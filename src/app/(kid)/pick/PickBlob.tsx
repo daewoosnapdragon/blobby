@@ -62,7 +62,7 @@ export function PickBlob({ name, initial }: { name: string; initial: BlobColorKe
       <div className={styles.stage}>
         <Sparkle size={28} className={styles.sparkle} />
         <div className={styles.bigBlob}>
-          <Blob key={changes} color={color} mood="idle" size={220} reaction={changes ? 'squish' : null} />
+          <Blob key={changes} color={color} mood="idle" size="var(--pick-blob, 220px)" reaction={changes ? 'squish' : null} />
         </div>
       </div>
 

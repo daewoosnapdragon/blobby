@@ -15,7 +15,7 @@ export function PokeBlob({ color }: { color: BlobColor }) {
   }, [pokes]);
   return (
     <button type="button" className={styles.poke} aria-label="Say hi to your blob" onClick={() => setPokes((n) => n + 1)}>
-      <Blob key={pokes} color={color} mood={happy ? 'happy' : 'idle'} size={196} reaction={pokes ? 'squish' : null} />
+      <Blob key={pokes} color={color} mood={happy ? 'happy' : 'idle'} size="var(--hero-blob, 196px)" reaction={pokes ? 'squish' : null} />
     </button>
   );
 }

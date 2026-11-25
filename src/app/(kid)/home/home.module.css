@@ -7,9 +7,12 @@
 .hello { flex-grow: 1; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; }
 .hi { margin: 0; font-size: 23px; font-weight: 800; line-height: 1.15; overflow-wrap: anywhere; }
 
+/* Phone: one column, as D-Home. Wider screens rearrange these two boxes (below). */
+.layout, .side { display: flex; flex-direction: column; gap: 20px; }
+
 /* This week */
 .weekCard { position: relative; background: var(--card); border-radius: var(--radius-card); min-height: 236px; overflow: hidden; }
-.poke { position: absolute; right: -36px; bottom: -44px; width: 196px; height: 183px; padding: 0; border: none; background: transparent; line-height: 0; }
+.poke { position: absolute; right: calc(var(--hero-blob, 196px) * -0.184); bottom: calc(var(--hero-blob, 196px) * -0.225); width: var(--hero-blob, 196px); padding: 0; border: none; background: transparent; line-height: 0; }
 .poke:active { transform: none; }
 .cardSparkle { position: absolute; right: 28px; top: 26px; }
 .weekCardBody { position: relative; min-height: 236px; padding: 22px 20px 20px; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; pointer-events: none; }
@@ -22,14 +25,14 @@
 .grow { flex-grow: 1; }
 .action { pointer-events: auto; }
 
-/* My winter plan */
+/* My winter plan. Phone: cards are 104px so the next one peeks in at 390px (the row visibly scrolls). */
 .plan { display: flex; flex-direction: column; gap: 12px; }
 .planHead { display: flex; justify-content: space-between; align-items: baseline; }
 .planTitle { margin: 0; font-size: 18px; font-weight: 800; }
 .planCount { font-size: 14px; font-weight: 500; color: var(--muted); }
 .rail { position: relative; display: flex; gap: 10px; margin-right: -18px; padding-right: 18px; overflow-x: auto; scrollbar-width: none; }
 .rail::-webkit-scrollbar { display: none; }
-.weekTile { width: 116px; flex-shrink: 0; background: var(--card); border-radius: 22px; padding: 10px; display: flex; flex-direction: column; gap: 6px; color: var(--ink); text-decoration: none; transition: transform 160ms var(--ease-out); }
+.weekTile { width: 104px; flex-shrink: 0; background: var(--card); border-radius: 22px; padding: 10px; display: flex; flex-direction: column; gap: 6px; color: var(--ink); text-decoration: none; transition: transform 160ms var(--ease-out); }
 a.weekTile:active { transform: scale(0.97); }
 .current { box-shadow: inset 0 0 0 2px var(--ink); }
 .locked { background: #EFEAE4; color: var(--muted); }
@@ -51,3 +54,52 @@ a.weekTile:active { transform: scale(0.97); }
 .freeTitle { font-size: 19px; font-weight: 800; }
 .freeSub { font-size: 14px; font-weight: 500; color: #2F4A40; }
 .freeArrow { width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: var(--card); display: flex; align-items: center; justify-content: center; }
+
+/* ---- Tablet (R26): one wide column, bigger card and blob, every week visible in a grid ---------- */
+@media (min-width: 640px) {
+  .screen { max-width: 900px; padding: 28px 32px 36px; gap: 28px; }
+  .top { gap: 16px; }
+  .me { width: 60px; height: 60px; }
+  .me svg { width: 42px; height: auto; }
+  .hi { font-size: 30px; }
+  .layout, .side { gap: 28px; }
+
+  .weekCard { --hero-blob: 300px; min-height: 380px; }
+  .weekCardBody { min-height: 380px; padding: 30px 32px 30px; gap: 14px; }
+  .cardSparkle { right: 44px; top: 36px; width: 34px; height: 34px; }
+  .tagYellow { font-size: 15px; padding: 5px 14px; }
+  .skill { max-width: 360px; font-size: 42px; }
+  .line { max-width: 380px; font-size: 19px; }
+  .dot, .dotDone { width: 36px; height: 10px; }
+  .dots { gap: 8px; }
+
+  .planTitle { font-size: 22px; }
+  .planCount { font-size: 16px; }
+  /* every week at once: no hidden sideways scroll */
+  .rail { display: grid; grid-template-columns: repeat(auto-fit, minmax(128px, 1fr)); gap: 12px; margin-right: 0; padding-right: 0; overflow: visible; }
+  .weekTile { width: auto; padding: 12px; gap: 8px; border-radius: 24px; }
+  .tile { height: 96px; border-radius: 16px; }
+  .hereBlob svg { width: 80px; height: auto; }
+  .tile > svg { transform: scale(1.15); }
+  .weekLabel, .weekLabelStrong, .opens { font-size: 13px; }
+  .weekName { font-size: 17px; }
+
+  .free { padding: 20px; gap: 18px; }
+  .freeIcon { width: 64px; height: 64px; border-radius: 20px; }
+  .freeTitle { font-size: 22px; }
+  .freeSub { font-size: 16px; }
+  .freeArrow { width: 52px; height: 52px; }
+}
+
+/* ---- Desktop: "this week" large on the left; the plan and free practice on the right ------------ */
+@media (min-width: 1024px) {
+  .screen { max-width: 1180px; padding: 28px 48px 40px; }
+  .layout { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 28px; align-items: stretch; }
+  .weekCard { --hero-blob: 330px; min-height: 460px; display: flex; flex-direction: column; }
+  .weekCardBody { flex-grow: 1; min-height: 0; padding: 34px 36px 34px; }
+  .skill { font-size: 46px; }
+  .side { gap: 24px; }
+  .rail { grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); gap: 14px; }
+  .tile { height: 104px; }
+  .free { margin-top: auto; }
+}

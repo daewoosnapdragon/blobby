@@ -23,7 +23,8 @@ const DROP = '#A9D3FF';
 type Props = {
   color: BlobColor;
   mood: Mood;
-  size: number;
+  /** px, or any CSS width (e.g. "var(--hero-blob, 196px)") so layouts can size the blob per breakpoint */
+  size: number | string;
   reaction?: Reaction | null;
   hat?: Hat | null;
 };
@@ -103,7 +104,7 @@ export function Blob({ color, mood, size, reaction = null, hat = null }: Props) 
       aria-hidden="true"
       data-mood={mood}
       data-reaction={reaction ?? undefined}
-      style={{ width: size, height: (size * 112) / 120 }}
+      style={{ width: size, height: typeof size === 'number' ? (size * 112) / 120 : undefined, aspectRatio: '120 / 112' }}
     >
       <svg className={styles.breathe} width="100%" height="100%" viewBox="0 0 120 112" overflow="visible">
         <path data-part="body" d={BODY_PATH} fill={BLOB_HEX[color]} />

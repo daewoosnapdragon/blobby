@@ -17,7 +17,8 @@ export function PickOne({ q, status, onAnswer }: QProps<'pick_one'>) {
     onAnswer(checkAnswer(q, { choice: i }));
   }
   return (
-    <div className={s.options}>
+    // Short choices (words) can sit two to a row on wide screens; sentences stay one per row for easy comparing.
+    <div className={s.options} data-short={q.choices.every((c) => c.length <= 18) ? '' : undefined}>
       {q.choices.map((c, i) => {
         const mark = locked && picked === i ? status : undefined;
         return (

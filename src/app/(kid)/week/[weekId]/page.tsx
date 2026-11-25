@@ -38,7 +38,7 @@ export default async function WeekPage({ params }: { params: Promise<{ weekId: s
             {week.lessons.length === 0 ? 'Lessons are on the way' : week.done ? 'Week done! Play any lesson again for practice.' : `${done} of ${week.lessons.length} lessons done`}
           </p>
         </div>
-        <div className={styles.blob}><Blob color={toBlobColor(home.student.blobColor)} mood={week.done ? 'happy' : 'idle'} size={96} /></div>
+        <div className={styles.blob}><Blob color={toBlobColor(home.student.blobColor)} mood={week.done ? 'happy' : 'idle'} size="var(--wk-blob, 96px)" /></div>
       </header>
 
       <ol className={styles.list}>

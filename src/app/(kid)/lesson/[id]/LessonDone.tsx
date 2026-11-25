@@ -68,41 +68,43 @@ export function LessonDone({ state, name, color, stars, onRetry }: {
     <div className={styles.screen}>
       <TopBar closeHref="/" closeLabel="Close" current={1} total={1} stars={shown} starsRef={pill} />
 
-      <div className={styles.stage}>
-        <span className={`${styles.dot} ${styles.d1}`} />
-        <span className={`${styles.dot} ${styles.d2}`} />
-        <span className={`${styles.dot} ${styles.d3}`} />
-        <Blob color={color} mood={state.kind === 'error' ? 'oops' : 'happy'} size={180} reaction={saved ? 'hop' : null} />
-      </div>
+      <div className={styles.main}>
+        <div className={styles.stage}>
+          <span className={`${styles.dot} ${styles.d1}`} />
+          <span className={`${styles.dot} ${styles.d2}`} />
+          <span className={`${styles.dot} ${styles.d3}`} />
+          <Blob color={color} mood={state.kind === 'error' ? 'oops' : 'happy'} size="var(--ld-blob, 180px)" reaction={saved ? 'hop' : null} />
+        </div>
 
-      <div className={styles.text} role="status" aria-live="polite">
-        <h1 className={styles.title}>Lesson done!</h1>
-        <p className={styles.sub}>Nice work, {name}!</p>
-        {state.kind === 'saving' ? (
-          <p className={styles.result}>Saving your stars…</p>
-        ) : state.kind === 'error' ? (
-          <p className={styles.result}>That didn’t save. Check the internet, then try again.</p>
-        ) : state.firstTime ? (
-          <p className={styles.stars}>
-            <span ref={source} className={styles.starIcon}><StarIcon size={34} /></span>
-            +{STAR_VALUES.lesson} stars
-          </p>
+        <div className={styles.text} role="status" aria-live="polite">
+          <h1 className={styles.title}>Lesson done!</h1>
+          <p className={styles.sub}>Nice work, {name}!</p>
+          {state.kind === 'saving' ? (
+            <p className={styles.result}>Saving your stars…</p>
+          ) : state.kind === 'error' ? (
+            <p className={styles.result}>That didn’t save. Check the internet, then try again.</p>
+          ) : state.firstTime ? (
+            <p className={styles.stars}>
+              <span ref={source} className={styles.starIcon}><StarIcon size={34} /></span>
+              +{STAR_VALUES.lesson} stars
+            </p>
+          ) : (
+            <p className={styles.stars}>Nice practice!</p>
+          )}
+          {saved && !saved.firstTime ? <p className={styles.result}>You already got the stars for this one.</p> : null}
+          {saved && saved.nextHref !== '/' ? <p className={styles.result}>And that finishes the week!</p> : null}
+        </div>
+
+        <div className={styles.spacer} />
+
+        {state.kind === 'error' ? (
+          <PillButton onClick={onRetry}>Try again</PillButton>
+        ) : saved ? (
+          <PillButton href={saved.nextHref}>{saved.nextHref === '/' ? 'Back to my plan' : 'Next'}</PillButton>
         ) : (
-          <p className={styles.stars}>Nice practice!</p>
+          <PillButton disabled>Back to my plan</PillButton>
         )}
-        {saved && !saved.firstTime ? <p className={styles.result}>You already got the stars for this one.</p> : null}
-        {saved && saved.nextHref !== '/' ? <p className={styles.result}>And that finishes the week!</p> : null}
       </div>
-
-      <div className={styles.spacer} />
-
-      {state.kind === 'error' ? (
-        <PillButton onClick={onRetry}>Try again</PillButton>
-      ) : saved ? (
-        <PillButton href={saved.nextHref}>{saved.nextHref === '/' ? 'Back to my plan' : 'Next'}</PillButton>
-      ) : (
-        <PillButton disabled>Back to my plan</PillButton>
-      )}
 
       {saved?.firstTime
         ? Array.from({ length: FLY }, (_, i) => (

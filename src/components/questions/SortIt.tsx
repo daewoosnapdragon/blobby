@@ -62,13 +62,15 @@ export function SortIt({ q, status, onAnswer }: QProps<'sort_it'>) {
           </div>
         ))}
       </div>
-      {ready && !locked ? (
-        <div className={s.appear}>
-          <PillButton size="lg" onClick={() => onAnswer(checkAnswer(q, { placement: placement.map((v) => v ?? -1) }))}>Check</PillButton>
-        </div>
-      ) : !ready ? (
-        <p className={s.helper}>Tap a word, then tap its group.</p>
-      ) : null}
+      <div className={s.checkSlot}>
+        {ready && !locked ? (
+          <div className={s.appear}>
+            <PillButton size="lg" onClick={() => onAnswer(checkAnswer(q, { placement: placement.map((v) => v ?? -1) }))}>Check</PillButton>
+          </div>
+        ) : !ready ? (
+          <p className={s.helper}>Tap a word, then tap its group.</p>
+        ) : null}
+      </div>
     </div>
   );
 }

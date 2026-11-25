@@ -38,13 +38,15 @@ export function BuildIt({ q, status, onAnswer }: QProps<'build_it'>) {
           ),
         )}
       </div>
-      {ready && !locked ? (
-        <div className={s.appear}>
-          <PillButton size="lg" onClick={() => onAnswer(checkAnswer(q, { order: placed.map((k) => pool[k]) }))}>Check</PillButton>
-        </div>
-      ) : (
-        <p className={s.helper}>Tap the words in order.</p>
-      )}
+      <div className={s.checkSlot}>
+        {ready && !locked ? (
+          <div className={s.appear}>
+            <PillButton size="lg" onClick={() => onAnswer(checkAnswer(q, { order: placed.map((k) => pool[k]) }))}>Check</PillButton>
+          </div>
+        ) : (
+          <p className={s.helper}>Tap the words in order.</p>
+        )}
+      </div>
     </div>
   );
 }

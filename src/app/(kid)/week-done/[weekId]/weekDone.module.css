@@ -1,13 +1,16 @@
 /* D-Done */
-.screen { min-height: 100dvh; max-width: 430px; margin: 0 auto; padding: 20px 18px 24px; display: flex; flex-direction: column; gap: 16px; }
+.screen { position: relative; min-height: 100dvh; max-width: 430px; margin: 0 auto; padding: 20px 18px 24px; display: flex; flex-direction: column; gap: 16px; }
 .close { width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: var(--card); display: flex; align-items: center; justify-content: center; transition: transform 160ms var(--ease-out); }
 .close:active { transform: scale(0.97); }
 .stage { position: relative; height: 290px; flex-shrink: 0; }
 .pop { position: absolute; animation: var(--kf-pop) 250ms var(--ease-out) both; }
-.blob { position: absolute; left: 50%; top: 70px; width: 216px; margin-left: -108px; line-height: 0; }
+.blob { position: absolute; left: 50%; bottom: 18px; width: var(--done-blob, 216px); margin-left: calc(var(--done-blob, 216px) / -2); line-height: 0; }
 .head { text-align: center; display: flex; flex-direction: column; gap: 6px; }
 .title { margin: 0; font-size: 32px; font-weight: 800; line-height: 1.2; }
 .sub { margin: 0; font-size: 17px; font-weight: 500; color: #4F4A45; }
+.skillTag { display: inline-block; margin-left: 2px; background: var(--yellow-soft); color: var(--ink); border-radius: 999px; padding: 2px 12px; font-weight: 700; }
+/* Phone: these wrappers vanish, so the screen is one flex column exactly as D-Done. */
+.layout, .info { display: contents; }
 .card { padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; }
 .row { display: flex; align-items: center; gap: 12px; }
 .label { flex-grow: 1; font-size: 16px; font-weight: 700; }
@@ -17,3 +20,27 @@
 .spacer { flex-grow: 1; }
 /* Movement stops; the numbers are final (reduced motion is handled in WeekDone). */
 @media (prefers-reduced-motion: reduce) { .pop { animation: none; } }
+
+/* ---- Tablet: a bigger, centered celebration ---- */
+@media (min-width: 640px) {
+  .screen { max-width: 680px; padding: 40px 32px; justify-content: center; gap: 22px; }
+  .close { position: absolute; left: 24px; top: 24px; width: 52px; height: 52px; }
+  .stage { --done-blob: 300px; height: 390px; }
+  .title { font-size: 46px; }
+  .sub { font-size: 20px; }
+  .card { padding: 24px 30px; gap: 18px; }
+  .label { font-size: 19px; }
+  .note { font-size: 15px; }
+  .num { font-size: 34px; }
+  .row svg { transform: scale(1.2); }
+  .spacer { display: none; }
+}
+/* ---- Desktop: the blob on the left, the numbers on the right ---- */
+@media (min-width: 1024px) {
+  .screen { max-width: 1080px; padding: 40px 56px; }
+  .layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: 48px; }
+  .info { display: flex; flex-direction: column; gap: 24px; }
+  .stage { --done-blob: 330px; height: 470px; }
+  .head { text-align: left; }
+  .title { font-size: 50px; }
+}

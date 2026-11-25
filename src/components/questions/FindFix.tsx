@@ -40,18 +40,17 @@ export function FindFix({ q, status, onAnswer, onFound }: QProps<'find_fix'> & {
           );
         })}
       </div>
-      {found ? (
-        <div className={`${s.stack} ${s.appear}`}>
-          <p className={s.helper}>Change <strong>{q.words[q.wrongIndex]}</strong> to:</p>
-          <div className={s.chips} role="group" aria-label="Fixes">
-            {q.fixes.map((f, j) => (
-              <button key={j} type="button" className={s.chip} data-mark={locked && fix === j ? status : undefined} aria-disabled={locked || undefined} onClick={() => chooseFix(j)}>
-                {f}
-              </button>
-            ))}
-          </div>
+      {/* Always rendered so the screen doesn't jump when the fixes appear; hidden (and out of the a11y tree) until then. */}
+      <div className={`${s.stack} ${found ? s.appear : ''}`} style={found ? undefined : { visibility: 'hidden' }} aria-hidden={found ? undefined : true}>
+        <p className={s.helper}>Change <strong>{q.words[q.wrongIndex]}</strong> to:</p>
+        <div className={s.chips} role="group" aria-label="Fixes">
+          {q.fixes.map((f, j) => (
+            <button key={j} type="button" className={s.chip} data-mark={locked && fix === j ? status : undefined} aria-disabled={locked || undefined} onClick={() => chooseFix(j)}>
+              {f}
+            </button>
+          ))}
         </div>
-      ) : null}
+      </div>
     </div>
   );
 }

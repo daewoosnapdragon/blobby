@@ -143,32 +143,36 @@ export default async function Home() {
         <StarCount value={home.totalStars} />
       </header>
 
-      <ThisWeek home={home} color={color} />
+      <div className={styles.layout}>
+        <ThisWeek home={home} color={color} />
 
-      {home.plan && home.weeks.length > 0 ? (
-        <section className={styles.plan} aria-labelledby="plan-title">
-          <div className={styles.planHead}>
-            <h2 id="plan-title" className={styles.planTitle}>My winter plan</h2>
-            <span className={styles.planCount}>{doneCount} of {home.weeks.length} weeks</span>
+        {home.plan ? (
+          <div className={styles.side}>
+            {home.weeks.length > 0 ? (
+              <section className={styles.plan} aria-labelledby="plan-title">
+                <div className={styles.planHead}>
+                  <h2 id="plan-title" className={styles.planTitle}>My winter plan</h2>
+                  <span className={styles.planCount}>{doneCount} of {home.weeks.length} weeks</span>
+                </div>
+                <Rail>
+                  {home.weeks.map((w, i) => (
+                    <WeekTile key={w.id} w={w} i={i} home={home} color={color} today={today} doneIndex={w.done && w.id !== home.currentWeekId ? doneSeen++ : 0} />
+                  ))}
+                </Rail>
+              </section>
+            ) : null}
+
+            <Link href="/practice" className={styles.free}>
+              <span className={styles.freeIcon}><DiceIcon /></span>
+              <span className={styles.freeText}>
+                <span className={styles.freeTitle}>Free practice</span>
+                <span className={styles.freeSub}>Mixed review for bonus stars</span>
+              </span>
+              <span className={styles.freeArrow}><ArrowIcon size={18} /></span>
+            </Link>
           </div>
-          <Rail>
-            {home.weeks.map((w, i) => (
-              <WeekTile key={w.id} w={w} i={i} home={home} color={color} today={today} doneIndex={w.done && w.id !== home.currentWeekId ? doneSeen++ : 0} />
-            ))}
-          </Rail>
-        </section>
-      ) : null}
-
-      {home.plan ? (
-        <Link href="/practice" className={styles.free}>
-          <span className={styles.freeIcon}><DiceIcon /></span>
-          <span className={styles.freeText}>
-            <span className={styles.freeTitle}>Free practice</span>
-            <span className={styles.freeSub}>Mixed review for bonus stars</span>
-          </span>
-          <span className={styles.freeArrow}><ArrowIcon size={18} /></span>
-        </Link>
-      ) : null}
+        ) : null}
+      </div>
     </main>
   );
 }

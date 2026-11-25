@@ -2,5 +2,12 @@
 .card { width: 100%; max-width: 390px; background: var(--card); border-radius: var(--radius-card); padding: 32px 22px 24px; display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center; }
 .title { margin: 0; font-size: 26px; font-weight: 800; line-height: 1.25; }
 .message { margin: 0; font-size: 16px; color: var(--muted); }
-.note { margin: 0; font-size: 14px; color: var(--muted); }
+.note { margin: 0; font-size: 14px; color: var(--muted); word-break: keep-all; }
 .arrow { width: 44px; height: 44px; border-radius: 50%; background: var(--yellow); display: inline-flex; align-items: center; justify-content: center; }
+
+@media (min-width: 640px) {
+  .card { --ps-blob: 190px; max-width: 560px; padding: 44px 40px 36px; gap: 18px; }
+  .title { font-size: 34px; }
+  .message { font-size: 19px; }
+  .note { font-size: 16px; }
+}

@@ -72,7 +72,7 @@ export function JoinFlow() {
         {koJoin.parentHelp.map((l) => <p key={l}>{l}</p>)}
       </div>
       <div className={styles.card}>
-        <Blob color="sunny" mood="idle" size={110} />
+        <Blob color="sunny" mood="idle" size="var(--join-blob, 110px)" />
         <h1 className={styles.title}>{joinCopy.title}</h1>
         {names ? (
           <>

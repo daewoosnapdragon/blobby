@@ -339,3 +339,32 @@ describe('QuestionPlayer', () => {
     expect(played).toEqual([]);
   });
 });
+
+describe('focus and announcements (Task 8b review minors)', () => {
+  it('after Try again, focus moves to the question prompt', () => {
+    renderPlayer();
+    fireEvent.click(btn('She don’t like carrots.'));
+    fireEvent.click(btn('Try again'));
+    expect(document.activeElement).toBe(document.getElementById('q-ask'));
+    expect(document.activeElement).toHaveTextContent('Which sentence is right?');
+  });
+
+  it('after Next, focus moves to the new question’s prompt', () => {
+    renderPlayer();
+    fireEvent.click(btn('She doesn’t like carrots.'));
+    fireEvent.click(btn('Next'));
+    expect(document.activeElement).toBe(document.getElementById('q-ask'));
+    expect(document.activeElement).toHaveTextContent('Tap the word you hear.');
+  });
+
+  it('HearIt failing is announced in a live region', async () => {
+    mode = 'error';
+    const { container } = render(<HearIt texts={['one']} audio={{ one: 'http://a/broken.mp3' }} />);
+    const live = container.querySelector('[aria-live="polite"]');
+    expect(live).not.toBeNull();
+    expect(live).toHaveTextContent('');
+    fireEvent.click(btn('Hear it'));
+    await flush();
+    expect(live).toHaveTextContent(/couldn.t play/i);
+  });
+});

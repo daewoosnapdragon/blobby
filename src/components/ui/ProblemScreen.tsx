@@ -17,7 +17,7 @@ export function ProblemScreen({ title, message, parentNote, mood = 'sleepy', col
   return (
     <main className={styles.screen}>
       <div className={styles.card}>
-        <Blob color={color} mood={mood} size={140} />
+        <Blob color={color} mood={mood} size="var(--ps-blob, 140px)" />
         <h1 className={styles.title}>{title}</h1>
         {message ? <p className={styles.message}>{message}</p> : null}
         {parentNote ? <p className={styles.note} lang="ko">{parentNote}</p> : null}

@@ -12,3 +12,20 @@
 .result { margin: 6px 0 0; font-size: 15px; font-weight: 500; color: var(--muted); }
 .spacer { flex-grow: 1; }
 .flyer { position: fixed; left: 0; top: 0; visibility: hidden; pointer-events: none; z-index: 10; will-change: transform; }
+
+/* Phone: the wrapper vanishes (one flex column). Wider: the same column, bigger and vertically centered. */
+.main { display: contents; }
+@media (min-width: 640px) {
+  .screen { max-width: 820px; padding: 28px 32px 32px; gap: 20px; }
+  .main { display: flex; flex-direction: column; flex-grow: 1; justify-content: center; gap: 20px; padding-bottom: 4vh; }
+  .stage { --ld-blob: 250px; height: 320px; }
+  .title { font-size: 44px; }
+  .sub { font-size: 20px; }
+  .stars { font-size: 32px; padding: 12px 28px 12px 18px; }
+  .result { font-size: 17px; }
+  .spacer { display: none; }
+}
+@media (min-width: 1024px) {
+  .screen { max-width: 960px; padding: 24px 40px 28px; }
+  .stage { --ld-blob: 230px; height: 290px; }
+}

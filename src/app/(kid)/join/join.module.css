@@ -1,5 +1,5 @@
 .screen { min-height: 100dvh; padding: 24px 18px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; }
-.parent { width: 100%; max-width: 390px; font-size: 14px; color: var(--muted); text-align: center; }
+.parent { width: 100%; max-width: 390px; font-size: 14px; color: var(--muted); text-align: center; word-break: keep-all; }
 .parent p { margin: 0 0 4px; }
 .card { width: 100%; max-width: 390px; background: var(--card); border-radius: var(--radius-card); padding: 28px 20px 22px; display: flex; flex-direction: column; align-items: center; gap: 14px; }
 .title { margin: 0; font-size: 28px; font-weight: 800; }
@@ -14,3 +14,17 @@
 .dot { width: 32px; height: 30px; border-radius: 50%; background: #E6DFD8; display: inline-block; }
 .link { min-height: 44px; border: none; background: transparent; color: var(--muted); font-size: 14px; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
 .error { margin: 0; font-size: 15px; font-weight: 700; color: var(--ink); background: var(--yellow-soft); border-radius: 16px; padding: 10px 14px; text-align: center; }
+
+@media (min-width: 640px) {
+  .screen { gap: 22px; padding: 40px 32px; }
+  .parent { max-width: 560px; font-size: 16px; }
+  .card { --join-blob: 150px; max-width: 560px; padding: 40px 40px 32px; gap: 18px; }
+  .title { font-size: 36px; }
+  .label { font-size: 17px; }
+  .input { min-height: 68px; font-size: 32px; }
+  .hint { font-size: 16px; }
+  .pill { min-height: 66px; font-size: 20px; }
+  .chips { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .chip { min-height: 68px; font-size: 20px; }
+  .link { font-size: 16px; }
+}

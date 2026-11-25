@@ -75,6 +75,7 @@ export function HearIt({ texts, audio, autoPlay = false, autoPlayTexts }: Props)
 
   const error = state === 'error';
   return (
+    <>
     <button
       type="button"
       className={`${styles.hear} ${state === 'playing' ? styles.hearPlaying : ''}`}
@@ -85,5 +86,8 @@ export function HearIt({ texts, audio, autoPlay = false, autoPlayTexts }: Props)
       {error ? <RetryIcon /> : <SpeakerIcon />}
       {error ? 'Try again' : 'Hear it'}
     </button>
+    {/* A name change on a focused button isn't reliably announced; this is. */}
+    <span className="sr-only" aria-live="polite">{error ? 'Couldn’t play the sound. Tap Try again to hear it.' : ''}</span>
+    </>
   );
 }

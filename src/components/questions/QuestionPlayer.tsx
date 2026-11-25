@@ -122,12 +122,19 @@ export function QuestionPlayer({
   const [reaction, setReaction] = useState<{ kind: Reaction; n: number } | null>(null);
   const [found, setFound] = useState(false);
   const actionRef = useRef<HTMLButtonElement & HTMLAnchorElement>(null);
+  const askRef = useRef<HTMLDivElement>(null);
+  // Set when the focused button is about to unmount (Try again, Next): focus goes to the prompt so it's read out.
+  const focusAsk = useRef(false);
 
   const step = steps[Math.min(index, steps.length - 1)];
 
   useEffect(() => {
     if (status !== 'idle') actionRef.current?.focus({ preventScroll: true });
-  }, [status]);
+    else if (focusAsk.current) {
+      focusAsk.current = false;
+      askRef.current?.focus({ preventScroll: true });
+    }
+  }, [status, index]);
 
   if (!step) return null;
   const q = step.question;
@@ -148,6 +155,7 @@ export function QuestionPlayer({
       onFinish();
       return;
     }
+    focusAsk.current = true;
     setIndex(index + 1);
     setStatus('idle');
     setFirstTry(true);
@@ -164,49 +172,52 @@ export function QuestionPlayer({
     <div className={s.screen}>
       <TopBar closeHref={closeHref} current={index + 1} total={steps.length} stars={stars} />
 
-      <section className={s.qCard} aria-labelledby="q-ask">
-        <span className={s.tag} style={{ background: TYPE_TINT[q.type] }}>{TYPE_LABEL[q.type]}</span>
-        <div className={s.qRow}>
-          <div className={s.qBlob}>
-            <Blob key={reaction?.n ?? 0} color={blobColor} mood={mood} size={136} reaction={reaction?.kind ?? null} />
-          </div>
-          <div className={s.bubble}>
-            {/* Both lines share one grid cell, so the card keeps its height when the words change. */}
-            <div className={s.askStack}>
-              <div id="q-ask" className={s.ask}>{bubble}</div>
-              <div className={s.ask} aria-hidden="true" style={{ visibility: 'hidden' }}>{ask(q, found)}</div>
+      {/* phone: fills the screen, feedback at the bottom (D-Question). Wider: a centered column, feedback right under the answers. */}
+      <div className={s.main}>
+        <section className={s.qCard} aria-labelledby="q-ask">
+          <span className={s.tag} style={{ background: TYPE_TINT[q.type] }}>{TYPE_LABEL[q.type]}</span>
+          <div className={s.qRow}>
+            <div className={s.qBlob}>
+              <Blob key={reaction?.n ?? 0} color={blobColor} mood={mood} size="var(--q-blob, 136px)" reaction={reaction?.kind ?? null} />
             </div>
-            <HearIt key={step.key + index} texts={aloud.all} audio={step.audio} autoPlay={autoRead} autoPlayTexts={aloud.auto} />
+            <div className={s.bubble}>
+              {/* Both lines share one grid cell, so the card keeps its height when the words change. */}
+              <div className={s.askStack}>
+                <div id="q-ask" ref={askRef} tabIndex={-1} className={s.ask}>{bubble}</div>
+                <div className={s.ask} aria-hidden="true" style={{ visibility: 'hidden' }}>{ask(q, found)}</div>
+              </div>
+              <HearIt key={step.key + index} texts={aloud.all} audio={step.audio} autoPlay={autoRead} autoPlayTexts={aloud.auto} />
+            </div>
           </div>
+        </section>
+
+        <div key={step.key + index} className={s.body}>
+          <Body q={q} status={status} onAnswer={answer} onFound={setFound} />
         </div>
-      </section>
 
-      <div key={step.key + index} className={s.body}>
-        <Body q={q} status={status} onAnswer={answer} onFound={setFound} />
-      </div>
+        <div className={s.spacer} />
 
-      <div className={s.spacer} />
-
-      <div role="status" aria-live="polite" className={s.feedbackSlot}>
-        {status === 'right' ? (
-          <div className={`${s.feedback} ${s.right}`}>
-            <div className={s.feedbackText}>
-              <div className={s.feedbackTitle}>That’s it!</div>
-              {answerStars > 0 && rightFirst ? (
-                <div className={s.feedbackNote}>+{answerStars} {answerStars === 1 ? 'star' : 'stars'}</div>
-              ) : null}
+        <div role="status" aria-live="polite" className={s.feedbackSlot}>
+          {status === 'right' ? (
+            <div className={`${s.feedback} ${s.right}`}>
+              <div className={s.feedbackText}>
+                <div className={s.feedbackTitle}>That’s it!</div>
+                {answerStars > 0 && rightFirst ? (
+                  <div className={s.feedbackNote}>+{answerStars} {answerStars === 1 ? 'star' : 'stars'}</div>
+                ) : null}
+              </div>
+              <PillButton size="sm" onClick={next} ref={actionRef}>Next</PillButton>
             </div>
-            <PillButton size="sm" onClick={next} ref={actionRef}>Next</PillButton>
-          </div>
-        ) : status === 'wrong' ? (
-          <div className={`${s.feedback} ${s.wrong}`}>
-            <div className={s.feedbackText}>
-              <div className={s.feedbackTitle}>Almost!</div>
-              <div className={s.feedbackNote} data-hint="">{HINT[q.type]}</div>
+          ) : status === 'wrong' ? (
+            <div className={`${s.feedback} ${s.wrong}`}>
+              <div className={s.feedbackText}>
+                <div className={s.feedbackTitle}>Almost!</div>
+                <div className={s.feedbackNote} data-hint="">{HINT[q.type]}</div>
+              </div>
+              <button type="button" className={s.tryAgain} onClick={() => { focusAsk.current = true; setStatus('idle'); }} ref={actionRef}>Try again</button>
             </div>
-            <button type="button" className={s.tryAgain} onClick={() => setStatus('idle')} ref={actionRef}>Try again</button>
-          </div>
-        ) : null}
+          ) : null}
+        </div>
       </div>
     </div>
   );
