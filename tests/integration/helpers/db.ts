@@ -1,5 +1,6 @@
 import postgres from 'postgres';
 import fs from 'node:fs';
+import { pgOptions } from '../../../src/lib/db/options';
 import path from 'node:path';
 
 export const TEST_DATABASE_URL =
@@ -27,7 +28,16 @@ export async function resetTestDb(): Promise<ReturnType<typeof postgres>> {
   } finally {
     await admin.end();
   }
-  const sql = postgres(TEST_DATABASE_URL, { max: 4, prepare: false, onnotice: () => {} });
+  // Mimic Supabase: new tables are granted to anon/authenticated by default, so the
+  // migration's revokes are what actually locks them. Must run BEFORE the migration.
+  const db = postgres(url.toString(), { max: 1, onnotice: () => {} });
+  try {
+    await db.unsafe('grant usage on schema public to anon, authenticated');
+    await db.unsafe('alter default privileges in schema public grant all on tables to anon, authenticated');
+  } finally {
+    await db.end();
+  }
+  const sql = postgres(TEST_DATABASE_URL, { ...pgOptions, max: 4, onnotice: () => {} });
   await sql.unsafe(fs.readFileSync(MIGRATION, 'utf8'));
   return sql;
 }

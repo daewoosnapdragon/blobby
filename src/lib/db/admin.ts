@@ -1,5 +1,6 @@
 import 'server-only';
 import postgres from 'postgres';
+import { pgOptions } from './options';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
 type Sql = ReturnType<typeof postgres>;
@@ -10,7 +11,7 @@ function getSql(): Sql {
     const url = process.env.DATABASE_URL;
     if (!url) throw new Error('DATABASE_URL is not set');
     // prepare: false is required for the Supabase transaction pooler.
-    _sql = postgres(url, { prepare: false });
+    _sql = postgres(url, pgOptions);
   }
   return _sql;
 }

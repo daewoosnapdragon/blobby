@@ -40,6 +40,15 @@ describe('lockdown', () => {
   });
 });
 
+describe('anon role', () => {
+  it('is denied at runtime', async () => {
+    await expect(sql.begin(async (tx) => {
+      await tx.unsafe('set local role anon');
+      await tx.unsafe('select * from wp_students');
+    })).rejects.toMatchObject({ code: '42501' });
+  });
+});
+
 describe('constraints', () => {
   let classId: string, studentId: string, planId: string, weekId: string, lessonId: string, questionId: string;
   beforeAll(async () => {
@@ -83,6 +92,21 @@ describe('constraints', () => {
     await sql`insert into wp_star_events (student_id, plan_id, amount, reason, ref_id) values (${studentId}, ${planId}, 10, 'lesson', ${lessonId})`;
     await rejects(sql`insert into wp_star_events (student_id, plan_id, amount, reason, ref_id) values (${studentId}, ${planId}, 10, 'lesson', ${lessonId})`, UNIQUE);
     await rejects(sql`insert into wp_star_events (student_id, plan_id, amount, reason, ref_id) values (${studentId}, ${planId}, 10, 'nope', ${lessonId})`, CHECK);
+  });
+  it('star_events ref_id is required', async () => {
+    await rejects(sql`insert into wp_star_events (student_id, plan_id, amount, reason) values (${studentId}, ${planId}, 10, 'lesson')`, '23502');
+  });
+  it('plan title, week position, lesson position are unique; question positions are not', async () => {
+    await rejects(sql`insert into wp_plans (title, kind) values ('Winter', 'winter')`, UNIQUE);
+    await rejects(sql`insert into wp_weeks (plan_id, position, skill) values (${planId}, 1, 'x')`, UNIQUE);
+    await rejects(sql`insert into wp_lessons (week_id, position, title) values (${weekId}, 1, 'x')`, UNIQUE);
+    await sql`insert into wp_questions (lesson_id, position, type, payload) values (${lessonId}, 1, 'mc', '{}')`;
+  });
+  it('date columns round-trip as YYYY-MM-DD strings', async () => {
+    await sql`insert into wp_practice_days (student_id, day) values (${studentId}, '2026-12-28')`;
+    const [r] = await sql`select day from wp_practice_days where student_id=${studentId} and day='2026-12-28'`;
+    expect(r.day).toBe('2026-12-28');
+    await sql`delete from wp_practice_days where day='2026-12-28'`;
   });
   it('practice_days primary key (student_id, day), seconds default 0', async () => {
     await sql`insert into wp_practice_days (student_id, day) values (${studentId}, '2026-12-01')`;

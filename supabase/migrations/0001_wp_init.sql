@@ -27,7 +27,7 @@ create index wp_students_class_idx on wp_students (class_id);
 -- Plans, and who they are assigned to ---------------------------------------
 create table wp_plans (
   id         uuid primary key default gen_random_uuid(),
-  title      text not null,
+  title      text not null unique,  -- importer upserts plans by title
   kind       text not null check (kind in ('test', 'winter', 'homework')),
   created_at timestamptz not null default now()
 );
@@ -50,17 +50,17 @@ create table wp_weeks (
   plan_id   uuid not null references wp_plans(id) on delete cascade,
   position  int  not null,
   skill     text not null,
-  opens_on  date
+  opens_on  date,
+  unique (plan_id, position)  -- importer upserts weeks by (plan, position)
 );
-create index wp_weeks_plan_idx on wp_weeks (plan_id, position);
 
 create table wp_lessons (
   id       uuid primary key default gen_random_uuid(),
   week_id  uuid not null references wp_weeks(id) on delete cascade,
   position int  not null,
-  title    text not null
+  title    text not null,
+  unique (week_id, position)  -- importer upserts lessons by (week, position)
 );
-create index wp_lessons_week_idx on wp_lessons (week_id, position);
 
 -- Questions are soft-deleted (deleted_at); the app never hard-deletes them.
 create table wp_questions (
@@ -103,7 +103,7 @@ create table wp_star_events (
   plan_id    uuid references wp_plans(id),
   amount     int  not null,
   reason     text not null check (reason in ('lesson', 'week_bonus', 'free_correct')),
-  ref_id     uuid,  -- lesson id, week id, or attempt id depending on reason
+  ref_id     uuid not null,  -- lesson id, week id, or attempt id depending on reason
   created_at timestamptz not null default now(),
   unique (student_id, reason, ref_id)
 );

@@ -1,6 +1,6 @@
 // Row types mirroring the wp_ tables. Convention: snake_case keys, exactly as the columns
 // are named, because rows come straight from `postgres` (no camelCase transform).
-// uuid -> string, timestamptz -> string (ISO) or Date as returned by the driver, date -> string (YYYY-MM-DD).
+// uuid -> string, timestamptz -> string (ISO) or Date as returned by the driver, date -> string (YYYY-MM-DD; the driver is configured in src/lib/db/options.ts).
 
 export type PlanKind = 'test' | 'winter' | 'homework';
 export type AttemptContext = 'lesson' | 'free';
@@ -33,6 +33,6 @@ export interface WpLessonCompletion {
 }
 export interface WpStarEvent {
   id: string; student_id: string; plan_id: string | null; amount: number;
-  reason: StarReason; ref_id: string | null; created_at: Date;
+  reason: StarReason; ref_id: string; created_at: Date;
 }
 export interface WpPracticeDay { student_id: string; day: string; seconds: number }
