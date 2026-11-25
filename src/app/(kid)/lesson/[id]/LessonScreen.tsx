@@ -3,13 +3,13 @@ import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { LessonData } from '@/lib/db/kid';
 import { toBlobColor } from '@/lib/blobColors';
-import { newId, postWithRetry } from '@/lib/kidApi';
+import { postWithRetry } from '@/lib/kidApi';
 import { lessonOutcome } from '@/lib/lessonOutcome';
-import { QuestionPlayer, type AnsweredQuestion } from '@/components/questions/QuestionPlayer';
+import { QuestionPlayer } from '@/components/questions/QuestionPlayer';
+import { useRecordAttempt } from '@/components/questions/useRecordAttempt';
 import { WhoAreYouScreen } from '@/components/ui/KidProblems';
 import { LessonDone, type DoneState } from './LessonDone';
 
-type AttemptRes = { starsAwarded: number; studentId: string };
 type CompleteRes = { starsAwarded: number; weekDone: boolean; totalStars: number; studentId: string };
 
 /**
@@ -24,15 +24,11 @@ export function LessonScreen({ data }: { data: LessonData }) {
   const [phase, setPhase] = useState<'play' | 'done' | 'signedOut'>('play');
   const [done, setDone] = useState<DoneState>({ kind: 'saving' });
 
-  function onAnswer(q: AnsweredQuestion, correct: boolean) {
-    // Fire and forget: the kid never waits on a save. Retries reuse the same clientAttemptId.
-    void postWithRetry<AttemptRes>('/api/attempt', { clientAttemptId: newId(), questionId: q.id, correct, context: 'lesson' })
-      .then((r) => {
-        if (r.status === 401) setPhase('signedOut');
-        else if (r.status === 404) router.refresh();
-        else if (r.data && r.data.studentId !== latest.current.student.id) router.refresh();
-      });
-  }
+  const onAnswer = useRecordAttempt({
+    context: 'lesson',
+    studentId: data.student.id,
+    onSignedOut: () => setPhase('signedOut'),
+  });
 
   async function finish() {
     setPhase('done');

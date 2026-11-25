@@ -8,6 +8,7 @@ import { isWeekOpen } from '../dates';
 import { STAR_VALUES, weekBonusDue } from '../stars';
 import { BLOB_COLOR_KEYS, type BlobColorKey } from '../blobColors';
 import { parseQuestion, type Question } from '../questions/schema';
+import { pickFreePractice, PRACTICE_SET_SIZE } from '../practice';
 import type { WpStudent } from '../types';
 
 
@@ -390,4 +391,74 @@ export async function getWeekDone(studentId: string, weekId: string, now: Date =
     weekStars,
     totalStars,
   };
+}
+
+// ---- Free practice -----------------------------------------------------------------------
+
+/**
+ * Questions this kid last got wrong (in a lesson or in free practice). A question leaves the set as soon
+ * as the kid's latest attempt on it is correct. Soft-deleted questions are never in it.
+ */
+export async function getMissedIds(studentId: string): Promise<Set<string>> {
+  const rows = await sql<{ question_id: string }[]>`
+    select question_id from (
+      select distinct on (a.question_id) a.question_id, a.correct
+      from wp_attempts a join wp_questions q on q.id = a.question_id
+      where a.student_id = ${studentId} and q.deleted_at is null
+      order by a.question_id, a.created_at desc
+    ) latest
+    where not correct`;
+  return new Set(rows.map((r) => r.question_id));
+}
+
+/** Every playable question of the kid's open weeks (assigned plans): not deleted, not watch_answer, not malformed. */
+async function practicePool(studentId: string, now: Date): Promise<LessonQuestion[]> {
+  const rows = await sql<{ id: string; type: string; payload: unknown; audio: unknown; opens_on: string | null }[]>`
+    select q.id, q.type, q.payload, q.audio, w.opens_on
+    from wp_questions q
+    join wp_lessons l on l.id = q.lesson_id
+    join wp_weeks w on w.id = l.week_id
+    where q.deleted_at is null and q.type <> 'watch_answer'
+      and w.plan_id in (${assignedTo(sql, studentId)})
+    order by w.position, l.position, q.position, q.id`;
+  const pool: LessonQuestion[] = [];
+  for (const r of rows) {
+    if (!weekIsOpen(r.opens_on, now)) continue;
+    try {
+      pool.push({ id: r.id, question: parseQuestion(r.type, r.payload), audio: audioMap(r.audio) });
+    } catch {
+      // skipped, like in lessons
+    }
+  }
+  return pool;
+}
+
+/** A free-practice set: up to 8 mixed questions, missed ones 3x as likely, in the order they'll be asked. */
+export async function getPracticeSet(
+  studentId: string,
+  now: Date = new Date(),
+  n: number = PRACTICE_SET_SIZE,
+  rand: () => number = Math.random,
+): Promise<LessonQuestion[]> {
+  const [pool, missed] = await Promise.all([practicePool(studentId, now), getMissedIds(studentId)]);
+  const byId = new Map(pool.map((q) => [q.id, q]));
+  return pickFreePractice(pool.map((q) => ({ id: q.id, deleted: false })), missed, n, rand).map((qid) => byId.get(qid)!);
+}
+
+/** Is there anything to practice yet? (Home shows the free-practice card as opening later when not.) */
+export async function practiceAvailable(studentId: string, now: Date = new Date()): Promise<boolean> {
+  const weeks = await sql<{ opens_on: string | null }[]>`
+    select distinct w.opens_on
+    from wp_questions q
+    join wp_lessons l on l.id = q.lesson_id
+    join wp_weeks w on w.id = l.week_id
+    where q.deleted_at is null and q.type <> 'watch_answer'
+      and w.plan_id in (${assignedTo(sql, studentId)})`;
+  return weeks.some((w) => weekIsOpen(w.opens_on, now));
+}
+
+/** What the practice screen needs besides the questions. */
+export async function getPracticeStudent(studentId: string) {
+  const [student, totalStars] = await Promise.all([studentWithGrade(studentId), totalStarsFor(studentId)]);
+  return { id: student.id, displayName: student.display_name, blobColor: student.blob_color, grade: student.grade, totalStars };
 }

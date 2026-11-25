@@ -6,6 +6,7 @@ import { playSound } from '@/lib/sound';
 import { Blob, type BlobColor, type Mood, type Reaction } from '@/components/blob/Blob';
 import { HearIt } from '@/components/ui/HearIt';
 import { PillButton } from '@/components/ui/PillButton';
+import { StarIcon, STAR_PATH } from '@/components/ui/icons';
 import { ListenTap } from './ListenTap';
 import { PickOne } from './PickOne';
 import { FindFix } from './FindFix';
@@ -41,6 +42,8 @@ export type QuestionPlayerProps = {
   /** stars per first-try right answer, shown on the right card ("+1 star"); 0 in lessons */
   answerStars?: number;
   closeHref?: string;
+  /** the close button's accessible name */
+  closeLabel?: string;
 };
 
 const TYPE_LABEL: Record<NonWatchQuestion['type'], string> = {
@@ -111,7 +114,7 @@ function Body({ q, status, onAnswer, onFound }: { q: NonWatchQuestion; status: S
  * free practice (Task 12) and watch-and-answer (Task 14).
  */
 export function QuestionPlayer({
-  questions, onAnswer, onFinish, blobColor, stars, autoRead = false, answerStars = 0, closeHref = '/',
+  questions, onAnswer, onFinish, blobColor, stars, autoRead = false, answerStars = 0, closeHref = '/', closeLabel = 'Close lesson',
 }: QuestionPlayerProps) {
   const steps = useMemo(
     () =>
@@ -130,6 +133,9 @@ export function QuestionPlayer({
   const [found, setFound] = useState(false);
   const actionRef = useRef<HTMLButtonElement & HTMLAnchorElement>(null);
   const askRef = useRef<HTMLDivElement>(null);
+  const pillRef = useRef<HTMLDivElement>(null);
+  const noteStar = useRef<HTMLSpanElement>(null);
+  const flyer = useRef<SVGSVGElement>(null);
   // Set when the focused button is about to unmount (Try again, Next): focus goes to the prompt so it's read out.
   const focusAsk = useRef(false);
 
@@ -142,6 +148,38 @@ export function QuestionPlayer({
       askRef.current?.focus({ preventScroll: true });
     }
   }, [status, index]);
+
+  // A first-try right answer with a star on it: the star flies from the card to the counter (transform only;
+  // skipped under reduced motion, where the note and the counter say it).
+  const flies = status === 'right' && rightFirst && answerStars > 0;
+  useEffect(() => {
+    if (!flies) return;
+    let reduce = false;
+    try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch {}
+    const el = flyer.current;
+    if (reduce || !el || typeof el.animate !== 'function') return;
+    let anim: Animation | undefined;
+    // wait for the feedback card to finish popping in, so the star starts where the card really is
+    const t = setTimeout(() => {
+      const from = noteStar.current?.getBoundingClientRect();
+      const to = pillRef.current?.querySelector('svg')?.getBoundingClientRect();
+      if (!from || !to) return;
+      el.style.left = `${from.left + from.width / 2 - 11}px`;
+      el.style.top = `${from.top + from.height / 2 - 11}px`;
+      const dx = to.left + to.width / 2 - (from.left + from.width / 2);
+      const dy = to.top + to.height / 2 - (from.top + from.height / 2);
+      anim = el.animate(
+        [
+          { transform: 'translate(0, 0) scale(0.7)', visibility: 'visible' },
+          { transform: `translate(${dx * 0.15}px, -30px) scale(1.2)`, offset: 0.3, visibility: 'visible' },
+          { transform: `translate(${dx}px, ${dy}px) scale(0.8)`, visibility: 'visible' },
+        ],
+        { duration: 700, easing: 'cubic-bezier(0.77, 0, 0.175, 1)', fill: 'both' },
+      );
+      anim.finished.then(() => anim?.cancel()).catch(() => {});
+    }, 260);
+    return () => { clearTimeout(t); anim?.cancel(); };
+  }, [flies, index]);
 
   if (!step) return null;
   const q = step.question;
@@ -179,7 +217,7 @@ export function QuestionPlayer({
 
   return (
     <div className={s.screen}>
-      <TopBar closeHref={closeHref} current={index + 1} total={steps.length} stars={stars} />
+      <TopBar closeHref={closeHref} closeLabel={closeLabel} starsRef={pillRef} current={index + 1} total={steps.length} stars={stars} />
 
       {/* phone: fills the screen, feedback at the bottom (D-Question). Wider: a centered column, feedback right under the answers. */}
       <div className={s.main}>
@@ -213,7 +251,10 @@ export function QuestionPlayer({
               <div className={s.feedbackText}>
                 <div className={s.feedbackTitle}>That’s it!</div>
                 {answerStars > 0 && rightFirst ? (
-                  <div className={s.feedbackNote}>+{answerStars} {answerStars === 1 ? 'star' : 'stars'}</div>
+                  <div className={s.feedbackNote}>
+                    <span ref={noteStar} className={s.noteStar}><StarIcon size={16} /></span>
+                    +{answerStars} {answerStars === 1 ? 'star' : 'stars'}
+                  </div>
                 ) : null}
               </div>
               <PillButton size="sm" onClick={next} ref={actionRef}>Next</PillButton>
@@ -229,6 +270,12 @@ export function QuestionPlayer({
           ) : null}
         </div>
       </div>
+
+      {flies ? (
+        <svg ref={flyer} className={s.flyer} width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
+          <path d={STAR_PATH} fill="#FFD95A" stroke="#1F1F1F" strokeWidth="1.5" strokeLinejoin="round" />
+        </svg>
+      ) : null}
     </div>
   );
 }

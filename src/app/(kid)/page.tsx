@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { getHome, studentFromRequest, type HomeData } from '@/lib/db/kid';
+import { getHome, practiceAvailable, studentFromRequest, type HomeData } from '@/lib/db/kid';
 import { seoulDate } from '@/lib/dates';
 import { toBlobColor, type BlobColorKey } from '@/lib/blobColors';
 import { opensLabel, weekTileColor } from '@/lib/weekLabels';
@@ -125,7 +125,7 @@ export default async function Home() {
   const student = await studentFromRequest();
   if (!student) redirect('/join');
   if (!student.blob_color) redirect('/pick');
-  const home = await getHome(student.id);
+  const [home, canPractice] = await Promise.all([getHome(student.id), practiceAvailable(student.id)]);
   const color = toBlobColor(home.student.blobColor);
   const today = seoulDate(new Date());
   const doneCount = home.weeks.filter((w) => w.done).length;
@@ -164,14 +164,26 @@ export default async function Home() {
               </section>
             ) : null}
 
-            <Link href="/practice" className={styles.free}>
-              <span className={styles.freeIcon}><DiceIcon /></span>
-              <span className={styles.freeText}>
-                <span className={styles.freeTitle}>Free practice</span>
-                <span className={styles.freeSub}>Mixed review for bonus stars</span>
-              </span>
-              <span className={styles.freeArrow}><ArrowIcon size={18} /></span>
-            </Link>
+            {canPractice ? (
+              <Link href="/practice" className={styles.free}>
+                <span className={styles.freeIcon}><DiceIcon /></span>
+                <span className={styles.freeText}>
+                  <span className={styles.freeTitle}>Free practice</span>
+                  <span className={styles.freeSub}>Mixed review for bonus stars</span>
+                </span>
+                <span className={styles.freeArrow}><ArrowIcon size={18} /></span>
+              </Link>
+            ) : (
+              <div className={`${styles.free} ${styles.freeOff}`} data-testid="free-off">
+                <span className={styles.freeIcon}><DiceIcon /></span>
+                <span className={styles.freeText}>
+                  <span className={styles.freeTitle}>Free practice</span>
+                  <span className={styles.freeSub}>
+                    {home.weeks.some((w) => w.open) ? 'Questions are on the way' : 'Opens when your first week does'}
+                  </span>
+                </span>
+              </div>
+            )}
           </div>
         ) : null}
       </div>

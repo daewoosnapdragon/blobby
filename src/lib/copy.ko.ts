@@ -15,6 +15,7 @@ export const koKid = {
   loading: '불러오는 중이에요. 잠시만 기다려 주세요.', // DRAFT: Kyla to confirm
   muteNote: '효과음만 꺼져요. 읽어 주는 소리는 계속 나와요.', // DRAFT: Kyla to confirm
   notOpen: '아직 열리지 않은 수업이에요. 홈 화면으로 돌아가 주세요.', // DRAFT: Kyla to confirm
+  noPractice: '첫 주차가 열리면 자유 연습도 시작돼요. 홈 화면으로 돌아가 주세요.', // DRAFT: Kyla to confirm
 } as const;
 
 /** Printed on every QR card (spec §5.1). */
