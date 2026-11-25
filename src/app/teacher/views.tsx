@@ -127,6 +127,7 @@ export function ClassListView({ classId, className, classCode, rows, sort }: { c
               </tbody>
             </table>
           </div>
+          <p className={styles.tableNote}>Days and time include the in-class test weeks.</p>
         </div>
       )}
     </>

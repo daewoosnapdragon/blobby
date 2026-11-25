@@ -49,6 +49,7 @@
 .num { text-align: right; white-space: nowrap; }
 .table td.num { font-weight: 700; }
 .none { color: var(--muted); }
+.tableNote { margin: 4px 8px 8px; font-size: 14px; font-weight: 500; color: var(--muted); }
 .kid { display: flex; align-items: center; gap: 12px; min-height: 44px; color: var(--ink); text-decoration: none; }
 .kid:hover span { text-decoration: underline; text-underline-offset: 3px; }
 

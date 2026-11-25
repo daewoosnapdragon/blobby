@@ -48,8 +48,8 @@
             },
             {
               "type": "fill_blank",
-              "before": "There are three",
-              "after": "in the box.",
+              "before": "I have three",
+              "after": "for my toys.",
               "choices": ["boxes", "box", "boxs"],
               "answer": 0
             },
@@ -58,10 +58,10 @@
               "prompt": "Sort the words.",
               "groups": ["Noun", "Verb"],
               "items": [
-                { "text": "dog", "group": 0 },
-                { "text": "jump", "group": 1 },
+                { "text": "girl", "group": 0 },
+                { "text": "eat", "group": 1 },
                 { "text": "apple", "group": 0 },
-                { "text": "swim", "group": 1 }
+                { "text": "sing", "group": 1 }
               ]
             }
           ]

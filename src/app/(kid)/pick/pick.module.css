@@ -12,6 +12,7 @@
 .swatch[aria-checked='true'] { box-shadow: inset 0 0 0 3px var(--ink); }
 .spacer { flex-grow: 1; }
 .later { margin: 0; text-align: center; font-size: 14px; font-weight: 500; color: var(--muted); }
+.parentNote { margin: 0; text-align: center; font-size: 13px; font-weight: 500; line-height: 1.5; color: var(--muted); word-break: keep-all; }
 
 /* ---- Tablet and desktop (R26): bigger stage and blob, all six swatches in one row, centered block ---- */
 @media (min-width: 640px) {
@@ -27,6 +28,7 @@
   .swatch svg { width: 58px; height: auto; }
   .spacer { display: none; }
   .later { margin-top: 8px; font-size: 16px; }
+  .parentNote { font-size: 15px; }
 }
 @media (min-width: 1024px) {
   .screen { max-width: 960px; padding: 36px 48px 36px; gap: 20px; }

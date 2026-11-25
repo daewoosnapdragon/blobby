@@ -15,7 +15,7 @@
 -- ============================ PART 1: LOOK FIRST ============================
 -- Safe to run any time: it only reads, it never changes anything.
 -- One row per test plan, plus a TOTAL row at the bottom.
---   star_events_to_delete = stars records that PART 2 would delete
+--   star_events_to_delete = star records that PART 2 would delete
 --   assignments_to_remove = classes/kids that would stop seeing that plan
 
 select plan, star_events_to_delete, assignments_to_remove
@@ -35,6 +35,13 @@ from (
 order by sort_order, plan;
 
 
+-- ############################################################################
+-- ##
+-- ##  STOP. Run PART 1 alone first and check the numbers. Only then select and run PART 2.
+-- ##
+-- ##  PART 2 deletes stars. It cannot be undone.
+-- ##
+-- ############################################################################
 -- >>> PART 2 STARTS HERE <<<
 -- ============================ PART 2: DO THE RESET ==========================
 -- Only run this after you checked the numbers from PART 1.

@@ -18,6 +18,11 @@ export const koKid = {
   noPractice: '첫 주차가 열리면 자유 연습도 시작돼요. 홈 화면으로 돌아가 주세요.', // DRAFT: Kyla to confirm
 } as const;
 
+/** The pick-your-blob screen: the first screen after a QR scan (spec §5.1). */
+export const koPick = {
+  parentNote: '아이가 좋아하는 색의 블롭을 고르고 "That’s me!"를 누르면 시작해요. 색은 나중에 바꿀 수 있어요.', // DRAFT: Kyla to confirm
+} as const;
+
 /** Printed on every QR card (spec §5.1). */
 export const koCards = {
   help: [

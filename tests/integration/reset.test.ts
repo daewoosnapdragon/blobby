@@ -100,6 +100,14 @@ describe('resetTestStars', () => {
 describe('supabase/reset-test-stars.sql', () => {
   const [part1, part2] = SQL_FILE.split(MARKER);
 
+  it('has a plain STOP banner right at the PART 2 marker, and no "stars records" typo', () => {
+    const stop = 'STOP. Run PART 1 alone first and check the numbers. Only then select and run PART 2.';
+    const markerLine = SQL_FILE.split('\n').findIndex((l) => l === MARKER);
+    const near = SQL_FILE.split('\n').slice(Math.max(0, markerLine - 6), markerLine + 1).join('\n');
+    expect(near).toContain(stop);
+    expect(SQL_FILE).not.toMatch(/stars records/);
+  });
+
   it('has both parts and only wp_ tables', () => {
     expect(part2).toBeTruthy();
     expect(part2).toMatch(/begin;/i);

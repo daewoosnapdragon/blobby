@@ -10,6 +10,7 @@ import { WhoAreYouScreen } from '@/components/ui/KidProblems';
 import { BLOB_COLOR_KEYS, BLOB_NAMES, type BlobColorKey } from '@/lib/blobColors';
 import { postWithRetry } from '@/lib/kidApi';
 import { playSound } from '@/lib/sound';
+import { koPick } from '@/lib/copy.ko';
 import styles from './pick.module.css';
 
 /** Pick your blob (D-Pick): six radio swatches, the big blob squishes on each change, "That’s me!" saves. */
@@ -93,6 +94,7 @@ export function PickBlob({ name, initial }: { name: string; initial: BlobColorKe
         {error ? 'That didn’t save. Let’s try again.' : 'You can change it later.'}
       </p>
       <PillButton onClick={save} disabled={busy} arrowColor={BLOB_HEX[color]}>That’s me!</PillButton>
+      <p className={styles.parentNote} lang="ko">{koPick.parentNote}</p>
     </main>
   );
 }
