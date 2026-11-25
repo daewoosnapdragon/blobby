@@ -31,8 +31,9 @@ describe('spokenStrings', () => {
     expect(spokenStrings(q)).toEqual(['Tap the word you hear.', 'tree', 'bee']);
   });
   it('pick_one: prompt and choices, deduped and trimmed', () => {
-    const q = parseQuestion('pick_one', { prompt: ' Pick one. ', choices: ['A cat.', 'A cat.', 'Two cats.'], answer: 2 });
-    expect(spokenStrings(q)).toEqual(['Pick one.', 'A cat.', 'Two cats.']);
+    // choices can't repeat (T5), but the prompt can say the same thing as a choice
+    const q = parseQuestion('pick_one', { prompt: ' A cat. ', choices: ['A cat.', 'Two cats.'], answer: 1 });
+    expect(spokenStrings(q)).toEqual(['A cat.', 'Two cats.']);
   });
   it('fill_blank: prompt, sentence with ellipsis, choices', () => {
     const q = parseQuestion('fill_blank', { before: 'She', after: 'to school.', choices: ['walks', 'walk'], answer: 0 });

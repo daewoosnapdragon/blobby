@@ -10,6 +10,21 @@ import { z } from 'zod';
 const text = z.string().trim().min(1, 'must not be empty');
 const idx = z.number().int().min(0);
 
+/** Case- and space-insensitive form, for "is this the same text?" checks. */
+const norm = (s: string) => s.trim().replace(/\s+/g, ' ').toLowerCase();
+
+/** Adds one issue per repeated text, at the repeat's index: "is the same as {noun} {first}". */
+function noRepeats(ctx: z.RefinementCtx, texts: string[], field: string, noun: string) {
+  const first = new Map<string, number>();
+  texts.forEach((t, i) => {
+    const k = norm(t);
+    if (k === '') return; // already "fill this in"
+    const j = first.get(k);
+    if (j === undefined) first.set(k, i);
+    else ctx.addIssue({ code: 'custom', message: `is the same as ${noun} ${j + 1}`, path: [field, i] });
+  });
+}
+
 const listenTapPayload = z
   .object({
     prompt: text,
@@ -17,22 +32,40 @@ const listenTapPayload = z
     choices: z.array(z.object({ text, image: z.string().trim().min(1).optional() })).min(2),
     answer: idx,
   })
-  .refine((q) => q.answer < q.choices.length, { message: 'answer is out of range of choices', path: ['answer'] });
+  .refine((q) => q.answer < q.choices.length, { message: 'answer is out of range of choices', path: ['answer'] })
+  .superRefine((q, ctx) => noRepeats(ctx, q.choices.map((c) => c.text), 'choices', 'choice'));
 
 const pickOnePayload = z
   .object({ prompt: text, choices: z.array(text).min(2).max(4), answer: idx })
-  .refine((q) => q.answer < q.choices.length, { message: 'answer is out of range of choices', path: ['answer'] });
+  .refine((q) => q.answer < q.choices.length, { message: 'answer is out of range of choices', path: ['answer'] })
+  .superRefine((q, ctx) => noRepeats(ctx, q.choices, 'choices', 'choice'));
 
 const findFixPayload = z
   .object({ words: z.array(text).min(1), wrongIndex: idx, fixes: z.array(text).min(2), answer: idx })
   .refine((q) => q.wrongIndex < q.words.length, { message: 'wrongIndex is out of range of words', path: ['wrongIndex'] })
-  .refine((q) => q.answer < q.fixes.length, { message: 'answer is out of range of fixes', path: ['answer'] });
+  .refine((q) => q.answer < q.fixes.length, { message: 'answer is out of range of fixes', path: ['answer'] })
+  .superRefine((q, ctx) => {
+    const wrong = q.words[q.wrongIndex];
+    q.fixes.forEach((f, i) => {
+      if (wrong !== undefined && norm(f) !== '' && norm(f) === norm(wrong)) {
+        ctx.addIssue({ code: 'custom', message: 'is the same as the wrong word', path: ['fixes', i] });
+      }
+    });
+    noRepeats(ctx, q.fixes, 'fixes', 'fix');
+  });
 
-const buildItPayload = z.object({
-  prompt: text,
-  tiles: z.array(text).min(2, 'needs at least 2 tiles'),
-  distractors: z.array(text).optional(),
-});
+const buildItPayload = z
+  .object({
+    prompt: text,
+    tiles: z.array(text).min(2, 'needs at least 2 tiles'),
+    distractors: z.array(text).optional(),
+  })
+  .superRefine((q, ctx) => {
+    const tiles = new Set(q.tiles.map(norm));
+    (q.distractors ?? []).forEach((d, i) => {
+      if (norm(d) !== '' && tiles.has(norm(d))) ctx.addIssue({ code: 'custom', message: 'is the same as a tile', path: ['distractors', i] });
+    });
+  });
 
 const sortItPayload = z
   .object({
@@ -43,12 +76,14 @@ const sortItPayload = z
   .refine((q) => q.items.every((i) => i.group < q.groups.length), {
     message: 'item group is out of range of groups',
     path: ['items'],
-  });
+  })
+  .superRefine((q, ctx) => noRepeats(ctx, q.items.map((i) => i.text), 'items', 'word'));
 
 const fillBlankPayload = z
   .object({ before: z.string(), after: z.string(), choices: z.array(text).min(2), answer: idx })
   .refine((q) => q.before.trim() !== '' || q.after.trim() !== '', { message: 'before and after cannot both be empty', path: ['before'] })
-  .refine((q) => q.answer < q.choices.length, { message: 'answer is out of range of choices', path: ['answer'] });
+  .refine((q) => q.answer < q.choices.length, { message: 'answer is out of range of choices', path: ['answer'] })
+  .superRefine((q, ctx) => noRepeats(ctx, q.choices, 'choices', 'choice'));
 
 const listenTapQ = listenTapPayload.extend({ type: z.literal('listen_tap') });
 const pickOneQ = pickOnePayload.extend({ type: z.literal('pick_one') });
