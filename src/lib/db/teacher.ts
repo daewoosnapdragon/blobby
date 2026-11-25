@@ -1,6 +1,7 @@
 import 'server-only';
 import { sql } from './admin';
-import { starEventsFor } from './kid';
+import { starEventsFor, NotFoundError } from './kid';
+import { makeLinkSecret } from '../roster';
 import { UUID_RE } from '../uuid';
 import { computeClassStats, skillHistory, type StatLesson, type StatAttempt, type StudentStats } from '../stats';
 
@@ -99,7 +100,40 @@ export const DISPLAY_NAME_MAX = 40;
 export async function setDisplayName(studentId: string, name: string): Promise<void> {
   const trimmed = name.trim();
   if (trimmed.length < 1 || trimmed.length > DISPLAY_NAME_MAX) throw new Error('display name must be 1-40 characters');
-  if (!UUID_RE.test(studentId)) throw new Error('student not found');
+  if (!UUID_RE.test(studentId)) throw new NotFoundError('student not found');
   const rows = await sql`update wp_students set display_name = ${trimmed} where id = ${studentId} returning id`;
-  if (rows.length === 0) throw new Error('student not found');
+  if (rows.length === 0) throw new NotFoundError('student not found');
+}
+
+/**
+ * Replace a kid's card secret. The old /s/<secret> link stops resolving at once; devices that already
+ * signed in keep their cookie (it holds the student id, not the secret). Returns the new secret: never log it.
+ */
+export async function reissueLink(studentId: string): Promise<string> {
+  if (!UUID_RE.test(studentId)) throw new NotFoundError('student not found');
+  const secret = makeLinkSecret();
+  const rows = await sql`update wp_students set link_secret = ${secret} where id = ${studentId} returning id`;
+  if (rows.length === 0) throw new NotFoundError('student not found');
+  return secret;
+}
+
+export interface CardsData {
+  className: string; classCode: string;
+  students: { id: string; displayName: string; blobColor: string | null; secret: string }[];
+}
+
+/** Everything the printable cards need. With studentId, only that kid (empty list if they are not in this class). Null for an unknown class. */
+export async function cardsForClass(classId: string, studentId?: string): Promise<CardsData | null> {
+  if (!UUID_RE.test(classId)) return null;
+  const [cls] = await sql<{ name: string; class_code: string }[]>`select name, class_code from wp_classes where id = ${classId}`;
+  if (!cls) return null;
+  const only = studentId !== undefined && UUID_RE.test(studentId) ? studentId : null;
+  const kids = studentId !== undefined && only === null ? [] : await sql<{ id: string; display_name: string; blob_color: string | null; link_secret: string }[]>`
+    select id, display_name, blob_color, link_secret from wp_students
+    where class_id = ${classId} and (${only}::uuid is null or id = ${only}::uuid)
+    order by display_name, id`;
+  return {
+    className: cls.name, classCode: cls.class_code,
+    students: kids.map((k) => ({ id: k.id, displayName: k.display_name, blobColor: k.blob_color, secret: k.link_secret })),
+  };
 }

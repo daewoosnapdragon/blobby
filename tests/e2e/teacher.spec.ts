@@ -32,3 +32,13 @@ test.describe('teacher side fails closed without a teacher session', () => {
     await expect(page).toHaveURL(/\/join$/);
   });
 });
+
+test('the cards page needs a teacher session', async ({ page }) => {
+  await page.goto(`/teacher/class/${CLASS.id}/cards`);
+  await expect(page).toHaveURL(/\/teacher\/login$/);
+});
+
+test('a card secret that was replaced lands on the friendly problem page', async ({ page }) => {
+  await page.goto('/s/an-old-reissued-secret');
+  await expect(page).toHaveURL(/\/link-problem$/);
+});

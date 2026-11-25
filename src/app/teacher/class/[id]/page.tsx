@@ -16,7 +16,7 @@ export default async function ClassPage({ params, searchParams }: { params: Prom
   if (!view) notFound();
   return (
     <TeacherShell signOut={signOut}>
-      <ClassListView className={view.className} classCode={view.classCode} rows={view.rows} sort={sort === 'stars' ? 'stars' : 'name'} />
+      <ClassListView classId={id} className={view.className} classCode={view.classCode} rows={view.rows} sort={sort === 'stars' ? 'stars' : 'name'} />
     </TeacherShell>
   );
 }

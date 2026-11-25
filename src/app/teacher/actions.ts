@@ -1,10 +1,11 @@
 'use server';
-import { redirect } from 'next/navigation';
+import { redirect, notFound } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { requireTeacher, teacherSupabase } from '@/lib/supabase/server';
 import { isTeacherEmail } from '@/lib/teacherAuth';
-import { publicOrigin } from '@/lib/teacherUrl';
-import { setDisplayName, DISPLAY_NAME_MAX } from '@/lib/db/teacher';
+import { appOrigin } from '@/lib/teacherUrl';
+import { NotFoundError } from '@/lib/db/kid';
+import { studentDetail, setDisplayName, reissueLink, DISPLAY_NAME_MAX } from '@/lib/db/teacher';
 import { UUID_RE } from '@/lib/uuid';
 
 /** Same neutral outcome whether or not the email is allowed: no allowlist leak. */
@@ -13,9 +14,12 @@ export async function requestLink(formData: FormData): Promise<void> {
   if (email.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && isTeacherEmail(email)) {
     const supabase = await teacherSupabase();
     if (supabase) {
-      const origin = await publicOrigin();
-      // Errors are swallowed on purpose: the page answers the same either way.
-      await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: `${origin}/teacher/auth/callback` } }).catch(() => undefined);
+      // Missing APP_URL in production and Supabase errors are swallowed on purpose: the page answers the same either way.
+      const origin = await appOrigin().catch(() => null);
+      if (origin) {
+        // shouldCreateUser:false: only users Kyla added in Supabase Auth can ever get a link.
+        await supabase.auth.signInWithOtp({ email, options: { shouldCreateUser: false, emailRedirectTo: `${origin}/teacher/auth/callback` } }).catch(() => undefined);
+      }
     }
   }
   redirect('/teacher/login?sent=1');
@@ -34,9 +38,25 @@ export async function renameStudent(formData: FormData): Promise<void> {
   if (!UUID_RE.test(id)) redirect('/teacher');
   const ok = name.trim().length >= 1 && name.trim().length <= DISPLAY_NAME_MAX;
   if (ok) {
-    await setDisplayName(id, name);
+    try { await setDisplayName(id, name); } catch (e) { if (e instanceof NotFoundError) notFound(); throw e; }
     revalidatePath(`/teacher/student/${id}`);
     revalidatePath('/teacher/class/[id]', 'page');
   }
   redirect(`/teacher/student/${id}${ok ? '' : '?name=bad'}`);
+}
+
+/** After this the old card stops working; the new link is only ever printed, never shown. Devices already signed in stay signed in. */
+export async function reissueStudentLink(formData: FormData): Promise<void> {
+  await requireTeacher();
+  const id = String(formData.get('studentId') ?? '');
+  if (!UUID_RE.test(id)) redirect('/teacher');
+  let classId: string;
+  try {
+    await reissueLink(id);
+    const d = await studentDetail(id);
+    if (!d) notFound();
+    classId = d.classId;
+  } catch (e) { if (e instanceof NotFoundError) notFound(); throw e; }
+  revalidatePath(`/teacher/class/${classId}/cards`);
+  redirect(`/teacher/student/${id}?reissued=1`);
 }

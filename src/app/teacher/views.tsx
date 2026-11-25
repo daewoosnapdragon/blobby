@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { ReissueButton } from './ReissueButton';
 import { Blob, BLOB_HEX, type BlobColor } from '@/components/blob/Blob';
 import { BackIcon, StarIcon } from '@/components/ui/icons';
 import { toBlobColor } from '@/lib/blobColors';
@@ -68,7 +69,7 @@ export function ClassesView({ classes }: { classes: ClassCard[] }) {
 
 export type SortKey = 'name' | 'stars';
 
-export function ClassListView({ className, classCode, rows, sort }: { className: string; classCode: string; rows: StudentStats[]; sort: SortKey }) {
+export function ClassListView({ classId, className, classCode, rows, sort }: { classId: string; className: string; classCode: string; rows: StudentStats[]; sort: SortKey }) {
   const sorted = [...rows].sort((a, b) =>
     sort === 'stars' ? b.stars - a.stars || a.displayName.localeCompare(b.displayName) : a.displayName.localeCompare(b.displayName));
   const total = rows.reduce((n, r) => n + r.stars, 0);
@@ -78,6 +79,7 @@ export function ClassListView({ className, classCode, rows, sort }: { className:
       <div className={styles.titleRow}>
         <h1 className={styles.h1}>{className}</h1>
         <span className={styles.code}>Code {classCode}</span>
+        <Link href={`/teacher/class/${classId}/cards`} className={styles.ghost} style={{ display: 'inline-flex', alignItems: 'center', textDecoration: 'none' }}>Print cards</Link>
       </div>
       <p className={styles.sub}>{rows.length} {rows.length === 1 ? 'kid' : 'kids'} · {total} stars in all</p>
       {rows.length === 0 ? (
@@ -132,13 +134,15 @@ export function niceDate(iso: string): string {
 }
 
 export function StudentView({
-  student, classId, className, history, renameAction, nameError,
+  student, classId, className, history, renameAction, reissueAction, nameError, reissued,
 }: {
   student: { id: string; displayName: string; blobColor: string | null };
   classId: string; className: string;
   history: { skill: string; dates: string[] }[];
   renameAction: (formData: FormData) => Promise<void>;
+  reissueAction: (formData: FormData) => Promise<void>;
   nameError?: boolean;
+  reissued?: boolean;
 }) {
   return (
     <>
@@ -158,6 +162,21 @@ export function StudentView({
           </form>
         </div>
       </div>
+
+      <section className={styles.card} aria-labelledby="card-link">
+        <h2 id="card-link" className={styles.h2}>QR card</h2>
+        {reissued ? (
+          <p role="status" className={styles.okNote}>
+            New card link made. The old card has stopped working.{' '}
+            <Link href={`/teacher/class/${classId}/cards?student=${student.id}`}>Print {student.displayName}&apos;s new card</Link>
+          </p>
+        ) : null}
+        <form action={reissueAction} className={styles.reissue}>
+          <input type="hidden" name="studentId" value={student.id} />
+          <ReissueButton />
+        </form>
+        <p className={styles.hint}>Lost card? Make a new link. The old card will stop working. Devices already signed in stay signed in.</p>
+      </section>
 
       <section className={styles.card} aria-labelledby="skills">
         <h2 id="skills" className={styles.h2}>Skills practiced</h2>

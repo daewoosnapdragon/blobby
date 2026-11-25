@@ -81,3 +81,15 @@
   .skillName { flex: 0 0 240px; }
 }
 .kid span { white-space: nowrap; }
+
+/* Printing (QR cards): no app chrome. */
+@media print {
+  .top, .noPrint { display: none; }
+  .main { max-width: none; padding: 0; }
+  .shell { min-height: 0; }
+}
+.reissue { margin: 0 0 8px; }
+.hint { margin: 0; color: var(--muted); font-size: 14px; }
+.okNote { margin: 0 0 12px; font-weight: 700; }
+.okNote a { color: var(--ink); text-underline-offset: 3px; }
+.card + .card { margin-top: 16px; }

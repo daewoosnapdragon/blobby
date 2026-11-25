@@ -67,4 +67,30 @@ describe('teacher queries', () => {
     await expect(setDisplayName('00000000-0000-4000-8000-00000000ffff', 'Nobody')).rejects.toThrow();
     expect(await studentDetail('nope')).toBeNull();
   });
+
+  it('reissueLink replaces the secret: old stops resolving, new does', async () => {
+    const { reissueLink } = await import('@/lib/db/teacher');
+    const { studentBySecret } = await import('@/lib/db/kid');
+    expect((await studentBySecret(STUDENTS.leo.secret))!.id).toBe(STUDENTS.leo.id);
+    const fresh = await reissueLink(STUDENTS.leo.id);
+    expect(fresh).not.toBe(STUDENTS.leo.secret);
+    expect(fresh.length).toBeGreaterThanOrEqual(30);
+    expect(await studentBySecret(STUDENTS.leo.secret)).toBeNull();
+    expect((await studentBySecret(fresh))!.id).toBe(STUDENTS.leo.id);
+    await expect(reissueLink('00000000-0000-4000-8000-00000000ffff')).rejects.toThrow();
+    await expect(reissueLink('nope')).rejects.toThrow();
+  });
+
+  it('cardsForClass lists secrets for the class, or one kid', async () => {
+    const { cardsForClass } = await import('@/lib/db/teacher');
+    const all = (await cardsForClass(CLASS.id))!;
+    expect(all.classCode).toBe('ABC234');
+    expect(all.students.map((s) => s.displayName)).toEqual(['Leo', 'Mina', 'x'.repeat(40)]);
+    expect(all.students.every((s) => s.secret.length > 10)).toBe(true);
+    const one = (await cardsForClass(CLASS.id, STUDENTS.mina.id))!;
+    expect(one.students).toHaveLength(1);
+    expect(one.students[0].secret).toBe(STUDENTS.mina.secret);
+    expect(await cardsForClass('nope')).toBeNull();
+    expect((await cardsForClass(CLASS.id, 'nope'))!.students).toEqual([]);
+  });
 });

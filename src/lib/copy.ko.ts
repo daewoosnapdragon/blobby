@@ -12,3 +12,12 @@ export const koKid = {
   whoAreYou: '로그인이 풀렸어요. 반 코드를 입력하고 아이 이름을 다시 눌러 주세요.', // DRAFT: Kyla to confirm
   notOpen: '아직 열리지 않은 수업이에요. 홈 화면으로 돌아가 주세요.', // DRAFT: Kyla to confirm
 } as const;
+
+/** Printed on every QR card (spec §5.1). */
+export const koCards = {
+  help: [
+    '처음 한 번만 QR 코드를 스캔하세요. 휴대폰이 기억해요.', // DRAFT: Kyla to confirm
+    '카드를 잃어버렸다면 사이트에 들어가 반 코드를 입력하고 우리 아이 이름을 눌러 주세요.', // DRAFT: Kyla to confirm
+  ],
+  classCodeLabel: '반 코드', // DRAFT: Kyla to confirm
+} as const;
