@@ -14,7 +14,12 @@ export default function KidError({ error, reset }: { error: Error & { digest?: s
       title="Oops, that didn’t work"
       message="It’s not your fault. Let’s try once more."
       parentNote={koKid.error}
-      action={<PillButton onClick={reset}>Try again</PillButton>}
+      action={
+        <>
+          <PillButton onClick={reset}>Try again</PillButton>
+          {error.digest ? <small style={{ display: 'block', marginTop: 16, fontSize: 12, color: 'var(--muted)' }}>Code: {error.digest}</small> : null}
+        </>
+      }
     />
   );
 }

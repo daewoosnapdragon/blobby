@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Blob, type BlobColor } from '@/components/blob/Blob';
 import { PillArrow } from '@/components/ui/ProblemScreen';
@@ -20,16 +20,34 @@ export const joinCopy = {
   back: 'Different code',
 };
 
+function normalizeCode(v: string) {
+  return v.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
+}
+
 function asColor(c: string | null): BlobColor | null {
   return COLORS.includes(c as BlobColor) ? (c as BlobColor) : null;
 }
 
 export function JoinFlow() {
   const router = useRouter();
+  // Uncontrolled on purpose: a kid can type before the page hydrates, and React must not wipe what they typed.
+  const inputRef = useRef<HTMLInputElement>(null);
   const [code, setCode] = useState('');
   const [names, setNames] = useState<Name[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+
+  function syncCode() {
+    const el = inputRef.current;
+    if (!el) return '';
+    const clean = normalizeCode(el.value);
+    if (el.value !== clean) el.value = clean;
+    setCode(clean);
+    return clean;
+  }
+
+  // Pick up anything typed before hydration.
+  useEffect(() => { syncCode(); }, []);
 
   async function post(body: object) {
     return fetch('/api/join', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
@@ -38,9 +56,11 @@ export function JoinFlow() {
   async function submitCode(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    const typed = syncCode();
+    if (typed.length !== 6) return;
     setBusy(true);
     try {
-      const res = await post({ code });
+      const res = await post({ code: typed });
       if (res.status === 404 || res.status === 400) setError(joinCopy.unknownCode);
       else if (!res.ok) setError(joinCopy.networkError);
       else setNames((await res.json()).names);
@@ -98,8 +118,8 @@ export function JoinFlow() {
             <input
               id="code"
               className={styles.input}
-              value={code}
-              onChange={(e) => setCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6))}
+              ref={inputRef}
+              onChange={syncCode}
               maxLength={6}
               autoCapitalize="characters"
               autoComplete="off"

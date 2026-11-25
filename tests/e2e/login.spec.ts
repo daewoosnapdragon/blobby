@@ -29,8 +29,6 @@ test('"Not you?" goes to /join; class code plus name sets the other kid', async 
   await expect(page).toHaveURL(/\/join$/);
 
   const input = page.getByLabel(/class code/i);
-  // The redirect from / now streams through the loading screen; let /join finish loading before typing.
-  await page.waitForLoadState('networkidle');
   await input.fill('zzzzzz');
   await page.getByRole('button', { name: 'Next', exact: true }).click();
   await expect(page.getByText(/couldn.t find that code/i)).toBeVisible();
@@ -45,4 +43,20 @@ test('"Not you?" goes to /join; class code plus name sets the other kid', async 
 test('/pick and / send a visitor with no cookie to /join', async ({ page }) => {
   await page.goto('/pick');
   await expect(page).toHaveURL(/\/join$/);
+});
+
+test('/join keeps characters typed before the page hydrates', async ({ page }) => {
+  // Hold every script chunk for ~1.5s so the kid types into server-rendered HTML.
+  await page.route('**/_next/static/**/*.js', async (route) => {
+    await new Promise((r) => setTimeout(r, 1500));
+    await route.continue();
+  });
+  await page.goto('/join', { waitUntil: 'commit' });
+  const input = page.getByLabel(/class code/i);
+  await input.waitFor();
+  await input.pressSequentially(CLASS.code.toLowerCase());
+  await expect(page.getByRole('button', { name: 'Next', exact: true })).toBeEnabled({ timeout: 15_000 });
+  await expect(input).toHaveValue(CLASS.code);
+  await page.getByRole('button', { name: 'Next', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Leo' })).toBeVisible();
 });

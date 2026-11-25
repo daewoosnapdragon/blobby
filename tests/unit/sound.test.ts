@@ -128,3 +128,30 @@ describe('mute persistence', () => {
     delete (window as unknown as Record<string, unknown>).localStorage;
   });
 });
+
+describe('preloadSounds / preloadOnFirstGesture', () => {
+  it('preloadSounds creates every sound once', async () => {
+    const { preloadSounds } = await load();
+    preloadSounds();
+    preloadSounds();
+    expect(made.map((a) => a.src).sort()).toEqual(['/sounds/boop.mp3', '/sounds/ding.mp3', '/sounds/pop.mp3', '/sounds/squeak.mp3']);
+  });
+
+  it('preloads nothing until the first pointerdown, then exactly once', async () => {
+    const { preloadOnFirstGesture } = await load();
+    const stop = preloadOnFirstGesture();
+    expect(made).toHaveLength(0);
+    window.dispatchEvent(new Event('pointerdown'));
+    expect(made).toHaveLength(4);
+    window.dispatchEvent(new Event('pointerdown'));
+    expect(made).toHaveLength(4);
+    stop();
+  });
+
+  it('the cleanup removes the listener', async () => {
+    const { preloadOnFirstGesture } = await load();
+    preloadOnFirstGesture()();
+    window.dispatchEvent(new Event('pointerdown'));
+    expect(made).toHaveLength(0);
+  });
+});

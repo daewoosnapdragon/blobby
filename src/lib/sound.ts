@@ -75,3 +75,12 @@ export function preloadSounds(names: SoundName[] = ['pop', 'ding', 'boop', 'sque
   if (typeof window === 'undefined' || typeof Audio === 'undefined') return;
   try { names.forEach((n) => audioFor(n)); } catch { /* ignore */ }
 }
+
+/** Preloads the sounds on the first pointerdown anywhere (not on page load, to save parents' mobile data). Returns a cleanup. */
+export function preloadOnFirstGesture(): () => void {
+  if (typeof window === 'undefined') return () => {};
+  const stop = () => window.removeEventListener('pointerdown', onDown, true);
+  function onDown() { stop(); preloadSounds(); }
+  window.addEventListener('pointerdown', onDown, true);
+  return stop;
+}
