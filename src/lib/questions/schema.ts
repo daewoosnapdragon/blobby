@@ -10,8 +10,11 @@ import { z } from 'zod';
 const text = z.string().trim().min(1, 'must not be empty');
 const idx = z.number().int().min(0);
 
-/** Case- and space-insensitive form, for "is this the same text?" checks. */
-const norm = (s: string) => s.trim().replace(/\s+/g, ' ').toLowerCase();
+/**
+ * Form for "is this the same text?" checks: trimmed, inner spaces collapsed. Case-SENSITIVE on purpose:
+ * capitalization is a skill we teach ("i" vs "I", "monday." vs "Monday."), so those are different answers.
+ */
+const norm = (s: string) => s.trim().replace(/\s+/g, ' ');
 
 /** Adds one issue per repeated text, at the repeat's index: "is the same as {noun} {first}". */
 function noRepeats(ctx: z.RefinementCtx, texts: string[], field: string, noun: string) {

@@ -35,9 +35,11 @@ Every page makes several database calls, so a far-away region makes every screen
 4. Reset the test stars (`docs/reset-test-stars.md`). This also takes the test plan off every kid's home.
 5. Winter plan: `npx tsx scripts/import-content.ts content/<winter-plan>.json`.
 
-Importing the winter plan **early** (during the test weeks) is also safe: home shows the newest assigned plan
-that has an open week that isn't done yet, so kids keep seeing the test plan until its weeks are done and the
-first winter week opens.
+Importing the winter plan **early** (during the test weeks) is also safe. Home shows the newest assigned plan
+that has an open week the kid hasn't finished (else the newest with any open week). While no winter week is
+open, that is the test plan. As soon as the first winter week opens, home switches to the winter plan, even
+for a kid who hasn't finished the test weeks. Until the reset, the test lessons stay reachable by a direct week
+or lesson link, and their questions stay in free practice. So run the reset before the first winter week opens.
 
 Re-importing a file keeps what the teacher changed in the app (week skills and dates, lesson titles, edited
 and deleted questions) and prints what it kept. Add `--overwrite` only when the file should replace those edits.

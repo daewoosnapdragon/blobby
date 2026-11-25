@@ -6,17 +6,17 @@ const ok = (type: string, p: object) => expect(() => parseQuestion(type, p)).not
 const bad = (type: string, p: object, re: RegExp) => expect(() => parseQuestion(type, p)).toThrow(re);
 
 describe('no duplicate choices', () => {
-  it('pick_one: same text, ignoring case and spaces, is rejected', () => {
-    bad('pick_one', { prompt: 'P', choices: ['dogs', ' Dogs '], answer: 0 }, /choices\.1: is the same as choice 1/);
+  it('pick_one: same text after trimming and collapsing spaces is rejected', () => {
+    bad('pick_one', { prompt: 'P', choices: ['dogs', ' dogs '], answer: 0 }, /choices\.1: is the same as choice 1/);
     bad('pick_one', { prompt: 'P', choices: ['a big dog', 'a  big dog', 'cat'], answer: 2 }, /choices\.1/);
     ok('pick_one', { prompt: 'P', choices: ['dogs', 'dog'], answer: 0 });
   });
   it('fill_blank', () => {
-    bad('fill_blank', { before: 'I', after: '.', choices: ['ran', 'RAN'], answer: 0 }, /is the same as choice 1/);
+    bad('fill_blank', { before: 'I', after: '.', choices: ['ran', 'ran '], answer: 0 }, /is the same as choice 1/);
     ok('fill_blank', { before: 'I', after: '.', choices: ['ran', 'run'], answer: 0 });
   });
   it('listen_tap compares choice texts', () => {
-    bad('listen_tap', { prompt: 'P', audioText: 'cat', choices: [{ text: 'cat' }, { text: 'Cat' }], answer: 0 }, /choices\.1: is the same as choice 1/);
+    bad('listen_tap', { prompt: 'P', audioText: 'cat', choices: [{ text: 'cat' }, { text: ' cat' }], answer: 0 }, /choices\.1: is the same as choice 1/);
     ok('listen_tap', { prompt: 'P', audioText: 'cat', choices: [{ text: 'cat' }, { text: 'cap' }], answer: 0 });
   });
 });
@@ -24,7 +24,7 @@ describe('no duplicate choices', () => {
 describe('find_fix fixes', () => {
   const base = { words: ['She', 'goed', 'home.'], wrongIndex: 1 };
   it('must not include the wrong word itself', () => {
-    bad('find_fix', { ...base, fixes: ['went', 'Goed'], answer: 0 }, /fixes\.1: is the same as the wrong word/);
+    bad('find_fix', { ...base, fixes: ['went', ' goed '], answer: 0 }, /fixes\.1: is the same as the wrong word/);
   });
   it('must be unique', () => {
     bad('find_fix', { ...base, fixes: ['went', 'gone', 'went'], answer: 0 }, /fixes\.2: is the same as fix 1/);
@@ -44,7 +44,7 @@ describe('build_it distractors', () => {
 
 describe('sort_it items', () => {
   it('must have unique texts', () => {
-    bad('sort_it', { prompt: 'P', groups: ['a', 'b'], items: [{ text: 'cat', group: 0 }, { text: 'CAT', group: 1 }] }, /items\.1: is the same as word 1/);
+    bad('sort_it', { prompt: 'P', groups: ['a', 'b'], items: [{ text: 'cat', group: 0 }, { text: 'cat ', group: 1 }] }, /items\.1: is the same as word 1/);
     ok('sort_it', { prompt: 'P', groups: ['a', 'b'], items: [{ text: 'cat', group: 0 }, { text: 'eat', group: 1 }] });
   });
 });
@@ -58,13 +58,33 @@ describe('inside watch_answer, and in the editor', () => {
     expect(questionProblems('pick_one', { prompt: 'P', choices: ['', ''], answer: 0 })).toEqual(['Choice 1: fill this in.', 'Choice 2: fill this in.']);
   });
   it('the editor gets readable sentences', () => {
-    expect(questionProblems('pick_one', { prompt: 'P', choices: ['dogs', 'Dogs'], answer: 0 })).toEqual(['Choice 2: is the same as choice 1.']);
+    expect(questionProblems('pick_one', { prompt: 'P', choices: ['dogs', 'dogs'], answer: 0 })).toEqual(['Choice 2: is the same as choice 1.']);
     expect(questionProblems('find_fix', { words: ['She', 'goed'], wrongIndex: 1, fixes: ['goed', 'went'], answer: 1 }))
       .toEqual(['Fix 1: is the same as the wrong word.']);
     expect(questionProblems('build_it', { prompt: 'P', tiles: ['I', 'ran.'], distractors: ['ran.'] })).toEqual(['Extra tile 1: is the same as a tile.']);
     expect(questionProblems('sort_it', { prompt: 'P', groups: ['a', 'b'], items: [{ text: 'cat', group: 0 }, { text: 'cat', group: 1 }] }))
       .toEqual(['Word 2: is the same as word 1.']);
-    expect(questionProblems('watch_answer', { youtubeId: 'dQw4w9WgXcQ', questions: [{ type: 'fill_blank', before: 'I', after: '', choices: ['a', 'A'], answer: 0 }] }))
+    expect(questionProblems('watch_answer', { youtubeId: 'dQw4w9WgXcQ', questions: [{ type: 'fill_blank', before: 'I', after: '', choices: ['a', ' a'], answer: 0 }] }))
       .toEqual(['Question 1, Choice 2: is the same as choice 1.']);
+  });
+});
+
+describe('capitalization is a real difference (a G1-G2 skill)', () => {
+  it('find_fix: fixing "i" to "I" is allowed', () => {
+    ok('find_fix', { words: ['i', 'like', 'cats.'], wrongIndex: 0, fixes: ['I', 'Me'], answer: 0 });
+  });
+  it('find_fix: fixing "monday." to "Monday." is allowed', () => {
+    ok('find_fix', { words: ['We', 'swim', 'on', 'monday.'], wrongIndex: 3, fixes: ['Monday.', 'mondays.'], answer: 0 });
+  });
+  it('pick_one: choices that differ only in capitals are allowed', () => {
+    ok('pick_one', { prompt: 'Which is right?', choices: ['i like cats.', 'I like cats.'], answer: 1 });
+  });
+  it('build_it: an extra tile "the" next to the tile "The" is allowed', () => {
+    ok('build_it', { prompt: 'Build it.', tiles: ['The', 'dog', 'ran.'], distractors: ['the'] });
+  });
+  it('true duplicates (same after trim and space-collapse) are still rejected', () => {
+    bad('pick_one', { prompt: 'P', choices: ['I like  cats.', ' I like cats.'], answer: 0 }, /choices\.1: is the same as choice 1/);
+    bad('find_fix', { words: ['i', 'like'], wrongIndex: 0, fixes: ['I', ' i '], answer: 0 }, /fixes\.1: is the same as the wrong word/);
+    bad('build_it', { prompt: 'P', tiles: ['The', 'dog'], distractors: ['The '] }, /distractors\.0: is the same as a tile/);
   });
 });
