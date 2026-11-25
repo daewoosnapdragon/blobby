@@ -3,7 +3,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import type { NonWatchQuestion, Question } from '@/lib/questions/schema';
 import { spokenStrings } from '@/lib/spoken';
 import { playSound } from '@/lib/sound';
-import { Blob, type BlobColor, type Mood, type Reaction } from '@/components/blob/Blob';
+import { Blob, type BlobColor, type Hat, type Mood, type Reaction } from '@/components/blob/Blob';
+import { useNudge } from '@/components/blob/useNudge';
 import { HearIt } from '@/components/ui/HearIt';
 import { PillButton } from '@/components/ui/PillButton';
 import { StarIcon, STAR_PATH } from '@/components/ui/icons';
@@ -36,6 +37,8 @@ export type QuestionPlayerProps = {
   /** after Next on the last step */
   onFinish: () => void;
   blobColor: BlobColor;
+  /** seasonal hat for the kid's own blob (Seoul date, from the server) */
+  hat?: Hat | null;
   /** the number on the star counter */
   stars: number;
   /** Grades 1–2: read the prompt aloud as each question appears (spec 5.7) */
@@ -120,8 +123,9 @@ function Body({ q, status, onAnswer, onFound }: { q: NonWatchQuestion; status: S
  * free practice (Task 12) and watch-and-answer (Task 14).
  */
 export function QuestionPlayer({
-  questions, onAnswer, onFinish, blobColor, stars, autoRead = false, answerStars = 0, closeHref = '/', closeLabel = 'Close lesson', bare = false,
+  questions, onAnswer, onFinish, blobColor, hat = null, stars, autoRead = false, answerStars = 0, closeHref = '/', closeLabel = 'Close lesson', bare = false,
 }: QuestionPlayerProps) {
+  const nudge = useNudge();
   const steps = useMemo(
     () =>
       questions.flatMap((pq): Step[] => {
@@ -251,7 +255,7 @@ export function QuestionPlayer({
           <span className={s.tag} style={{ background: TYPE_TINT[q.type] }}>{TYPE_LABEL[q.type]}</span>
           <div className={s.qRow}>
             <div className={s.qBlob}>
-              <Blob key={reaction?.n ?? 0} color={blobColor} mood={mood} size="var(--q-blob, 136px)" reaction={reaction?.kind ?? null} />
+              <Blob key={reaction?.n ?? 0} color={blobColor} mood={mood} size="var(--q-blob, 136px)" reaction={reaction?.kind ?? null} hat={hat} accessory={nudge === 'bedtime' ? 'pajamas' : null} />
             </div>
             <div className={s.bubble}>
               {/* Both lines share one grid cell, so the card keeps its height when the words change. */}

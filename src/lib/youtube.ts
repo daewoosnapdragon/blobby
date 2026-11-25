@@ -39,7 +39,7 @@ export async function checkEmbeddable(urlOrId: string): Promise<EmbedCheck> {
   if (!id) return { ok: false, reason: 'bad_url' };
   try {
     const url = `https://www.youtube.com/oembed?url=${encodeURIComponent(`https://www.youtube.com/watch?v=${id}`)}&format=json`;
-    const res = await fetch(url);
+    const res = await fetch(url, { signal: AbortSignal.timeout(8000) }); // a timeout throws, which is 'unreachable' below
     if (res.status === 200) return { ok: true, id };
     if (res.status === 401 || res.status === 403) return { ok: false, reason: 'not_embeddable' };
     if (res.status === 404 || res.status === 400) return { ok: false, reason: 'not_found' };

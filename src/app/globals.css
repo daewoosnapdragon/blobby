@@ -31,6 +31,7 @@
   --kf-squish: squish;
   --kf-cheer: cheer;
   --kf-pop: pop;
+  --kf-snowfall: snowfall;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -59,6 +60,11 @@ button:active { transform: scale(0.97); }
   60% { transform: translateY(-14px) scale(0.97, 1.03); }
   80% { transform: translateY(0) scale(1.04, 0.96); }
   100% { transform: translateY(0) scale(1, 1); }
+}
+@keyframes snowfall {
+  0% { transform: translate(0, 0); }
+  50% { transform: translate(var(--sway, 10px), 55vh); }
+  100% { transform: translate(0, 110vh); }
 }
 @keyframes pop { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
 

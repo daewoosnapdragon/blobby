@@ -1,5 +1,5 @@
 /* D-Home */
-.screen { min-height: 100dvh; max-width: 430px; margin: 0 auto; padding: 20px 18px 24px; display: flex; flex-direction: column; gap: 20px; }
+.screen { position: relative; z-index: 1; min-height: 100dvh; max-width: 430px; margin: 0 auto; padding: 20px 18px 24px; display: flex; flex-direction: column; gap: 20px; }
 
 .top { display: flex; align-items: center; gap: 12px; }
 .me { width: 48px; height: 48px; flex-shrink: 0; border-radius: 50%; background: var(--card); display: flex; align-items: center; justify-content: center; transition: transform 160ms var(--ease-out); }

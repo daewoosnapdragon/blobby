@@ -66,4 +66,18 @@ describe('checkEmbeddable', () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('offline')));
     expect(await checkEmbeddable(ID)).toEqual({ ok: false, reason: 'unreachable' });
   });
+  it('gives the fetch an 8 second timeout and maps a timeout to unreachable', async () => {
+    const ctl = new AbortController();
+    const timeout = vi.spyOn(AbortSignal, 'timeout').mockReturnValue(ctl.signal);
+    const f = vi.fn((_u: unknown, init?: RequestInit) => new Promise((_res, rej) => {
+      init?.signal?.addEventListener('abort', () => rej(new DOMException('timed out', 'TimeoutError')));
+    }));
+    vi.stubGlobal('fetch', f);
+    const p = checkEmbeddable(ID);
+    expect(timeout).toHaveBeenCalledWith(8000);
+    expect(f.mock.calls[0][1]?.signal).toBe(ctl.signal);
+    ctl.abort();
+    expect(await p).toEqual({ ok: false, reason: 'unreachable' });
+    timeout.mockRestore();
+  });
 });

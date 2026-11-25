@@ -1,7 +1,8 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Blob, type BlobColor } from '@/components/blob/Blob';
+import { Blob, type BlobColor, type Hat } from '@/components/blob/Blob';
+import { useNudge } from '@/components/blob/useNudge';
 import { PillButton } from '@/components/ui/PillButton';
 import { Card } from '@/components/ui/Card';
 import { ChestIcon, CloseIcon, Sparkle, StarIcon } from '@/components/ui/icons';
@@ -20,9 +21,10 @@ const COUNT_DELAY = 600;
 const COUNT_MS = 900;
 
 /** Week done (D-Done): double jump, staggered sparkles, stars counting up over 900ms, the chest total. */
-export function WeekDone({ number, skill, weekStars, totalStars, color }: {
-  number: number; skill: string; weekStars: number; totalStars: number; color: BlobColor;
+export function WeekDone({ number, skill, weekStars, totalStars, color, hat = null }: {
+  number: number; skill: string; weekStars: number; totalStars: number; color: BlobColor; hat?: Hat | null;
 }) {
+  const nudge = useNudge();
   const [t, setT] = useState(0);
   useEffect(() => {
     let reduce = false;
@@ -54,7 +56,7 @@ export function WeekDone({ number, skill, weekStars, totalStars, color }: {
           <Sparkle size={28} className={styles.pop} style={{ left: '72%', top: '7%', animationDelay: '380ms' }} />
           <Sparkle size={20} color="#FFD95A" className={styles.pop} style={{ left: '16%', top: '24%', animationDelay: '430ms' }} />
           <div className={styles.blob}>
-            <Blob color={color} mood="happy" size="var(--done-blob, 216px)" reaction="cheer" />
+            <Blob color={color} mood="happy" size="var(--done-blob, 216px)" reaction="cheer" hat={hat} accessory={nudge === 'bedtime' ? 'pajamas' : null} />
           </div>
         </div>
 

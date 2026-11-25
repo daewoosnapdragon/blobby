@@ -4,7 +4,7 @@ export type BlobColor = 'sunny' | 'peach' | 'pink' | 'mint' | 'sky' | 'grape';
 export type Mood = 'idle' | 'happy' | 'oops' | 'sleepy';
 export type Reaction = 'hop' | 'wobble' | 'squish' | 'cheer';
 export type Hat = 'santa' | 'seollal';
-export type Accessory = 'umbrella' | null;
+export type Accessory = 'umbrella' | 'pajamas' | null;
 
 export const BLOB_HEX: Record<BlobColor, string> = {
   sunny: '#FFD95A',
@@ -28,7 +28,7 @@ type Props = {
   size: number | string;
   reaction?: Reaction | null;
   hat?: Hat | null;
-  /** held props (Task 16 adds pajamas) */
+  /** umbrella (offline) or pajamas (bedtime nudge) */
   accessory?: Accessory;
 };
 
@@ -113,6 +113,23 @@ function UmbrellaArt({ color }: { color: BlobColor }) {
   );
 }
 
+/** Striped pajama top over the lower body, clipped to the blob so it follows the curves. Stripes avoid the blob's own color. */
+function PajamasArt({ color }: { color: BlobColor }) {
+  const base = color === 'sky' ? '#FFB5C1' : '#A9D3FF';
+  return (
+    <g data-accessory="pajamas">
+      <clipPath id="blob-pj-clip"><path d={BODY_PATH} /></clipPath>
+      <g clipPath="url(#blob-pj-clip)">
+        <rect x="0" y="72" width="120" height="44" fill={base} />
+        {[14, 38, 62, 86, 110].map((x) => <rect key={x} x={x - 5} y="72" width="10" height="44" fill="#FFFFFF" fillOpacity="0.85" />)}
+        <path d="M0 72 q60 9 120 0" stroke={INK} strokeOpacity="0.18" strokeWidth="2" fill="none" />
+      </g>
+      <circle cx="60" cy="82" r="2.4" fill={INK} fillOpacity="0.55" />
+      <circle cx="60" cy="92" r="2.4" fill={INK} fillOpacity="0.55" />
+    </g>
+  );
+}
+
 export function Blob({ color, mood, size, reaction = null, hat = null, accessory = null }: Props) {
   const cls = [styles.root, reaction ? styles[reaction] : ''].filter(Boolean).join(' ');
   return (
@@ -127,6 +144,7 @@ export function Blob({ color, mood, size, reaction = null, hat = null, accessory
         <path data-part="body" d={BODY_PATH} fill={BLOB_HEX[color]} />
         <Face mood={mood} />
         {hat ? <HatArt hat={hat} /> : null}
+        {accessory === 'pajamas' ? <PajamasArt color={color} /> : null}
         {accessory === 'umbrella' ? <UmbrellaArt color={color} /> : null}
       </svg>
     </div>

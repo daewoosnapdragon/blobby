@@ -1,0 +1,12 @@
+/* Snow: fixed, behind the page, never catches a tap. Flakes are tiny and slow; the layer is also hidden by CSS under reduced motion. */
+.snow { position: fixed; inset: 0; z-index: -1; /* inside the page's own stacking context: above its background, behind every card and word */ overflow: hidden; pointer-events: none; }
+.flake {
+  position: absolute; top: -12px; border-radius: 50%;
+  background: #fff; box-shadow: 0 0 0 1.5px rgba(169, 211, 255, 0.55);
+  opacity: 0.9;
+  animation: var(--kf-snowfall) 18s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) { .snow { display: none; } }
+
+/* The nudge line: one fixed-height row, so it never changes the layout whether or not it has words. */
+.nudge { margin: -12px 0; min-height: 22px; font-size: 15px; font-weight: 700; line-height: 22px; color: #4F4A45; }

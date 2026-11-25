@@ -2,6 +2,10 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { getHome, practiceAvailable, studentFromRequest, type HomeData } from '@/lib/db/kid';
 import { seoulDate } from '@/lib/dates';
+import { blobScene } from '@/lib/scene';
+import { sceneNow } from '@/lib/sceneOverride';
+import { Snow } from '@/components/blob/Snow';
+import { NudgeLine } from '@/components/blob/NudgeLine';
 import { toBlobColor, type BlobColorKey } from '@/lib/blobColors';
 import { opensLabel, weekTileColor } from '@/lib/weekLabels';
 import { MiniBlob } from '@/components/blob/MiniBlob';
@@ -34,7 +38,7 @@ function Dots({ w }: { w: Week }) {
   );
 }
 
-function ThisWeek({ home, color }: { home: HomeData; color: BlobColorKey }) {
+function ThisWeek({ home, color, hat }: { home: HomeData; color: BlobColorKey; hat: 'santa' | 'seollal' | null }) {
   const current = home.weeks.find((w) => w.id === home.currentWeekId);
   let tag: string, title: string, line: string, action: React.ReactNode = null, dots: React.ReactNode = null;
   if (!home.plan) {
@@ -56,7 +60,7 @@ function ThisWeek({ home, color }: { home: HomeData; color: BlobColorKey }) {
   }
   return (
     <section className={styles.weekCard} aria-labelledby="this-week">
-      <PokeBlob color={color} />
+      <PokeBlob color={color} hat={hat} />
       <Sparkle size={26} className={styles.cardSparkle} />
       <div className={styles.weekCardBody}>
         <span className={styles.tagYellow}>{tag}</span>
@@ -121,18 +125,22 @@ function WeekTile({ w, i, home, color, today, doneIndex }: { w: Week; i: number;
   );
 }
 
-export default async function Home() {
+export default async function Home({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const sp = await searchParams;
   const student = await studentFromRequest();
   if (!student) redirect('/join');
   if (!student.blob_color) redirect('/pick');
   const [home, canPractice] = await Promise.all([getHome(student.id), practiceAvailable(student.id)]);
   const color = toBlobColor(home.student.blobColor);
+  const now = sceneNow(sp['scene-date']);
+  const scene = blobScene(now, 12); // snow and hat come from the Seoul date; the time-of-day nudge is client-only
   const today = seoulDate(new Date());
   const doneCount = home.weeks.filter((w) => w.done).length;
   let doneSeen = 0;
 
   return (
     <main className={styles.screen}>
+      {scene.snow ? <Snow /> : null}
       <header className={styles.top}>
         <Link href="/pick" className={styles.me} aria-label="Change my blob color" data-testid="me-blob">
           <MiniBlob color={color} size={34} blink="late" />
@@ -145,8 +153,10 @@ export default async function Home() {
         <StarCount value={home.totalStars} />
       </header>
 
+      <NudgeLine />
+
       <div className={styles.layout}>
-        <ThisWeek home={home} color={color} />
+        <ThisWeek home={home} color={color} hat={scene.hat} />
 
         {home.plan ? (
           <div className={styles.side}>

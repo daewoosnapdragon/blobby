@@ -2,6 +2,7 @@
 import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { LessonData } from '@/lib/db/kid';
+import type { Hat } from '@/components/blob/Blob';
 import { toBlobColor } from '@/lib/blobColors';
 import { postWithRetry } from '@/lib/kidApi';
 import { lessonOutcome } from '@/lib/lessonOutcome';
@@ -18,7 +19,7 @@ type CompleteRes = { starsAwarded: number; weekDone: boolean; totalStars: number
  * when a response names a different kid than this page was rendered for, the page refreshes itself so the
  * screen shows that kid too (Review Focus #2).
  */
-export function LessonScreen({ data }: { data: LessonData }) {
+export function LessonScreen({ data, hat = null }: { data: LessonData; hat?: Hat | null }) {
   const router = useRouter();
   const latest = useRef(data);
   latest.current = data;
@@ -73,6 +74,7 @@ export function LessonScreen({ data }: { data: LessonData }) {
       onAnswer={onAnswer}
       onFinish={finish}
       blobColor={toBlobColor(data.student.blobColor)}
+      hat={hat}
       stars={data.totalStars}
       autoRead={data.student.grade <= 2}
     />
