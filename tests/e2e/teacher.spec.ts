@@ -4,7 +4,7 @@ import { CLASS, STUDENTS, PLAN } from './fixtures/seed';
 // The e2e server has no Supabase or TEACHER_EMAILS configured, so teacher auth must fail closed.
 test.describe('teacher side fails closed without a teacher session', () => {
   for (const path of ['/teacher', `/teacher/class/${CLASS.id}`, `/teacher/student/${STUDENTS.mina.id}`,
-    '/teacher/plans', `/teacher/editor/${PLAN.lessons.one.id}`, '/teacher/editor/preview']) {
+    '/teacher/plans', `/teacher/editor/${PLAN.lessons.one.id}`, '/teacher/editor/preview', '/teacher/account']) {
     test(`${path} redirects to login`, async ({ page }) => {
       await page.goto(path);
       await expect(page).toHaveURL(/\/teacher\/login$/);
@@ -17,10 +17,27 @@ test.describe('teacher side fails closed without a teacher session', () => {
     for (const email of ['stranger@example.com', 'kyla@example.com']) {
       await page.goto('/teacher/login');
       await page.getByLabel('Email').fill(email);
-      await page.getByRole('button', { name: 'Email me a link' }).click();
+      await page.getByRole('button', { name: 'Email me a link instead' }).click();
       await expect(page).toHaveURL(/sent=1/);
       await expect(page.getByRole('status')).toHaveText('If that email can sign in, a link is on its way. Check your email.');
     }
+  });
+
+  test('login shows email and password sign-in', async ({ page }) => {
+    await page.goto('/teacher/login');
+    await expect(page.getByLabel('Email')).toBeVisible();
+    await expect(page.getByLabel('Password')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Sign in', exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Email me a link instead' })).toBeVisible();
+  });
+
+  test('password sign-in fails neutrally without Supabase', async ({ page }) => {
+    await page.goto('/teacher/login');
+    await page.getByLabel('Email').fill('kyla@example.com');
+    await page.getByLabel('Password').fill('whatever1');
+    await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+    await expect(page).toHaveURL(/error=signin/);
+    await expect(page.getByRole('alert').filter({ hasText: "That email and password didn't work." })).toBeVisible();
   });
 
   test('a bad callback code goes back to login', async ({ page }) => {

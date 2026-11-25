@@ -25,6 +25,27 @@ export async function requestLink(formData: FormData): Promise<void> {
   redirect('/teacher/login?sent=1');
 }
 
+/** Wrong password, unknown user, and an email not on TEACHER_EMAILS all end on the same neutral error. */
+export async function signInWithPassword(formData: FormData): Promise<void> {
+  const email = String(formData.get('email') ?? '').trim().toLowerCase();
+  const password = String(formData.get('password') ?? '');
+  let ok = false;
+  // The allowlist is checked first, so an email that isn't on it is never sent to Supabase.
+  if (password !== '' && email.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && isTeacherEmail(email)) {
+    const supabase = await teacherSupabase();
+    if (supabase) {
+      try {
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        ok = !error && isTeacherEmail(data.user?.email);
+        if (!error && !ok) await supabase.auth.signOut();
+      } catch {
+        ok = false;
+      }
+    }
+  }
+  redirect(ok ? '/teacher' : '/teacher/login?error=signin');
+}
+
 export async function signOut(): Promise<void> {
   const supabase = await teacherSupabase();
   await supabase?.auth.signOut();
