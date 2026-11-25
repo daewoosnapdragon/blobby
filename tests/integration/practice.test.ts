@@ -39,7 +39,7 @@ beforeAll(async () => {
   const rows: [string, string, number, string, unknown][] = [
     [Q.a, L.open, 1, 'pick_one', pick('a')], [Q.b, L.open, 2, 'pick_one', pick('b')], [Q.c, L.open, 3, 'pick_one', pick('c')],
     [Q.deleted, L.open, 4, 'pick_one', pick('deleted')],
-    [Q.watch, L.open, 5, 'watch_answer', { youtubeId: 'abc', questions: [{ type: 'pick_one', ...pick('w') }] }],
+    [Q.watch, L.open, 5, 'watch_answer', { youtubeId: 'dQw4w9WgXcQ', questions: [{ type: 'pick_one', ...pick('w') }] }],
     [Q.open2, L.open2, 1, 'pick_one', pick('open2')],
     [Q.future, L.future, 1, 'pick_one', pick('future')], [Q.noDate, L.noDate, 1, 'pick_one', pick('undated')],
     [Q.other, L.other, 1, 'pick_one', pick('other')], [Q.direct, L.direct, 1, 'pick_one', pick('direct')],

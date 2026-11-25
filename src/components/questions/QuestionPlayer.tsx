@@ -14,6 +14,7 @@ import { BuildIt } from './BuildIt';
 import { SortIt } from './SortIt';
 import { FillBlank } from './FillBlank';
 import { TopBar } from './TopBar';
+import { WatchAnswer } from './WatchAnswer';
 import type { Status } from './types';
 import s from './questions.module.css';
 
@@ -45,6 +46,9 @@ export type QuestionPlayerProps = {
   /** the close button's accessible name */
   closeLabel?: string;
 };
+
+/** A video step (watch_answer's first step) or one answerable question. */
+type Step = { key: string; id: string } & ({ video: string; question?: undefined; audio?: undefined } | { question: NonWatchQuestion; audio: Record<string, string>; video?: undefined });
 
 const TYPE_LABEL: Record<NonWatchQuestion['type'], string> = {
   listen_tap: 'Listen and tap',
@@ -118,11 +122,17 @@ export function QuestionPlayer({
 }: QuestionPlayerProps) {
   const steps = useMemo(
     () =>
-      questions.flatMap((pq) =>
-        pq.question.type === 'watch_answer'
-          ? pq.question.questions.map((inner, i) => ({ key: `${pq.id}:${i}`, id: pq.id, question: inner, audio: pq.audio ?? {} }))
-          : [{ key: pq.id, id: pq.id, question: pq.question as NonWatchQuestion, audio: pq.audio ?? {} }],
-      ),
+      questions.flatMap((pq): Step[] => {
+        const audio = pq.audio ?? {};
+        const wa = pq.question;
+        if (wa.type === 'watch_answer') {
+          return [
+            { key: `${pq.id}:video`, id: pq.id, video: wa.youtubeId },
+            ...wa.questions.map((inner, i) => ({ key: `${pq.id}:${i}`, id: pq.id, question: inner, audio })),
+          ];
+        }
+        return [{ key: pq.id, id: pq.id, question: wa, audio }];
+      }),
     [questions],
   );
   const [index, setIndex] = useState(0);
@@ -182,6 +192,19 @@ export function QuestionPlayer({
   }, [flies, index]);
 
   if (!step) return null;
+  // Progress counts the questions only; the video step sits before the first one.
+  const qSteps = steps.filter((x) => x.question);
+  const done = steps.slice(0, index).filter((x) => x.question).length;
+  if (!step.question) {
+    return (
+      <div className={s.screen}>
+        <TopBar closeHref={closeHref} closeLabel={closeLabel} starsRef={pillRef} current={done} total={qSteps.length} stars={stars} />
+        <div className={s.main}>
+          <WatchAnswer key={step.key} youtubeId={step.video} onDone={next} />
+        </div>
+      </div>
+    );
+  }
   const q = step.question;
 
   function answer(correct: boolean) {
@@ -217,7 +240,7 @@ export function QuestionPlayer({
 
   return (
     <div className={s.screen}>
-      <TopBar closeHref={closeHref} closeLabel={closeLabel} starsRef={pillRef} current={index + 1} total={steps.length} stars={stars} />
+      <TopBar closeHref={closeHref} closeLabel={closeLabel} starsRef={pillRef} current={done + 1} total={qSteps.length} stars={stars} />
 
       {/* phone: fills the screen, feedback at the bottom (D-Question). Wider: a centered column, feedback right under the answers. */}
       <div className={s.main}>
@@ -233,7 +256,7 @@ export function QuestionPlayer({
                 <div id="q-ask" ref={askRef} tabIndex={-1} className={s.ask}>{bubble}</div>
                 <div className={s.ask} aria-hidden="true" style={{ visibility: 'hidden' }}>{ask(q, found)}</div>
               </div>
-              <HearIt key={step.key + index} texts={aloud.all} audio={step.audio} autoPlay={autoRead} autoPlayTexts={aloud.auto} />
+              <HearIt key={step.key + index} texts={aloud.all} audio={step.audio ?? {}} autoPlay={autoRead} autoPlayTexts={aloud.auto} />
             </div>
           </div>
         </section>

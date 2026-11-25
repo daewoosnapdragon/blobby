@@ -1,3 +1,4 @@
+import { YOUTUBE_ID_RE } from '@/lib/youtube';
 import { z } from 'zod';
 
 /**
@@ -59,7 +60,7 @@ const fillBlankQ = fillBlankPayload.extend({ type: z.literal('fill_blank') });
 const nonWatchSchema = z.discriminatedUnion('type', [listenTapQ, pickOneQ, findFixQ, buildItQ, sortItQ, fillBlankQ]);
 
 const watchAnswerPayload = z.object({
-  youtubeId: text,
+  youtubeId: z.string().trim().regex(YOUTUBE_ID_RE, 'needs an 11-character YouTube id'),
   questions: z.array(nonWatchSchema).min(1, 'needs at least 1 question'),
 });
 const watchAnswerQ = watchAnswerPayload.extend({ type: z.literal('watch_answer') });

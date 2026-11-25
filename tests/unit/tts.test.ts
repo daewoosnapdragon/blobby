@@ -52,7 +52,7 @@ describe('spokenStrings', () => {
   });
   it('watch_answer: union of inner questions', () => {
     const q = parseQuestion('watch_answer', {
-      youtubeId: 'abc',
+      youtubeId: 'dQw4w9WgXcQ',
       questions: [
         { type: 'pick_one', prompt: 'Q1?', choices: ['x', 'y'], answer: 0 },
         { type: 'pick_one', prompt: 'Q2?', choices: ['x', 'z'], answer: 1 },

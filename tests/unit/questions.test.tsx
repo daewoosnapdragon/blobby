@@ -332,8 +332,10 @@ describe('QuestionPlayer', () => {
   });
 
   it('expands watch_answer into its inner questions, recorded under the parent id', () => {
-    const watch: Question = { type: 'watch_answer', youtubeId: 'abc', questions: [pick, fix] };
+    const watch: Question = { type: 'watch_answer', youtubeId: 'dQw4w9WgXcQ', questions: [pick, fix] };
     const { onAnswer } = renderPlayer({ questions: [pq(QID, watch)] });
+    expect(btn('Next')).toBeInTheDocument();
+    fireEvent.click(btn('Next')); // the video step comes first
     expect(screen.getByRole('progressbar', { name: 'Question 1 of 2' })).toBeInTheDocument();
     fireEvent.click(btn('She doesn’t like carrots.'));
     expect(onAnswer).toHaveBeenLastCalledWith({ id: QID, question: pick }, true);

@@ -93,11 +93,21 @@ describe('parseQuestion', () => {
   });
   it('watch_answer', () => {
     const inner = { type: 'pick_one', prompt: 'p', choices: ['a', 'b'], answer: 0 };
-    const w = parseQuestion('watch_answer', { youtubeId: 'abc123', questions: [inner] });
+    const w = parseQuestion('watch_answer', { youtubeId: 'dQw4w9WgXcQ', questions: [inner] });
     expect(w.type).toBe('watch_answer');
-    expect(() => parseQuestion('watch_answer', { youtubeId: 'abc', questions: [] })).toThrow();
+    expect(() => parseQuestion('watch_answer', { youtubeId: 'dQw4w9WgXcQ', questions: [] })).toThrow();
     expect(() => parseQuestion('watch_answer', { youtubeId: ' ', questions: [inner] })).toThrow();
-    expect(() => parseQuestion('watch_answer', { youtubeId: 'abc', questions: [{ type: 'watch_answer', youtubeId: 'x', questions: [inner] }] })).toThrow();
-    expect(() => parseQuestion('watch_answer', { youtubeId: 'abc', questions: [{ ...inner, answer: 5 }] })).toThrow();
+    expect(() => parseQuestion('watch_answer', { youtubeId: 'dQw4w9WgXcQ', questions: [{ type: 'watch_answer', youtubeId: 'x', questions: [inner] }] })).toThrow();
+    expect(() => parseQuestion('watch_answer', { youtubeId: 'dQw4w9WgXcQ', questions: [{ ...inner, answer: 5 }] })).toThrow();
+  });
+});
+
+describe('watch_answer youtubeId', () => {
+  const inner = { type: 'pick_one', prompt: 'p', choices: ['a', 'b'], answer: 0 };
+  it('must be an 11-character YouTube id', () => {
+    expect(() => parseQuestion('watch_answer', { youtubeId: 'dQw4w9WgXcQ', questions: [inner] })).not.toThrow();
+    for (const bad of ['abc', 'dQw4w9WgXcQ1', 'dQw4w9WgXc!', 'https://youtu.be/dQw4w9WgXcQ', '']) {
+      expect(() => parseQuestion('watch_answer', { youtubeId: bad, questions: [inner] })).toThrow();
+    }
   });
 });
