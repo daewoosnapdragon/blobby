@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { NonWatchQuestion, Question } from '@/lib/questions/schema';
 import { spokenStrings } from '@/lib/spoken';
+import { playSound } from '@/lib/sound';
 import { Blob, type BlobColor, type Mood, type Reaction } from '@/components/blob/Blob';
 import { HearIt } from '@/components/ui/HearIt';
 import { PillButton } from '@/components/ui/PillButton';
@@ -88,6 +89,12 @@ function readAloud(q: NonWatchQuestion): { all: string[]; auto: string[] } {
   return { all, auto: all.slice(0, 1) };
 }
 
+/** Pop for a tap on an enabled button inside the answer area. */
+function popOnTap(e: React.MouseEvent) {
+  const b = (e.target as HTMLElement).closest('button');
+  if (b && b.getAttribute('aria-disabled') !== 'true' && !b.disabled) playSound('pop');
+}
+
 function Body({ q, status, onAnswer, onFound }: { q: NonWatchQuestion; status: Status; onAnswer: (c: boolean) => void; onFound: (f: boolean) => void }) {
   switch (q.type) {
     case 'listen_tap': return <ListenTap q={q} status={status} onAnswer={onAnswer} />;
@@ -147,6 +154,8 @@ export function QuestionPlayer({
       setFirstTry(false);
     }
     setStatus(correct ? 'right' : 'wrong');
+    // The tap's pop (~80 ms) finishes first, then the result sound.
+    setTimeout(() => playSound(correct ? 'ding' : 'boop'), 90);
     setReaction((r) => ({ kind: correct ? 'hop' : 'wobble', n: (r?.n ?? 0) + 1 }));
   }
 
@@ -191,7 +200,8 @@ export function QuestionPlayer({
           </div>
         </section>
 
-        <div key={step.key + index} className={s.body}>
+        {/* A soft pop on every answer tap (words, tiles, choices). Hear it sits outside this box, so read-aloud is never popped over. */}
+        <div key={step.key + index} className={s.body} onClickCapture={popOnTap}>
           <Body q={q} status={status} onAnswer={answer} onFound={setFound} />
         </div>
 

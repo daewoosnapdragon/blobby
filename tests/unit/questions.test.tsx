@@ -11,6 +11,9 @@ import { SortIt } from '@/components/questions/SortIt';
 import { QuestionPlayer } from '@/components/questions/QuestionPlayer';
 import { HearIt } from '@/components/ui/HearIt';
 
+vi.mock('@/lib/sound', async (orig) => ({ ...(await orig<typeof import('@/lib/sound')>()), playSound: vi.fn() }));
+import { playSound } from '@/lib/sound';
+
 type Q<T extends NonWatchQuestion['type']> = Extract<NonWatchQuestion, { type: T }>;
 
 const pick: Q<'pick_one'> = {
@@ -267,6 +270,30 @@ function renderPlayer(props: Partial<Parameters<typeof QuestionPlayer>[0]> = {})
   );
   return { onAnswer, onFinish };
 }
+
+describe('QuestionPlayer sounds', () => {
+  beforeEach(() => { vi.useFakeTimers(); vi.mocked(playSound).mockClear(); });
+  afterEach(() => vi.useRealTimers());
+
+  it('pops on an answer tap, then dings when right or boops when wrong', () => {
+    renderPlayer();
+    fireEvent.click(btn('She don’t like carrots.'));
+    expect(playSound).toHaveBeenCalledWith('pop');
+    act(() => { vi.advanceTimersByTime(100); });
+    expect(playSound).toHaveBeenLastCalledWith('boop');
+    fireEvent.click(btn('Try again'));
+    fireEvent.click(btn('She doesn’t like carrots.'));
+    act(() => { vi.advanceTimersByTime(100); });
+    expect(playSound).toHaveBeenLastCalledWith('ding');
+  });
+
+  it('does not pop for Hear it, so read-aloud is not covered', () => {
+    renderPlayer();
+    vi.mocked(playSound).mockClear();
+    fireEvent.click(screen.getByRole('button', { name: 'Hear it' }));
+    expect(playSound).not.toHaveBeenCalled();
+  });
+});
 
 describe('QuestionPlayer', () => {
   it('records only the first try, shows words with the feedback, and finishes after the last Next', () => {

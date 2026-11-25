@@ -6,7 +6,7 @@
 .title { margin: 0; font-size: 30px; font-weight: 800; line-height: 1.2; }
 .stage { position: relative; height: 260px; flex-shrink: 0; background: var(--card); border-radius: var(--radius-card); overflow: hidden; display: flex; align-items: flex-end; justify-content: center; }
 .sparkle { position: absolute; right: 36px; top: 30px; }
-.bigBlob { margin-bottom: -26px; line-height: 0; }
+.bigBlob { margin-bottom: -26px; line-height: 0; padding: 0; border: 0; background: transparent; cursor: pointer; }
 .swatches { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
 .swatch { height: 92px; border: none; border-radius: 22px; background: var(--card); color: var(--ink); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; font-size: 13px; font-weight: 700; }
 .swatch[aria-checked='true'] { box-shadow: inset 0 0 0 3px var(--ink); }

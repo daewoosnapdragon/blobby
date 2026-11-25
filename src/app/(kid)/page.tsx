@@ -8,6 +8,7 @@ import { MiniBlob } from '@/components/blob/MiniBlob';
 import { NotYou } from '@/components/auth/NotYou';
 import { StarCount } from '@/components/ui/StarCount';
 import { PillButton } from '@/components/ui/PillButton';
+import { MuteToggle } from '@/components/ui/MuteToggle';
 import { ArrowIcon, CheckIcon, ChestIcon, DiceIcon, LockIcon, Sparkle } from '@/components/ui/icons';
 import { PokeBlob } from './home/PokeBlob';
 import { Rail } from './home/Rail';
@@ -140,6 +141,7 @@ export default async function Home() {
           <h1 className={styles.hi}>Hi, {home.student.displayName}!</h1>
           <NotYou compact />
         </div>
+        <MuteToggle />
         <StarCount value={home.totalStars} />
       </header>
 

@@ -4,6 +4,7 @@ export type BlobColor = 'sunny' | 'peach' | 'pink' | 'mint' | 'sky' | 'grape';
 export type Mood = 'idle' | 'happy' | 'oops' | 'sleepy';
 export type Reaction = 'hop' | 'wobble' | 'squish' | 'cheer';
 export type Hat = 'santa' | 'seollal';
+export type Accessory = 'umbrella' | null;
 
 export const BLOB_HEX: Record<BlobColor, string> = {
   sunny: '#FFD95A',
@@ -27,6 +28,8 @@ type Props = {
   size: number | string;
   reaction?: Reaction | null;
   hat?: Hat | null;
+  /** held props (Task 16 adds pajamas) */
+  accessory?: Accessory;
 };
 
 function Face({ mood }: { mood: Mood }) {
@@ -96,7 +99,21 @@ function HatArt({ hat }: { hat: Hat }) {
   );
 }
 
-export function Blob({ color, mood, size, reaction = null, hat = null }: Props) {
+/** A small umbrella held at the blob's right side, tipped toward its head. The canopy avoids the blob's own color. */
+function UmbrellaArt({ color }: { color: BlobColor }) {
+  const canopy = color === 'sky' ? '#FFB5C1' : '#A9D3FF';
+  return (
+    <g data-accessory="umbrella" transform="rotate(-18 112 60)">
+      <path d="M112 8 V62" stroke={INK} strokeWidth="3" strokeLinecap="round" fill="none" />
+      <path d="M78 8 C78 -14 146 -14 146 8 q-5.7 -5 -11.3 0 q-5.7 -5 -11.4 0 q-5.6 -5 -11.3 0 q-5.7 -5 -11.4 0 q-5.6 -5 -11.3 0 q-5.7 -5 -11.3 0 Z" fill={canopy} />
+      <path d="M112 -8 C105 -8 100 -2 100 7 M112 -8 C119 -8 124 -2 124 7" stroke="#FFFFFF" strokeOpacity="0.7" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+      <circle cx="112" cy="-9" r="2.2" fill={INK} />
+      <ellipse cx="112" cy="62" rx="7" ry="6.5" fill={BLOB_HEX[color]} stroke="#1F1F1F" strokeOpacity="0.18" strokeWidth="1.5" />
+    </g>
+  );
+}
+
+export function Blob({ color, mood, size, reaction = null, hat = null, accessory = null }: Props) {
   const cls = [styles.root, reaction ? styles[reaction] : ''].filter(Boolean).join(' ');
   return (
     <div
@@ -110,6 +127,7 @@ export function Blob({ color, mood, size, reaction = null, hat = null }: Props) 
         <path data-part="body" d={BODY_PATH} fill={BLOB_HEX[color]} />
         <Face mood={mood} />
         {hat ? <HatArt hat={hat} /> : null}
+        {accessory === 'umbrella' ? <UmbrellaArt color={color} /> : null}
       </svg>
     </div>
   );

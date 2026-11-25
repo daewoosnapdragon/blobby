@@ -35,3 +35,9 @@
   .starPlain { font-size: 20px; }
   .hear { min-height: 44px; padding: 8px 16px 8px 12px; font-size: 16px; }
 }
+
+/* Mute toggle: a round 44px button like the close button; 52px on wider screens. */
+.mute { width: 44px; height: 44px; flex-shrink: 0; border: 0; padding: 0; border-radius: 50%; background: var(--card); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: transform 160ms var(--ease-out); }
+.mute:active { transform: scale(0.97); }
+.mute[aria-pressed='true'] { background: #E9E2D9; }
+@media (min-width: 640px) { .mute { width: 52px; height: 52px; } }

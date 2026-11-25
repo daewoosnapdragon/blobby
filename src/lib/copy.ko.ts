@@ -10,6 +10,10 @@ export const koJoin = {
 
 export const koKid = {
   whoAreYou: '로그인이 풀렸어요. 반 코드를 입력하고 아이 이름을 다시 눌러 주세요.', // DRAFT: Kyla to confirm
+  offline: '인터넷에 연결되어 있지 않아요. 연결되면 아이가 하던 곳에서 이어서 할 수 있어요.', // DRAFT: Kyla to confirm
+  error: '문제가 생겼어요. 아래 버튼을 눌러 다시 시도해 주세요. 계속되면 선생님께 알려 주세요.', // DRAFT: Kyla to confirm
+  loading: '불러오는 중이에요. 잠시만 기다려 주세요.', // DRAFT: Kyla to confirm
+  muteNote: '효과음만 꺼져요. 읽어 주는 소리는 계속 나와요.', // DRAFT: Kyla to confirm
   notOpen: '아직 열리지 않은 수업이에요. 홈 화면으로 돌아가 주세요.', // DRAFT: Kyla to confirm
 } as const;
 

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import type { Ref } from 'react';
 import { StarCount } from '@/components/ui/StarCount';
 import { CloseIcon } from '@/components/ui/icons';
+import { MuteToggle } from '@/components/ui/MuteToggle';
 import s from './questions.module.css';
 
 /** Close, progress, stars: the lesson's top bar (D-Question). Shared by the player and the lesson-done moment. */
@@ -26,6 +27,7 @@ export function TopBar({
       >
         <div className={s.progressFill} style={{ width: `${pct}%` }} />
       </div>
+      <MuteToggle />
       <StarCount value={stars} variant="plain" ref={starsRef} />
     </div>
   );

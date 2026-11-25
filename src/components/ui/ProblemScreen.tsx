@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Blob, type BlobColor, type Mood } from '@/components/blob/Blob';
+import { Blob, type Accessory, type BlobColor, type Mood } from '@/components/blob/Blob';
 import styles from './ProblemScreen.module.css';
 
 type Props = {
@@ -9,21 +9,29 @@ type Props = {
   parentNote?: string;
   mood?: Mood;
   color?: BlobColor;
+  accessory?: Accessory;
   /** Button or link. */
   action?: ReactNode;
+  /** 'overlay' sits on top of the page (offline); the page underneath stays mounted. */
+  variant?: 'page' | 'overlay';
+  /** 'loading' keeps the blob bouncing; the title is announced politely. */
+  bounce?: boolean;
 };
 
-export function ProblemScreen({ title, message, parentNote, mood = 'sleepy', color = 'sunny', action }: Props) {
+export function ProblemScreen({ title, message, parentNote, mood = 'sleepy', color = 'sunny', accessory = null, action, variant = 'page', bounce = false }: Props) {
+  const Tag = variant === 'overlay' ? 'div' : 'main';
   return (
-    <main className={styles.screen}>
+    <Tag className={`${styles.screen} ${variant === 'overlay' ? styles.overlay : ''}`}>
       <div className={styles.card}>
-        <Blob color={color} mood={mood} size="var(--ps-blob, 140px)" />
+        <div className={bounce ? styles.bounce : undefined}>
+          <Blob color={color} mood={mood} size="var(--ps-blob, 140px)" accessory={accessory} />
+        </div>
         <h1 className={styles.title}>{title}</h1>
         {message ? <p className={styles.message}>{message}</p> : null}
         {parentNote ? <p className={styles.note} lang="ko">{parentNote}</p> : null}
         {action}
       </div>
-    </main>
+    </Tag>
   );
 }
 

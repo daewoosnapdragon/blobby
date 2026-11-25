@@ -29,6 +29,8 @@ test('"Not you?" goes to /join; class code plus name sets the other kid', async 
   await expect(page).toHaveURL(/\/join$/);
 
   const input = page.getByLabel(/class code/i);
+  // The redirect from / now streams through the loading screen; let /join finish loading before typing.
+  await page.waitForLoadState('networkidle');
   await input.fill('zzzzzz');
   await page.getByRole('button', { name: 'Next', exact: true }).click();
   await expect(page.getByText(/couldn.t find that code/i)).toBeVisible();

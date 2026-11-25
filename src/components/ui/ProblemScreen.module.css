@@ -11,3 +11,10 @@
   .message { font-size: 19px; }
   .note { font-size: 16px; }
 }
+
+/* Offline: covers the page without unmounting it. Scrolls if the screen is short. */
+.overlay { position: fixed; inset: 0; z-index: 100; background: var(--bg); overflow-y: auto; }
+
+/* Loading: the blob bounces; still under reduced motion. */
+.bounce { animation: var(--kf-hop) 900ms var(--ease-out) infinite; transform-origin: 50% 100%; }
+@media (prefers-reduced-motion: reduce) { .bounce { animation: none; } }

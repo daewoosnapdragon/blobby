@@ -9,6 +9,7 @@ import { Sparkle } from '@/components/ui/icons';
 import { WhoAreYouScreen } from '@/components/ui/KidProblems';
 import { BLOB_COLOR_KEYS, BLOB_NAMES, type BlobColorKey } from '@/lib/blobColors';
 import { postWithRetry } from '@/lib/kidApi';
+import { playSound } from '@/lib/sound';
 import styles from './pick.module.css';
 
 /** Pick your blob (D-Pick): six radio swatches, the big blob squishes on each change, "That’s me!" saves. */
@@ -22,6 +23,7 @@ export function PickBlob({ name, initial }: { name: string; initial: BlobColorKe
   const refs = useRef<(HTMLButtonElement | null)[]>([]);
 
   function choose(c: BlobColorKey) {
+    playSound('pop');
     setColor(c);
     setChanges((n) => n + 1);
   }
@@ -61,9 +63,9 @@ export function PickBlob({ name, initial }: { name: string; initial: BlobColorKe
 
       <div className={styles.stage}>
         <Sparkle size={28} className={styles.sparkle} />
-        <div className={styles.bigBlob}>
+        <button type="button" className={styles.bigBlob} aria-label="Say hi to your blob" onClick={() => { playSound('squeak'); setChanges((n) => n + 1); }}>
           <Blob key={changes} color={color} mood="idle" size="var(--pick-blob, 220px)" reaction={changes ? 'squish' : null} />
-        </div>
+        </button>
       </div>
 
       <div role="radiogroup" aria-label="Blob color" className={styles.swatches} onKeyDown={onKeyDown}>

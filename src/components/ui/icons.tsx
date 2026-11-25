@@ -99,3 +99,13 @@ export function RetryIcon() {
     </svg>
   );
 }
+
+/** Speaker with sound waves (sounds on) or a slash (muted). Line style like the rest. */
+export function SoundIcon({ muted = false, size = 22 }: { muted?: boolean; size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={INK} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M4 9.5h3.2L12 5.5v13l-4.8-4H4z" fill={muted ? 'none' : '#FFE59A'} />
+      {muted ? <path d="M16 9.5l5 5M21 9.5l-5 5" /> : <path d="M15.5 9a4.2 4.2 0 0 1 0 6M18.2 6.5a8 8 0 0 1 0 11" />}
+    </svg>
+  );
+}
