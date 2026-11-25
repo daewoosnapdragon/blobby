@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { getHome, studentFromRequest } from '@/lib/db/kid';
+import { getWeek, studentFromRequest } from '@/lib/db/kid';
 import { toBlobColor } from '@/lib/blobColors';
 import { Blob } from '@/components/blob/Blob';
 import { StarCount } from '@/components/ui/StarCount';
@@ -15,9 +15,10 @@ export default async function WeekPage({ params }: { params: Promise<{ weekId: s
   const { weekId } = await params;
   const student = await studentFromRequest();
   if (!student) redirect('/join');
-  const home = await getHome(student.id);
-  const week = home.weeks.find((w) => w.id === weekId && w.open);
-  if (!week) return <NotOpenScreen />;
+  // Any open week of any plan assigned to this kid, not only home's current plan.
+  const home = await getWeek(student.id, weekId);
+  if (!home) return <NotOpenScreen />;
+  const { week } = home;
 
   const done = week.lessons.filter((l) => l.done).length;
   const next = week.lessons.find((l) => !l.done);

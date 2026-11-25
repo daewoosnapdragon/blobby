@@ -232,40 +232,58 @@ export interface HomeData {
   currentWeekId: string | null;
 }
 
+type HomeWeek = HomeData['weeks'][number];
+
+/** The weeks (with this kid's lesson checks) of each given plan, in week/lesson order. */
+async function weeksByPlan(studentId: string, planIds: string[], now: Date): Promise<Map<string, HomeWeek[]>> {
+  const out = new Map<string, HomeWeek[]>(planIds.map((p) => [p, []]));
+  if (planIds.length === 0) return out;
+  const rows = await sql<{
+    plan_id: string; week_id: string; position: number; skill: string; opens_on: string | null;
+    lesson_id: string | null; title: string | null; done: boolean | null;
+  }[]>`
+    select w.plan_id, w.id as week_id, w.position, w.skill, w.opens_on, l.id as lesson_id, l.title,
+           (c.id is not null) as done
+    from wp_weeks w
+    left join wp_lessons l on l.week_id = w.id
+    left join wp_lesson_completions c on c.lesson_id = l.id and c.student_id = ${studentId}
+    where w.plan_id = any(${planIds}::uuid[])
+    order by w.plan_id, w.position, l.position`;
+  const byWeek = new Map<string, HomeWeek>();
+  for (const r of rows) {
+    let w = byWeek.get(r.week_id);
+    if (!w) {
+      w = { id: r.week_id, number: r.position, skill: r.skill, opensOn: r.opens_on, open: weekIsOpen(r.opens_on, now), done: false, lessons: [] };
+      byWeek.set(r.week_id, w);
+      out.get(r.plan_id)!.push(w);
+    }
+    if (r.lesson_id) w.lessons.push({ id: r.lesson_id, title: r.title ?? '', done: !!r.done });
+  }
+  for (const w of byWeek.values()) {
+    w.done = weekBonusDue(w.lessons.map((l) => l.id), new Set(w.lessons.filter((l) => l.done).map((l) => l.id)));
+  }
+  return out;
+}
+
+/**
+ * Home shows one plan. Several can be assigned at once (the winter plan is imported while the test weeks
+ * still run), so the current one is: the newest assigned plan with an open week that isn't done, else the
+ * newest with any open week, else the newest overall.
+ */
 export async function getHome(studentId: string, now: Date = new Date()): Promise<HomeData> {
   const [student] = await sql<WpStudent[]>`select * from wp_students where id = ${studentId}`;
   if (!student) throw new NotFoundError('student');
 
-  const [plan] = await sql<{ id: string; title: string }[]>`
+  const plans = await sql<{ id: string; title: string }[]>`
     select id, title from wp_plans where id in (${assignedTo(sql, studentId)})
-    order by created_at desc, id limit 1`;
-  const total = await totalStarsFor(studentId);
-
-  let weeks: HomeData['weeks'] = [];
-  if (plan) {
-    const rows = await sql<{
-      week_id: string; position: number; skill: string; opens_on: string | null;
-      lesson_id: string | null; title: string | null; done: boolean | null;
-    }[]>`
-      select w.id as week_id, w.position, w.skill, w.opens_on, l.id as lesson_id, l.title,
-             (c.id is not null) as done
-      from wp_weeks w
-      left join wp_lessons l on l.week_id = w.id
-      left join wp_lesson_completions c on c.lesson_id = l.id and c.student_id = ${studentId}
-      where w.plan_id = ${plan.id}
-      order by w.position, l.position`;
-    const byWeek = new Map<string, HomeData['weeks'][number]>();
-    for (const r of rows) {
-      let w = byWeek.get(r.week_id);
-      if (!w) {
-        w = { id: r.week_id, number: r.position, skill: r.skill, opensOn: r.opens_on, open: weekIsOpen(r.opens_on, now), done: false, lessons: [] };
-        byWeek.set(r.week_id, w);
-      }
-      if (r.lesson_id) w.lessons.push({ id: r.lesson_id, title: r.title ?? '', done: !!r.done });
-    }
-    weeks = [...byWeek.values()];
-    for (const w of weeks) w.done = weekBonusDue(w.lessons.map((l) => l.id), new Set(w.lessons.filter((l) => l.done).map((l) => l.id)));
-  }
+    order by created_at desc, id`;
+  const [total, byPlan] = await Promise.all([totalStarsFor(studentId), weeksByPlan(studentId, plans.map((p) => p.id), now)]);
+  const weeksOf = (p: { id: string }) => byPlan.get(p.id) ?? [];
+  const plan =
+    plans.find((p) => weeksOf(p).some((w) => w.open && !w.done)) ??
+    plans.find((p) => weeksOf(p).some((w) => w.open)) ??
+    plans[0];
+  const weeks = plan ? weeksOf(plan) : [];
 
   const open = weeks.filter((w) => w.open);
   const currentWeekId = (open.find((w) => !w.done) ?? open[open.length - 1])?.id ?? null;
@@ -273,9 +291,33 @@ export async function getHome(studentId: string, now: Date = new Date()): Promis
   return {
     student: { id: student.id, displayName: student.display_name, blobColor: student.blob_color },
     totalStars: total,
-    plan: plan ?? null,
+    plan: plan ? { id: plan.id, title: plan.title } : null,
     weeks,
     currentWeekId,
+  };
+}
+
+export interface WeekData {
+  student: HomeData['student'];
+  totalStars: number;
+  week: HomeWeek;
+}
+
+/** One open week of ANY plan assigned to this kid (not only home's current plan), else null. */
+export async function getWeek(studentId: string, weekId: string, now: Date = new Date()): Promise<WeekData | null> {
+  if (!UUID_RE.test(weekId)) return null;
+  const [student] = await sql<WpStudent[]>`select * from wp_students where id = ${studentId}`;
+  if (!student) return null;
+  const [row] = await sql<{ plan_id: string; opens_on: string | null }[]>`
+    select plan_id, opens_on from wp_weeks where id = ${weekId} and plan_id in (${assignedTo(sql, studentId)})`;
+  if (!row || !weekIsOpen(row.opens_on, now)) return null;
+  const [byPlan, totalStars] = await Promise.all([weeksByPlan(studentId, [row.plan_id], now), totalStarsFor(studentId)]);
+  const week = byPlan.get(row.plan_id)?.find((w) => w.id === weekId);
+  if (!week) return null;
+  return {
+    student: { id: student.id, displayName: student.display_name, blobColor: student.blob_color },
+    totalStars,
+    week,
   };
 }
 
