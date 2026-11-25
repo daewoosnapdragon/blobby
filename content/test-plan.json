@@ -1,0 +1,72 @@
+{
+  "plan": { "title": "Test plan (sample)", "kind": "test" },
+  "assignTo": { "grade": 3 },
+  "weeks": [
+    {
+      "skill": "Past tense and plurals",
+      "opensOn": "2026-11-01",
+      "lessons": [
+        {
+          "title": "Yesterday and today",
+          "questions": [
+            {
+              "type": "pick_one",
+              "prompt": "Which sentence is about yesterday?",
+              "choices": ["I walked to school.", "I walk to school.", "I will walk to school."],
+              "answer": 0
+            },
+            {
+              "type": "fill_blank",
+              "before": "Yesterday, we",
+              "after": "pizza for lunch.",
+              "choices": ["ate", "eat", "eating"],
+              "answer": 0
+            },
+            {
+              "type": "find_fix",
+              "words": ["She", "goed", "to", "the", "park."],
+              "wrongIndex": 1,
+              "fixes": ["went", "gone", "going"],
+              "answer": 0
+            },
+            {
+              "type": "build_it",
+              "prompt": "Build the sentence.",
+              "tiles": ["We", "played", "soccer", "yesterday."],
+              "distractors": ["play"]
+            }
+          ]
+        },
+        {
+          "title": "More than one",
+          "questions": [
+            {
+              "type": "pick_one",
+              "prompt": "Which sentence is correct?",
+              "choices": ["I see two mouses.", "I see two mice.", "I see two mouse."],
+              "answer": 1
+            },
+            {
+              "type": "fill_blank",
+              "before": "There are three",
+              "after": "in the box.",
+              "choices": ["boxes", "box", "boxs"],
+              "answer": 0
+            },
+            {
+              "type": "sort_it",
+              "prompt": "Sort the words.",
+              "groups": ["Noun", "Verb"],
+              "items": [
+                { "text": "dog", "group": 0 },
+                { "text": "jump", "group": 1 },
+                { "text": "apple", "group": 0 },
+                { "text": "swim", "group": 1 }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

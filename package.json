@@ -13,6 +13,7 @@
   "dependencies": {
     "@supabase/supabase-js": "^2.119.2",
     "next": "^15.5.29",
+    "openai": "^7.64.0",
     "papaparse": "^5.7.1",
     "postgres": "^4.1.1",
     "react": "^19.3.1",
