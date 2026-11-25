@@ -4,7 +4,7 @@
 // Needs DATABASE_URL; audio also needs SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, OPENAI_API_KEY.
 import fs from 'node:fs';
 import postgres from 'postgres';
-import { pgOptions } from '../src/lib/db/options';
+import { scriptDbOptions } from '../src/lib/db/options';
 import { importContent, keptSummary, parseContent } from '../src/lib/content';
 import { defaultAudioDeps, ensureAudio } from '../src/lib/tts';
 
@@ -26,7 +26,7 @@ async function main() {
   const url = process.env.DATABASE_URL;
   if (!url) throw new Error('DATABASE_URL is not set');
   const deps = noAudio ? null : await defaultAudioDeps(); // fail early on missing keys, before writing
-  const sql = postgres(url, { ...pgOptions, max: 1, onnotice: () => {} });
+  const sql = postgres(url, scriptDbOptions(url));
   try {
     const r = await importContent(sql, content, { overwrite });
     console.log(`plan "${content.plan.title}": weeks ${r.weeks}, lessons ${r.lessons}, questions ${r.questions}`);

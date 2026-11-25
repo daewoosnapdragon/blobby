@@ -2,6 +2,7 @@
 // Needs SUPABASE_URL, SUPABASE_ANON_KEY, DATABASE_URL. Read-only. Does not import src/lib/db/admin.ts (server-only).
 import { createClient } from '@supabase/supabase-js';
 import postgres from 'postgres';
+import { scriptDbOptions } from '../src/lib/db/options';
 
 const TABLES = [
   'wp_classes', 'wp_students', 'wp_plans', 'wp_plan_assignments', 'wp_weeks',
@@ -26,7 +27,8 @@ async function main() {
   }
 
   // 2. Tables exist, RLS on (service side, direct Postgres).
-  const sql = postgres(need('DATABASE_URL'), { prepare: false, max: 1 });
+  const dbUrl = need('DATABASE_URL');
+  const sql = postgres(dbUrl, scriptDbOptions(dbUrl));
   try {
     const rows = await sql<{ relname: string; relrowsecurity: boolean }[]>`
       select c.relname, c.relrowsecurity from pg_class c

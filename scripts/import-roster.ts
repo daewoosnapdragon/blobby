@@ -2,7 +2,7 @@
 // Prints counts only; never prints names or any student data.
 import fs from 'node:fs';
 import postgres from 'postgres';
-import { pgOptions } from '../src/lib/db/options';
+import { scriptDbOptions } from '../src/lib/db/options';
 import { importRoster, parseRoster } from '../src/lib/roster';
 
 async function main() {
@@ -21,7 +21,7 @@ async function main() {
   }
   const url = process.env.DATABASE_URL;
   if (!url) throw new Error('DATABASE_URL is not set');
-  const sql = postgres(url, { ...pgOptions, max: 1, onnotice: () => {} });
+  const sql = postgres(url, scriptDbOptions(url));
   try {
     const r = await importRoster(sql, parsed);
     console.log(`classes ${r.classes}, students ${r.students} (${r.byGrade.join('/')})`);
