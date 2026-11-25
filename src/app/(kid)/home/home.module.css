@@ -60,6 +60,13 @@ a.weekTile:active { transform: scale(0.97); }
 .freeSub { font-size: 14px; font-weight: 500; color: #2F4A40; }
 .freeArrow { width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: var(--card); display: flex; align-items: center; justify-content: center; }
 
+/* Day stamps link: a small card under the plan */
+.stamps { min-height: 56px; background: var(--card); border-radius: 22px; padding: 6px 8px 6px 12px; display: flex; align-items: center; gap: 12px; color: var(--ink); text-decoration: none; transition: transform 160ms var(--ease-out); }
+.stamps:active { transform: scale(0.97); }
+.stampsIcon { width: 40px; height: 40px; border-radius: 14px; background: var(--bg); display: flex; align-items: center; justify-content: center; }
+.stampsTitle { flex-grow: 1; font-size: 16px; font-weight: 800; }
+.stampsArrow { width: 44px; height: 44px; border-radius: 50%; background: var(--bg); display: flex; align-items: center; justify-content: center; }
+
 /* ---- Tablet (R26): one wide column, bigger card and blob, every week visible in a grid ---------- */
 @media (min-width: 640px) {
   .screen { max-width: 900px; padding: 28px 32px 36px; gap: 28px; }

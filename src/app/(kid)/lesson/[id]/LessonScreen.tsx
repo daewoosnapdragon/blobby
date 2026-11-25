@@ -7,6 +7,7 @@ import { postWithRetry } from '@/lib/kidApi';
 import { lessonOutcome } from '@/lib/lessonOutcome';
 import { QuestionPlayer } from '@/components/questions/QuestionPlayer';
 import { useRecordAttempt } from '@/components/questions/useRecordAttempt';
+import { usePracticePing } from '@/components/usePracticePing';
 import { WhoAreYouScreen } from '@/components/ui/KidProblems';
 import { LessonDone, type DoneState } from './LessonDone';
 
@@ -24,6 +25,7 @@ export function LessonScreen({ data }: { data: LessonData }) {
   const [phase, setPhase] = useState<'play' | 'done' | 'signedOut'>('play');
   const [done, setDone] = useState<DoneState>({ kind: 'saving' });
 
+  usePracticePing();
   const onAnswer = useRecordAttempt({
     context: 'lesson',
     studentId: data.student.id,

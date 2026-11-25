@@ -187,6 +187,12 @@ export default async function Home() {
           </div>
         ) : null}
       </div>
+
+      <Link href="/stamps" className={styles.stamps}>
+        <span className={styles.stampsIcon}><MiniBlob color={color} size={30} /></span>
+        <span className={styles.stampsTitle}>My stamps</span>
+        <span className={styles.stampsArrow}><ArrowIcon size={16} /></span>
+      </Link>
     </main>
   );
 }

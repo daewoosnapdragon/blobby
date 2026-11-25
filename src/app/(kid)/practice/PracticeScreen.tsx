@@ -5,6 +5,7 @@ import { toBlobColor } from '@/lib/blobColors';
 import { STAR_VALUES } from '@/lib/stars';
 import { QuestionPlayer } from '@/components/questions/QuestionPlayer';
 import { useRecordAttempt } from '@/components/questions/useRecordAttempt';
+import { usePracticePing } from '@/components/usePracticePing';
 import { WhoAreYouScreen } from '@/components/ui/KidProblems';
 import { PracticeDone } from './PracticeDone';
 
@@ -20,6 +21,7 @@ export function PracticeScreen({ student, questions }: { student: Student; quest
   const [earned, setEarned] = useState(0);
   const [saving, setSaving] = useState(0);
 
+  usePracticePing();
   const record = useRecordAttempt({
     context: 'free',
     studentId: student.id,

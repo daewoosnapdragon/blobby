@@ -4,7 +4,7 @@ import { cookies } from 'next/headers';
 import { sql } from './admin';
 import { SESSION_COOKIE, verifyStudent } from '../session';
 import { UUID_RE } from '../uuid';
-import { isWeekOpen } from '../dates';
+import { isWeekOpen, seoulDate } from '../dates';
 import { STAR_VALUES, weekBonusDue } from '../stars';
 import { BLOB_COLOR_KEYS, type BlobColorKey } from '../blobColors';
 import { parseQuestion, type Question } from '../questions/schema';
@@ -167,6 +167,11 @@ export async function recordAttempt(
       where qu.id = ${input.questionId} and w.plan_id in (${assignedTo(tx, studentId)})`;
     if (!q || !weekIsOpen(q.opens_on, now)) throw new NotFoundError('question');
 
+    // Answering anything counts as practicing today (a stamp), even a retry; never touches seconds already counted.
+    await tx`
+      insert into wp_practice_days (student_id, day, seconds) values (${studentId}, ${seoulDate(now)}, 0)
+      on conflict (student_id, day) do nothing`;
+
     const [inserted] = await tx<{ id: string }[]>`
       insert into wp_attempts (student_id, question_id, client_attempt_id, correct, context)
       values (${studentId}, ${input.questionId}, ${input.clientAttemptId}, ${input.correct}, ${input.context})
@@ -192,6 +197,28 @@ export async function recordAttempt(
     }
     return { starsAwarded: 0 };
   });
+}
+
+/** Seconds of practice one ping is worth, and the most one day can hold (3 hours). */
+export const PING_SECONDS = 30;
+export const DAY_SECONDS_CAP = 10800;
+
+/** Adds one ping's worth of practice time to today's (Seoul) row, in a single atomic statement. */
+export async function ping(studentId: string, now: Date = new Date()): Promise<void> {
+  await sql`
+    insert into wp_practice_days (student_id, day, seconds) values (${studentId}, ${seoulDate(now)}, ${PING_SECONDS})
+    on conflict (student_id, day)
+    do update set seconds = least(wp_practice_days.seconds + ${PING_SECONDS}, ${DAY_SECONDS_CAP})`;
+}
+
+/** The Seoul dates (YYYY-MM-DD) in `month` (YYYY-MM) this kid practiced, oldest first. */
+export async function practicedDays(studentId: string, month: string): Promise<string[]> {
+  if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(month)) return [];
+  const rows = await sql<{ day: string }[]>`
+    select day from wp_practice_days
+    where student_id = ${studentId} and day >= ${month + '-01'}::date and day < (${month + '-01'}::date + interval '1 month')
+    order by day`;
+  return rows.map((r) => r.day);
 }
 
 export interface HomeData {
