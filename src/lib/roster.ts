@@ -5,13 +5,13 @@
 import { randomBytes, randomInt } from 'node:crypto';
 import Papa from 'papaparse';
 import type postgres from 'postgres';
+import { UUID_RE } from './uuid';
 
 export interface RosterStudent { id: string; grade: number; displayName: string }
 export interface ParsedRoster { classes: { grade: number }[]; students: RosterStudent[] }
 export interface ImportSummary { classes: number; students: number; byGrade: [number, number, number, number] }
 
 const CODE_ALPHABET = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const REQUIRED = ['UUID', 'Name', 'Grade', 'English Class', 'Active'];
 
 export function makeClassCode(): string {

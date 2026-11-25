@@ -2,9 +2,9 @@ import 'server-only';
 import { cookies } from 'next/headers';
 import { sql } from './admin';
 import { SESSION_COOKIE, verifyStudent } from '../session';
+import { UUID_RE } from '../uuid';
 import type { WpStudent } from '../types';
 
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export async function studentById(id: string): Promise<WpStudent | null> {
   if (!UUID_RE.test(id)) return null;

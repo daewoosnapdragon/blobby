@@ -1,17 +1,12 @@
 import { NextResponse } from 'next/server';
-import { z } from 'zod';
+import { JoinBody } from '@/lib/joinBody';
 import { classByCode, studentForJoin, landingPath } from '@/lib/db/kid';
 import { SESSION_COOKIE, signStudent, sessionCookieOptions } from '@/lib/session';
 
 export const dynamic = 'force-dynamic';
 
-const Body = z.object({
-  code: z.string().trim().min(1).max(12),
-  studentId: z.string().uuid().optional(),
-});
-
 export async function POST(req: Request) {
-  const parsed = Body.safeParse(await req.json().catch(() => null));
+  const parsed = JoinBody.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: 'bad_request' }, { status: 400 });
   const { code, studentId } = parsed.data;
 
