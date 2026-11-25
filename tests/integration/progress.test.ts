@@ -82,6 +82,22 @@ describe('completeLesson', () => {
     expect(bonus).toHaveLength(1);
   });
 
+  it('last two lessons finished in parallel (exactly [b, c]) never miss the bonus', async () => {
+    const { completeLesson } = await import('@/lib/db/kid');
+    const cls = id(8100);
+    await sql`insert into wp_classes (id, grade, name, class_code) values (${cls}, 1, 'Race', 'RACE22')`;
+    await sql`insert into wp_plan_assignments (plan_id, class_id) values (${P.plan}, ${cls})`;
+    for (let i = 0; i < 20; i++) {
+      const s = id(8200 + i);
+      await sql`insert into wp_students (id, class_id, display_name, link_secret) values (${s}, ${cls}, ${'R' + i}, ${'race-' + i})`;
+      await completeLesson(s, L.a, NOW);
+      const rs = await Promise.all([completeLesson(s, L.b, NOW), completeLesson(s, L.c, NOW)]);
+      expect(rs.reduce((n, r) => n + r.starsAwarded, 0), `student ${i}`).toBe(30);
+      expect(rs.filter((r) => r.weekDone), `student ${i}`).toHaveLength(1);
+      expect(await stars(s)).toBe(40);
+    }
+  });
+
   it('rejects unassigned, locked-week and unknown lessons without writing', async () => {
     const { completeLesson, NotFoundError } = await import('@/lib/db/kid');
     await expect(completeLesson(JUN, L.other, NOW)).rejects.toBeInstanceOf(NotFoundError);
@@ -151,6 +167,26 @@ describe('recordAttempt', () => {
     await sql`update wp_questions set deleted_at = now() where id = ${Q.b1}`;
     expect(await recordAttempt(MINA, { clientAttemptId: id(513), questionId: Q.b1, correct: true, context: 'free' }, NOW))
       .toEqual({ starsAwarded: 1 });
+  });
+});
+
+describe('weeks with no opens_on', () => {
+  it('stay locked (fail closed) for writes and in getHome', async () => {
+    const { completeLesson, recordAttempt, getHome, NotFoundError } = await import('@/lib/db/kid');
+    const p = id(600), w = id(601), l = id(602), q = id(603), s = id(604), c = id(605);
+    await sql`insert into wp_classes (id, grade, name, class_code) values (${c}, 3, 'Null', 'NUL333')`;
+    await sql`insert into wp_students (id, class_id, display_name, link_secret) values (${s}, ${c}, 'N', 'null-secret')`;
+    await sql`insert into wp_plans (id, title, kind) values (${p}, 'NullPlan', 'winter')`;
+    await sql`insert into wp_plan_assignments (plan_id, class_id) values (${p}, ${c})`;
+    await sql`insert into wp_weeks (id, plan_id, position, skill, opens_on) values (${w}, ${p}, 1, 'x', null)`;
+    await sql`insert into wp_lessons (id, week_id, position, title) values (${l}, ${w}, 1, 'N')`;
+    await sql`insert into wp_questions (id, lesson_id, position, type, payload) values (${q}, ${l}, 1, 'pick', '{}')`;
+    await expect(completeLesson(s, l, NOW)).rejects.toBeInstanceOf(NotFoundError);
+    await expect(recordAttempt(s, { clientAttemptId: id(606), questionId: q, correct: true, context: 'free' }, NOW))
+      .rejects.toBeInstanceOf(NotFoundError);
+    const h = await getHome(s, NOW);
+    expect(h.weeks[0]).toMatchObject({ opensOn: null, open: false });
+    expect(h.currentWeekId).toBeNull();
   });
 });
 

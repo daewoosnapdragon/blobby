@@ -86,7 +86,8 @@ const assignedTo = (tx: Tx | typeof sql, studentId: string) => tx`
   where a.student_id = ${studentId}
      or a.class_id = (select class_id from wp_students where id = ${studentId})`;
 
-const weekIsOpen = (opensOn: string | null, now: Date) => opensOn === null || isWeekOpen(opensOn, now);
+/** A week with no opens_on date fails closed: it stays locked. */
+const weekIsOpen = (opensOn: string | null, now: Date) => opensOn !== null && isWeekOpen(opensOn, now);
 
 /** A lesson of an assigned plan in an open week, else NotFoundError. */
 async function authorizedLesson(tx: Tx, studentId: string, lessonId: string, now: Date) {
