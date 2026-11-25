@@ -1,0 +1,94 @@
+/* The question screen, after D-Question (390×844 reference). */
+.screen { min-height: 100dvh; max-width: 430px; margin: 0 auto; padding: 20px 18px 24px; display: flex; flex-direction: column; gap: 16px; }
+
+/* Top bar */
+.topBar { display: flex; align-items: center; gap: 12px; }
+.close { width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: var(--card); display: flex; align-items: center; justify-content: center; transition: transform 160ms var(--ease-out); }
+.close:active { transform: scale(0.97); }
+.progress { flex-grow: 1; height: 10px; border-radius: 999px; background: #E9E2D9; overflow: hidden; }
+.progressFill { height: 100%; border-radius: 999px; background: var(--ink); }
+
+/* Question card: tag, blob, speech bubble */
+.qCard { position: relative; background: var(--card); border-radius: var(--radius-card); min-height: 208px; padding: 16px 16px 18px 18px; overflow: hidden; display: flex; flex-direction: column; gap: 17px; }
+.tag { align-self: flex-start; border-radius: 999px; padding: 4px 12px; font-size: 13px; font-weight: 700; line-height: 1.45; }
+.qRow { display: flex; align-items: flex-start; gap: 10px; }
+.qBlob { width: 136px; height: 128px; flex-shrink: 0; margin-left: 2px; margin-top: 2px; }
+.bubble { flex: 1; min-width: 0; background: var(--bg); border-radius: 20px 20px 20px 6px; padding: 14px 14px 12px 16px; display: flex; flex-direction: column; gap: 10px; }
+.askStack { display: grid; }
+.askStack > * { grid-area: 1 / 1; }
+.ask { font-size: 19px; font-weight: 800; line-height: 1.3; overflow-wrap: anywhere; }
+
+.body { display: flex; flex-direction: column; }
+.spacer { flex-grow: 1; }
+.stack { display: flex; flex-direction: column; gap: 12px; }
+.helper { margin: 0; font-size: 14px; font-weight: 500; color: var(--muted); text-align: center; }
+.helper strong { font-family: var(--font-sentence); font-weight: 700; color: var(--ink); }
+
+/* Pick one: full-width sentence options with a letter dot */
+.options { display: flex; flex-direction: column; gap: 10px; }
+.option { min-height: 64px; display: flex; align-items: center; gap: 12px; padding: 16px 18px 16px 14px; border: none; border-radius: 22px; background: var(--card); box-shadow: inset 0 0 0 2px var(--card); color: var(--ink); text-align: left; font-family: var(--font-sentence); font-size: 20px; line-height: 1.3; }
+.letter { width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: var(--bg); display: flex; align-items: center; justify-content: center; font-family: var(--font-ui); font-size: 15px; font-weight: 800; }
+
+/* Shared right / wrong / selected looks (D-Question colors) */
+[data-mark='right'].option, [data-mark='right'].word, [data-mark='right'].chip, [data-mark='right'].sentenceWord { background: #E9F6F0; box-shadow: inset 0 0 0 2px var(--ink); }
+[data-mark='wrong'].option, [data-mark='wrong'].word, [data-mark='wrong'].chip, [data-mark='wrong'].sentenceWord { background: #FFF1F3; box-shadow: inset 0 0 0 2px #D9798B; }
+[data-mark='right'] > .letter { background: var(--mint); }
+[data-mark='wrong'] > .letter { background: var(--pink); }
+[data-mark='selected'].sentenceWord { background: var(--yellow-soft); box-shadow: inset 0 0 0 2px var(--ink); }
+
+/* Listen and tap: big printed words */
+.wordGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.wordGrid[data-count='3'] > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+.word { position: relative; min-height: 88px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 12px; border: none; border-radius: 22px; background: var(--card); box-shadow: inset 0 0 0 2px var(--card); color: var(--ink); font-family: var(--font-sentence); font-size: 30px; line-height: 1.1; }
+.wordImg { width: 64px; height: 64px; object-fit: contain; }
+.cornerMark { position: absolute; top: 8px; right: 8px; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+[data-mark='right'] > .cornerMark { background: var(--mint); }
+[data-mark='wrong'] > .cornerMark { background: var(--pink); }
+
+/* Sentences (fill the blank, find and fix) */
+.sentence { margin: 0; background: var(--card); border-radius: 22px; padding: 18px 20px; font-family: var(--font-sentence); font-size: 24px; line-height: 1.7; }
+.blank { display: inline-block; min-width: 84px; padding: 0 8px; border-bottom: 3px solid var(--ink); text-align: center; line-height: 1.25; vertical-align: baseline; }
+.blank[data-mark='right'] { background: #E9F6F0; border-radius: 10px 10px 0 0; }
+.blank[data-mark='wrong'] { background: #FFF1F3; border-bottom-color: #D9798B; border-radius: 10px 10px 0 0; }
+.chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+.chip { min-height: 56px; min-width: 88px; padding: 0 22px; border: none; border-radius: 22px; background: var(--card); box-shadow: inset 0 0 0 2px var(--card); color: var(--ink); font-family: var(--font-sentence); font-size: 22px; }
+.sentenceWords { background: var(--card); border-radius: 22px; padding: 14px; display: flex; flex-wrap: wrap; gap: 8px; }
+.sentenceWord { min-height: 48px; padding: 0 12px; border: none; border-radius: 14px; background: var(--bg); box-shadow: inset 0 0 0 2px var(--bg); color: var(--ink); font-family: var(--font-sentence); font-size: 24px; }
+
+/* Build it and sort it: word tiles */
+.tile { min-height: 48px; padding: 0 16px; border: none; border-radius: 16px; background: var(--card); box-shadow: inset 0 0 0 2px #E9E2D9, 0 3px 0 #E9E2D9; color: var(--ink); font-family: var(--font-sentence); font-size: 22px; }
+.tile[aria-pressed='true'] { background: var(--yellow-soft); box-shadow: inset 0 0 0 2px var(--ink), 0 3px 0 var(--ink); }
+.tileGhost { min-height: 48px; padding: 0 16px; border-radius: 16px; background: #EFEAE4; color: transparent; font-family: var(--font-sentence); font-size: 22px; display: inline-flex; align-items: center; user-select: none; }
+.answerRow { min-height: 128px; border-radius: 22px; padding: 14px; display: flex; flex-wrap: wrap; align-content: flex-start; gap: 10px 8px;
+  /* a writing line under each row of tiles (58px per row), drawn in the content box only */
+  background: repeating-linear-gradient(to bottom, transparent 0 55px, #EFEAE4 55px 57px, transparent 57px 58px) content-box, linear-gradient(var(--card), var(--card)) padding-box; }
+.answerRow[data-mark='right'] .tile { background: #E9F6F0; box-shadow: inset 0 0 0 2px var(--ink), 0 3px 0 var(--ink); }
+.answerRow[data-mark='wrong'] .tile { background: #FFF1F3; box-shadow: inset 0 0 0 2px #D9798B, 0 3px 0 #D9798B; }
+.bank { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 8px; min-height: 51px; align-items: center; }
+
+.groups { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.groups[data-count='3'] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.group { background: var(--card); border-radius: 22px; padding: 8px; display: flex; flex-direction: column; gap: 8px; min-height: 150px; }
+.group[data-mark='right'] { box-shadow: inset 0 0 0 2px var(--ink); background: #E9F6F0; }
+.group[data-mark='wrong'] { box-shadow: inset 0 0 0 2px #D9798B; }
+.groupHead { min-height: 48px; border: none; border-radius: 16px; color: var(--ink); font-size: 17px; font-weight: 800; }
+.groupHead[data-armed] { outline: 2px dashed var(--ink); outline-offset: -5px; }
+.groupBody { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+
+.appear { animation: var(--kf-pop) 250ms var(--ease-out) both; }
+
+/* Feedback: color, words and the blob (spec 5.6) */
+.feedbackSlot:empty { display: none; }
+.feedback { border-radius: 24px; padding: 14px 14px 14px 20px; display: flex; align-items: center; gap: 12px; animation: var(--kf-pop) 250ms var(--ease-out) both; }
+.right { background: var(--mint); }
+.wrong { background: #FFD9DF; }
+.feedbackText { flex-grow: 1; min-width: 0; }
+.feedbackTitle { font-size: 20px; font-weight: 800; }
+.feedbackNote { font-size: 15px; font-weight: 500; }
+.right .feedbackNote { color: #2F4A40; }
+.wrong .feedbackNote { color: #5E2A33; }
+.tryAgain { flex-shrink: 0; min-height: 48px; padding: 12px 18px; border: none; border-radius: 999px; background: var(--card); color: var(--ink); font-size: 17px; font-weight: 700; }
+
+/* Taps on a locked question do nothing; it shouldn't look pressable either. */
+.body [aria-disabled='true']:active { transform: none; }
+.body [aria-disabled='true'] { cursor: default; }

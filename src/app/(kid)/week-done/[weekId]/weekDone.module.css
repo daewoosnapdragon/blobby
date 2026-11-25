@@ -1,0 +1,19 @@
+/* D-Done */
+.screen { min-height: 100dvh; max-width: 430px; margin: 0 auto; padding: 20px 18px 24px; display: flex; flex-direction: column; gap: 16px; }
+.close { width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: var(--card); display: flex; align-items: center; justify-content: center; transition: transform 160ms var(--ease-out); }
+.close:active { transform: scale(0.97); }
+.stage { position: relative; height: 290px; flex-shrink: 0; }
+.pop { position: absolute; animation: var(--kf-pop) 250ms var(--ease-out) both; }
+.blob { position: absolute; left: 50%; top: 70px; width: 216px; margin-left: -108px; line-height: 0; }
+.head { text-align: center; display: flex; flex-direction: column; gap: 6px; }
+.title { margin: 0; font-size: 32px; font-weight: 800; line-height: 1.2; }
+.sub { margin: 0; font-size: 17px; font-weight: 500; color: #4F4A45; }
+.card { padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; }
+.row { display: flex; align-items: center; gap: 12px; }
+.label { flex-grow: 1; font-size: 16px; font-weight: 700; }
+.note { font-size: 13px; font-weight: 500; color: var(--muted); }
+.num { font-size: 26px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.rule { height: 1px; background: #EFEAE4; }
+.spacer { flex-grow: 1; }
+/* Movement stops; the numbers are final (reduced motion is handled in WeekDone). */
+@media (prefers-reduced-motion: reduce) { .pop { animation: none; } }

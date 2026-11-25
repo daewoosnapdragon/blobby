@@ -7,6 +7,7 @@ import { UUID_RE } from '../uuid';
 import { isWeekOpen } from '../dates';
 import { STAR_VALUES, weekBonusDue } from '../stars';
 import { BLOB_COLOR_KEYS, type BlobColorKey } from '../blobColors';
+import { parseQuestion, type Question } from '../questions/schema';
 import type { WpStudent } from '../types';
 
 
@@ -90,7 +91,7 @@ const assignedTo = (tx: Tx | typeof sql, studentId: string) => tx`
 const weekIsOpen = (opensOn: string | null, now: Date) => opensOn !== null && isWeekOpen(opensOn, now);
 
 /** A lesson of an assigned plan in an open week, else NotFoundError. */
-async function authorizedLesson(tx: Tx, studentId: string, lessonId: string, now: Date) {
+async function authorizedLesson(tx: Tx | typeof sql, studentId: string, lessonId: string, now: Date) {
   if (!UUID_RE.test(lessonId)) throw new NotFoundError('lesson');
   const [row] = await tx<{ week_id: string; plan_id: string; opens_on: string | null }[]>`
     select l.week_id, w.plan_id, w.opens_on
@@ -197,7 +198,7 @@ export interface HomeData {
   totalStars: number;
   plan: { id: string; title: string } | null;
   weeks: {
-    id: string; skill: string; opensOn: string | null; open: boolean; done: boolean;
+    id: string; number: number; skill: string; opensOn: string | null; open: boolean; done: boolean;
     lessons: { id: string; title: string; done: boolean }[];
   }[];
   currentWeekId: string | null;
@@ -210,17 +211,15 @@ export async function getHome(studentId: string, now: Date = new Date()): Promis
   const [plan] = await sql<{ id: string; title: string }[]>`
     select id, title from wp_plans where id in (${assignedTo(sql, studentId)})
     order by created_at desc, id limit 1`;
-  const [{ total }] = await sql<{ total: number }[]>`
-    select coalesce(sum(amount), 0)::int as total from wp_star_events
-    where student_id = ${studentId} and plan_id in (${assignedTo(sql, studentId)})`;
+  const total = await totalStarsFor(studentId);
 
   let weeks: HomeData['weeks'] = [];
   if (plan) {
     const rows = await sql<{
-      week_id: string; skill: string; opens_on: string | null;
+      week_id: string; position: number; skill: string; opens_on: string | null;
       lesson_id: string | null; title: string | null; done: boolean | null;
     }[]>`
-      select w.id as week_id, w.skill, w.opens_on, l.id as lesson_id, l.title,
+      select w.id as week_id, w.position, w.skill, w.opens_on, l.id as lesson_id, l.title,
              (c.id is not null) as done
       from wp_weeks w
       left join wp_lessons l on l.week_id = w.id
@@ -231,7 +230,7 @@ export async function getHome(studentId: string, now: Date = new Date()): Promis
     for (const r of rows) {
       let w = byWeek.get(r.week_id);
       if (!w) {
-        w = { id: r.week_id, skill: r.skill, opensOn: r.opens_on, open: weekIsOpen(r.opens_on, now), done: false, lessons: [] };
+        w = { id: r.week_id, number: r.position, skill: r.skill, opensOn: r.opens_on, open: weekIsOpen(r.opens_on, now), done: false, lessons: [] };
         byWeek.set(r.week_id, w);
       }
       if (r.lesson_id) w.lessons.push({ id: r.lesson_id, title: r.title ?? '', done: !!r.done });
@@ -255,4 +254,128 @@ export async function getHome(studentId: string, now: Date = new Date()): Promis
 export async function setBlobColor(studentId: string, color: BlobColorKey): Promise<void> {
   if (!BLOB_COLOR_KEYS.includes(color)) throw new Error('bad blob color');
   await sql`update wp_students set blob_color = ${color} where id = ${studentId}`;
+}
+
+/** Stars from the kid's assigned plan(s): the number on the home pill and the treasure chest. */
+export async function totalStarsFor(studentId: string): Promise<number> {
+  const [{ total }] = await sql<{ total: number }[]>`
+    select coalesce(sum(amount), 0)::int as total from wp_star_events
+    where student_id = ${studentId} and plan_id in (${assignedTo(sql, studentId)})`;
+  return total;
+}
+
+async function studentWithGrade(studentId: string) {
+  const [row] = await sql<{ id: string; display_name: string; blob_color: string | null; grade: number }[]>`
+    select s.id, s.display_name, s.blob_color, c.grade
+    from wp_students s join wp_classes c on c.id = s.class_id where s.id = ${studentId}`;
+  if (!row) throw new NotFoundError('student');
+  return row;
+}
+
+export interface LessonQuestion {
+  id: string;
+  question: Question;
+  /** spoken text -> audio URL (spec 5.7); only string URLs are kept */
+  audio: Record<string, string>;
+}
+
+export interface LessonData {
+  student: { id: string; displayName: string; blobColor: string | null; grade: number };
+  totalStars: number;
+  lesson: { id: string; title: string; position: number };
+  week: { id: string; number: number; skill: string; lessonCount: number; done: boolean };
+  /** this kid finished this lesson before (a redo earns no stars) */
+  lessonDone: boolean;
+  /** every other lesson of the week is finished (this one is the last undone one) */
+  otherLessonsDone: boolean;
+  questions: LessonQuestion[];
+}
+
+function audioMap(raw: unknown): Record<string, string> {
+  const out: Record<string, string> = {};
+  if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
+    for (const [k, v] of Object.entries(raw)) if (typeof v === 'string' && v) out[k] = v;
+  }
+  return out;
+}
+
+/** A lesson the kid may play (assigned plan, open week), else NotFoundError. Same authorization as completeLesson. */
+export async function getLesson(studentId: string, lessonId: string, now: Date = new Date()): Promise<LessonData> {
+  const student = await studentWithGrade(studentId);
+  const auth = await authorizedLesson(sql, studentId, lessonId, now);
+
+  const [[lesson], [week], lessons, qs, totalStars] = await Promise.all([
+    sql<{ id: string; title: string; position: number }[]>`select id, title, position from wp_lessons where id = ${lessonId}`,
+    sql<{ id: string; position: number; skill: string }[]>`select id, position, skill from wp_weeks where id = ${auth.week_id}`,
+    sql<{ id: string; done: boolean }[]>`
+      select l.id, exists(select 1 from wp_lesson_completions c where c.lesson_id = l.id and c.student_id = ${studentId}) as done
+      from wp_lessons l where l.week_id = ${auth.week_id}`,
+    sql<{ id: string; type: string; payload: unknown; audio: unknown }[]>`
+      select id, type, payload, audio from wp_questions
+      where lesson_id = ${lessonId} and deleted_at is null order by position, id`,
+    totalStarsFor(studentId),
+  ]);
+
+  const questions: LessonQuestion[] = [];
+  for (const q of qs) {
+    try {
+      questions.push({ id: q.id, question: parseQuestion(q.type, q.payload), audio: audioMap(q.audio) });
+    } catch {
+      // A malformed question is skipped rather than breaking the whole lesson for the kid.
+    }
+  }
+
+  const done = new Set(lessons.filter((l) => l.done).map((l) => l.id));
+  return {
+    student: { id: student.id, displayName: student.display_name, blobColor: student.blob_color, grade: student.grade },
+    totalStars,
+    lesson,
+    week: {
+      id: week.id, number: week.position, skill: week.skill, lessonCount: lessons.length,
+      done: weekBonusDue(lessons.map((l) => l.id), done),
+    },
+    lessonDone: done.has(lessonId),
+    otherLessonsDone: lessons.every((l) => l.id === lessonId || l.done),
+    questions,
+  };
+}
+
+export interface WeekDoneData {
+  student: { id: string; displayName: string; blobColor: string | null };
+  week: { id: string; number: number; skill: string; done: boolean };
+  /** this week's lesson stars + its week bonus (R24) */
+  weekStars: number;
+  totalStars: number;
+}
+
+/** The week-done celebration's numbers, for an open week of an assigned plan, else NotFoundError. */
+export async function getWeekDone(studentId: string, weekId: string, now: Date = new Date()): Promise<WeekDoneData> {
+  if (!UUID_RE.test(weekId)) throw new NotFoundError('week');
+  const [student] = await sql<WpStudent[]>`select * from wp_students where id = ${studentId}`;
+  if (!student) throw new NotFoundError('student');
+  const [week] = await sql<{ id: string; position: number; skill: string; opens_on: string | null }[]>`
+    select id, position, skill, opens_on from wp_weeks
+    where id = ${weekId} and plan_id in (${assignedTo(sql, studentId)})`;
+  if (!week || !weekIsOpen(week.opens_on, now)) throw new NotFoundError('week');
+
+  const [lessons, [{ weekStars }], totalStars] = await Promise.all([
+    sql<{ id: string; done: boolean }[]>`
+      select l.id, exists(select 1 from wp_lesson_completions c where c.lesson_id = l.id and c.student_id = ${studentId}) as done
+      from wp_lessons l where l.week_id = ${weekId}`,
+    sql<{ weekStars: number }[]>`
+      select coalesce(sum(amount), 0)::int as "weekStars" from wp_star_events
+      where student_id = ${studentId}
+        and ((reason = 'lesson' and ref_id in (select id from wp_lessons where week_id = ${weekId}))
+          or (reason = 'week_bonus' and ref_id = ${weekId}))`,
+    totalStarsFor(studentId),
+  ]);
+  return {
+    student: { id: student.id, displayName: student.display_name, blobColor: student.blob_color },
+    week: {
+      id: week.id, number: week.position, skill: week.skill,
+      done: weekBonusDue(lessons.map((l) => l.id), new Set(lessons.filter((l) => l.done).map((l) => l.id))),
+    },
+    weekStars,
+    totalStars,
+  };
 }

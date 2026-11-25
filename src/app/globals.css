@@ -39,6 +39,7 @@ body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--f
 button { font: inherit; cursor: pointer; transition: transform 160ms var(--ease-out); }
 button:active { transform: scale(0.97); }
 :focus-visible { outline: 3px solid #1F1F1F; outline-offset: 3px; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 
 @keyframes breathe { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.03, 0.97); } }
 @keyframes blink { 0%, 94%, 100% { transform: scaleY(1); } 96% { transform: scaleY(0.1); } }

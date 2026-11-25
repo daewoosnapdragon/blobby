@@ -5,8 +5,11 @@ import styles from './NotYou.module.css';
 
 export const notYouText = 'Not you?';
 
-/** Clears the kid cookie, then goes to /join. Task 8 places it in the home top bar. */
-export function NotYou() {
+/**
+ * Clears the kid cookie, then goes to /join (siblings sharing a phone).
+ * `compact` looks like small text in a top bar but keeps a 44px touch target.
+ */
+export function NotYou({ compact = false }: { compact?: boolean }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   async function onClick() {
@@ -19,7 +22,7 @@ export function NotYou() {
     }
   }
   return (
-    <button type="button" className={styles.btn} onClick={onClick} disabled={busy}>
+    <button type="button" className={`${styles.btn} ${compact ? styles.compact : ''}`} onClick={onClick} disabled={busy}>
       {notYouText}
     </button>
   );

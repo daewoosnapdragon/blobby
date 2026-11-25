@@ -1,0 +1,24 @@
+.card { background: var(--card); border-radius: var(--radius-card); }
+
+/* Star total */
+.starPill { display: flex; align-items: center; gap: 6px; flex-shrink: 0; background: var(--card); border-radius: 999px; padding: 8px 14px 8px 10px; font-size: 18px; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1.2; }
+.starPlain { display: flex; align-items: center; gap: 4px; flex-shrink: 0; font-size: 17px; font-weight: 800; font-variant-numeric: tabular-nums; }
+
+/* Main action: black pill + arrow circle */
+.pill { display: inline-flex; align-items: center; border: none; border-radius: 999px; background: var(--ink); color: #fff; font-weight: 700; text-decoration: none; transition: transform 160ms var(--ease-out); -webkit-tap-highlight-color: transparent; }
+.pill:active { transform: scale(0.97); }
+.pill:disabled { opacity: 0.4; cursor: default; }
+.pill:disabled:active { transform: none; }
+.arrow { flex-shrink: 0; border-radius: 50%; background: var(--yellow); display: flex; align-items: center; justify-content: center; }
+.lg { width: 100%; justify-content: space-between; padding: 8px 8px 8px 24px; font-size: 18px; min-height: 60px; }
+.lg .arrow { width: 44px; height: 44px; }
+.md { gap: 14px; padding: 7px 7px 7px 22px; font-size: 17px; }
+.md .arrow { width: 36px; height: 36px; }
+.sm { gap: 12px; padding: 7px 7px 7px 20px; font-size: 17px; min-height: 48px; }
+.sm .arrow { width: 34px; height: 34px; }
+
+/* Hear it: 36px tall as in D-Question; the ::before stretches the touch target to 44px. */
+.hear { position: relative; align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 6px 12px 6px 8px; border: none; border-radius: 999px; background: var(--card); color: var(--ink); font-size: 14px; font-weight: 700; }
+.hear::before { content: ''; position: absolute; inset: -4px; }
+.hearPlaying { background: var(--yellow-soft); }
+.hear[data-state='error'] { box-shadow: inset 0 0 0 2px #D9798B; }
