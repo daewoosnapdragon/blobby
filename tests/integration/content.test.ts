@@ -52,11 +52,33 @@ describe('importContent', () => {
     await sql`update wp_questions set audio = ${sql.json({ 'Pick the plural.': 'u' })} where id = ${orig.id}`;
     const b = base();
     b.weeks[0].lessons[0].questions[0] = { type: 'pick_one', prompt: 'Pick the plural of cat.', choices: ['cats', 'cat'], answer: 0 };
-    await importContent(sql, parseContent(b));
+    // default: the app's version wins (R37)
+    const kept = await importContent(sql, parseContent(b));
+    expect(kept.differing).toBe(1);
+    const [same] = await sql`select payload from wp_questions where id = ${orig.id}`;
+    expect(same.payload.prompt).toBe('Pick the plural.');
+    // --overwrite: the file wins
+    const over = await importContent(sql, parseContent(b), { overwrite: true });
+    expect(over.differing).toBe(0);
     expect(await count('wp_questions')).toBe(3);
     const [q] = await sql`select payload, audio from wp_questions where id = ${orig.id}`;
     expect(q.payload.prompt).toBe('Pick the plural of cat.');
     expect(q.audio).toEqual({ 'Pick the plural.': 'u' }); // refreshed by the audio step, not the DB step
+  });
+
+  it('never overwrites a teacher edit by default, but still inserts new positions', async () => {
+    const [orig] = await sql`select id from wp_questions where position = 1 and type = 'pick_one' and deleted_at is null order by id limit 1`;
+    await sql`update wp_questions set payload = ${sql.json({ prompt: 'Teacher wrote this.', choices: ['x', 'y'], answer: 1 })} where id = ${orig.id}`;
+    const b = base();
+    b.weeks[0].lessons[1].questions.push({ type: 'pick_one', prompt: 'Brand new?', choices: ['a', 'b'], answer: 0 });
+    const r = await importContent(sql, parseContent(b));
+    expect(r.differing).toBeGreaterThanOrEqual(1);
+    const [q] = await sql`select payload from wp_questions where id = ${orig.id}`;
+    expect(q.payload.prompt).toBe('Teacher wrote this.');
+    expect((await sql`select 1 from wp_questions where payload->>'prompt' = 'Brand new?'`).length).toBe(1);
+    // restore for the tests below
+    await importContent(sql, parseContent(base()), { overwrite: true });
+    await sql`delete from wp_questions where payload->>'prompt' = 'Brand new?'`;
   });
 
   it('inserts fresh after a soft delete and writes nothing when validation fails', async () => {

@@ -1,4 +1,4 @@
-// Usage: npx tsx scripts/import-content.ts <content.json> [--dry-run] [--no-audio]
+// Usage: npx tsx scripts/import-content.ts <content.json> [--dry-run] [--no-audio] [--overwrite]
 // Needs DATABASE_URL; audio also needs SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, OPENAI_API_KEY.
 import fs from 'node:fs';
 import postgres from 'postgres';
@@ -10,8 +10,9 @@ async function main() {
   const args = process.argv.slice(2);
   const dryRun = args.includes('--dry-run');
   const noAudio = args.includes('--no-audio');
+  const overwrite = args.includes('--overwrite');
   const file = args.find((a) => !a.startsWith('--'));
-  if (!file) throw new Error('Usage: tsx scripts/import-content.ts <content.json> [--dry-run] [--no-audio]');
+  if (!file) throw new Error('Usage: tsx scripts/import-content.ts <content.json> [--dry-run] [--no-audio] [--overwrite]');
 
   const content = parseContent(JSON.parse(fs.readFileSync(file, 'utf8')));
   const nQ = content.weeks.flatMap((w) => w.lessons).reduce((n, l) => n + l.questions.length, 0);
@@ -25,8 +26,9 @@ async function main() {
   const deps = noAudio ? null : await defaultAudioDeps(); // fail early on missing keys, before writing
   const sql = postgres(url, { ...pgOptions, max: 1, onnotice: () => {} });
   try {
-    const r = await importContent(sql, content);
+    const r = await importContent(sql, content, { overwrite });
     console.log(`plan "${content.plan.title}": weeks ${r.weeks}, lessons ${r.lessons}, questions ${r.questions}`);
+    if (r.differing > 0) console.log(`${r.differing} questions differ from the file; kept the app's version (use --overwrite to replace them)`);
     if (deps) {
       let updated = 0;
       for (const it of r.items) {

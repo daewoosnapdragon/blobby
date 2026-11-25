@@ -15,7 +15,8 @@ export interface TtsProvider {
 const openaiProvider: TtsProvider = {
   async synthesize(text, { voice, model }) {
     const { default: OpenAI } = await import('openai');
-    const client = new OpenAI(); // reads OPENAI_API_KEY
+    // reads OPENAI_API_KEY. Short timeout and one retry: the SDK default (10 minutes, 2 retries) would hang an editor save.
+    const client = new OpenAI({ timeout: 15_000, maxRetries: 1 });
     const res = await client.audio.speech.create({ model, voice, input: text, response_format: 'mp3' });
     return Buffer.from(await res.arrayBuffer());
   },
@@ -47,13 +48,44 @@ export async function defaultAudioDeps(): Promise<AudioDeps> {
   return { storage: await getAudioStorage(), synthesize, voice: ttsVoice() };
 }
 
-/** Maps every spoken string to its public URL, synthesizing only keys missing from storage. */
-export async function ensureAudio(q: Question, deps: AudioDeps): Promise<Record<string, string>> {
-  const out: Record<string, string> = {};
-  for (const text of spokenStrings(q)) {
-    const key = audioKey(text, deps.voice);
-    if (!(await deps.storage.exists(key))) await deps.storage.upload(key, await deps.synthesize(text));
-    out[text] = deps.storage.publicUrl(key);
+export interface EnsureOptions {
+  /** overall deadline in ms: past it, ensureAudio rejects with AudioTimeoutError and starts no new work (the editor uses this) */
+  timeoutMs?: number;
+  /** strings handled at once (default 4) */
+  concurrency?: number;
+}
+
+export class AudioTimeoutError extends Error {
+  constructor() { super('Audio took too long'); }
+}
+
+/** Maps every spoken string to its public URL, synthesizing only keys missing from storage, a few at a time. */
+export async function ensureAudio(q: Question, deps: AudioDeps, opts: EnsureOptions = {}): Promise<Record<string, string>> {
+  const texts = spokenStrings(q);
+  const urls = new Map<string, string>();
+  let stopped = false;
+  let next = 0;
+  async function worker() {
+    while (!stopped && next < texts.length) {
+      const text = texts[next++];
+      const key = audioKey(text, deps.voice);
+      if (!(await deps.storage.exists(key))) await deps.storage.upload(key, await deps.synthesize(text));
+      urls.set(text, deps.storage.publicUrl(key));
+    }
   }
-  return out;
+  const run = Promise.all(Array.from({ length: Math.min(opts.concurrency ?? 4, texts.length) }, worker)).then(() => undefined);
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    await (opts.timeoutMs === undefined ? run : Promise.race([
+      run,
+      new Promise<never>((_, reject) => { timer = setTimeout(() => { stopped = true; reject(new AudioTimeoutError()); }, opts.timeoutMs); }),
+    ]));
+  } catch (e) {
+    stopped = true;
+    run.catch(() => undefined); // a late failure after the deadline is not an unhandled rejection
+    throw e;
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+  return Object.fromEntries(texts.map((t) => [t, urls.get(t)!]));
 }

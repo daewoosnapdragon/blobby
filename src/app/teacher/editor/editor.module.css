@@ -81,3 +81,4 @@
   .preview { position: sticky; top: 16px; }
   .frame { margin: 12px 0 0; }
 }
+.noAudio { align-self: flex-start; padding: 2px 10px; border-radius: 999px; background: var(--yellow-soft); font-size: 13px; font-weight: 700; }

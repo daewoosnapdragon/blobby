@@ -25,8 +25,8 @@ function previewQuestions(d: Draft): NonWatchQuestion[] {
   return out;
 }
 
-export function QuestionForm({ lessonId, position, initial, isNew, cancelHref, previewSrc }: {
-  lessonId: string; position: number; initial: Draft; isNew: boolean; cancelHref: string; previewSrc?: string;
+export function QuestionForm({ lessonId, questionId, position, initial, isNew, cancelHref, previewSrc }: {
+  lessonId: string; /** the question being edited; none when adding */ questionId?: string; /** shown in the title only */ position: number; initial: Draft; isNew: boolean; cancelHref: string; previewSrc?: string;
 }) {
   const [draft, setDraft] = useState<Draft>(initial);
   const [state, action, pending] = useActionState(saveQuestionAction, null);
@@ -36,7 +36,7 @@ export function QuestionForm({ lessonId, position, initial, isNew, cancelHref, p
     <div className={s.workspace}>
       <form action={action} className={`${t.card} ${s.form}`} aria-labelledby="form-title">
         <input type="hidden" name="lessonId" value={lessonId} />
-        <input type="hidden" name="position" value={position} />
+        <input type="hidden" name="questionId" value={questionId ?? ''} />
         <input type="hidden" name="type" value={draft.type} />
         <input type="hidden" name="draft" value={JSON.stringify(draft)} />
         <h2 id="form-title" className={t.h2}>{isNew ? 'New question' : `Edit question ${position}`}: {TYPE_NAMES[draft.type].toLowerCase()}</h2>

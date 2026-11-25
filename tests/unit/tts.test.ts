@@ -82,3 +82,23 @@ describe('ensureAudio', () => {
     expect(storage.uploaded).toEqual([]);
   });
 });
+
+describe('ensureAudio deadline and concurrency', () => {
+  const q = parseQuestion('pick_one', { prompt: 'Pick one.', choices: ['A', 'B'], answer: 0 });
+
+  it('rejects at the deadline and starts nothing new afterwards', async () => {
+    const storage = memStorage([]);
+    const synthesize = vi.fn((): Promise<Buffer> => new Promise(() => {})); // never answers
+    await expect(ensureAudio(q, { storage, synthesize, voice: 'nova' }, { timeoutMs: 30, concurrency: 1 })).rejects.toThrow(/too long/);
+    expect(synthesize).toHaveBeenCalledTimes(1);
+  });
+
+  it('runs several strings at once', async () => {
+    const storage = memStorage([]);
+    let live = 0, peak = 0;
+    const synthesize = vi.fn(async (t: string) => { live++; peak = Math.max(peak, live); await new Promise((r) => setTimeout(r, 15)); live--; return Buffer.from(t); });
+    const map = await ensureAudio(q, { storage, synthesize, voice: 'nova' });
+    expect(peak).toBe(3);
+    expect(Object.keys(map)).toEqual(['Pick one.', 'A', 'B']);
+  });
+});

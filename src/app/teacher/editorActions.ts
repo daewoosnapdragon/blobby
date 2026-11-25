@@ -16,17 +16,17 @@ const fail = (...problems: string[]): FormState => ({ ok: false, problems });
 export async function saveQuestionAction(_prev: FormState, formData: FormData): Promise<FormState> {
   await requireTeacher();
   const lessonId = String(formData.get('lessonId') ?? '');
-  const position = Number(formData.get('position'));
+  const questionId = String(formData.get('questionId') ?? '');
   const type = String(formData.get('type') ?? '');
   if (!UUID_RE.test(lessonId)) notFound();
-  if (!isQuestionType(type) || !Number.isInteger(position) || position < 1) return fail('Something went wrong with the form. Reload the page and try again.');
+  if (!isQuestionType(type)) return fail('Something went wrong with the form. Reload the page and try again.');
   let draft: Draft;
   try { draft = JSON.parse(String(formData.get('draft') ?? '')) as Draft; } catch { return fail('Something went wrong with the form. Reload the page and try again.'); }
   if (!draft || typeof draft !== 'object' || draft.type !== type) return fail('Something went wrong with the form. Reload the page and try again.');
 
   let audio: 'ok' | 'failed';
   try {
-    ({ audio } = await saveQuestion(lessonId, position, type, draftToPayload(draft)));
+    ({ audio } = await saveQuestion(lessonId, questionId ? { id: questionId } : {}, type, draftToPayload(draft)));
   } catch (e) {
     if (e instanceof EditorError) return fail(...e.problems);
     if (e instanceof NotFoundError) notFound();
@@ -42,7 +42,11 @@ export async function deleteQuestionAction(formData: FormData): Promise<void> {
   const lessonId = String(formData.get('lessonId') ?? '');
   const questionId = String(formData.get('questionId') ?? '');
   if (!UUID_RE.test(lessonId)) notFound();
-  try { await softDeleteQuestion(questionId); } catch (e) { if (e instanceof NotFoundError) notFound(); throw e; }
+  try { await softDeleteQuestion(questionId); } catch (e) {
+    if (e instanceof EditorError) redirect(`/teacher/editor/${lessonId}?problem=last`);
+    if (e instanceof NotFoundError) notFound();
+    throw e;
+  }
   revalidatePath(`/teacher/editor/${lessonId}`);
   revalidatePath('/teacher/plans');
   redirect(`/teacher/editor/${lessonId}?deleted=1`);

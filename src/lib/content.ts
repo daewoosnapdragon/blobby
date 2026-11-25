@@ -61,7 +61,11 @@ export function parseContent(raw: unknown): ContentFile {
 }
 
 export interface ImportedQuestion { id: string; question: Question; audio: Record<string, unknown> }
-export interface ImportResult { weeks: number; lessons: number; questions: number; items: ImportedQuestion[] }
+export interface ImportResult {
+  weeks: number; lessons: number; questions: number; items: ImportedQuestion[];
+  /** existing questions whose payload differs from the file and were left as they are in the app (always 0 with overwrite) */
+  differing: number;
+}
 
 function stable(v: unknown): string {
   if (Array.isArray(v)) return `[${v.map(stable).join(',')}]`;
@@ -72,8 +76,11 @@ function stable(v: unknown): string {
   return JSON.stringify(v);
 }
 
-/** One transaction. Unchanged content writes nothing. */
-export async function importContent(sql: postgres.Sql, c: ContentFile): Promise<ImportResult> {
+/**
+ * One transaction. Unchanged content writes nothing. A question the teacher edited in the app (payload differs
+ * from the file) keeps the app's version and is counted in `differing`, unless `overwrite` is set (R37).
+ */
+export async function importContent(sql: postgres.Sql, c: ContentFile, opts: { overwrite?: boolean } = {}): Promise<ImportResult> {
   return sql.begin(async (tx) => {
     const [cls] = await tx`select id from wp_classes where grade = ${c.assignTo.grade} order by name, id limit 1`;
     if (!cls) throw new Error(`No class for grade ${c.assignTo.grade}; import the roster first`);
@@ -86,6 +93,7 @@ export async function importContent(sql: postgres.Sql, c: ContentFile): Promise<
 
     const items: ImportedQuestion[] = [];
     let lessons = 0;
+    let differing = 0;
     for (const [wi, w] of c.weeks.entries()) {
       const [week] = await tx`
         insert into wp_weeks (plan_id, position, skill, opens_on) values (${plan.id}, ${wi + 1}, ${w.skill}, ${w.opensOn})
@@ -107,15 +115,22 @@ export async function importContent(sql: postgres.Sql, c: ContentFile): Promise<
               values (${lesson.id}, ${qi + 1}, ${type}, ${tx.json(payload as never)}) returning id`;
             items.push({ id: row.id, question: q, audio: {} });
           } else {
-            if (existing.type !== type || stable(existing.payload) !== stable(payload)) {
+            const differs = existing.type !== type || stable(existing.payload) !== stable(payload);
+            if (differs && opts.overwrite) {
               await tx`update wp_questions set type = ${type}, payload = ${tx.json(payload as never)}, updated_at = now()
                 where id = ${existing.id}`;
+              items.push({ id: existing.id, question: q, audio: existing.audio ?? {} });
+            } else if (differs) {
+              differing++;
+              try { items.push({ id: existing.id, question: parseQuestion(existing.type, existing.payload), audio: existing.audio ?? {} }); }
+              catch { /* the app's version is malformed: nothing to make audio for */ }
+            } else {
+              items.push({ id: existing.id, question: q, audio: existing.audio ?? {} });
             }
-            items.push({ id: existing.id, question: q, audio: existing.audio ?? {} });
           }
         }
       }
     }
-    return { weeks: c.weeks.length, lessons, questions: items.length, items };
+    return { weeks: c.weeks.length, lessons, questions: items.length, items, differing };
   });
 }

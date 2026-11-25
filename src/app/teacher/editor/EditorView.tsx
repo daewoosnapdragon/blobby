@@ -9,7 +9,7 @@ import { QuestionForm } from './QuestionForm';
 import t from '../teacher.module.css';
 import s from './editor.module.css';
 
-export type EditorBanner = 'saved' | 'noaudio' | 'deleted' | null;
+export type EditorBanner = 'saved' | 'noaudio' | 'deleted' | 'last' | null;
 
 function summary(q: Question): string {
   switch (q.type) {
@@ -43,6 +43,7 @@ export function EditorView({ data, edit, add, banner, previewSrc }: {
       <div role="status" aria-live="polite">
         {banner === 'saved' ? <p className={`${s.banner} ${s.ok}`}>Saved. Audio is ready.</p> : null}
         {banner === 'noaudio' ? <p className={`${s.banner} ${s.warn}`}>Saved. Audio couldn&rsquo;t be made, so Hear it will be quiet for this question.</p> : null}
+        {banner === 'last' ? <p className={`${s.banner} ${s.warn}`}>A lesson needs at least one question. Add another one first, then delete this one.</p> : null}
         {banner === 'deleted' ? <p className={`${s.banner} ${s.ok}`}>Deleted. Kids won&rsquo;t see it any more.</p> : null}
       </div>
 
@@ -57,6 +58,7 @@ export function EditorView({ data, edit, add, banner, previewSrc }: {
                   <span className={s.typeTag}>{isQuestionType(q.type) ? TYPE_NAMES[q.type] : q.type}</span>
                   {q.question ? <span className={s.qText}>{summary(q.question)}</span>
                     : <span className={`${s.qText} ${s.broken}`}>This question has a problem and kids skip it. Delete it and add it again.</span>}
+                  {q.audioMissing ? <span className={s.noAudio}>No audio yet. Open Edit and save again to try.</span> : null}
                 </span>
                 <span className={s.qActions}>
                   {q.question ? <Link href={`${base}?edit=${q.id}#form`} className={s.editLink} aria-label={`Edit question ${i + 1}`}>Edit</Link> : null}
@@ -81,7 +83,7 @@ export function EditorView({ data, edit, add, banner, previewSrc }: {
 
       <div id="form" className={s.formAnchor}>
         {editing?.question ? (
-          <QuestionForm key={`${editing.id}`} lessonId={data.lesson.id} position={editing.position} initial={draftFromQuestion(editing.question)} isNew={false} cancelHref={base} previewSrc={previewSrc} />
+          <QuestionForm key={`${editing.id}`} lessonId={data.lesson.id} questionId={editing.id} position={editing.position} initial={draftFromQuestion(editing.question)} isNew={false} cancelHref={base} previewSrc={previewSrc} />
         ) : adding ? (
           <QuestionForm key={`new-${adding}`} lessonId={data.lesson.id} position={nextPosition} initial={emptyDraft(adding)} isNew cancelHref={base} previewSrc={previewSrc} />
         ) : null}

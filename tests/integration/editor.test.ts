@@ -43,7 +43,7 @@ describe('saveQuestion', () => {
   it('creates a question at the next position and makes audio for its text', async () => {
     const { saveQuestion } = await import('@/lib/db/teacher');
     const a = fakeAudio();
-    const r = await saveQuestion(LESSON, 3, 'pick_one', pick('Which is yesterday?'), { audio: a.deps });
+    const r = await saveQuestion(LESSON, {}, 'pick_one', pick('Which is yesterday?'), { audio: a.deps });
     expect(r.audio).toBe('ok');
     const [row] = await sql`select position, type, payload from wp_questions where id = ${r.id}`;
     expect(row.position).toBe(3);
@@ -59,7 +59,7 @@ describe('saveQuestion', () => {
   it('puts a new question after the last one whatever position it is given', async () => {
     const { saveQuestion } = await import('@/lib/db/teacher');
     const a = fakeAudio();
-    const r = await saveQuestion(LESSON, 99, 'pick_one', pick('Another one?'), { audio: a.deps });
+    const r = await saveQuestion(LESSON, {}, 'pick_one', pick('Another one?'), { audio: a.deps });
     const [row] = await sql`select position from wp_questions where id = ${r.id}`;
     const [{ max }] = await sql`select max(position) from wp_questions where lesson_id = ${LESSON} and deleted_at is null and id <> ${r.id}`;
     expect(row.position).toBe(max + 1);
@@ -68,17 +68,17 @@ describe('saveQuestion', () => {
   it('changed text makes a new audio key; unchanged text calls no synthesis', async () => {
     const { saveQuestion } = await import('@/lib/db/teacher');
     const a = fakeAudio();
-    const first = await saveQuestion(LESSON, 2, 'fill_blank', { before: 'Yesterday, we', after: 'pizza.', choices: ['eat', 'ate'], answer: 1 }, { audio: a.deps });
+    const first = await saveQuestion(LESSON, { id: PLAN.questions.q2.id }, 'fill_blank', { before: 'Yesterday, we', after: 'pizza.', choices: ['eat', 'ate'], answer: 1 }, { audio: a.deps });
     expect(first.id).toBe(PLAN.questions.q2.id); // saved in place
     const calls = a.synthesize.mock.calls.length;
     const before = await audioOf(first.id);
 
     // same text again: nothing is synthesized
-    await saveQuestion(LESSON, 2, 'fill_blank', { before: 'Yesterday, we', after: 'pizza.', choices: ['eat', 'ate'], answer: 1 }, { audio: a.deps });
+    await saveQuestion(LESSON, { id: PLAN.questions.q2.id }, 'fill_blank', { before: 'Yesterday, we', after: 'pizza.', choices: ['eat', 'ate'], answer: 1 }, { audio: a.deps });
     expect(a.synthesize.mock.calls.length).toBe(calls);
 
     // one word changed: only the new strings are synthesized, and the map has the new key
-    await saveQuestion(LESSON, 2, 'fill_blank', { before: 'Yesterday, we', after: 'pizza.', choices: ['eat', 'ate', 'eaten'], answer: 1 }, { audio: a.deps });
+    await saveQuestion(LESSON, { id: PLAN.questions.q2.id }, 'fill_blank', { before: 'Yesterday, we', after: 'pizza.', choices: ['eat', 'ate', 'eaten'], answer: 1 }, { audio: a.deps });
     expect(a.synthesize.mock.calls.slice(calls).map((c) => c[0])).toEqual(['eaten']);
     const after = await audioOf(first.id);
     expect(after.eaten).toBe(`https://audio.test/${audioKey('eaten', VOICE)}.mp3`);
@@ -94,7 +94,7 @@ describe('saveQuestion', () => {
       values (${STUDENTS.leo.id}, ${id}, '00000000-0000-4000-8000-00000000b001', true, 'lesson')`;
     const [{ updated_at: t0 }] = await sql`select updated_at from wp_questions where id = ${id}`;
     await new Promise((r) => setTimeout(r, 15));
-    const r = await saveQuestion(LESSON, 1, 'pick_one', pick('Which one is about yesterday?', ['I walk to school.', 'I walked to school.']), { audio: a.deps });
+    const r = await saveQuestion(LESSON, { id }, 'pick_one', pick('Which one is about yesterday?', ['I walk to school.', 'I walked to school.']), { audio: a.deps });
     expect(r.id).toBe(id);
     const [{ updated_at: t1 }] = await sql`select updated_at from wp_questions where id = ${id}`;
     expect(+t1).toBeGreaterThan(+t0);
@@ -105,7 +105,7 @@ describe('saveQuestion', () => {
     const { saveQuestion, EditorError } = await import('@/lib/db/teacher');
     const a = fakeAudio();
     const [{ n }] = await sql`select count(*)::int as n from wp_questions`;
-    const err = await saveQuestion(LESSON, 1, 'pick_one', { prompt: '', choices: ['only one'], answer: 0 }, { audio: a.deps }).catch((e) => e);
+    const err = await saveQuestion(LESSON, {}, 'pick_one', { prompt: '', choices: ['only one'], answer: 0 }, { audio: a.deps }).catch((e) => e);
     expect(err).toBeInstanceOf(EditorError);
     expect(err.problems.join(' | ')).toMatch(/Prompt/);
     expect(err.problems.join(' | ')).toMatch(/at least 2 choices/i);
@@ -121,22 +121,22 @@ describe('saveQuestion', () => {
       synthesize: async () => { throw new Error('TTS retired'); },
       storage: { exists: async () => false, upload: async () => {}, publicUrl: () => 'x' },
     });
-    const r = await saveQuestion(LESSON, 3, 'pick_one', pick('Saved without sound?'), { audio: broken });
+    const r = await saveQuestion(LESSON, {}, 'pick_one', pick('Saved without sound?'), { audio: broken });
     expect(r.audio).toBe('failed');
     const [row] = await sql`select payload from wp_questions where id = ${r.id}`;
     expect(row.payload.prompt).toBe('Saved without sound?');
     // not configured at all (no deps given, no Supabase env): same outcome
-    const r2 = await saveQuestion(LESSON, 3, 'pick_one', pick('No env either?'));
+    const r2 = await saveQuestion(LESSON, {}, 'pick_one', pick('No env either?'));
     expect(r2.audio).toBe('failed');
   });
 
   it('keeps the old audio of strings that did not change when audio fails', async () => {
     const { saveQuestion } = await import('@/lib/db/teacher');
     const a = fakeAudio();
-    const first = await saveQuestion(LESSON, 3, 'pick_one', pick('Keep my sound?'), { audio: a.deps });
+    const first = await saveQuestion(LESSON, {}, 'pick_one', pick('Keep my sound?'), { audio: a.deps });
     const old = await audioOf(first.id);
     const broken = async () => ({ voice: VOICE, synthesize: async () => { throw new Error('down'); }, storage: { exists: async () => false, upload: async () => {}, publicUrl: () => 'x' } });
-    await saveQuestion(LESSON, 3, 'pick_one', pick('Keep my sound?', ['I walk.', 'I walked.', 'I walking.']), { audio: broken });
+    await saveQuestion(LESSON, { id: first.id }, 'pick_one', pick('Keep my sound?', ['I walk.', 'I walked.', 'I walking.']), { audio: broken });
     // the id is the new question's position, so re-find it
     const [row] = await sql`select id, audio from wp_questions where id = ${first.id}`;
     expect(row.audio['Keep my sound?']).toBe(old['Keep my sound?']);
@@ -152,7 +152,7 @@ describe('watch_answer video check', () => {
   it('stores the parsed id when the video can be embedded', async () => {
     const { saveQuestion } = await import('@/lib/db/teacher');
     stub(200);
-    const r = await saveQuestion(LESSON, 9, 'watch_answer', { youtubeId: `https://youtu.be/${ID}?t=3`, questions: inner.map((q) => ({ type: 'pick_one', ...q })) }, { audio: fakeAudio().deps });
+    const r = await saveQuestion(LESSON, {}, 'watch_answer', { youtubeId: `https://youtu.be/${ID}?t=3`, questions: inner.map((q) => ({ type: 'pick_one', ...q })) }, { audio: fakeAudio().deps });
     const [row] = await sql`select payload from wp_questions where id = ${r.id}`;
     expect(row.payload.youtubeId).toBe(ID);
   });
@@ -164,7 +164,7 @@ describe('watch_answer video check', () => {
   ])('rejects with a readable message (status %s)', async (status, msg) => {
     const { saveQuestion, EditorError } = await import('@/lib/db/teacher');
     stub(status);
-    const err = await saveQuestion(LESSON, 9, 'watch_answer', { youtubeId: ID, questions: inner.map((q) => ({ type: 'pick_one', ...q })) }, { audio: fakeAudio().deps }).catch((e) => e);
+    const err = await saveQuestion(LESSON, {}, 'watch_answer', { youtubeId: ID, questions: inner.map((q) => ({ type: 'pick_one', ...q })) }, { audio: fakeAudio().deps }).catch((e) => e);
     expect(err).toBeInstanceOf(EditorError);
     expect(err.problems.join(' ')).toMatch(msg);
   });
@@ -172,7 +172,7 @@ describe('watch_answer video check', () => {
   it('rejects a link that is not YouTube and never calls the network', async () => {
     const { saveQuestion } = await import('@/lib/db/teacher');
     const f = vi.fn(); vi.stubGlobal('fetch', f);
-    const err = await saveQuestion(LESSON, 9, 'watch_answer', { youtubeId: 'https://example.com/x', questions: inner.map((q) => ({ type: 'pick_one', ...q })) }, { audio: fakeAudio().deps }).catch((e) => e);
+    const err = await saveQuestion(LESSON, {}, 'watch_answer', { youtubeId: 'https://example.com/x', questions: inner.map((q) => ({ type: 'pick_one', ...q })) }, { audio: fakeAudio().deps }).catch((e) => e);
     expect(err.problems.join(' ')).toMatch(/YouTube link/);
     expect(f).not.toHaveBeenCalled();
   });
@@ -281,5 +281,121 @@ describe('Review Focus 4: deleting or editing a question kids already answered',
     const { getEditorLesson } = await import('@/lib/db/teacher');
     const d = (await getEditorLesson(LESSON2))!;
     expect(d.questions.map((q) => q.id)).toEqual([Q4]);
+  });
+});
+
+describe('R35: edits are addressed by question id', () => {
+  const L2 = PLAN.lessons.locked.id;
+  const L3 = PLAN.lessons.final.id;
+  const text = async (id: string) => (await sql<{ payload: { prompt: string } }[]>`select payload from wp_questions where id = ${id}`)[0].payload.prompt;
+
+  it('rejects a stale edit of a deleted question and one that belongs to another lesson', async () => {
+    const { saveQuestion, softDeleteQuestion, EditorError, DELETED_MESSAGE } = await import('@/lib/db/teacher');
+    const a = fakeAudio();
+    const extra = await saveQuestion(L2, {}, 'pick_one', pick('Soon gone?'), { audio: a.deps });
+    await softDeleteQuestion(extra.id);
+    const err = await saveQuestion(L2, { id: extra.id }, 'pick_one', pick('Stale form'), { audio: a.deps }).catch((e) => e);
+    expect(err).toBeInstanceOf(EditorError);
+    expect(err.problems).toEqual([DELETED_MESSAGE]);
+    expect(await text(extra.id)).toBe('Soon gone?');
+    const other = await saveQuestion(L2, { id: PLAN.questions.q1.id }, 'pick_one', pick('Wrong lesson'), { audio: a.deps }).catch((e) => e);
+    expect(other).toBeInstanceOf(EditorError);
+    expect(await text(PLAN.questions.q1.id)).toBe('Which one is about yesterday?');
+  });
+
+  it('two concurrent adds get different positions and both survive', async () => {
+    const { saveQuestion } = await import('@/lib/db/teacher');
+    const a = fakeAudio();
+    const [r1, r2] = await Promise.all([
+      saveQuestion(L3, {}, 'pick_one', pick('Add one?'), { audio: a.deps }),
+      saveQuestion(L3, {}, 'pick_one', pick('Add two?'), { audio: a.deps }),
+    ]);
+    const rows = await sql<{ id: string; position: number }[]>`select id, position from wp_questions where lesson_id = ${L3} and deleted_at is null order by position`;
+    expect(rows.map((r) => r.id)).toEqual(expect.arrayContaining([r1.id, r2.id]));
+    expect(new Set(rows.map((r) => r.position)).size).toBe(rows.length);
+  });
+
+  it('an edit never touches another question', async () => {
+    const { saveQuestion } = await import('@/lib/db/teacher');
+    const a = fakeAudio();
+    const before = await sql`select id, payload, updated_at from wp_questions where lesson_id = ${L3} order by id`;
+    const target = before[1];
+    await saveQuestion(L3, { id: target.id }, 'pick_one', pick('Only me?'), { audio: a.deps });
+    const after = await sql`select id, payload, updated_at from wp_questions where lesson_id = ${L3} order by id`;
+    for (let i = 0; i < before.length; i++) {
+      if (before[i].id === target.id) expect(after[i].payload.prompt).toBe('Only me?');
+      else expect(after[i]).toEqual(before[i]);
+    }
+  });
+});
+
+describe('R36: audio deadline, ordering, video check, last question', () => {
+  const L4 = PLAN.lessons.later.id;
+
+  it('a voice service that never answers still gives a saved question with the audio-failed flag', async () => {
+    const { saveQuestion, getEditorLesson } = await import('@/lib/db/teacher');
+    const hung = async () => ({
+      voice: VOICE, synthesize: () => new Promise<Buffer>(() => {}),
+      storage: { exists: async () => false, upload: async () => {}, publicUrl: () => 'x' },
+    });
+    const t0 = Date.now();
+    const r = await saveQuestion(L4, {}, 'pick_one', pick('Too slow?'), { audio: hung, audioTimeoutMs: 60 });
+    expect(Date.now() - t0).toBeLessThan(3000);
+    expect(r.audio).toBe('failed');
+    expect((await sql`select 1 from wp_questions where id = ${r.id}`).length).toBe(1);
+    const row = (await getEditorLesson(L4))!.questions.find((q) => q.id === r.id)!;
+    expect(row.audioMissing).toBe(true);
+  });
+
+  it('marks audioMissing only until a save makes the audio', async () => {
+    const { saveQuestion, getEditorLesson } = await import('@/lib/db/teacher');
+    const first = (await getEditorLesson(L4))!.questions.find((q) => q.audioMissing)!;
+    const a = fakeAudio();
+    await saveQuestion(L4, { id: first.id }, first.type as 'pick_one', { prompt: 'Too slow?', choices: ['I walk.', 'I walked.'], answer: 1 }, { audio: a.deps });
+    expect((await getEditorLesson(L4))!.questions.find((q) => q.id === first.id)!.audioMissing).toBe(false);
+  });
+
+  it('an older, slower save cannot overwrite the audio of a newer one', async () => {
+    const { saveQuestion } = await import('@/lib/db/teacher');
+    const id = PLAN.questions.q2.id;
+    let release!: () => void;
+    const gate = new Promise<void>((r) => { release = r; });
+    const files = new Set<string>();
+    const storage = { exists: async (k: string) => files.has(k), upload: async (k: string) => { files.add(k); }, publicUrl: (k: string) => `https://audio.test/${k}.mp3` };
+    const started = vi.fn();
+    const slow = async () => ({ voice: VOICE, storage, synthesize: async (t: string) => { started(); await gate; return Buffer.from(t); } });
+    const older = saveQuestion(PLAN.lessons.one.id, { id }, 'pick_one', pick('Older prompt?'), { audio: slow });
+    await vi.waitFor(() => expect(started).toHaveBeenCalled());
+    await saveQuestion(PLAN.lessons.one.id, { id }, 'pick_one', pick('Newer prompt?'), { audio: fakeAudio().deps });
+    release();
+    await older;
+    const audio = await audioOf(id);
+    expect(audio['Newer prompt?']).toBeDefined();
+    expect(audio['Older prompt?']).toBeUndefined();
+  });
+
+  it('does not ask YouTube again when the video is unchanged', async () => {
+    const { saveQuestion } = await import('@/lib/db/teacher');
+    const ID = 'dQw4w9WgXcQ';
+    const f = vi.fn(async () => new Response('{}', { status: 200 }));
+    vi.stubGlobal('fetch', f);
+    const inner = (p: string) => [{ type: 'pick_one', ...pick(p) }];
+    const a = fakeAudio();
+    const made = await saveQuestion(L4, {}, 'watch_answer', { youtubeId: ID, questions: inner('First?') }, { audio: a.deps });
+    expect(f).toHaveBeenCalledTimes(1);
+    await saveQuestion(L4, { id: made.id }, 'watch_answer', { youtubeId: `https://youtu.be/${ID}`, questions: inner('Second?') }, { audio: a.deps });
+    expect(f).toHaveBeenCalledTimes(1);
+    await saveQuestion(L4, { id: made.id }, 'watch_answer', { youtubeId: 'aaaaaaaaaab', questions: inner('Second?') }, { audio: a.deps });
+    expect(f).toHaveBeenCalledTimes(2);
+  });
+
+  it('refuses to delete the last question of a lesson', async () => {
+    const { softDeleteQuestion, EditorError } = await import('@/lib/db/teacher');
+    const only = PLAN.questions.q4.id; // lesson two: q3 was deleted by the Review Focus tests
+    const err = await softDeleteQuestion(only).catch((e) => e);
+    expect(err).toBeInstanceOf(EditorError);
+    expect(err.problems).toEqual(['A lesson needs at least one question.']);
+    const [row] = await sql`select deleted_at from wp_questions where id = ${only}`;
+    expect(row.deleted_at).toBeNull();
   });
 });

@@ -201,6 +201,8 @@ export async function setWeek(weekId: string, input: { skill: string; opensOn: s
 
 export interface EditorQuestion {
   id: string; position: number; type: string;
+  /** a spoken string has no audio yet (the voice service failed on the last save): the list offers a retry */
+  audioMissing: boolean;
   /** null when the stored payload no longer passes validation: the list says so and offers Delete */
   question: Question | null;
 }
@@ -219,8 +221,8 @@ export async function getEditorLesson(lessonId: string): Promise<EditorLesson | 
     from wp_lessons l join wp_weeks w on w.id = l.week_id join wp_plans p on p.id = w.plan_id
     where l.id = ${lessonId}`;
   if (!row) return null;
-  const qs = await sql<{ id: string; position: number; type: string; payload: unknown }[]>`
-    select id, position, type, payload from wp_questions
+  const qs = await sql<{ id: string; position: number; type: string; payload: unknown; audio: unknown }[]>`
+    select id, position, type, payload, audio from wp_questions
     where lesson_id = ${lessonId} and deleted_at is null order by position, id`;
   return {
     lesson: { id: row.id, title: row.title, position: row.position },
@@ -229,13 +231,21 @@ export async function getEditorLesson(lessonId: string): Promise<EditorLesson | 
     questions: qs.map((q) => {
       let question: Question | null = null;
       try { question = parseQuestion(q.type, q.payload); } catch { /* shown as a problem in the list */ }
-      return { id: q.id, position: q.position, type: q.type, question };
+      const have = q.audio && typeof q.audio === 'object' ? (q.audio as Record<string, unknown>) : {};
+      const audioMissing = question ? spokenStrings(question).some((t) => typeof have[t] !== 'string' || !have[t]) : false;
+      return { id: q.id, position: q.position, type: q.type, audioMissing, question };
     }),
   };
 }
 
-export interface SaveDeps { audio?: () => Promise<AudioDeps> }
+export interface SaveDeps {
+  audio?: () => Promise<AudioDeps>;
+  /** overall audio deadline; default 20 s */
+  audioTimeoutMs?: number;
+}
 export interface SaveResult { id: string; audio: 'ok' | 'failed' }
+export const AUDIO_DEADLINE_MS = 20_000;
+export const DELETED_MESSAGE = 'This question was deleted. Reload the page.';
 
 const VIDEO_PROBLEM = {
   not_found: "Video: Blobby couldn't find that video. Check the link.",
@@ -243,18 +253,30 @@ const VIDEO_PROBLEM = {
   unreachable: "Video: Couldn't check the video right now. Try again.",
 } as const;
 
+// Compared as text so microseconds survive the round trip through JS dates.
+const versionSql = () => sql`to_char(updated_at at time zone 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US')`;
+
 /**
- * Saves one question. Validates first (EditorError with readable problems), writes the question, and only then makes
- * audio, best effort: if the voice service or Storage is unavailable the save still stands and `audio` is 'failed'.
- * An existing question at `position` is updated in place (same id, so attempts stay valid); otherwise the question
- * is added after the last one.
+ * Saves one question. With `target.id` that exact question is edited in place (it must belong to this lesson and not
+ * be deleted, else a readable EditorError), so attempts stay valid. Without it a question is added at the next
+ * position, computed while the lesson row is locked so concurrent adds get different positions.
+ * Validates first (EditorError with readable problems), writes the question, and only then makes audio, best effort:
+ * if the voice service is unavailable or slow the save still stands and `audio` is 'failed'.
  */
 export async function saveQuestion(
-  lessonId: string, position: number, type: string, payload: unknown, deps: SaveDeps = {},
+  lessonId: string, target: { id?: string }, type: string, payload: unknown, deps: SaveDeps = {},
 ): Promise<SaveResult> {
   if (!UUID_RE.test(lessonId)) throw new NotFoundError('lesson not found');
   const [lesson] = await sql`select id from wp_lessons where id = ${lessonId}`;
   if (!lesson) throw new NotFoundError('lesson not found');
+  if (target.id !== undefined && !UUID_RE.test(target.id)) throw new EditorError([DELETED_MESSAGE]);
+
+  let stored: { type: string; payload: unknown } | undefined;
+  if (target.id) {
+    [stored] = await sql<{ type: string; payload: unknown }[]>`
+      select type, payload from wp_questions where id = ${target.id} and lesson_id = ${lessonId} and deleted_at is null`;
+    if (!stored) throw new EditorError([DELETED_MESSAGE]);
+  }
 
   let body = payload;
   let videoId: string | null = null;
@@ -264,45 +286,61 @@ export async function saveQuestion(
   }
   const problems = questionProblems(type, body);
   if (problems.length) throw new EditorError(problems);
-  if (videoId) {
+  // An unchanged video was checked when it was saved; don't ask YouTube again on every edit of the inner questions.
+  const unchangedVideo = stored?.type === 'watch_answer' && (stored.payload as { youtubeId?: string } | null)?.youtubeId === videoId;
+  if (videoId && !unchangedVideo) {
     const check = await checkEmbeddable(videoId);
     if (!check.ok) throw new EditorError([check.reason === 'bad_url' ? 'Video: paste a YouTube link or the 11-character video id.' : VIDEO_PROBLEM[check.reason]]);
   }
   const q = parseQuestion(type, body);
-  const { type: t, ...stored } = q;
+  const { type: t, ...rest } = q;
 
-  const { id, previous } = await sql.begin(async (tx) => {
-    const [existing] = await tx<{ id: string; audio: unknown }[]>`
-      select id, audio from wp_questions
-      where lesson_id = ${lessonId} and position = ${position} and deleted_at is null order by updated_at desc limit 1`;
-    if (existing) {
-      await tx`update wp_questions set type = ${t}, payload = ${tx.json(stored as never)}, updated_at = now() where id = ${existing.id}`;
-      return { id: existing.id, previous: existing.audio };
+  const { id, previous, version } = await sql.begin(async (tx) => {
+    await tx`select id from wp_lessons where id = ${lessonId} for update`;
+    if (target.id) {
+      const [row] = await tx<{ id: string; audio: unknown; v: string }[]>`
+        update wp_questions set type = ${t}, payload = ${tx.json(rest as never)}, updated_at = now()
+        where id = ${target.id} and lesson_id = ${lessonId} and deleted_at is null
+        returning id, audio, ${versionSql()} as v`;
+      if (!row) throw new EditorError([DELETED_MESSAGE]);
+      return { id: row.id, previous: row.audio, version: row.v };
     }
     const [{ next }] = await tx<{ next: number }[]>`
       select coalesce(max(position), 0)::int + 1 as next from wp_questions where lesson_id = ${lessonId} and deleted_at is null`;
-    const [row] = await tx<{ id: string }[]>`
-      insert into wp_questions (lesson_id, position, type, payload) values (${lessonId}, ${next}, ${t}, ${tx.json(stored as never)}) returning id`;
-    return { id: row.id, previous: {} };
+    const [row] = await tx<{ id: string; v: string }[]>`
+      insert into wp_questions (lesson_id, position, type, payload) values (${lessonId}, ${next}, ${t}, ${tx.json(rest as never)})
+      returning id, ${versionSql()} as v`;
+    return { id: row.id, previous: {}, version: row.v };
   });
 
   let audio: Record<string, string>;
   let status: 'ok' | 'failed' = 'ok';
   try {
-    audio = await ensureAudio(q, await (deps.audio ?? defaultAudioDeps)());
+    audio = await ensureAudio(q, await (deps.audio ?? defaultAudioDeps)(), { timeoutMs: deps.audioTimeoutMs ?? AUDIO_DEADLINE_MS });
   } catch {
     // Keep sound for every string that is still spoken; a changed string simply has none until audio works again.
     const old = previous && typeof previous === 'object' ? (previous as Record<string, unknown>) : {};
     audio = Object.fromEntries(spokenStrings(q).filter((s) => typeof old[s] === 'string').map((s) => [s, old[s] as string]));
     status = 'failed';
   }
-  await sql`update wp_questions set audio = ${sql.json(audio as never)} where id = ${id}`;
+  // Only if nobody saved this question since: an older, slower save must not overwrite a newer one's audio.
+  await sql`update wp_questions set audio = ${sql.json(audio as never)} where id = ${id} and ${versionSql()} = ${version}`;
   return { id, audio: status };
 }
 
-/** Hides a question from the editor, lessons and free practice. The row and its attempts stay (stats still count them). */
+/**
+ * Hides a question from the editor, lessons and free practice. The row and its attempts stay (stats still count them).
+ * A lesson's last question can't be deleted: kids would be stranded on a lesson with nothing in it.
+ */
 export async function softDeleteQuestion(id: string): Promise<void> {
   if (!UUID_RE.test(id)) throw new NotFoundError('question not found');
-  const rows = await sql`update wp_questions set deleted_at = coalesce(deleted_at, now()) where id = ${id} returning id`;
-  if (rows.length === 0) throw new NotFoundError('question not found');
+  await sql.begin(async (tx) => {
+    const [q] = await tx<{ lesson_id: string; deleted_at: Date | null }[]>`select lesson_id, deleted_at from wp_questions where id = ${id}`;
+    if (!q) throw new NotFoundError('question not found');
+    if (q.deleted_at) return;
+    await tx`select id from wp_lessons where id = ${q.lesson_id} for update`;
+    const [{ n }] = await tx<{ n: number }[]>`select count(*)::int as n from wp_questions where lesson_id = ${q.lesson_id} and deleted_at is null`;
+    if (n <= 1) throw new EditorError(['A lesson needs at least one question.']);
+    await tx`update wp_questions set deleted_at = now() where id = ${id} and deleted_at is null`;
+  });
 }
