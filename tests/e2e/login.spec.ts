@@ -60,3 +60,16 @@ test('/join keeps characters typed before the page hydrates', async ({ page }) =
   await page.getByRole('button', { name: 'Next', exact: true }).click();
   await expect(page.getByRole('button', { name: 'Leo' })).toBeVisible();
 });
+
+test('"Different code" keeps the code visible and Next stays in step with the field', async ({ page }) => {
+  await page.goto('/join');
+  const input = page.getByLabel(/class code/i);
+  await input.fill(CLASS.code);
+  await page.getByRole('button', { name: 'Next', exact: true }).click();
+  await page.getByRole('button', { name: 'Leo' }).waitFor();
+  await page.getByRole('button', { name: 'Different code' }).click();
+  await expect(input).toHaveValue(CLASS.code);
+  await expect(page.getByRole('button', { name: 'Next', exact: true })).toBeEnabled();
+  await input.fill('AB');
+  await expect(page.getByRole('button', { name: 'Next', exact: true })).toBeDisabled();
+});

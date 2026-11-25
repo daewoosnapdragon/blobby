@@ -1,8 +1,10 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 import TeacherError from '@/app/teacher/error';
 import GlobalError from '@/app/global-error';
 import KidError from '@/app/(kid)/error';
+
+afterEach(() => { vi.restoreAllMocks(); });
 
 function err(digest?: string) {
   return Object.assign(new Error('boom'), digest ? { digest } : {});
@@ -30,7 +32,6 @@ describe('teacher error page', () => {
 
 describe('global error page', () => {
   it('renders its own html shell with a message, digest and Try again', () => {
-    vi.spyOn(console, 'error').mockImplementation(() => {});
     vi.spyOn(console, 'error').mockImplementation(() => {});
     const reset = vi.fn();
     // <html> inside a div is a React warning only; render the body content.

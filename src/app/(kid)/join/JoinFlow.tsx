@@ -119,6 +119,7 @@ export function JoinFlow() {
               id="code"
               className={styles.input}
               ref={inputRef}
+              defaultValue={code}
               onChange={syncCode}
               maxLength={6}
               autoCapitalize="characters"
