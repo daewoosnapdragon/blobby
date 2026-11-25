@@ -3,6 +3,8 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import { useState } from 'react';
 import { OfflineGate } from '@/components/ui/OfflineGate';
 import { MuteToggle } from '@/components/ui/MuteToggle';
+const refresh = vi.fn();
+vi.mock('next/navigation', () => ({ useRouter: () => ({ refresh }) }));
 import KidError from '@/app/(kid)/error';
 import Loading from '@/app/(kid)/loading';
 import { Blob } from '@/components/blob/Blob';
@@ -57,13 +59,14 @@ describe('OfflineGate', () => {
 });
 
 describe('kid error screen', () => {
-  it('shows a calm message with a Korean line, and Try again calls reset', () => {
+  it('shows a calm message with a Korean line, and Try again refreshes and resets', () => {
     vi.spyOn(console, 'error').mockImplementation(() => {});
     const reset = vi.fn();
     render(<KidError error={new Error('boom')} reset={reset} />);
     expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
     expect(document.querySelector('[lang="ko"]')).not.toBeNull();
     fireEvent.click(screen.getByRole('button', { name: /try again/i }));
+    expect(refresh).toHaveBeenCalled();
     expect(reset).toHaveBeenCalledTimes(1);
   });
 });
