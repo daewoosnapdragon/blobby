@@ -256,12 +256,24 @@ export async function setBlobColor(studentId: string, color: BlobColorKey): Prom
   await sql`update wp_students set blob_color = ${color} where id = ${studentId}`;
 }
 
+/**
+ * Star events that count toward a kid's total: those from plans assigned to that kid (their class or them).
+ * The one definition of "stars this break", shared by the kid's pill and the teacher view.
+ */
+export async function starEventsFor(studentIds: string[]): Promise<{ studentId: string; amount: number }[]> {
+  if (studentIds.length === 0) return [];
+  return sql<{ studentId: string; amount: number }[]>`
+    select e.student_id as "studentId", e.amount from wp_star_events e
+    where e.student_id = any(${studentIds}::uuid[])
+      and e.plan_id in (
+        select a.plan_id from wp_plan_assignments a
+        where a.student_id = e.student_id
+           or a.class_id = (select class_id from wp_students where id = e.student_id))`;
+}
+
 /** Stars from the kid's assigned plan(s): the number on the home pill and the treasure chest. */
 export async function totalStarsFor(studentId: string): Promise<number> {
-  const [{ total }] = await sql<{ total: number }[]>`
-    select coalesce(sum(amount), 0)::int as total from wp_star_events
-    where student_id = ${studentId} and plan_id in (${assignedTo(sql, studentId)})`;
-  return total;
+  return (await starEventsFor([studentId])).reduce((n, e) => n + e.amount, 0);
 }
 
 async function studentWithGrade(studentId: string) {

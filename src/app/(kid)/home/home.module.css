@@ -25,7 +25,7 @@
 .grow { flex-grow: 1; }
 .action { pointer-events: auto; }
 
-/* My winter plan. Phone: cards are 104px so the next one peeks in at 390px (the row visibly scrolls). */
+/* The plan rail. Phone: cards are 104px so the next one peeks in at 390px (the row visibly scrolls). */
 .plan { display: flex; flex-direction: column; gap: 12px; }
 .planHead { display: flex; justify-content: space-between; align-items: baseline; }
 .planTitle { margin: 0; font-size: 18px; font-weight: 800; }

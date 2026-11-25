@@ -37,12 +37,12 @@ function ThisWeek({ home, color }: { home: HomeData; color: BlobColorKey }) {
   const current = home.weeks.find((w) => w.id === home.currentWeekId);
   let tag: string, title: string, line: string, action: React.ReactNode = null, dots: React.ReactNode = null;
   if (!home.plan) {
-    tag = 'Winter practice';
+    tag = 'Practice';
     title = 'Your plan is on the way';
     line = 'Your teacher is getting your lessons ready.';
   } else if (!current) {
     const first = home.weeks[0];
-    tag = first ? `Week ${first.number} · coming up` : 'Winter practice';
+    tag = first ? `Week ${first.number} · coming up` : 'Practice';
     title = first?.skill ?? 'Your plan is on the way';
     line = first ? `${opensLabel(first.opensOn, seoulDate(new Date()))}. See you then!` : 'Your teacher is getting your lessons ready.';
   } else {
@@ -151,7 +151,7 @@ export default async function Home() {
             {home.weeks.length > 0 ? (
               <section className={styles.plan} aria-labelledby="plan-title">
                 <div className={styles.planHead}>
-                  <h2 id="plan-title" className={styles.planTitle}>My winter plan</h2>
+                  <h2 id="plan-title" className={styles.planTitle}>{home.plan.title}</h2>
                   <span className={styles.planCount}>{doneCount} of {home.weeks.length} weeks</span>
                 </div>
                 <Rail>

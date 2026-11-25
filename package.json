@@ -1,5 +1,5 @@
 {
-  "name": "winter-practice",
+  "name": "blobby",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -11,6 +11,7 @@
     "test:e2e": "playwright test --trace off"
   },
   "dependencies": {
+    "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.119.2",
     "next": "^15.5.29",
     "openai": "^7.64.0",
