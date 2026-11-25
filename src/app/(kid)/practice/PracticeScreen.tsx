@@ -4,7 +4,8 @@ import type { LessonQuestion } from '@/lib/db/kid';
 import { toBlobColor } from '@/lib/blobColors';
 import { STAR_VALUES } from '@/lib/stars';
 import { QuestionPlayer } from '@/components/questions/QuestionPlayer';
-import { useRecordAttempt } from '@/components/questions/useRecordAttempt';
+import { useRecordAttempt, type FailedSave } from '@/components/questions/useRecordAttempt';
+import { SaveRetry } from '@/components/questions/SaveRetry';
 import { usePracticePing } from '@/components/usePracticePing';
 import { WhoAreYouScreen } from '@/components/ui/KidProblems';
 import { PracticeDone } from './PracticeDone';
@@ -20,6 +21,9 @@ export function PracticeScreen({ student, questions }: { student: Student; quest
   const [phase, setPhase] = useState<'play' | 'done' | 'signedOut'>('play');
   const [earned, setEarned] = useState(0);
   const [saving, setSaving] = useState(0);
+  // First-try right answers whose save failed after every retry ("+1 star" already showed): tap to resend.
+  const [failed, setFailed] = useState<FailedSave[]>([]);
+  const [retrying, setRetrying] = useState(false);
 
   usePracticePing();
   const record = useRecordAttempt({
@@ -27,7 +31,17 @@ export function PracticeScreen({ student, questions }: { student: Student; quest
     studentId: student.id,
     onSignedOut: () => setPhase('signedOut'),
     onSaved: (r) => setEarned((n) => n + r.starsAwarded),
+    onFailed: (f) => { if (f.correct) setFailed((list) => [...list, f]); },
   });
+
+  async function retryFailed() {
+    setRetrying(true);
+    const results = await Promise.all(failed.map(async (f) => ((await f.retry()) ? null : f)));
+    const stillFailed = results.filter((f): f is FailedSave => f !== null);
+    setFailed((list) => [...stillFailed, ...list.filter((f) => !failed.includes(f))]);
+    setRetrying(false);
+  }
+  const retryNote = <SaveRetry failed={failed} onRetry={() => void retryFailed()} busy={retrying} />;
 
   function onAnswer(...args: Parameters<typeof record>) {
     setSaving((n) => n + 1);
@@ -38,18 +52,26 @@ export function PracticeScreen({ student, questions }: { student: Student; quest
   const color = toBlobColor(student.blobColor);
   const stars = student.totalStars + earned;
   if (phase === 'done') {
-    return <PracticeDone name={student.displayName} color={color} stars={stars} earned={earned} saving={saving > 0} />;
+    return (
+      <>
+        <PracticeDone name={student.displayName} color={color} stars={stars} earned={earned} saving={saving > 0 || retrying} />
+        {retryNote}
+      </>
+    );
   }
   return (
-    <QuestionPlayer
-      questions={questions}
-      onAnswer={onAnswer}
-      onFinish={() => setPhase('done')}
-      blobColor={color}
-      stars={stars}
-      autoRead={student.grade <= 2}
-      answerStars={STAR_VALUES.freeCorrect}
-      closeLabel="Close practice"
-    />
+    <>
+      <QuestionPlayer
+        questions={questions}
+        onAnswer={onAnswer}
+        onFinish={() => setPhase('done')}
+        blobColor={color}
+        stars={stars}
+        autoRead={student.grade <= 2}
+        answerStars={STAR_VALUES.freeCorrect}
+        closeLabel="Close practice"
+      />
+      {retryNote}
+    </>
   );
 }

@@ -104,3 +104,37 @@ test('before any week opens, home shows a calm disabled card and /practice is fr
     await sql`update wp_weeks set opens_on = '2026-01-01' where id = ${PLAN.weeks.open.id}`;
   }
 });
+
+test('a right answer that could not be saved offers a tap to try again, with the same attempt id', async ({ page }) => {
+  await page.goto(`/s/${leo.secret}`);
+  const base = await leoStars();
+  await page.goto('/practice');
+  await expect(page.getByRole('progressbar', { name: 'Question 1 of 4' })).toBeVisible();
+
+  let offline = true;
+  const ids: string[] = [];
+  await page.route('**/api/attempt', async (route) => {
+    ids.push(JSON.parse(route.request().postData() ?? '{}').clientAttemptId);
+    if (offline) await route.abort('internetdisconnected');
+    else await route.continue();
+  });
+
+  await buttonFor(page, RIGHT).first().click();
+  await expect(page.getByRole('status')).toContainText('+1 star');
+  const retry = page.getByRole('button', { name: 'Couldn’t save that one. Tap to try again' });
+  await expect(retry).toBeVisible({ timeout: 10_000 }); // after the automatic retries
+  expect(ids).toHaveLength(4);
+  const [{ n }] = await sql<{ n: number }[]>`select count(*)::int as n from wp_attempts where student_id = ${leo.id} and context = 'free'`;
+  expect(n).toBe(0);
+
+  // it never blocks moving on
+  await page.getByRole('button', { name: 'Next', exact: true }).click();
+  await expect(page.getByRole('progressbar', { name: 'Question 2 of 4' })).toBeVisible();
+
+  offline = false;
+  await retry.click();
+  await expect(retry).toHaveCount(0);
+  await expect(starPill(page, base + 1)).toBeVisible();
+  expect(new Set(ids).size).toBe(1); // every send, including the tap, used one clientAttemptId
+  expect(await leoStars()).toBe(base + 1);
+});
