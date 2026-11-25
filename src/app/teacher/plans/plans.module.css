@@ -1,0 +1,33 @@
+.classBlock { margin-top: 32px; }
+.planTitle { margin: 0 0 4px; font-size: 17px; font-weight: 700; color: var(--muted); }
+.weeks { list-style: none; margin: 0; padding: 0; }
+.week { padding: 20px 0; border-bottom: 1px solid #F0EAE3; }
+.week:last-child { border-bottom: none; padding-bottom: 4px; }
+
+.weekForm { display: grid; grid-template-columns: 1fr; gap: 12px; align-items: end; }
+.weekNum { margin: 0; font-size: 18px; font-weight: 800; }
+.field { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.field label { color: var(--muted); font-size: 14px; font-weight: 700; }
+.field input { min-height: 44px; padding: 0 16px; border: 2px solid #E6DFD7; border-radius: 16px; background: var(--card); font: inherit; font-size: 16px; color: var(--ink); min-width: 0; }
+.field input:focus-visible { outline: 3px solid var(--blue); outline-offset: 1px; }
+.dateRow { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.dateRow input { flex: 0 1 190px; }
+.weekday { min-width: 6ch; font-weight: 800; font-size: 16px; }
+.status { min-height: 0; font-size: 15px; font-weight: 700; }
+.saved { color: #1E6B4E; }
+.problems { margin: 0; padding: 0; list-style: none; color: #B3374B; }
+
+.lessons { list-style: none; margin: 14px 0 0; padding: 0; display: grid; grid-template-columns: 1fr; gap: 8px; }
+.lesson { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; min-height: 52px; padding: 8px 16px; border-radius: 18px; background: var(--bg); color: var(--ink); text-decoration: none; }
+.lesson:hover { background: #F0EAE3; }
+.lesson:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+.lessonTitle { font-weight: 800; flex: 1 1 140px; }
+.count { color: var(--muted); font-size: 14px; font-variant-numeric: tabular-nums; }
+.edit { font-size: 14px; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+
+@media (min-width: 900px) {
+  .weekForm { grid-template-columns: 80px minmax(0, 1fr) auto auto; gap: 16px; }
+  .weekNum { align-self: center; padding-top: 20px; }
+  .status { grid-column: 2 / -1; }
+  .lessons { grid-template-columns: 1fr 1fr; }
+}

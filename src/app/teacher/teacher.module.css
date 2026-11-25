@@ -1,8 +1,13 @@
 /* Calmer than the kid screens: same tokens and fonts, laptop first, usable on a phone. */
 .shell { min-height: 100vh; }
-.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; max-width: 1040px; margin: 0 auto; padding: 20px 16px 8px; }
+.top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; max-width: 1040px; margin: 0 auto; padding: 20px 16px 8px; }
 .brand { font-size: 20px; font-weight: 800; color: var(--ink); text-decoration: none; }
 .brand span { color: var(--muted); font-weight: 500; }
+.nav { display: flex; gap: 4px; margin-left: auto; }
+.nav a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border-radius: 999px; color: var(--muted); font-weight: 700; text-decoration: none; }
+.nav a:hover { color: var(--ink); background: var(--card); }
+.nav a[aria-current='page'] { color: var(--ink); background: var(--card); }
+.nav a:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
 .main { max-width: 1040px; margin: 0 auto; padding: 8px 16px 64px; }
 
 .h1 { margin: 0; font-size: 30px; font-weight: 800; line-height: 1.2; letter-spacing: -0.01em; }

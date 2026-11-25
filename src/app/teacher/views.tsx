@@ -9,11 +9,17 @@ import styles from './teacher.module.css';
 
 /** Presentational pieces for the teacher pages. Data in, markup out; the pages own auth and queries. */
 
-export function TeacherShell({ children, signOut }: { children: React.ReactNode; signOut?: () => Promise<void> }) {
+export function TeacherShell({ children, signOut, current }: { children: React.ReactNode; signOut?: () => Promise<void>; current?: 'classes' | 'plans' }) {
   return (
     <div className={styles.shell}>
       <header className={styles.top}>
         <Link href="/teacher" className={styles.brand}>Blobby <span>teacher</span></Link>
+        {signOut ? (
+          <nav className={styles.nav} aria-label="Teacher">
+            <Link href="/teacher" aria-current={current === 'classes' ? 'page' : undefined}>Classes</Link>
+            <Link href="/teacher/plans" aria-current={current === 'plans' ? 'page' : undefined}>Plans</Link>
+          </nav>
+        ) : null}
         {signOut ? (
           <form action={signOut}><button type="submit" className={styles.ghost}>Sign out</button></form>
         ) : null}

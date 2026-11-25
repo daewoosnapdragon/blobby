@@ -45,6 +45,8 @@ export type QuestionPlayerProps = {
   closeHref?: string;
   /** the close button's accessible name */
   closeLabel?: string;
+  /** no top bar: the teacher's editor preview shows just the question */
+  bare?: boolean;
 };
 
 /** A video step (watch_answer's first step) or one answerable question. */
@@ -118,7 +120,7 @@ function Body({ q, status, onAnswer, onFound }: { q: NonWatchQuestion; status: S
  * free practice (Task 12) and watch-and-answer (Task 14).
  */
 export function QuestionPlayer({
-  questions, onAnswer, onFinish, blobColor, stars, autoRead = false, answerStars = 0, closeHref = '/', closeLabel = 'Close lesson',
+  questions, onAnswer, onFinish, blobColor, stars, autoRead = false, answerStars = 0, closeHref = '/', closeLabel = 'Close lesson', bare = false,
 }: QuestionPlayerProps) {
   const steps = useMemo(
     () =>
@@ -198,8 +200,8 @@ export function QuestionPlayer({
   if (!step.question) {
     return (
       <div className={s.screen}>
-        <TopBar closeHref={closeHref} closeLabel={closeLabel} starsRef={pillRef} current={done} total={qSteps.length} stars={stars}
-          label={`Watch the video, then ${qSteps.length} ${qSteps.length === 1 ? 'question' : 'questions'}`} />
+        {bare ? null : <TopBar closeHref={closeHref} closeLabel={closeLabel} starsRef={pillRef} current={done} total={qSteps.length} stars={stars}
+          label={`Watch the video, then ${qSteps.length} ${qSteps.length === 1 ? 'question' : 'questions'}`} />}
         <div className={s.main}>
           <WatchAnswer key={step.key} youtubeId={step.video} onDone={next} />
         </div>
@@ -241,7 +243,7 @@ export function QuestionPlayer({
 
   return (
     <div className={s.screen}>
-      <TopBar closeHref={closeHref} closeLabel={closeLabel} starsRef={pillRef} current={done + 1} total={qSteps.length} stars={stars} />
+      {bare ? null : <TopBar closeHref={closeHref} closeLabel={closeLabel} starsRef={pillRef} current={done + 1} total={qSteps.length} stars={stars} />}
 
       {/* phone: fills the screen, feedback at the bottom (D-Question). Wider: a centered column, feedback right under the answers. */}
       <div className={s.main}>

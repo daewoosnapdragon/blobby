@@ -1,9 +1,10 @@
 import { test, expect } from '@playwright/test';
-import { CLASS, STUDENTS } from './fixtures/seed';
+import { CLASS, STUDENTS, PLAN } from './fixtures/seed';
 
 // The e2e server has no Supabase or TEACHER_EMAILS configured, so teacher auth must fail closed.
 test.describe('teacher side fails closed without a teacher session', () => {
-  for (const path of ['/teacher', `/teacher/class/${CLASS.id}`, `/teacher/student/${STUDENTS.mina.id}`]) {
+  for (const path of ['/teacher', `/teacher/class/${CLASS.id}`, `/teacher/student/${STUDENTS.mina.id}`,
+    '/teacher/plans', `/teacher/editor/${PLAN.lessons.one.id}`, '/teacher/editor/preview']) {
     test(`${path} redirects to login`, async ({ page }) => {
       await page.goto(path);
       await expect(page).toHaveURL(/\/teacher\/login$/);

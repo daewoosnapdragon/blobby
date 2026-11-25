@@ -10,5 +10,5 @@ export const metadata: Metadata = { title: 'Classes' };
 export default async function TeacherHome() {
   await requireTeacher();
   const classes = await listClasses();
-  return <TeacherShell signOut={signOut}><ClassesView classes={classes} /></TeacherShell>;
+  return <TeacherShell signOut={signOut} current="classes"><ClassesView classes={classes} /></TeacherShell>;
 }
