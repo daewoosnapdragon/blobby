@@ -1,0 +1,15 @@
+.root { display: inline-block; transform-origin: 50% 100%; }
+.breathe { display: block; transform-origin: 50% 100%; animation: var(--kf-breathe) 3.2s var(--ease-in-out) infinite; }
+.blink { transform-box: fill-box; transform-origin: center; animation: var(--kf-blink) 5s linear infinite; }
+.glance { animation: var(--kf-glance) 7s var(--ease-in-out) infinite; }
+.pop { animation: var(--kf-pop) 250ms var(--ease-out) both; }
+.hop { animation: var(--kf-hop) 500ms var(--ease-out); }
+.wobble { animation: var(--kf-wobble) 400ms var(--ease-out); }
+.squish { animation: var(--kf-squish) 500ms var(--ease-out); }
+.cheer { animation: var(--kf-cheer) 900ms var(--ease-out); }
+
+/* Movement stops; faces and colors still change. */
+@media (prefers-reduced-motion: reduce) {
+  .root, .breathe, .blink, .glance, .hop, .wobble, .squish, .cheer { animation: none; }
+  .pop { animation: none; opacity: 1; }
+}

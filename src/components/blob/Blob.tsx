@@ -1,0 +1,115 @@
+import styles from './Blob.module.css';
+
+export type BlobColor = 'sunny' | 'peach' | 'pink' | 'mint' | 'sky' | 'grape';
+export type Mood = 'idle' | 'happy' | 'oops' | 'sleepy';
+export type Reaction = 'hop' | 'wobble' | 'squish' | 'cheer';
+export type Hat = 'santa' | 'seollal';
+
+export const BLOB_HEX: Record<BlobColor, string> = {
+  sunny: '#FFD95A',
+  peach: '#FFC9A8',
+  pink: '#FFB5C1',
+  mint: '#B7E1D1',
+  sky: '#A9D3FF',
+  grape: '#D9CCF5',
+};
+
+const BODY_PATH =
+  'M58 8 C84 2 112 18 114 48 C116 78 98 104 64 106 C30 108 4 88 6 58 C8 30 30 14 58 8 Z';
+const INK = '#1F1F1F';
+const CHEEK = '#FFB5C1';
+const DROP = '#A9D3FF';
+
+type Props = {
+  color: BlobColor;
+  mood: Mood;
+  size: number;
+  reaction?: Reaction | null;
+  hat?: Hat | null;
+};
+
+function Face({ mood }: { mood: Mood }) {
+  switch (mood) {
+    case 'happy':
+      return (
+        <>
+          <path data-part="arc-eyes" d="M43 52 q7 -9 14 0 M63 50 q7 -9 14 0" stroke={INK} strokeWidth="4" fill="none" strokeLinecap="round" />
+          <path data-part="smile" d="M52 66 q8 7 16 0" stroke={INK} strokeWidth="3" fill="none" strokeLinecap="round" />
+          <ellipse cx="38" cy="64" rx="6" ry="3.5" fill={CHEEK} />
+          <ellipse cx="82" cy="62" rx="6" ry="3.5" fill={CHEEK} />
+        </>
+      );
+    case 'oops':
+      return (
+        <>
+          <circle cx="50" cy="52" r="4" fill={INK} />
+          <circle cx="70" cy="50" r="4" fill={INK} />
+          <ellipse cx="60" cy="68" rx="4" ry="5" fill={INK} />
+          <path data-part="sweat-drop" className={styles.pop} d="M98 24 q-6 9 0 13 q6 -4 0 -13z" fill={DROP} />
+          <ellipse cx="38" cy="66" rx="6" ry="3.5" fill={CHEEK} />
+          <ellipse cx="82" cy="64" rx="6" ry="3.5" fill={CHEEK} />
+        </>
+      );
+    case 'sleepy':
+      return (
+        <>
+          <path data-part="sleepy-eyes" d="M41 54 q7 5 14 0 M63 52 q7 5 14 0" stroke={INK} strokeWidth="4" fill="none" strokeLinecap="round" />
+          <path d="M55 68 q5 3 10 0" stroke={INK} strokeWidth="3" fill="none" strokeLinecap="round" />
+          <ellipse cx="38" cy="64" rx="6" ry="3.5" fill={CHEEK} />
+          <ellipse cx="82" cy="62" rx="6" ry="3.5" fill={CHEEK} />
+        </>
+      );
+    default:
+      return (
+        <>
+          <g className={styles.glance}>
+            <g data-part="blink" className={styles.blink}>
+              <ellipse cx="46" cy="48" rx="5" ry="7" fill={INK} />
+              <ellipse cx="66" cy="46" rx="5" ry="7" fill={INK} />
+            </g>
+          </g>
+          <ellipse cx="36" cy="60" rx="6" ry="3.5" fill={CHEEK} />
+          <ellipse cx="76" cy="58" rx="6" ry="3.5" fill={CHEEK} />
+        </>
+      );
+  }
+}
+
+function HatArt({ hat }: { hat: Hat }) {
+  if (hat === 'santa') {
+    return (
+      <g data-part="hat-santa" transform="rotate(-12 58 14)">
+        <path d="M36 20 C40 -2 66 -6 82 14 C70 10 52 12 36 20 Z" fill="#E5484D" />
+        <path d="M30 22 q28 -12 56 -2 q3 9 -3 10 q-26 -8 -50 2 q-6 -2 -3 -10z" fill="#FFFFFF" />
+        <circle cx="84" cy="14" r="6" fill="#FFFFFF" />
+      </g>
+    );
+  }
+  return (
+    <g data-part="hat-seollal" transform="translate(84 14) rotate(18)">
+      <path d="M0 0 C-10 -12 -18 -4 -14 4 C-10 8 -4 4 0 0 Z" fill="#E5484D" />
+      <path d="M0 0 C10 -12 18 -4 14 4 C10 8 4 4 0 0 Z" fill="#E5484D" />
+      <path d="M-2 2 L-9 16 M2 2 L9 16" stroke="#3B6FD4" strokeWidth="3" strokeLinecap="round" />
+      <circle cx="0" cy="0" r="3.5" fill="#FFD95A" />
+    </g>
+  );
+}
+
+export function Blob({ color, mood, size, reaction = null, hat = null }: Props) {
+  const cls = [styles.root, reaction ? styles[reaction] : ''].filter(Boolean).join(' ');
+  return (
+    <div
+      className={cls}
+      aria-hidden="true"
+      data-mood={mood}
+      data-reaction={reaction ?? undefined}
+      style={{ width: size, height: (size * 112) / 120 }}
+    >
+      <svg className={styles.breathe} width="100%" height="100%" viewBox="0 0 120 112" overflow="visible">
+        <path data-part="body" d={BODY_PATH} fill={BLOB_HEX[color]} />
+        <Face mood={mood} />
+        {hat ? <HatArt hat={hat} /> : null}
+      </svg>
+    </div>
+  );
+}

@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Soft Blobs home</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+:root{--ease-out:cubic-bezier(0.23,1,0.32,1);--ease-in-out:cubic-bezier(0.77,0,0.175,1)}
+button{font:inherit;cursor:pointer;transition:transform 160ms var(--ease-out)}
+button:active{transform:scale(0.97)}
+button:focus-visible{outline:3px solid #1F1F1F;outline-offset:3px}
+.rail{scrollbar-width:none}.rail::-webkit-scrollbar{display:none}
+.breathe{transform-origin:50% 100%;animation:breathe 3.2s var(--ease-in-out) infinite}
+.blink{transform-box:fill-box;transform-origin:center;animation:blink 5s linear infinite}
+.blink.late{animation-delay:1.7s}
+.squish-a,.squish-b{transform-origin:50% 100%;animation:squish 500ms var(--ease-out)}
+.squish-b{animation-name:squish2}
+@keyframes breathe{0%,100%{transform:scale(1,1)}50%{transform:scale(1.03,0.97)}}
+@keyframes blink{0%,94%,100%{transform:scaleY(1)}96%{transform:scaleY(0.1)}}
+@keyframes squish{0%{transform:scale(1,1)}30%{transform:scale(1.12,0.86)}60%{transform:scale(0.95,1.06)}100%{transform:scale(1,1)}}
+@keyframes squish2{0%{transform:scale(1,1)}30%{transform:scale(1.12,0.86)}60%{transform:scale(0.95,1.06)}100%{transform:scale(1,1)}}
+@media (prefers-reduced-motion:reduce){.breathe,.blink,.squish-a,.squish-b{animation:none}}
+a{color:#1F1F1F}a:hover{color:#555}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F7F3EF; font-family: 'M PLUS Rounded 1c', sans-serif; color: #1F1F1F; padding: 20px 18px 24px; display: flex; flex-direction: column; gap: 20px; overflow: hidden">
+
+  <div style="display: flex; align-items: center; gap: 12px">
+    <div style="width: 48px; height: 48px; flex-shrink: 0; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center">
+      <svg width="34" height="32" viewBox="0 0 120 112" aria-hidden="true"><path d="M58 8 C84 2 112 18 114 48 C116 78 98 104 64 106 C30 108 4 88 6 58 C8 30 30 14 58 8 Z" fill="#FFD95A"></path><g class="blink late"><ellipse cx="48" cy="54" rx="7" ry="9" fill="#1F1F1F"></ellipse><ellipse cx="72" cy="52" rx="7" ry="9" fill="#1F1F1F"></ellipse></g></svg>
+    </div>
+    <div style="flex-grow: 1">
+      <div style="font-size: 13px; font-weight: 500; color: #6B655F">Winter practice</div>
+      <div style="font-size: 23px; font-weight: 800; line-height: 1.15">Hi, Minjun!</div>
+    </div>
+    <div aria-label="142 stars" style="display: flex; align-items: center; gap: 6px; background: #FFFFFF; border-radius: 999px; padding: 8px 14px 8px 10px; font-size: 18px; font-weight: 800; font-variant-numeric: tabular-nums">
+      <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.8 6.4.9-4.6 4.5 1.1 6.3L12 17.3l-5.7 3 1.1-6.3-4.6-4.5 6.4-.9z" fill="#FFD95A" stroke="#1F1F1F" stroke-width="1.5" stroke-linejoin="round"></path></svg>
+      <span>142</span>
+    </div>
+  </div>
+
+  <div style="position: relative; background: #FFFFFF; border-radius: 28px; height: 236px; overflow: hidden">
+    <button onClick="{{ poke }}" aria-label="Say hi to your blob" style="position: absolute; right: -36px; bottom: -44px; width: 196px; height: 183px; padding: 0; border: none; background: transparent">
+      <div class="{{ pokeClass }}" style="width: 196px; height: 183px">
+        <svg class="breathe" width="196" height="183" viewBox="0 0 120 112" aria-hidden="true"><path d="M58 8 C84 2 112 18 114 48 C116 78 98 104 64 106 C30 108 4 88 6 58 C8 30 30 14 58 8 Z" fill="#FFD95A"></path><g class="blink"><ellipse cx="46" cy="48" rx="5" ry="7" fill="#1F1F1F"></ellipse><ellipse cx="66" cy="46" rx="5" ry="7" fill="#1F1F1F"></ellipse></g><ellipse cx="36" cy="60" rx="6" ry="3.5" fill="#FFB5C1"></ellipse><ellipse cx="76" cy="58" rx="6" ry="3.5" fill="#FFB5C1"></ellipse></svg>
+      </div>
+    </button>
+    <svg width="26" height="26" viewBox="0 0 24 24" style="position: absolute; right: 28px; top: 26px" aria-hidden="true"><path d="M12 2 C13 8 16 11 22 12 C16 13 13 16 12 22 C11 16 8 13 2 12 C8 11 11 8 12 2Z" fill="#F97940"></path></svg>
+
+    <div style="position: relative; height: 100%; box-sizing: border-box; padding: 22px 20px 20px; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; pointer-events: none">
+      <span style="background: #FFE59A; border-radius: 999px; padding: 4px 12px; font-size: 13px; font-weight: 700">Week 3 · this week</span>
+      <div style="font-size: 30px; font-weight: 800; line-height: 1.15">Past tense</div>
+      <div style="max-width: 180px; font-size: 15px; font-weight: 500; line-height: 1.4; color: #4F4A45">2 more lessons to finish the week</div>
+      <div style="display: flex; gap: 6px" aria-label="2 of 4 lessons done">
+        <span style="width: 26px; height: 8px; border-radius: 999px; background: #1F1F1F"></span>
+        <span style="width: 26px; height: 8px; border-radius: 999px; background: #1F1F1F"></span>
+        <span style="width: 26px; height: 8px; border-radius: 999px; background: #E9E2D9"></span>
+        <span style="width: 26px; height: 8px; border-radius: 999px; background: #E9E2D9"></span>
+      </div>
+      <div style="flex-grow: 1"></div>
+      <button style="pointer-events: auto; background: #1F1F1F; color: #FFFFFF; border: none; border-radius: 999px; padding: 7px 7px 7px 22px; display: flex; align-items: center; gap: 14px; font-size: 17px; font-weight: 700">Keep going
+        <span style="width: 36px; height: 36px; border-radius: 50%; background: #FFD95A; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F1F1F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span>
+      </button>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: column; gap: 12px">
+    <div style="display: flex; justify-content: space-between; align-items: baseline">
+      <h2 style="margin: 0; font-size: 18px; font-weight: 800">My winter plan</h2>
+      <span style="font-size: 14px; font-weight: 500; color: #6B655F">2 of 5 weeks</span>
+    </div>
+    <div class="rail" style="display: flex; gap: 10px; margin-right: -18px; padding-right: 18px; overflow-x: auto">
+
+      <div style="width: 116px; flex-shrink: 0; background: #FFFFFF; border-radius: 22px; padding: 10px; box-sizing: border-box; display: flex; flex-direction: column; gap: 6px">
+        <div style="height: 72px; border-radius: 14px; background: #B7E1D1; display: flex; align-items: center; justify-content: center"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#1F1F1F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></div>
+        <div style="padding: 0 2px; font-size: 12px; font-weight: 500; color: #6B655F">Week 1 · done</div>
+        <div style="padding: 0 2px; font-size: 15px; font-weight: 700; line-height: 1.25">Nouns and verbs</div>
+      </div>
+
+      <div style="width: 116px; flex-shrink: 0; background: #FFFFFF; border-radius: 22px; padding: 10px; box-sizing: border-box; display: flex; flex-direction: column; gap: 6px">
+        <div style="height: 72px; border-radius: 14px; background: #FFB5C1; display: flex; align-items: center; justify-content: center"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#1F1F1F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></div>
+        <div style="padding: 0 2px; font-size: 12px; font-weight: 500; color: #6B655F">Week 2 · done</div>
+        <div style="padding: 0 2px; font-size: 15px; font-weight: 700; line-height: 1.25">Plural nouns</div>
+      </div>
+
+      <div style="width: 116px; flex-shrink: 0; background: #FFFFFF; box-shadow: inset 0 0 0 2px #1F1F1F; border-radius: 22px; padding: 10px; box-sizing: border-box; display: flex; flex-direction: column; gap: 6px">
+        <div style="height: 72px; border-radius: 14px; background: #FFE59A; display: flex; align-items: flex-end; justify-content: center; overflow: hidden"><svg class="breathe" width="64" height="60" viewBox="0 0 120 112" style="margin-bottom: -8px" aria-hidden="true"><path d="M58 8 C84 2 112 18 114 48 C116 78 98 104 64 106 C30 108 4 88 6 58 C8 30 30 14 58 8 Z" fill="#FFD95A" stroke="#1F1F1F" stroke-width="3"></path><g class="blink late"><ellipse cx="48" cy="52" rx="6" ry="8" fill="#1F1F1F"></ellipse><ellipse cx="70" cy="50" rx="6" ry="8" fill="#1F1F1F"></ellipse></g></svg></div>
+        <div style="padding: 0 2px; font-size: 12px; font-weight: 700">Week 3 · you are here</div>
+        <div style="padding: 0 2px; font-size: 15px; font-weight: 700; line-height: 1.25">Past tense</div>
+      </div>
+
+      <div style="width: 116px; flex-shrink: 0; background: #EFEAE4; border-radius: 22px; padding: 10px; box-sizing: border-box; display: flex; flex-direction: column; gap: 6px; color: #6B655F">
+        <div style="height: 72px; border-radius: 14px; background: #E6DFD7; display: flex; align-items: center; justify-content: center"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#6B655F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2.5"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg></div>
+        <div style="padding: 0 2px; font-size: 12px; font-weight: 500">Week 4 · Monday</div>
+        <div style="padding: 0 2px; font-size: 15px; font-weight: 700; line-height: 1.25">Asking questions</div>
+      </div>
+
+      <div style="width: 116px; flex-shrink: 0; background: #EFEAE4; border-radius: 22px; padding: 10px; box-sizing: border-box; display: flex; flex-direction: column; gap: 6px; color: #6B655F">
+        <div style="height: 72px; border-radius: 14px; background: #E6DFD7; display: flex; align-items: center; justify-content: center"><svg width="52" height="44" viewBox="0 0 120 100" aria-hidden="true"><path d="M18 52 v-8 a42 26 0 0 1 84 0 v8 z" fill="#FFE59A" stroke="#1F1F1F" stroke-width="4" stroke-linejoin="round"></path><rect x="18" y="52" width="84" height="38" rx="6" fill="#FFD95A" stroke="#1F1F1F" stroke-width="4"></rect><rect x="53" y="46" width="14" height="16" rx="4" fill="#1F1F1F"></rect></svg></div>
+        <div style="padding: 0 2px; font-size: 12px; font-weight: 500">Week 5</div>
+        <div style="padding: 0 2px; font-size: 15px; font-weight: 700; line-height: 1.25">Treasure review</div>
+      </div>
+    </div>
+  </div>
+
+  <button style="background: #B7E1D1; color: #1F1F1F; border: none; border-radius: 28px; padding: 16px; display: flex; align-items: center; gap: 14px; text-align: left">
+    <span style="width: 56px; height: 56px; flex-shrink: 0; border-radius: 18px; background: #FFFFFF; display: flex; align-items: center; justify-content: center">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#1F1F1F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="4.5"></rect><circle cx="8.5" cy="8.5" r="1.3" fill="#1F1F1F"></circle><circle cx="15.5" cy="15.5" r="1.3" fill="#1F1F1F"></circle><circle cx="12" cy="12" r="1.3" fill="#1F1F1F"></circle></svg>
+    </span>
+    <span style="flex-grow: 1; display: flex; flex-direction: column; gap: 2px">
+      <span style="font-size: 19px; font-weight: 800">Free practice</span>
+      <span style="font-size: 14px; font-weight: 500; color: #2F4A40">Mixed review for bonus stars</span>
+    </span>
+    <span style="width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: #FFFFFF; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F1F1F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></span>
+  </button>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { pokes: 0 };
+  }
+  renderVals() {
+    const pokes = this.state.pokes;
+    return {
+      pokeClass: pokes === 0 ? '' : (pokes % 2 ? 'squish-a' : 'squish-b'),
+      poke: () => this.setState({ pokes: pokes + 1 })
+    };
+  }
+}
+</script>
+</body>
+</html>
