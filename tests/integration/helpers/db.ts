@@ -9,13 +9,13 @@ export const TEST_DATABASE_URL =
 const MIGRATION = path.resolve(__dirname, '../../../supabase/migrations/0001_wp_init.sql');
 
 /** Drops and recreates the test database, creates anon/authenticated roles, applies the migration. */
-export async function resetTestDb(): Promise<ReturnType<typeof postgres>> {
-  const url = new URL(TEST_DATABASE_URL);
+export async function resetTestDb(databaseUrl: string = TEST_DATABASE_URL): Promise<ReturnType<typeof postgres>> {
+  const url = new URL(databaseUrl);
   const dbName = url.pathname.slice(1);
   if (!/^[a-z0-9_]+$/.test(dbName) || !dbName.includes('test')) {
     throw new Error(`Refusing to reset database "${dbName}": name must contain "test"`);
   }
-  const adminUrl = new URL(TEST_DATABASE_URL);
+  const adminUrl = new URL(databaseUrl);
   adminUrl.pathname = '/postgres';
   const admin = postgres(adminUrl.toString(), { max: 1, onnotice: () => {} });
   try {
@@ -37,7 +37,7 @@ export async function resetTestDb(): Promise<ReturnType<typeof postgres>> {
   } finally {
     await db.end();
   }
-  const sql = postgres(TEST_DATABASE_URL, { ...pgOptions, max: 4, onnotice: () => {} });
+  const sql = postgres(databaseUrl, { ...pgOptions, max: 4, onnotice: () => {} });
   await sql.unsafe(fs.readFileSync(MIGRATION, 'utf8'));
   return sql;
 }

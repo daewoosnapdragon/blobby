@@ -1,0 +1,1 @@
+.pill { margin-top: 6px; min-height: 60px; background: var(--ink); color: #fff; border-radius: 999px; padding: 8px 8px 8px 24px; display: inline-flex; align-items: center; gap: 16px; font-size: 18px; font-weight: 700; text-decoration: none; }
