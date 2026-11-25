@@ -7,8 +7,10 @@ import s from './questions.module.css';
 
 /** Close, progress, stars: the lesson's top bar (D-Question). Shared by the player and the lesson-done moment. */
 export function TopBar({
-  closeHref = '/', closeLabel = 'Close lesson', current, total, stars, starsRef,
+  closeHref = '/', closeLabel = 'Close lesson', current, total, stars, starsRef, label,
 }: {
+  /** overrides the progress bar's accessible name */
+  label?: string;
   closeHref?: string; closeLabel?: string; current: number; total: number; stars: number; starsRef?: Ref<HTMLDivElement>;
 }) {
   const pct = total > 0 ? Math.round((current / total) * 100) : 0;
@@ -20,7 +22,7 @@ export function TopBar({
       <div
         className={s.progress}
         role="progressbar"
-        aria-label={`Question ${current} of ${total}`}
+        aria-label={label ?? `Question ${current} of ${total}`}
         aria-valuemin={0}
         aria-valuemax={total}
         aria-valuenow={current}

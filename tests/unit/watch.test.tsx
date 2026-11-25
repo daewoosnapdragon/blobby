@@ -49,6 +49,14 @@ describe('watch and answer', () => {
     expect(screen.queryByText('Which sentence is right?')).toBeNull();
   });
 
+  it('has a visible caption and a progress label that makes sense before the questions start', () => {
+    renderPlayer();
+    expect(screen.getByText('Watch the video')).toBeVisible();
+    expect(screen.getByRole('progressbar', { name: 'Watch the video, then 1 question' })).toBeInTheDocument();
+    fireEvent.click(btn('Next'));
+    expect(screen.getByRole('progressbar', { name: 'Question 1 of 1' })).toBeInTheDocument();
+  });
+
   it('Next is always there and moves on to the questions; progress counts the questions', () => {
     const { onAnswer } = renderPlayer();
     fireEvent.click(btn('Next'));

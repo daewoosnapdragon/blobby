@@ -198,7 +198,8 @@ export function QuestionPlayer({
   if (!step.question) {
     return (
       <div className={s.screen}>
-        <TopBar closeHref={closeHref} closeLabel={closeLabel} starsRef={pillRef} current={done} total={qSteps.length} stars={stars} />
+        <TopBar closeHref={closeHref} closeLabel={closeLabel} starsRef={pillRef} current={done} total={qSteps.length} stars={stars}
+          label={`Watch the video, then ${qSteps.length} ${qSteps.length === 1 ? 'question' : 'questions'}`} />
         <div className={s.main}>
           <WatchAnswer key={step.key} youtubeId={step.video} onDone={next} />
         </div>

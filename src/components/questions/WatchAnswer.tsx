@@ -82,6 +82,7 @@ export function WatchAnswer({ youtubeId, onDone }: { youtubeId: string; onDone: 
   const showSkip = broken || slow;
   return (
     <div className={w.watch}>
+      <span className={w.tag}>Watch the video</span>
       <div className={w.card}>
         {broken ? null : (
           <iframe

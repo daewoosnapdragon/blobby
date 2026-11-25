@@ -30,6 +30,8 @@ for (const vp of [{ name: '390x844', width: 390, height: 844 }, { name: '1280x80
     await expect(page.locator('iframe[src*="youtube-nocookie.com/embed/dQw4w9WgXcQ"]')).toBeVisible();
     await expect(page.getByRole('button', { name: 'Next', exact: true })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Hear it' })).toHaveCount(0);
+    await expect(page.getByText('Watch the video', { exact: true })).toBeVisible();
+    await expect(page.getByRole('progressbar', { name: 'Watch the video, then 1 question' })).toBeVisible();
     await expect(page.getByRole('button', { name: 'Skip video' })).toBeVisible({ timeout: 12_000 });
     if (SHOTS) await page.screenshot({ path: `${SHOTS}/video-skip-${vp.name}.png` });
     // the page never scrolls sideways

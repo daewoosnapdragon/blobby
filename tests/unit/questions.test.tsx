@@ -335,6 +335,7 @@ describe('QuestionPlayer', () => {
     const watch: Question = { type: 'watch_answer', youtubeId: 'dQw4w9WgXcQ', questions: [pick, fix] };
     const { onAnswer } = renderPlayer({ questions: [pq(QID, watch)] });
     expect(btn('Next')).toBeInTheDocument();
+    expect(screen.getByRole('progressbar', { name: 'Watch the video, then 2 questions' })).toBeInTheDocument();
     fireEvent.click(btn('Next')); // the video step comes first
     expect(screen.getByRole('progressbar', { name: 'Question 1 of 2' })).toBeInTheDocument();
     fireEvent.click(btn('She doesn’t like carrots.'));

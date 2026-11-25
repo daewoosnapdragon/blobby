@@ -1,5 +1,6 @@
 /* The video step of watch-and-answer. Phone: full-width 16:9 card, Next under it. */
 .watch { flex-grow: 1; display: flex; flex-direction: column; gap: 16px; }
+.tag { align-self: flex-start; border-radius: 999px; padding: 4px 12px; background: #FFE59A; font-size: 13px; font-weight: 700; line-height: 1.45; }
 .card { position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: var(--radius-card); background: var(--card); overflow: hidden; }
 .frame { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 .problem { position: absolute; inset: 0; display: flex; align-items: flex-end; justify-content: center; padding: 12px; pointer-events: none; }
@@ -11,7 +12,8 @@
 @media (min-width: 640px) {
   .watch { flex-grow: 0; justify-content: center; align-items: center; gap: 20px; margin: auto 0; padding-bottom: 3vh; }
   /* as wide as the column allows, but never taller than the screen has room for */
-  .card { width: min(100%, calc((100dvh - 240px) * 16 / 9)); }
+  .tag { align-self: center; font-size: 15px; padding: 5px 14px; }
+  .card { width: min(100%, calc((100dvh - 290px) * 16 / 9)); }
   .problemText { font-size: 18px; padding: 10px 20px; }
   .actions { flex-direction: row-reverse; justify-content: center; align-items: center; margin-top: 0; gap: 16px; }
   .actions > :not(.skip) { flex: 0 0 auto; min-width: 260px; }
