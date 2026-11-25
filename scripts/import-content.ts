@@ -1,9 +1,11 @@
 // Usage: npx tsx scripts/import-content.ts <content.json> [--dry-run] [--no-audio] [--overwrite]
+// By default the teacher's edits in the app win (week skill/date, lesson titles, questions, deleted questions);
+// --overwrite makes the file win.
 // Needs DATABASE_URL; audio also needs SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, OPENAI_API_KEY.
 import fs from 'node:fs';
 import postgres from 'postgres';
 import { pgOptions } from '../src/lib/db/options';
-import { importContent, parseContent } from '../src/lib/content';
+import { importContent, keptSummary, parseContent } from '../src/lib/content';
 import { defaultAudioDeps, ensureAudio } from '../src/lib/tts';
 
 async function main() {
@@ -28,7 +30,7 @@ async function main() {
   try {
     const r = await importContent(sql, content, { overwrite });
     console.log(`plan "${content.plan.title}": weeks ${r.weeks}, lessons ${r.lessons}, questions ${r.questions}`);
-    if (r.differing > 0) console.log(`${r.differing} questions differ from the file; kept the app's version (use --overwrite to replace them)`);
+    for (const line of keptSummary(r, overwrite)) console.log(line);
     if (deps) {
       let updated = 0;
       for (const it of r.items) {

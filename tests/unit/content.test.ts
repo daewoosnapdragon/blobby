@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseContent } from '@/lib/content';
+import { keptSummary, parseContent } from '@/lib/content';
 import sample from '../../content/test-plan.json';
 
 const pick = { type: 'pick_one', prompt: 'Pick one.', choices: ['A', 'B'], answer: 0 };
@@ -29,5 +29,25 @@ describe('parseContent', () => {
     expect(() => parseContent(bad)).toThrow(/week 1.*opensOn/);
     const badKind = file([pick]); badKind.plan.kind = 'x';
     expect(() => parseContent(badKind)).toThrow(/plan\.kind/);
+  });
+});
+
+describe('keptSummary', () => {
+  const zero = { differing: 0, keptWeeks: 0, keptLessons: 0, keptDeleted: 0 };
+  it('says nothing was in the way when the app matches the file', () => {
+    expect(keptSummary(zero, false)).toEqual(['no edits from the app were in the way']);
+  });
+  it('lists each kind of kept edit and how to overwrite', () => {
+    const lines = keptSummary({ differing: 2, keptWeeks: 1, keptLessons: 3, keptDeleted: 1 }, false);
+    expect(lines).toEqual([
+      expect.stringMatching(/^1 week\(s\) .*kept the app's values/),
+      expect.stringMatching(/^3 lesson title\(s\)/),
+      expect.stringMatching(/^2 question\(s\) differ/),
+      expect.stringMatching(/^1 question\(s\) were deleted in the app; left deleted/),
+      expect.stringMatching(/--overwrite/),
+    ]);
+  });
+  it('with --overwrite, says the file won', () => {
+    expect(keptSummary(zero, true)).toEqual([expect.stringMatching(/file replaced/)]);
   });
 });

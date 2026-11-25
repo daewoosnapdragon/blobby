@@ -65,6 +65,12 @@ export interface ImportResult {
   weeks: number; lessons: number; questions: number; items: ImportedQuestion[];
   /** existing questions whose payload differs from the file and were left as they are in the app (always 0 with overwrite) */
   differing: number;
+  /** existing weeks whose skill or opens_on differs from the file; the app's values were kept (always 0 with overwrite) */
+  keptWeeks: number;
+  /** existing lessons whose title differs from the file; the app's title was kept (always 0 with overwrite) */
+  keptLessons: number;
+  /** positions where the teacher deleted the question in the app; left deleted, not re-inserted (always 0 with overwrite) */
+  keptDeleted: number;
 }
 
 function stable(v: unknown): string {
@@ -77,8 +83,10 @@ function stable(v: unknown): string {
 }
 
 /**
- * One transaction. Unchanged content writes nothing. A question the teacher edited in the app (payload differs
- * from the file) keeps the app's version and is counted in `differing`, unless `overwrite` is set (R37).
+ * One transaction. Unchanged content writes nothing. The teacher's edits in the app win by default (R37):
+ * an existing week keeps its skill and opens_on, a lesson its title, a question its payload (each counted),
+ * and a question she deleted stays deleted. `overwrite` makes the file win everywhere, and inserts a fresh
+ * question where one was deleted.
  */
 export async function importContent(sql: postgres.Sql, c: ContentFile, opts: { overwrite?: boolean } = {}): Promise<ImportResult> {
   return sql.begin(async (tx) => {
@@ -93,22 +101,40 @@ export async function importContent(sql: postgres.Sql, c: ContentFile, opts: { o
 
     const items: ImportedQuestion[] = [];
     let lessons = 0;
-    let differing = 0;
+    let differing = 0, keptWeeks = 0, keptLessons = 0, keptDeleted = 0;
     for (const [wi, w] of c.weeks.entries()) {
-      const [week] = await tx`
-        insert into wp_weeks (plan_id, position, skill, opens_on) values (${plan.id}, ${wi + 1}, ${w.skill}, ${w.opensOn})
-        on conflict (plan_id, position) do update set skill = excluded.skill, opens_on = excluded.opens_on returning id`;
+      let [week] = await tx<{ id: string; skill: string; opens_on: string | null }[]>`
+        select id, skill, opens_on::text as opens_on from wp_weeks where plan_id = ${plan.id} and position = ${wi + 1}`;
+      if (!week) {
+        [week] = await tx`
+          insert into wp_weeks (plan_id, position, skill, opens_on) values (${plan.id}, ${wi + 1}, ${w.skill}, ${w.opensOn})
+          returning id, skill, opens_on::text as opens_on`;
+      } else if (week.skill !== w.skill || week.opens_on !== w.opensOn) {
+        if (opts.overwrite) await tx`update wp_weeks set skill = ${w.skill}, opens_on = ${w.opensOn} where id = ${week.id}`;
+        else keptWeeks++;
+      }
       for (const [li, l] of w.lessons.entries()) {
         lessons++;
-        const [lesson] = await tx`
-          insert into wp_lessons (week_id, position, title) values (${week.id}, ${li + 1}, ${l.title})
-          on conflict (week_id, position) do update set title = excluded.title returning id`;
+        let [lesson] = await tx<{ id: string; title: string }[]>`
+          select id, title from wp_lessons where week_id = ${week.id} and position = ${li + 1}`;
+        if (!lesson) {
+          [lesson] = await tx`
+            insert into wp_lessons (week_id, position, title) values (${week.id}, ${li + 1}, ${l.title}) returning id, title`;
+        } else if (lesson.title !== l.title) {
+          if (opts.overwrite) await tx`update wp_lessons set title = ${l.title} where id = ${lesson.id}`;
+          else keptLessons++;
+        }
         for (const [qi, q] of l.questions.entries()) {
           const { type, ...payload } = q;
           const [existing] = await tx`
             select id, type, payload, audio from wp_questions
             where lesson_id = ${lesson.id} and position = ${qi + 1} and deleted_at is null
             order by updated_at desc limit 1`;
+          if (!existing && !opts.overwrite) {
+            const [gone] = await tx`
+              select 1 as x from wp_questions where lesson_id = ${lesson.id} and position = ${qi + 1} and deleted_at is not null limit 1`;
+            if (gone) { keptDeleted++; continue; }
+          }
           if (!existing) {
             const [row] = await tx`
               insert into wp_questions (lesson_id, position, type, payload)
@@ -131,6 +157,22 @@ export async function importContent(sql: postgres.Sql, c: ContentFile, opts: { o
         }
       }
     }
-    return { weeks: c.weeks.length, lessons, questions: items.length, items, differing };
+    return { weeks: c.weeks.length, lessons, questions: items.length, items, differing, keptWeeks, keptLessons, keptDeleted };
   });
+}
+
+/** What the import left as the teacher has it in the app (R37), one line each. */
+export function keptSummary(
+  r: Pick<ImportResult, 'differing' | 'keptWeeks' | 'keptLessons' | 'keptDeleted'>,
+  overwrite: boolean,
+): string[] {
+  if (overwrite) return ['--overwrite: the file replaced any edits made in the app'];
+  const lines = [
+    r.keptWeeks && `${r.keptWeeks} week(s) have a different skill or open date in the app; kept the app's values`,
+    r.keptLessons && `${r.keptLessons} lesson title(s) differ from the file; kept the app's titles`,
+    r.differing && `${r.differing} question(s) differ from the file; kept the app's version`,
+    r.keptDeleted && `${r.keptDeleted} question(s) were deleted in the app; left deleted`,
+  ].filter((x): x is string => typeof x === 'string');
+  if (lines.length === 0) return ['no edits from the app were in the way'];
+  return [...lines, 'Run again with --overwrite to make the file win (this replaces those edits).'];
 }

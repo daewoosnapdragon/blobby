@@ -81,10 +81,47 @@ describe('importContent', () => {
     await sql`delete from wp_questions where payload->>'prompt' = 'Brand new?'`;
   });
 
-  it('inserts fresh after a soft delete and writes nothing when validation fails', async () => {
+  it('keeps a question the teacher deleted deleted by default, and revives it only with --overwrite', async () => {
     await sql`update wp_questions set deleted_at = now() where position = 2 and type = 'build_it'`;
-    await importContent(sql, parseContent(base()));
+    const kept = await importContent(sql, parseContent(base()));
+    expect(kept.keptDeleted).toBe(1);
+    expect(kept.questions).toBe(2);
+    expect(await count('wp_questions')).toBe(3);
+    expect((await sql`select 1 from wp_questions where type = 'build_it' and deleted_at is null`).length).toBe(0);
+    // a second default import still leaves it deleted
+    expect((await importContent(sql, parseContent(base()))).keptDeleted).toBe(1);
+    expect(await count('wp_questions')).toBe(3);
+    // --overwrite: the file wins, a fresh row is inserted at that position
+    const over = await importContent(sql, parseContent(base()), { overwrite: true });
+    expect(over.keptDeleted).toBe(0);
     expect(await count('wp_questions')).toBe(4);
+    expect((await sql`select 1 from wp_questions where type = 'build_it' and deleted_at is null`).length).toBe(1);
+  });
+
+  it('keeps the teacher\'s week skill, opens_on and lesson titles by default; --overwrite restores the file', async () => {
+    await sql`update wp_weeks set skill = 'Plural nouns (teacher)', opens_on = '2026-01-07'`;
+    await sql`update wp_lessons set title = 'Lesson one (teacher)' where position = 1`;
+    const kept = await importContent(sql, parseContent(base()));
+    expect(kept).toMatchObject({ keptWeeks: 1, keptLessons: 1, differing: 0, keptDeleted: 0 });
+    const [w] = await sql`select skill, opens_on from wp_weeks`;
+    expect(w).toEqual({ skill: 'Plural nouns (teacher)', opens_on: '2026-01-07' });
+    const [l] = await sql`select title from wp_lessons where position = 1`;
+    expect(l.title).toBe('Lesson one (teacher)');
+    // only one of skill/opens_on differing still counts the week once
+    await sql`update wp_weeks set opens_on = '2026-01-05'`;
+    expect((await importContent(sql, parseContent(base()))).keptWeeks).toBe(1);
+
+    const over = await importContent(sql, parseContent(base()), { overwrite: true });
+    expect(over).toMatchObject({ keptWeeks: 0, keptLessons: 0 });
+    const [w2] = await sql`select skill, opens_on from wp_weeks`;
+    expect(w2).toEqual({ skill: 'Plurals', opens_on: '2026-01-05' });
+    const [l2] = await sql`select title from wp_lessons where position = 1`;
+    expect(l2.title).toBe('One');
+    // matching values: nothing counted
+    expect(await importContent(sql, parseContent(base()))).toMatchObject({ keptWeeks: 0, keptLessons: 0, differing: 0, keptDeleted: 0 });
+  });
+
+  it('writes nothing when validation fails', async () => {
     const bad = base();
     bad.plan.title = 'Never written';
     (bad.weeks[0].lessons[1].questions[0] as { answer: number }).answer = 9;
