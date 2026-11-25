@@ -7,12 +7,16 @@
     "build": "next build",
     "start": "next start",
     "test": "vitest run tests/unit",
+    "test:int": "vitest run --config vitest.integration.config.ts",
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.119.2",
     "next": "^15.5.29",
+    "postgres": "^4.1.1",
     "react": "^19.3.1",
-    "react-dom": "^19.3.1"
+    "react-dom": "^19.3.1",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
     "@playwright/test": "^1.65.1",
@@ -24,6 +28,7 @@
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.3.0",
     "jsdom": "^31.0.1",
+    "tsx": "^4.23.15",
     "typescript": "5.9",
     "vitest": "^5.1.2"
   }

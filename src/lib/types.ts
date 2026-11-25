@@ -1,0 +1,38 @@
+// Row types mirroring the wp_ tables. Convention: snake_case keys, exactly as the columns
+// are named, because rows come straight from `postgres` (no camelCase transform).
+// uuid -> string, timestamptz -> string (ISO) or Date as returned by the driver, date -> string (YYYY-MM-DD).
+
+export type PlanKind = 'test' | 'winter' | 'homework';
+export type AttemptContext = 'lesson' | 'free';
+export type StarReason = 'lesson' | 'week_bonus' | 'free_correct';
+
+export interface WpClass { id: string; grade: number; name: string; class_code: string }
+export interface WpStudent {
+  id: string; class_id: string; display_name: string; blob_color: string | null;
+  link_secret: string; created_at: Date;
+}
+export interface WpPlan { id: string; title: string; kind: PlanKind; created_at: Date }
+export interface WpPlanAssignment {
+  id: string; plan_id: string; class_id: string | null; student_id: string | null;
+}
+export interface WpWeek {
+  id: string; plan_id: string; position: number; skill: string; opens_on: string | null;
+}
+export interface WpLesson { id: string; week_id: string; position: number; title: string }
+export interface WpQuestion {
+  id: string; lesson_id: string; position: number; type: string;
+  payload: unknown; audio: Record<string, unknown>;
+  deleted_at: Date | null; updated_at: Date;
+}
+export interface WpAttempt {
+  id: string; student_id: string; question_id: string; client_attempt_id: string;
+  correct: boolean; context: AttemptContext; created_at: Date;
+}
+export interface WpLessonCompletion {
+  id: string; student_id: string; lesson_id: string; completed_at: Date;
+}
+export interface WpStarEvent {
+  id: string; student_id: string; plan_id: string | null; amount: number;
+  reason: StarReason; ref_id: string | null; created_at: Date;
+}
+export interface WpPracticeDay { student_id: string; day: string; seconds: number }
