@@ -1,0 +1,1081 @@
+{
+  "plan": {
+    "title": "Test week · Grade 3",
+    "kind": "test"
+  },
+  "assignTo": {
+    "grade": 3
+  },
+  "weeks": [
+    {
+      "skill": "Past tense in stories",
+      "opensOn": "2026-11-26",
+      "lessons": [
+        {
+          "title": "Add -ed the right way",
+          "questions": [
+            {
+              "type": "pick_one",
+              "skill": "past-tense",
+              "prompt": "Which sentence is right?",
+              "choices": [
+                "Last night the baby cryed, so Mom picked her up.",
+                "Last night the baby cried, so Mom picked her up.",
+                "Last night the baby cried, so Mom pick her up."
+              ],
+              "answer": 1
+            },
+            {
+              "type": "pick_one",
+              "skill": "past-tense",
+              "prompt": "Which sentence is right?",
+              "choices": [
+                "Mia smiled when she opened the old book.",
+                "Mia smiled when she open the old book.",
+                "Mia smileed when she opened the old book."
+              ],
+              "answer": 0
+            },
+            {
+              "type": "pick_one",
+              "skill": "past-tense",
+              "prompt": "Which sentence is right?",
+              "choices": [
+                "After school, they wait for Jun and then hurried home.",
+                "After school, they waited for Jun and then hurryed home.",
+                "After school, they waited for Jun and then hurried home."
+              ],
+              "answer": 2
+            },
+            {
+              "type": "fill_blank",
+              "skill": "past-tense",
+              "before": "The bus",
+              "after": "at the corner, and we got on.",
+              "choices": [
+                "stoped",
+                "stopped",
+                "stopping"
+              ],
+              "answer": 1
+            },
+            {
+              "type": "fill_blank",
+              "skill": "past-tense",
+              "before": "Last night, Sam",
+              "after": "his spelling words for an hour.",
+              "choices": [
+                "studyed",
+                "studies",
+                "studied"
+              ],
+              "answer": 2
+            },
+            {
+              "type": "fill_blank",
+              "skill": "past-tense",
+              "before": "Mina",
+              "after": "the ghost story, so she read it again.",
+              "choices": [
+                "liked",
+                "likeed",
+                "liking"
+              ],
+              "answer": 0
+            },
+            {
+              "type": "find_fix",
+              "skill": "past-tense",
+              "words": [
+                "Dad",
+                "heard",
+                "a",
+                "strange",
+                "noise",
+                "and",
+                "call",
+                "the",
+                "police."
+              ],
+              "wrongIndex": 6,
+              "fixes": [
+                "called",
+                "calls",
+                "calling"
+              ],
+              "answer": 0
+            },
+            {
+              "type": "find_fix",
+              "skill": "past-tense",
+              "words": [
+                "The",
+                "door",
+                "open",
+                "slowly,",
+                "and",
+                "we",
+                "peeked",
+                "inside."
+              ],
+              "wrongIndex": 2,
+              "fixes": [
+                "opens",
+                "opened",
+                "openned"
+              ],
+              "answer": 1
+            },
+            {
+              "type": "find_fix",
+              "skill": "past-tense",
+              "words": [
+                "Ben",
+                "hopped",
+                "over",
+                "the",
+                "puddle",
+                "and",
+                "hurryed",
+                "to",
+                "class."
+              ],
+              "wrongIndex": 6,
+              "fixes": [
+                "hurried",
+                "hurry",
+                "hurries"
+              ],
+              "answer": 0
+            },
+            {
+              "type": "build_it",
+              "skill": "past-tense",
+              "prompt": "Build the sentence.",
+              "tiles": [
+                "The",
+                "baby",
+                "cried",
+                "and",
+                "dropped",
+                "her",
+                "spoon."
+              ],
+              "distractors": [
+                "cryed"
+              ]
+            },
+            {
+              "type": "build_it",
+              "skill": "past-tense",
+              "prompt": "Build the sentence.",
+              "tiles": [
+                "We",
+                "planned",
+                "a",
+                "trip",
+                "to",
+                "the",
+                "zoo."
+              ],
+              "distractors": [
+                "planed"
+              ]
+            },
+            {
+              "type": "sort_it",
+              "skill": "past-tense",
+              "prompt": "How do we spell the past? Sort the verbs.",
+              "groups": [
+                "Just add -ed",
+                "Double the last letter",
+                "Change y to i"
+              ],
+              "items": [
+                {
+                  "text": "jumped",
+                  "group": 0
+                },
+                {
+                  "text": "stopped",
+                  "group": 1
+                },
+                {
+                  "text": "cried",
+                  "group": 2
+                },
+                {
+                  "text": "played",
+                  "group": 0
+                },
+                {
+                  "text": "hopped",
+                  "group": 1
+                },
+                {
+                  "text": "studied",
+                  "group": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Tricky past verbs",
+          "questions": [
+            {
+              "type": "pick_one",
+              "skill": "irregular-past",
+              "prompt": "Which sentence is right?",
+              "choices": [
+                "Jun took his book and sat by the window.",
+                "Jun taked his book and sat by the window.",
+                "Jun took his book and sitted by the window."
+              ],
+              "answer": 0
+            },
+            {
+              "type": "pick_one",
+              "skill": "irregular-past",
+              "prompt": "Which sentence is right?",
+              "choices": [
+                "Last week Mia readed a book about a ghost and told her brother the whole story.",
+                "Last week Mia read a book about a ghost and telled her brother the whole story.",
+                "Last week Mia read a book about a ghost and told her brother the whole story."
+              ],
+              "answer": 2
+            },
+            {
+              "type": "pick_one",
+              "skill": "irregular-past",
+              "prompt": "Which sentence is right?",
+              "choices": [
+                "We heared a noise, so we ran outside.",
+                "We heard a noise, so we ran outside.",
+                "We heard a noise, so we run outside."
+              ],
+              "answer": 1
+            },
+            {
+              "type": "fill_blank",
+              "skill": "irregular-past",
+              "before": "The movie",
+              "after": "at six, and we ate popcorn the whole time.",
+              "choices": [
+                "began",
+                "begun",
+                "beginned"
+              ],
+              "answer": 0
+            },
+            {
+              "type": "fill_blank",
+              "skill": "irregular-past",
+              "before": "Ben looked everywhere, and at last he",
+              "after": "his lost key under the mat.",
+              "choices": [
+                "finded",
+                "found",
+                "find"
+              ],
+              "answer": 1
+            },
+            {
+              "type": "fill_blank",
+              "skill": "irregular-past",
+              "before": "Sam threw the ball, and Leo",
+              "after": "it with one hand.",
+              "choices": [
+                "catched",
+                "catch",
+                "caught"
+              ],
+              "answer": 2
+            },
+            {
+              "type": "find_fix",
+              "skill": "irregular-past",
+              "words": [
+                "The",
+                "old",
+                "library",
+                "become",
+                "very",
+                "quiet",
+                "when",
+                "the",
+                "lights",
+                "went",
+                "out."
+              ],
+              "wrongIndex": 3,
+              "fixes": [
+                "became",
+                "becomed",
+                "becomes"
+              ],
+              "answer": 0
+            },
+            {
+              "type": "find_fix",
+              "skill": "irregular-past",
+              "words": [
+                "Mina",
+                "find",
+                "a",
+                "note",
+                "inside",
+                "the",
+                "book",
+                "she",
+                "borrowed."
+              ],
+              "wrongIndex": 1,
+              "fixes": [
+                "finded",
+                "found",
+                "finding"
+              ],
+              "answer": 1
+            },
+            {
+              "type": "find_fix",
+              "skill": "irregular-past",
+              "words": [
+                "When",
+                "the",
+                "bell",
+                "rang,",
+                "he",
+                "run",
+                "to",
+                "the",
+                "door."
+              ],
+              "wrongIndex": 5,
+              "fixes": [
+                "ran",
+                "runned",
+                "running"
+              ],
+              "answer": 0
+            },
+            {
+              "type": "build_it",
+              "skill": "irregular-past",
+              "prompt": "Build the sentence.",
+              "tiles": [
+                "The",
+                "children",
+                "saw",
+                "a",
+                "ghost",
+                "and",
+                "ran",
+                "away."
+              ],
+              "distractors": [
+                "seen",
+                "runned"
+              ]
+            },
+            {
+              "type": "build_it",
+              "skill": "irregular-past",
+              "prompt": "Build the sentence.",
+              "tiles": [
+                "Tom",
+                "thought",
+                "the",
+                "test",
+                "was",
+                "easy."
+              ],
+              "distractors": [
+                "thinked"
+              ]
+            },
+            {
+              "type": "sort_it",
+              "skill": "irregular-past",
+              "prompt": "Sort the verbs.",
+              "groups": [
+                "-ed",
+                "Irregular"
+              ],
+              "items": [
+                {
+                  "text": "knew",
+                  "group": 1
+                },
+                {
+                  "text": "wanted",
+                  "group": 0
+                },
+                {
+                  "text": "came",
+                  "group": 1
+                },
+                {
+                  "text": "carried",
+                  "group": 0
+                },
+                {
+                  "text": "told",
+                  "group": 1
+                },
+                {
+                  "text": "listened",
+                  "group": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Keep the story in the past",
+          "questions": [
+            {
+              "type": "pick_one",
+              "skill": "past-tense",
+              "prompt": "Which story stays in the past?",
+              "choices": [
+                "Leo went to the library. He finds a book about ghosts.",
+                "Leo went to the library. He found a book about ghosts.",
+                "Leo goes to the library. He found a book about ghosts."
+              ],
+              "answer": 1
+            },
+            {
+              "type": "pick_one",
+              "skill": "did-didnt",
+              "prompt": "Which sentence is right?",
+              "choices": [
+                "A ghost floated into the library. The librarian did not noticed it.",
+                "A ghost floated into the library. The librarian not noticed it.",
+                "A ghost floated into the library. The librarian did not notice it."
+              ],
+              "answer": 2
+            },
+            {
+              "type": "pick_one",
+              "skill": "past-tense",
+              "prompt": "Which sentence is right?",
+              "choices": [
+                "Sam came home late. Mom asked him what happened.",
+                "Sam came home late. Mom asked him what had happen.",
+                "Sam came home late. Mom asked him what happen."
+              ],
+              "answer": 0
+            },
+            {
+              "type": "fill_blank",
+              "skill": "irregular-past",
+              "before": "It was dark in the hall. Mia turned on her flashlight and",
+              "after": "a small white cat.",
+              "choices": [
+                "sees",
+                "saw",
+                "seen"
+              ],
+              "answer": 1
+            },
+            {
+              "type": "fill_blank",
+              "skill": "did-didnt",
+              "before": "Jun looked for his pencil, but he didn't",
+              "after": "it anywhere.",
+              "choices": [
+                "find",
+                "found",
+                "finds"
+              ],
+              "answer": 0
+            },
+            {
+              "type": "fill_blank",
+              "skill": "past-tense",
+              "before": "We were on the playground. Then the sky got dark, and the rain began to",
+              "after": "on our heads.",
+              "choices": [
+                "fell",
+                "falls",
+                "fall"
+              ],
+              "answer": 2
+            },
+            {
+              "type": "find_fix",
+              "skill": "irregular-past",
+              "words": [
+                "Recess",
+                "was",
+                "over.",
+                "The",
+                "bell",
+                "rang,",
+                "and",
+                "everyone",
+                "go",
+                "back",
+                "inside."
+              ],
+              "wrongIndex": 8,
+              "fixes": [
+                "went",
+                "goed",
+                "goes"
+              ],
+              "answer": 0
+            },
+            {
+              "type": "find_fix",
+              "skill": "past-tense",
+              "words": [
+                "Ben",
+                "and",
+                "Mia",
+                "got",
+                "to",
+                "the",
+                "bus",
+                "stop",
+                "early,",
+                "so",
+                "they",
+                "wait",
+                "for",
+                "ten",
+                "minutes."
+              ],
+              "wrongIndex": 11,
+              "fixes": [
+                "waits",
+                "waited",
+                "waitted"
+              ],
+              "answer": 1
+            },
+            {
+              "type": "find_fix",
+              "skill": "did-didnt",
+              "words": [
+                "Tom",
+                "was",
+                "reading",
+                "a",
+                "comic,",
+                "so",
+                "he",
+                "didn't",
+                "heard",
+                "the",
+                "phone."
+              ],
+              "wrongIndex": 8,
+              "fixes": [
+                "hear",
+                "hears",
+                "heared"
+              ],
+              "answer": 0
+            },
+            {
+              "type": "build_it",
+              "skill": "did-didnt",
+              "prompt": "Build the sentence.",
+              "tiles": [
+                "She",
+                "didn't",
+                "see",
+                "the",
+                "ghost",
+                "behind",
+                "her."
+              ],
+              "distractors": [
+                "saw"
+              ]
+            },
+            {
+              "type": "build_it",
+              "skill": "did-didnt",
+              "prompt": "Build the sentence.",
+              "tiles": [
+                "We",
+                "didn't",
+                "know",
+                "the",
+                "answer,",
+                "so",
+                "we",
+                "guessed."
+              ],
+              "distractors": [
+                "knew"
+              ]
+            },
+            {
+              "type": "sort_it",
+              "skill": "irregular-past",
+              "prompt": "Past or present? Sort the verbs.",
+              "groups": [
+                "Past",
+                "Present"
+              ],
+              "items": [
+                {
+                  "text": "caught",
+                  "group": 0
+                },
+                {
+                  "text": "thinks",
+                  "group": 1
+                },
+                {
+                  "text": "said",
+                  "group": 0
+                },
+                {
+                  "text": "begins",
+                  "group": 1
+                },
+                {
+                  "text": "knew",
+                  "group": 0
+                },
+                {
+                  "text": "comes",
+                  "group": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "A, the, and he/she + -s",
+          "questions": [
+            {
+              "type": "pick_one",
+              "skill": "articles",
+              "prompt": "Which sentence is right?",
+              "choices": [
+                "There is man at the door.",
+                "There is a man at the door.",
+                "There is a man at door."
+              ],
+              "answer": 1
+            },
+            {
+              "type": "pick_one",
+              "skill": "third-person-s",
+              "prompt": "Which sentence is right?",
+              "choices": [
+                "Our teacher have a red cup on her desk.",
+                "Teacher has a red cup on her desk.",
+                "Our teacher has a red cup on her desk."
+              ],
+              "answer": 2
+            },
+            {
+              "type": "pick_one",
+              "skill": "third-person-s",
+              "prompt": "Which sentence is right?",
+              "choices": [
+                "After school, Sam finishes his homework and plays outside.",
+                "After school, Sam finish his homework and plays outside.",
+                "After school, Sam finishes his homework and play outside."
+              ],
+              "answer": 0
+            },
+            {
+              "type": "fill_blank",
+              "skill": "articles",
+              "before": "Every Friday, Mina goes to",
+              "after": "to get new books.",
+              "choices": [
+                "library",
+                "the library",
+                "librarys"
+              ],
+              "answer": 1
+            },
+            {
+              "type": "fill_blank",
+              "skill": "third-person-s",
+              "before": "My brother",
+              "after": "his teeth before bed every night.",
+              "choices": [
+                "brushes",
+                "brush",
+                "brushs"
+              ],
+              "answer": 0
+            },
+            {
+              "type": "fill_blank",
+              "skill": "third-person-s",
+              "before": "Leo always",
+              "after": "the bus because he lives far away.",
+              "choices": [
+                "take",
+                "taked",
+                "takes"
+              ],
+              "answer": 2
+            },
+            {
+              "type": "find_fix",
+              "skill": "articles",
+              "words": [
+                "I",
+                "saw",
+                "man",
+                "in",
+                "a",
+                "long",
+                "black",
+                "coat."
+              ],
+              "wrongIndex": 2,
+              "fixes": [
+                "a man",
+                "mans",
+                "man's"
+              ],
+              "answer": 0
+            },
+            {
+              "type": "find_fix",
+              "skill": "third-person-s",
+              "words": [
+                "Every",
+                "morning,",
+                "Mr.",
+                "Park",
+                "open",
+                "the",
+                "library",
+                "and",
+                "waters",
+                "the",
+                "plants."
+              ],
+              "wrongIndex": 4,
+              "fixes": [
+                "opened",
+                "opens",
+                "opening"
+              ],
+              "answer": 1
+            },
+            {
+              "type": "find_fix",
+              "skill": "third-person-s",
+              "words": [
+                "She",
+                "watches",
+                "TV",
+                "after",
+                "dinner,",
+                "but",
+                "her",
+                "brother",
+                "do",
+                "his",
+                "homework."
+              ],
+              "wrongIndex": 8,
+              "fixes": [
+                "does",
+                "dos",
+                "doing"
+              ],
+              "answer": 0
+            },
+            {
+              "type": "build_it",
+              "skill": "third-person-s",
+              "prompt": "Build the sentence.",
+              "tiles": [
+                "My",
+                "sister",
+                "reads",
+                "a",
+                "book",
+                "every",
+                "night."
+              ],
+              "distractors": [
+                "reading"
+              ]
+            },
+            {
+              "type": "build_it",
+              "skill": "third-person-s",
+              "prompt": "Build the sentence.",
+              "tiles": [
+                "The",
+                "ghost",
+                "lives",
+                "in",
+                "an",
+                "old",
+                "library."
+              ],
+              "distractors": [
+                "live"
+              ]
+            },
+            {
+              "type": "sort_it",
+              "skill": "third-person-s",
+              "prompt": "He or she ... Sort the verbs: -s or -es?",
+              "groups": [
+                "-s",
+                "-es"
+              ],
+              "items": [
+                {
+                  "text": "plays",
+                  "group": 0
+                },
+                {
+                  "text": "watches",
+                  "group": 1
+                },
+                {
+                  "text": "runs",
+                  "group": 0
+                },
+                {
+                  "text": "fixes",
+                  "group": 1
+                },
+                {
+                  "text": "likes",
+                  "group": 0
+                },
+                {
+                  "text": "goes",
+                  "group": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Mix it up!",
+          "questions": [
+            {
+              "type": "pick_one",
+              "skill": "past-tense",
+              "prompt": "Which sentence is right?",
+              "choices": [
+                "The librarian nutice that Mia took two books.",
+                "The librarian noticed that Mia took two books.",
+                "The librarian noticed that Mia taked two books."
+              ],
+              "answer": 1
+            },
+            {
+              "type": "pick_one",
+              "skill": "third-person-s",
+              "prompt": "Which sentence is right?",
+              "choices": [
+                "Every day, she ride a bike to school.",
+                "Every day, she rides bike to school.",
+                "Every day, she rides a bike to school."
+              ],
+              "answer": 2
+            },
+            {
+              "type": "pick_one",
+              "skill": "did-didnt",
+              "prompt": "Which sentence is right?",
+              "choices": [
+                "Jun didn't bring his lunch, so he was hungry later.",
+                "Jun didn't brought his lunch, so he was hungry later.",
+                "Jun not bring his lunch, so he was hungry later."
+              ],
+              "answer": 0
+            },
+            {
+              "type": "fill_blank",
+              "skill": "articles",
+              "before": "Ben found a little box under his bed.",
+              "after": "box was full of old coins.",
+              "choices": [
+                "A",
+                "The"
+              ],
+              "answer": 1
+            },
+            {
+              "type": "fill_blank",
+              "skill": "irregular-past",
+              "before": "Tom",
+              "after": "the whole book in one day, and then he told me the ending.",
+              "choices": [
+                "reads",
+                "readed",
+                "read"
+              ],
+              "answer": 2
+            },
+            {
+              "type": "fill_blank",
+              "skill": "third-person-s",
+              "before": "Every Saturday, Mina",
+              "after": "to the library with her dad.",
+              "choices": [
+                "goes",
+                "go",
+                "gos"
+              ],
+              "answer": 0
+            },
+            {
+              "type": "find_fix",
+              "skill": "irregular-past",
+              "words": [
+                "We",
+                "sitted",
+                "on",
+                "the",
+                "floor",
+                "and",
+                "listened",
+                "to",
+                "a",
+                "ghost",
+                "story."
+              ],
+              "wrongIndex": 1,
+              "fixes": [
+                "sit",
+                "sat",
+                "sits"
+              ],
+              "answer": 1
+            },
+            {
+              "type": "find_fix",
+              "skill": "third-person-s",
+              "words": [
+                "Ms.",
+                "Lee",
+                "have",
+                "a",
+                "big",
+                "box",
+                "of",
+                "stickers."
+              ],
+              "wrongIndex": 2,
+              "fixes": [
+                "has",
+                "haves",
+                "having"
+              ],
+              "answer": 0
+            },
+            {
+              "type": "find_fix",
+              "skill": "irregular-past",
+              "words": [
+                "Leo",
+                "opened",
+                "his",
+                "bag",
+                "and",
+                "taked",
+                "out",
+                "a",
+                "flashlight."
+              ],
+              "wrongIndex": 5,
+              "fixes": [
+                "takes",
+                "taken",
+                "took"
+              ],
+              "answer": 2
+            },
+            {
+              "type": "build_it",
+              "skill": "did-didnt",
+              "prompt": "Build the sentence.",
+              "tiles": [
+                "Sam",
+                "didn't",
+                "eat",
+                "his",
+                "carrots",
+                "at",
+                "dinner."
+              ],
+              "distractors": [
+                "ate"
+              ]
+            },
+            {
+              "type": "build_it",
+              "skill": "irregular-past",
+              "prompt": "Build the sentence.",
+              "tiles": [
+                "She",
+                "caught",
+                "a",
+                "fish",
+                "and",
+                "gave",
+                "it",
+                "to",
+                "Ben."
+              ],
+              "distractors": [
+                "catched"
+              ]
+            },
+            {
+              "type": "sort_it",
+              "skill": "irregular-past",
+              "prompt": "Finish the sentence. Sort the verbs.",
+              "groups": [
+                "Yesterday, he ...",
+                "Every day, he ..."
+              ],
+              "items": [
+                {
+                  "text": "came",
+                  "group": 0
+                },
+                {
+                  "text": "tells",
+                  "group": 1
+                },
+                {
+                  "text": "thought",
+                  "group": 0
+                },
+                {
+                  "text": "comes",
+                  "group": 1
+                },
+                {
+                  "text": "told",
+                  "group": 0
+                },
+                {
+                  "text": "thinks",
+                  "group": 1
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

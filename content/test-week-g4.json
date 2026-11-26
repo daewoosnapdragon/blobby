@@ -1,0 +1,1124 @@
+{
+  "plan": {
+    "title": "Test week · Grade 4",
+    "kind": "test"
+  },
+  "assignTo": {
+    "grade": 4
+  },
+  "weeks": [
+    {
+      "skill": "Past tense in stories",
+      "opensOn": "2026-11-26",
+      "lessons": [
+        {
+          "title": "Yesterday with -ed",
+          "questions": [
+            {
+              "type": "pick_one",
+              "skill": "past-tense",
+              "prompt": "Which sentence is right?",
+              "choices": [
+                "Mia droped her spoon and picked it up.",
+                "Mia drop her spoon and picked it up.",
+                "Mia dropped her spoon and pick it up.",
+                "Mia dropped her spoon and picked it up."
+              ],
+              "answer": 3
+            },
+            {
+              "type": "pick_one",
+              "skill": "past-tense",
+              "prompt": "Which sentence is right?",
+              "choices": [
+                "Ben carryed the heavy box upstairs.",
+                "Ben carried the heavy box upstairs.",
+                "Ben caried the heavy box upstairs.",
+                "Ben carry the heavy box upstairs."
+              ],
+              "answer": 1
+            },
+            {
+              "type": "pick_one",
+              "skill": "past-tense",
+              "prompt": "Which sentence is right?",
+              "choices": [
+                "Yesterday, Leo decided to clean his room, and he started with the bed.",
+                "Yesterday, Leo decideed to clean his room, and he started with the bed.",
+                "Yesterday, Leo decided to clean his room, and he start with the bed.",
+                "Yesterday, Leo decide to clean his room, and he started with the bed."
+              ],
+              "answer": 0
+            },
+            {
+              "type": "fill_blank",
+              "skill": "past-tense",
+              "before": "The baby",
+              "after": "all night, so nobody slept well.",
+              "choices": [
+                "cryed",
+                "cry",
+                "cried"
+              ],
+              "answer": 2
+            },
+            {
+              "type": "fill_blank",
+              "skill": "past-tense",
+              "before": "The car",
+              "after": "at the red light, and everyone waited.",
+              "choices": [
+                "stoped",
+                "stopped",
+                "stopping"
+              ],
+              "answer": 1
+            },
+            {
+              "type": "fill_blank",
+              "skill": "past-tense",
+              "before": "Last summer, my family",
+              "after": "in a small town by the sea.",
+              "choices": [
+                "stayed",
+                "staied",
+                "stay"
+              ],
+              "answer": 0
+            },
+            {
+              "type": "find_fix",
+              "skill": "past-tense",
+              "words": [
+                "Mina",
+                "hurried",
+                "to",
+                "the",
+                "bus",
+                "stop",
+                "and",
+                "wave",
+                "to",
+                "her",
+                "friend."
+              ],
+              "wrongIndex": 7,
+              "fixes": [
+                "waved",
+                "waveed",
+                "waving"
+              ],
+              "answer": 0
+            },
+            {
+              "type": "find_fix",
+              "skill": "past-tense",
+              "words": [
+                "Jun",
+                "studyed",
+                "for",
+                "two",
+                "hours",
+                "and",
+                "then",
+                "watched",
+                "a",
+                "movie."
+              ],
+              "wrongIndex": 1,
+              "fixes": [
+                "studies",
+                "studied",
+                "studed"
+              ],
+              "answer": 1
+            },
+            {
+              "type": "find_fix",
+              "skill": "past-tense",
+              "words": [
+                "The",
+                "kids",
+                "clapped",
+                "and",
+                "shoutted",
+                "when",
+                "the",
+                "show",
+                "ended."
+              ],
+              "wrongIndex": 4,
+              "fixes": [
+                "shout",
+                "shouts",
+                "shouted"
+              ],
+              "answer": 2
+            },
+            {
+              "type": "build_it",
+              "skill": "past-tense",
+              "prompt": "Build the sentence.",
+              "tiles": [
+                "Stella",
+                "tried",
+                "to",
+                "open",
+                "the",
+                "jar,",
+                "but",
+                "it",
+                "slipped."
+              ],
+              "distractors": [
+                "tryed"
+              ]
+            },
+            {
+              "type": "build_it",
+              "skill": "past-tense",
+              "prompt": "Build the sentence.",
+              "tiles": [
+                "We",
+                "hurried",
+                "because",
+                "the",
+                "show",
+                "started",
+                "at",
+                "six."
+              ],
+              "distractors": [
+                "hurryed"
+              ]
+            },
+            {
+              "type": "sort_it",
+              "skill": "past-tense",
+              "prompt": "How do you make the past tense? Sort the words.",
+              "groups": [
+                "just add -ed",
+                "double the last letter + -ed",
+                "change y to i + -ed"
+              ],
+              "items": [
+                {
+                  "text": "played",
+                  "group": 0
+                },
+                {
+                  "text": "dropped",
+                  "group": 1
+                },
+                {
+                  "text": "studied",
+                  "group": 2
+                },
+                {
+                  "text": "jumped",
+                  "group": 0
+                },
+                {
+                  "text": "clapped",
+                  "group": 1
+                },
+                {
+                  "text": "carried",
+                  "group": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Tricky past verbs",
+          "questions": [
+            {
+              "type": "pick_one",
+              "skill": "irregular-past",
+              "prompt": "Which sentence is right?",
+              "choices": [
+                "Sam throw the ball, and his dog caught it.",
+                "Sam threw the ball, and his dog catched it.",
+                "Sam threw the ball, and his dog caught it.",
+                "Sam threwed the ball, and his dog caught it."
+              ],
+              "answer": 2
+            },
+            {
+              "type": "pick_one",
+              "skill": "irregular-past",
+              "prompt": "Which sentence is right?",
+              "choices": [
+                "Mina drank a glass of milk and felt better.",
+                "Mina drinked a glass of milk and felt better.",
+                "Mina drank a glass of milk and feeled better."
+              ],
+              "answer": 0
+            },
+            {
+              "type": "pick_one",
+              "skill": "irregular-past",
+              "prompt": "Which sentence is right?",
+              "choices": [
+                "Over the years, the little seed becomed a tall tree.",
+                "Over the years, the little seed became a tall tree.",
+                "Over the years, the little seed become a tall tree.",
+                "Over the years, the little seed becamed a tall tree."
+              ],
+              "answer": 1
+            },
+            {
+              "type": "fill_blank",
+              "skill": "irregular-past",
+              "before": "Leo",
+              "after": "his little sister's hand as they crossed the street.",
+              "choices": [
+                "holded",
+                "held",
+                "hold"
+              ],
+              "answer": 1
+            },
+            {
+              "type": "fill_blank",
+              "skill": "irregular-past",
+              "before": "Grandpa",
+              "after": "a birdhouse, and we painted it blue.",
+              "choices": [
+                "builded",
+                "build",
+                "built"
+              ],
+              "answer": 2
+            },
+            {
+              "type": "fill_blank",
+              "skill": "irregular-past",
+              "before": "Tom",
+              "after": "the blue shirt because it was his favorite color.",
+              "choices": [
+                "chose",
+                "choosed",
+                "chosen"
+              ],
+              "answer": 0
+            },
+            {
+              "type": "find_fix",
+              "skill": "irregular-past",
+              "words": [
+                "Mia",
+                "brang",
+                "cookies",
+                "to",
+                "school",
+                "and",
+                "shared",
+                "them",
+                "with",
+                "everyone."
+              ],
+              "wrongIndex": 1,
+              "fixes": [
+                "bringed",
+                "brought",
+                "brung"
+              ],
+              "answer": 1
+            },
+            {
+              "type": "find_fix",
+              "skill": "irregular-past",
+              "words": [
+                "Ben",
+                "slipped",
+                "on",
+                "the",
+                "ice",
+                "and",
+                "fall",
+                "down."
+              ],
+              "wrongIndex": 6,
+              "fixes": [
+                "fell",
+                "falled",
+                "fallen"
+              ],
+              "answer": 0
+            },
+            {
+              "type": "find_fix",
+              "skill": "irregular-past",
+              "words": [
+                "Stella",
+                "leaved",
+                "her",
+                "bag",
+                "on",
+                "the",
+                "bus,",
+                "so",
+                "she",
+                "ran",
+                "back",
+                "to",
+                "get",
+                "it."
+              ],
+              "wrongIndex": 1,
+              "fixes": [
+                "lefted",
+                "leaving",
+                "left"
+              ],
+              "answer": 2
+            },
+            {
+              "type": "build_it",
+              "skill": "irregular-past",
+              "prompt": "Build the sentence.",
+              "tiles": [
+                "Jun",
+                "kept",
+                "the",
+                "secret",
+                "and",
+                "never",
+                "told",
+                "anyone."
+              ],
+              "distractors": [
+                "keeped"
+              ]
+            },
+            {
+              "type": "build_it",
+              "skill": "irregular-past",
+              "prompt": "Build the sentence.",
+              "tiles": [
+                "I",
+                "felt",
+                "cold,",
+                "so",
+                "Dad",
+                "brought",
+                "me",
+                "a",
+                "blanket."
+              ],
+              "distractors": [
+                "bringed"
+              ]
+            },
+            {
+              "type": "sort_it",
+              "skill": "irregular-past",
+              "prompt": "Sort the past tense verbs.",
+              "groups": [
+                "Regular (-ed)",
+                "Irregular"
+              ],
+              "items": [
+                {
+                  "text": "carried",
+                  "group": 0
+                },
+                {
+                  "text": "meant",
+                  "group": 1
+                },
+                {
+                  "text": "caught",
+                  "group": 1
+                },
+                {
+                  "text": "stopped",
+                  "group": 0
+                },
+                {
+                  "text": "built",
+                  "group": 1
+                },
+                {
+                  "text": "decided",
+                  "group": 0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Keep the story in the past",
+          "questions": [
+            {
+              "type": "pick_one",
+              "skill": "irregular-past",
+              "prompt": "Which mini-story stays in the past?",
+              "choices": [
+                "Mr. Pin opened the door. He looked outside and go back to bed.",
+                "Mr. Pin opened the door. He looked outside and went back to bed.",
+                "Mr. Pin opens the door. He looked outside and went back to bed.",
+                "Mr. Pin opened the door. He looks outside and went back to bed."
+              ],
+              "answer": 1
+            },
+            {
+              "type": "pick_one",
+              "skill": "irregular-past",
+              "prompt": "Which sentence is right?",
+              "choices": [
+                "From the top of the hill, we can saw the whole town.",
+                "From the top of the hill, we could saw the whole town.",
+                "From the top of the hill, we could seen the whole town.",
+                "From the top of the hill, we could see the whole town."
+              ],
+              "answer": 3
+            },
+            {
+              "type": "pick_one",
+              "skill": "past-tense",
+              "prompt": "Which mini-story stays in the past?",
+              "choices": [
+                "The witch waved her wand. Then she turn into a black cat.",
+                "The witch waves her wand. Then she turned into a black cat.",
+                "The witch waved her wand. Then she turned into a black cat.",
+                "The witch waved her wand. Then she turns into a black cat."
+              ],
+              "answer": 2
+            },
+            {
+              "type": "fill_blank",
+              "skill": "past-tense",
+              "before": "Leo tripped on a rock. He",
+              "after": "to stand up, but his knee hurt.",
+              "choices": [
+                "trying",
+                "tried",
+                "tries"
+              ],
+              "answer": 1
+            },
+            {
+              "type": "fill_blank",
+              "skill": "irregular-past",
+              "before": "It was very dark in the cave. We",
+              "after": "anything at all.",
+              "choices": [
+                "couldn't see",
+                "can't saw",
+                "couldn't saw"
+              ],
+              "answer": 0
+            },
+            {
+              "type": "fill_blank",
+              "skill": "irregular-past",
+              "before": "The race started. Mia",
+              "after": "as fast as she could and won first place.",
+              "choices": [
+                "run",
+                "runs",
+                "ran"
+              ],
+              "answer": 2
+            },
+            {
+              "type": "find_fix",
+              "skill": "irregular-past",
+              "words": [
+                "Tom",
+                "was",
+                "thirsty",
+                "after",
+                "the",
+                "game.",
+                "He",
+                "drink",
+                "two",
+                "glasses",
+                "of",
+                "water."
+              ],
+              "wrongIndex": 7,
+              "fixes": [
+                "drinked",
+                "drank",
+                "drunk"
+              ],
+              "answer": 1
+            },
+            {
+              "type": "find_fix",
+              "skill": "irregular-past",
+              "words": [
+                "Mina",
+                "heard",
+                "a",
+                "noise.",
+                "She",
+                "looked",
+                "under",
+                "the",
+                "bed",
+                "and",
+                "sees",
+                "a",
+                "tiny",
+                "mouse."
+              ],
+              "wrongIndex": 10,
+              "fixes": [
+                "saw",
+                "seen",
+                "seed"
+              ],
+              "answer": 0
+            },
+            {
+              "type": "find_fix",
+              "skill": "irregular-past",
+              "words": [
+                "Ben's",
+                "kite",
+                "flew",
+                "high.",
+                "Then",
+                "the",
+                "string",
+                "broke,",
+                "and",
+                "the",
+                "kite",
+                "fall",
+                "into",
+                "a",
+                "tree."
+              ],
+              "wrongIndex": 11,
+              "fixes": [
+                "fallen",
+                "falls",
+                "fell"
+              ],
+              "answer": 2
+            },
+            {
+              "type": "build_it",
+              "skill": "irregular-past",
+              "prompt": "Build the sentence.",
+              "tiles": [
+                "It",
+                "was",
+                "cloudy,",
+                "so",
+                "Leo",
+                "could",
+                "not",
+                "see",
+                "the",
+                "moon."
+              ],
+              "distractors": [
+                "saw",
+                "can"
+              ]
+            },
+            {
+              "type": "build_it",
+              "skill": "irregular-past",
+              "prompt": "Build the sentence.",
+              "tiles": [
+                "The",
+                "bell",
+                "rang,",
+                "and",
+                "the",
+                "children",
+                "ran",
+                "outside."
+              ],
+              "distractors": [
+                "run"
+              ]
+            },
+            {
+              "type": "sort_it",
+              "skill": "past-tense",
+              "prompt": "Which words fit a story about yesterday? Sort them.",
+              "groups": [
+                "Past",
+                "Present"
+              ],
+              "items": [
+                {
+                  "text": "could see",
+                  "group": 0
+                },
+                {
+                  "text": "can see",
+                  "group": 1
+                },
+                {
+                  "text": "went back",
+                  "group": 0
+                },
+                {
+                  "text": "go back",
+                  "group": 1
+                },
+                {
+                  "text": "turned into",
+                  "group": 0
+                },
+                {
+                  "text": "turn into",
+                  "group": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "More than one, bigger, best",
+          "questions": [
+            {
+              "type": "pick_one",
+              "skill": "irregular-plurals",
+              "prompt": "Which sentence is right?",
+              "choices": [
+                "The childrens looked at the mice in the cage.",
+                "The children looked at the mouses in the cage.",
+                "The children looked at the mice in the cage.",
+                "The childs looked at the mice in the cage."
+              ],
+              "answer": 2
+            },
+            {
+              "type": "pick_one",
+              "skill": "plurals",
+              "prompt": "Which sentence is right?",
+              "choices": [
+                "Every students in our class has a library book.",
+                "Every student in our class has a library book.",
+                "Every student in our class have a library book.",
+                "Every students in our class have library books."
+              ],
+              "answer": 1
+            },
+            {
+              "type": "pick_one",
+              "skill": "comparatives",
+              "prompt": "Which sentence is right?",
+              "choices": [
+                "Mia's drawing is better than mine.",
+                "Mia's drawing is gooder than mine.",
+                "Mia's drawing is more better than mine.",
+                "Mia's drawing is best than mine."
+              ],
+              "answer": 0
+            },
+            {
+              "type": "fill_blank",
+              "skill": "irregular-plurals",
+              "before": "After the long walk, my",
+              "after": "hurt, so I sat down.",
+              "choices": [
+                "foots",
+                "feet",
+                "feets"
+              ],
+              "answer": 1
+            },
+            {
+              "type": "fill_blank",
+              "skill": "comparatives",
+              "before": "The blue whale is the",
+              "after": "animal in the world.",
+              "choices": [
+                "bigest",
+                "bigger",
+                "most big",
+                "biggest"
+              ],
+              "answer": 3
+            },
+            {
+              "type": "fill_blank",
+              "skill": "comparatives",
+              "before": "Yesterday was the",
+              "after": "day of my life. I lost my bag and missed the bus!",
+              "choices": [
+                "baddest",
+                "worse",
+                "worst",
+                "most bad"
+              ],
+              "answer": 2
+            },
+            {
+              "type": "find_fix",
+              "skill": "plurals",
+              "words": [
+                "Three",
+                "student",
+                "and",
+                "their",
+                "teacher",
+                "walked",
+                "to",
+                "the",
+                "library."
+              ],
+              "wrongIndex": 1,
+              "fixes": [
+                "students",
+                "student's",
+                "studentes"
+              ],
+              "answer": 0
+            },
+            {
+              "type": "find_fix",
+              "skill": "irregular-plurals",
+              "words": [
+                "Two",
+                "little",
+                "mouses",
+                "ran",
+                "under",
+                "the",
+                "table",
+                "and",
+                "ate",
+                "the",
+                "cheese."
+              ],
+              "wrongIndex": 2,
+              "fixes": [
+                "mouse",
+                "mice",
+                "mices"
+              ],
+              "answer": 1
+            },
+            {
+              "type": "find_fix",
+              "skill": "comparatives",
+              "words": [
+                "Ben",
+                "is",
+                "the",
+                "strongiest",
+                "boy",
+                "in",
+                "our",
+                "class,",
+                "but",
+                "Leo",
+                "is",
+                "faster."
+              ],
+              "wrongIndex": 3,
+              "fixes": [
+                "stronger",
+                "strongerest",
+                "strongest"
+              ],
+              "answer": 2
+            },
+            {
+              "type": "build_it",
+              "skill": "comparatives",
+              "prompt": "Build the sentence.",
+              "tiles": [
+                "Mina's",
+                "story",
+                "was",
+                "better",
+                "than",
+                "mine."
+              ],
+              "distractors": [
+                "gooder",
+                "best"
+              ]
+            },
+            {
+              "type": "build_it",
+              "skill": "irregular-plurals",
+              "prompt": "Build the sentence.",
+              "tiles": [
+                "Every",
+                "child",
+                "has",
+                "two",
+                "feet",
+                "and",
+                "ten",
+                "toes."
+              ],
+              "distractors": [
+                "children",
+                "foots"
+              ]
+            },
+            {
+              "type": "sort_it",
+              "skill": "irregular-plurals",
+              "prompt": "Sort the words.",
+              "groups": [
+                "One",
+                "More than one"
+              ],
+              "items": [
+                {
+                  "text": "mouse",
+                  "group": 0
+                },
+                {
+                  "text": "teeth",
+                  "group": 1
+                },
+                {
+                  "text": "people",
+                  "group": 1
+                },
+                {
+                  "text": "foot",
+                  "group": 0
+                },
+                {
+                  "text": "child",
+                  "group": 0
+                },
+                {
+                  "text": "mice",
+                  "group": 1
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "Big review",
+          "questions": [
+            {
+              "type": "pick_one",
+              "skill": "plurals",
+              "prompt": "Which sentence is right?",
+              "choices": [
+                "The wizard has lots of magics and many books.",
+                "The wizard has lots of magic and many book.",
+                "The wizard has lots books and lots of magic.",
+                "The wizard has lots of magic and many books."
+              ],
+              "answer": 3
+            },
+            {
+              "type": "pick_one",
+              "skill": "past-tense",
+              "prompt": "Which mini-story stays in the past?",
+              "choices": [
+                "Dad looked at my picture and say it was beautiful.",
+                "Dad looks at my picture and said it was beautiful.",
+                "Dad looked at my picture and said it was beautiful.",
+                "Dad looked at my picture and says it was beautiful."
+              ],
+              "answer": 2
+            },
+            {
+              "type": "pick_one",
+              "skill": "comparatives",
+              "prompt": "Which sentence is right?",
+              "choices": [
+                "Winter is the coldest season, and summer is the hottest.",
+                "Winter is the coldiest season, and summer is the hottest.",
+                "Winter is the coldest season, and summer is the hotest."
+              ],
+              "answer": 0
+            },
+            {
+              "type": "fill_blank",
+              "skill": "irregular-past",
+              "before": "Stella",
+              "after": "the ball high, and it landed on the roof.",
+              "choices": [
+                "throw",
+                "threw",
+                "throwed",
+                "thrown"
+              ],
+              "answer": 1
+            },
+            {
+              "type": "fill_blank",
+              "skill": "plurals",
+              "before": "There are",
+              "after": "on the shelf, so pick the one you like.",
+              "choices": [
+                "a books",
+                "lots books",
+                "lots of books"
+              ],
+              "answer": 2
+            },
+            {
+              "type": "fill_blank",
+              "skill": "irregular-past",
+              "before": "Last night, the wind was so strong that we",
+              "after": "the trees shaking.",
+              "choices": [
+                "could hear",
+                "can heard",
+                "could heard"
+              ],
+              "answer": 0
+            },
+            {
+              "type": "find_fix",
+              "skill": "plurals",
+              "words": [
+                "Every",
+                "books",
+                "on",
+                "this",
+                "shelf",
+                "has",
+                "a",
+                "red",
+                "cover."
+              ],
+              "wrongIndex": 1,
+              "fixes": [
+                "book",
+                "bookes",
+                "books'"
+              ],
+              "answer": 0
+            },
+            {
+              "type": "find_fix",
+              "skill": "plurals",
+              "words": [
+                "This",
+                "persons",
+                "is",
+                "our",
+                "new",
+                "art",
+                "teacher."
+              ],
+              "wrongIndex": 1,
+              "fixes": [
+                "peoples",
+                "person",
+                "persones"
+              ],
+              "answer": 1
+            },
+            {
+              "type": "find_fix",
+              "skill": "past-tense",
+              "words": [
+                "Leo",
+                "spill",
+                "his",
+                "juice,",
+                "so",
+                "he",
+                "grabbed",
+                "a",
+                "towel",
+                "and",
+                "cleaned",
+                "it",
+                "up."
+              ],
+              "wrongIndex": 1,
+              "fixes": [
+                "spills",
+                "spilling",
+                "spilled"
+              ],
+              "answer": 2
+            },
+            {
+              "type": "build_it",
+              "skill": "irregular-past",
+              "prompt": "Build the sentence.",
+              "tiles": [
+                "Mia",
+                "caught",
+                "a",
+                "cold,",
+                "so",
+                "she",
+                "stayed",
+                "home."
+              ],
+              "distractors": [
+                "catched"
+              ]
+            },
+            {
+              "type": "build_it",
+              "skill": "comparatives",
+              "prompt": "Build the sentence.",
+              "tiles": [
+                "My",
+                "grandma",
+                "makes",
+                "the",
+                "best",
+                "cookies",
+                "in",
+                "the",
+                "world."
+              ],
+              "distractors": [
+                "goodest"
+              ]
+            },
+            {
+              "type": "sort_it",
+              "skill": "comparatives",
+              "prompt": "Is it right or wrong? Sort the words.",
+              "groups": [
+                "Right",
+                "Wrong"
+              ],
+              "items": [
+                {
+                  "text": "more beautiful",
+                  "group": 0
+                },
+                {
+                  "text": "gooder",
+                  "group": 1
+                },
+                {
+                  "text": "drank",
+                  "group": 0
+                },
+                {
+                  "text": "throwed",
+                  "group": 1
+                },
+                {
+                  "text": "children",
+                  "group": 0
+                },
+                {
+                  "text": "childrens",
+                  "group": 1
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
