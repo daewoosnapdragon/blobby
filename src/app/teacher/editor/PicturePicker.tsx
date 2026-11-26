@@ -47,7 +47,8 @@ export function PicturePicker({ text, value, onChange, catalog: given, required 
           <button type="button" className={s.linkBtn} onClick={() => onChange('')}>Remove picture</button>
         </div>
       ) : (
-        <p className={s.hint}>Show a picture of the key word above the question. It should never give the answer away.</p>
+        <p className={s.hint}>{required ? 'This picture is the question. Pick the thing the right answer names.'
+          : 'Show a picture of the key word above the question. It should never give the answer away.'}</p>
       )}
       {suggested.length > 0 ? (
         <div className={s.picRow}>

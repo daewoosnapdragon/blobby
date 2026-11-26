@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { parseQuestion, type NonWatchQuestion } from '@/lib/questions/schema';
 import { checkAnswer } from '@/lib/questions/check';
@@ -58,7 +58,7 @@ describe('picture_first', () => {
     expect(onAnswer).toHaveBeenCalledTimes(1);
   });
 
-  it('component: a picture that fails to load says so, never names it, and Try again reloads it', () => {
+  it('component: a picture that fails to load says so, never names it, and Show it again reloads it', () => {
     const q = { ...pf, choices: ['a', 'b'] };
     const { container } = render(<PictureFirst q={q} status="idle" onAnswer={vi.fn()} />);
     fireEvent.error(bigImg()!);
@@ -66,9 +66,55 @@ describe('picture_first', () => {
     expect(screen.getByText('The picture didn’t load')).toBeInTheDocument();
     expect(container.querySelector('[class*="pictureMissing"]')).not.toBeNull();
     expect(container.textContent).not.toMatch(/ice.cream/i);
-    fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
+    expect(screen.queryByRole('button', { name: 'Try again' })).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'Show it again' }));
     expect(screen.queryByText('The picture didn’t load')).toBeNull();
     expect(bigImg()!.getAttribute('src')).toBe('/pictures/ice-cream.svg?retry=1');
+  });
+
+  it('component: a picture that failed before hydration (complete, no pixels) shows the fallback, not the name', () => {
+    vi.spyOn(HTMLImageElement.prototype, 'complete', 'get').mockReturnValue(true);
+    vi.spyOn(HTMLImageElement.prototype, 'naturalWidth', 'get').mockReturnValue(0);
+    try {
+      const { container } = render(<PictureFirst q={{ ...pf, choices: ['a', 'b'] }} status="idle" onAnswer={vi.fn()} />);
+      expect(bigImg()).toBeNull();
+      expect(screen.getByText('The picture didn’t load')).toBeInTheDocument();
+      expect(container.textContent).not.toMatch(/ice.cream/i);
+    } finally {
+      vi.restoreAllMocks();
+    }
+  });
+
+  it('component: a loaded viewBox-only SVG that reports naturalWidth 0 stays shown when decode() succeeds', async () => {
+    vi.spyOn(HTMLImageElement.prototype, 'complete', 'get').mockReturnValue(true);
+    vi.spyOn(HTMLImageElement.prototype, 'naturalWidth', 'get').mockReturnValue(0);
+    const decode = vi.fn(() => Promise.resolve());
+    Object.defineProperty(HTMLImageElement.prototype, 'decode', { value: decode, configurable: true });
+    try {
+      render(<PictureFirst q={pf} status="idle" onAnswer={vi.fn()} />);
+      await act(async () => {});
+      expect(decode).toHaveBeenCalled();
+      expect(bigImg()).not.toBeNull();
+      expect(screen.queryByText('The picture didn’t load')).toBeNull();
+    } finally {
+      delete (HTMLImageElement.prototype as { decode?: unknown }).decode;
+      vi.restoreAllMocks();
+    }
+  });
+
+  it('component: a complete image whose decode() rejects shows the fallback', async () => {
+    vi.spyOn(HTMLImageElement.prototype, 'complete', 'get').mockReturnValue(true);
+    vi.spyOn(HTMLImageElement.prototype, 'naturalWidth', 'get').mockReturnValue(0);
+    Object.defineProperty(HTMLImageElement.prototype, 'decode', { value: () => Promise.reject(new Error('broken')), configurable: true });
+    try {
+      render(<PictureFirst q={pf} status="idle" onAnswer={vi.fn()} />);
+      await act(async () => {});
+      expect(bigImg()).toBeNull();
+      expect(screen.getByText('The picture didn’t load')).toBeInTheDocument();
+    } finally {
+      delete (HTMLImageElement.prototype as { decode?: unknown }).decode;
+      vi.restoreAllMocks();
+    }
   });
 
   it('player: tag, prompt, no small bubble picture, the big picture; spoken strings', () => {
@@ -145,10 +191,13 @@ describe('picture_first', () => {
     expect(legend).toHaveTextContent('Picture');
     expect(legend).not.toHaveTextContent('(optional)');
     expect(screen.getByText('Required for picture first')).toBeInTheDocument();
+    expect(screen.getByText('This picture is the question. Pick the thing the right answer names.')).toBeInTheDocument();
+    expect(screen.queryByText(/Show a picture of the key word/)).toBeNull();
     cleanup();
     const plain = render(<PicturePicker text="" value="" onChange={vi.fn()} catalog={[]} />);
     expect(plain.container.querySelector('legend')).toHaveTextContent('Picture (optional)');
     expect(screen.queryByText('Required for picture first')).toBeNull();
+    expect(screen.getByText(/Show a picture of the key word/)).toBeInTheDocument();
   });
 
   it('answer summary: picture, prompt, choices with the right one marked', () => {
