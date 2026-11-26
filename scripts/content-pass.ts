@@ -17,10 +17,10 @@ let failed = false;
 for (const file of process.argv.slice(2)) {
   try {
     const data = JSON.parse(fs.readFileSync(file, 'utf8'));
-    const groups: { where: string; seed: string; get: () => RawQuestion[]; set: (qs: RawQuestion[]) => void }[] = [];
+    const groups: { where: string; seed: string; skill?: string; get: () => RawQuestion[]; set: (qs: RawQuestion[]) => void }[] = [];
     if (data && typeof data === 'object' && 'skills' in data && !('weeks' in data)) {
       for (const key of Object.keys(data.skills)) {
-        groups.push({ where: `skill ${key}`, seed: key, get: () => data.skills[key], set: (qs) => { data.skills[key] = qs; } });
+        groups.push({ where: `skill ${key}`, seed: key, skill: key, get: () => data.skills[key], set: (qs) => { data.skills[key] = qs; } });
       }
     } else {
       for (const week of data.weeks) for (const lesson of week.lessons) {
@@ -30,7 +30,7 @@ for (const file of process.argv.slice(2)) {
     let renamed = 0, rotated = 0, relabeled = 0;
     for (const g of groups) {
       validate(g.get(), g.where);
-      const r = passRawQuestions(g.get(), g.seed);
+      const r = passRawQuestions(g.get(), g.seed, g.skill);
       validate(r.questions, g.where);
       g.set(r.questions);
       renamed += r.renamed; rotated += r.rotated; relabeled += r.relabeled;

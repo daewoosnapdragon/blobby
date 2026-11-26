@@ -70,11 +70,12 @@ function stringsOf(q: Question | NonWatchQuestion): string[] {
 /**
  * Renames the old cast in every string of the question. The per-question map is resolved first over all
  * strings (in order of first appearance); when two originals would map to one target, the second takes
- * the next unused name of the same pronoun.
+ * the next unused name of the same pronoun. With `lowercaseNames` (capital-letter exercises), a lowercase
+ * name is renamed even when the capitalized name is not in the question ("leo" → "milo").
  */
-export function renameQuestion(q: NonWatchQuestion | Question): Question {
+export function renameQuestion(q: NonWatchQuestion | Question, options: { lowercaseNames?: boolean } = {}): Question {
   const strings = stringsOf(q);
-  const hasCapital = (name: string) => strings.some((s) => stemRe([name], '').test(s));
+  const hasCapital = (name: string) => !!options.lowercaseNames || strings.some((s) => stemRe([name], '').test(s));
   const found: { name: string; at: number }[] = [];
   CAST.forEach(({ from }) => {
     let at = Infinity;
@@ -88,7 +89,7 @@ export function renameQuestion(q: NonWatchQuestion | Question): Question {
   });
   if (found.length === 0) return q as Question;
   found.sort((a, b) => a.at - b.at);
-  const used = new Set([...BOYS, ...GIRLS].filter((n) => hasCapital(n)));
+  const used = new Set([...BOYS, ...GIRLS].filter((n) => strings.some((s) => stemRe([n], options.lowercaseNames ? 'i' : '').test(s))));
   const map = new Map<string, string>();
   for (const { name } of found) {
     const { to, pronoun } = CAST.find((c) => c.from === name)!;
@@ -169,9 +170,12 @@ export function rotatePrompts(questions: Question[], seed: string): Question[] {
   });
 }
 
+/** Skills whose exercises put names in lowercase on purpose; their lowercase names are renamed too. */
+export const LOWERCASE_NAME_SKILLS = new Set(['capitals-names', 'sentence-ends']);
+
 /** rename → relabel → rotate. Idempotent. */
-export function applyPass(questions: Question[], seed: string): Question[] {
-  return rotatePrompts(questions.map((q) => relabelRightWrong(renameQuestion(q))), seed);
+export function applyPass(questions: Question[], seed: string, options: { lowercaseNames?: boolean } = {}): Question[] {
+  return rotatePrompts(questions.map((q) => relabelRightWrong(renameQuestion(q, options))), seed);
 }
 
 /** A question as stored in a content file: the payload plus an optional `skill` the schema does not know. */
@@ -180,12 +184,13 @@ export type RawQuestion = { type: string; skill?: string } & Record<string, unkn
 /**
  * Runs the pass on content-file questions: strips `skill`, transforms, re-attaches it as the second key
  * (type, skill, then the payload in its original order), and counts the questions each rule changed.
+ * A question's skill is its own `skill` field, else `groupSkill` (a bank file's skill key).
  */
-export function passRawQuestions(raw: RawQuestion[], seed: string): { questions: RawQuestion[]; renamed: number; relabeled: number; rotated: number } {
+export function passRawQuestions(raw: RawQuestion[], seed: string, groupSkill?: string): { questions: RawQuestion[]; renamed: number; relabeled: number; rotated: number } {
   const skills = raw.map((q) => q.skill);
   const plain = raw.map(({ skill: _skill, ...q }) => q as unknown as Question);
   const same = (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b);
-  const renamedQs = plain.map(renameQuestion);
+  const renamedQs = plain.map((q, i) => renameQuestion(q, { lowercaseNames: LOWERCASE_NAME_SKILLS.has(skills[i] ?? groupSkill ?? '') }));
   const relabeledQs = renamedQs.map(relabelRightWrong);
   const rotatedQs = rotatePrompts(relabeledQs, seed);
   const changed = (a: Question[], b: Question[]) => a.filter((q, i) => !same(q, b[i])).length;

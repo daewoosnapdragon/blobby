@@ -84,6 +84,18 @@ describe('content pass: rename', () => {
   it('a new-cast name already in the question counts as used (Mia and Nova → Ruby and Nova)', () => {
     expect(renameQuestion(pick('Mia and Nova are sisters.'))).toMatchObject({ prompt: 'Ruby and Nova are sisters.' });
   });
+  it('capital-letter skills rename lowercase names too; other skills keep the guard; idempotent', () => {
+    const q = { type: 'sort_it', prompt: 'Sort.', groups: ['Capital', 'No capital'], items: [{ text: 'Ruby', group: 0 }, { text: 'leo', group: 1 }, { text: 'sam', group: 1 }] };
+    const texts = (r: RawQuestion) => (r.items as { text: string }[]).map((i) => i.text);
+    const caps = passRawQuestions([{ ...q, skill: 'capitals-names' }], 'x').questions;
+    expect(texts(caps[0])).toEqual(['Ruby', 'milo', 'finn']);
+    expect(passRawQuestions(caps, 'x').questions).toEqual(caps);
+    const bank = passRawQuestions([q], 'x', 'sentence-ends').questions;
+    expect(texts(bank[0])).toEqual(['Ruby', 'milo', 'finn']);
+    expect(texts(passRawQuestions([{ ...q, skill: 'past-tense' }], 'x').questions[0])).toEqual(['Ruby', 'leo', 'sam']);
+    expect(renameQuestion(pickWithChoices(['sam', 'jun']), { lowercaseNames: true })).toMatchObject({ choices: ['finn', 'theo'] });
+    expect(renameQuestion(pickWithChoices(['mia', 'nova']), { lowercaseNames: true })).toMatchObject({ choices: ['ruby', 'nova'] });
+  });
   it('is a no-op when no old names remain', () => {
     const q = pick('Finn and Theo are brothers.');
     expect(renameQuestion(q)).toEqual(q);
