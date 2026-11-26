@@ -1,24 +1,19 @@
 import Link from 'next/link';
 import type { EditorLesson } from '@/lib/db/teacher';
 import { draftFromQuestion, emptyDraft, TYPE_NAMES } from '@/lib/questions/draft';
-import { QUESTION_TYPES, isQuestionType, type Question, type QuestionType } from '@/lib/questions/schema';
+import { QUESTION_TYPES, isQuestionType, type QuestionType } from '@/lib/questions/schema';
 import { BackIcon } from '@/components/ui/icons';
 import { deleteQuestionAction } from '../editorActions';
 import { DeleteButton } from './DeleteButton';
 import { QuestionForm } from './QuestionForm';
+import { QuestionAnswers } from './QuestionAnswers';
 import t from '../teacher.module.css';
 import s from './editor.module.css';
 
 export type EditorBanner = 'saved' | 'noaudio' | 'deleted' | 'last' | null;
 
-function summary(q: Question): string {
-  switch (q.type) {
-    case 'fill_blank': return `${q.before} ____ ${q.after}`.trim();
-    case 'find_fix': return q.words.join(' ');
-    case 'watch_answer': return `Video, then ${q.questions.length} ${q.questions.length === 1 ? 'question' : 'questions'}`;
-    default: return q.prompt;
-  }
-}
+/** Read-aloud is paused for now (Kyla, Nov 26): no per-question audio warnings. Set true when audio is back. */
+const SHOW_AUDIO_STATUS = false;
 
 export function EditorView({ data, edit, add, banner, previewSrc }: {
   data: EditorLesson;
@@ -42,7 +37,9 @@ export function EditorView({ data, edit, add, banner, previewSrc }: {
 
       <div role="status" aria-live="polite">
         {banner === 'saved' ? <p className={`${s.banner} ${s.ok}`}>Saved. Audio is ready.</p> : null}
-        {banner === 'noaudio' ? <p className={`${s.banner} ${s.warn}`}>Saved. Audio couldn&rsquo;t be made, so Hear it will be quiet for this question.</p> : null}
+        {banner === 'noaudio' ? (SHOW_AUDIO_STATUS
+          ? <p className={`${s.banner} ${s.warn}`}>Saved. Audio couldn&rsquo;t be made, so Hear it will be quiet for this question.</p>
+          : <p className={`${s.banner} ${s.ok}`}>Saved.</p>) : null}
         {banner === 'last' ? <p className={`${s.banner} ${s.warn}`}>A lesson needs at least one question. Add another one first, then delete this one.</p> : null}
         {banner === 'deleted' ? <p className={`${s.banner} ${s.ok}`}>Deleted. Kids won&rsquo;t see it any more.</p> : null}
       </div>
@@ -50,20 +47,22 @@ export function EditorView({ data, edit, add, banner, previewSrc }: {
       <section className={t.card} aria-labelledby="qlist">
         <h2 id="qlist" className={t.h2}>Questions ({data.questions.length})</h2>
         {data.questions.length === 0 ? <p className={t.empty}>No questions yet. Add the first one below.</p> : (
-          <ol className={s.qList}>
+          <ol className={s.qGrid}>
             {data.questions.map((q, i) => (
-              <li key={q.id} className={s.qItem} data-active={editing?.id === q.id ? '' : undefined}>
-                <span className={s.qNum}>{i + 1}</span>
-                <span className={s.qMain}>
+              <li key={q.id} className={s.qCard} data-active={editing?.id === q.id ? '' : undefined}>
+                <div className={s.qHead}>
+                  <span className={s.qNum}>{i + 1}</span>
                   <span className={s.typeTag}>{isQuestionType(q.type) ? TYPE_NAMES[q.type] : q.type}</span>
-                  {q.question ? <span className={s.qText}>{summary(q.question)}</span>
-                    : <span className={`${s.qText} ${s.broken}`}>This question has a problem and kids skip it. Delete it and add it again.</span>}
-                  {q.audioMissing ? <span className={s.noAudio}>No audio yet. Open Edit and save again to try.</span> : null}
-                </span>
-                <span className={s.qActions}>
-                  {q.question ? <Link href={`${base}?edit=${q.id}#form`} className={s.editLink} aria-label={`Edit question ${i + 1}`}>Edit</Link> : null}
-                  <DeleteButton action={deleteQuestionAction} lessonId={data.lesson.id} questionId={q.id} label={`question ${i + 1}`} />
-                </span>
+                  <span className={s.qActions}>
+                    {q.question ? <Link href={`${base}?edit=${q.id}#form`} className={s.editLink} aria-label={`Edit question ${i + 1}`}>Edit</Link> : null}
+                    <DeleteButton action={deleteQuestionAction} lessonId={data.lesson.id} questionId={q.id} label={`question ${i + 1}`} />
+                  </span>
+                </div>
+                <div className={s.qBody}>
+                  {q.question ? <QuestionAnswers question={q.question} />
+                    : <p className={`${s.qText} ${s.broken}`}>This question has a problem and kids skip it. Delete it and add it again.</p>}
+                  {SHOW_AUDIO_STATUS && q.audioMissing ? <span className={s.noAudio}>No audio yet. Open Edit and save again to try.</span> : null}
+                </div>
               </li>
             ))}
           </ol>

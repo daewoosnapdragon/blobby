@@ -22,7 +22,7 @@ export default async function EditorPage({ params, searchParams }: {
   if (!data) notFound();
   const banner: EditorBanner = saved === '1' ? 'saved' : saved === 'noaudio' ? 'noaudio' : deleted === '1' ? 'deleted' : problem === 'last' ? 'last' : null;
   return (
-    <TeacherShell signOut={signOut} who={me.name ?? me.email} current="plans">
+    <TeacherShell signOut={signOut} who={me.name ?? me.email} current="plans" wide>
       <EditorView data={data} edit={edit} add={add} banner={banner} />
     </TeacherShell>
   );

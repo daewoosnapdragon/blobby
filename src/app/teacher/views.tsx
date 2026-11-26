@@ -9,9 +9,9 @@ import styles from './teacher.module.css';
 
 /** Presentational pieces for the teacher pages. Data in, markup out; the pages own auth and queries. */
 
-export function TeacherShell({ children, signOut, current, who }: { children: React.ReactNode; signOut?: () => Promise<void>; current?: 'classes' | 'plans' | 'account'; who?: string }) {
+export function TeacherShell({ children, signOut, current, who, wide }: { children: React.ReactNode; signOut?: () => Promise<void>; current?: 'classes' | 'plans' | 'account'; who?: string; /** more width, for the question editor */ wide?: boolean }) {
   return (
-    <div className={styles.shell}>
+    <div className={wide ? `${styles.shell} ${styles.wide}` : styles.shell}>
       <header className={styles.top}>
         <Link href="/teacher" className={styles.brand}>Blobby <span>teacher</span></Link>
         {signOut ? (

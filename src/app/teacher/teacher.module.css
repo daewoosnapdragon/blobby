@@ -114,3 +114,6 @@
 /* Class page: "Try it as a student" */
 .practiceRow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 0 0 20px; }
 .practiceRow .hint { flex-basis: 100%; }
+
+/* Wider pages (the question editor): header and main grow together */
+.wide .top, .wide .main { max-width: 1320px; }
