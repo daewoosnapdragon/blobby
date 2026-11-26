@@ -91,7 +91,7 @@ const HINT: Record<NonWatchQuestion['type'], string> = {
   build_it: 'Check the order of the words.',
   sort_it: 'Look at each word again.',
   fill_blank: 'Try each word in the sentence.',
-  right_wrong: 'Read the sentence again, word by word.',
+  right_wrong: 'Read it once more, slowly.',
 };
 
 function ask(q: NonWatchQuestion, found: boolean): string {

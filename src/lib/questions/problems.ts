@@ -5,6 +5,7 @@ const LABEL: Record<string, string> = {
   prompt: 'Prompt', audioText: 'Spoken word', choices: 'Choice', answer: 'Right answer', words: 'Sentence',
   wrongIndex: 'Wrong word', fixes: 'Fix', tiles: 'Tile', distractors: 'Extra tile', groups: 'Group',
   items: 'Word', before: 'Text before the blank', after: 'Text after the blank', youtubeId: 'Video', text: 'Text',
+  sentence: 'Sentence', right: 'Right or not',
 };
 const PLURAL: Record<string, string> = { choices: 'choices', fixes: 'fixes', tiles: 'tiles', groups: 'groups', items: 'words', words: 'words', questions: 'questions' };
 
@@ -34,6 +35,7 @@ export function questionProblems(type: string, payload: unknown): string[] {
     const field = path.filter((p) => typeof p === 'string' && p !== 'type').pop() as string | undefined;
     let msg: string;
     if (issue.code === 'invalid_union' || (path.length === 1 && path[0] === 'type')) msg = 'Pick a question type.';
+    else if (last === 'right') msg = 'Pick Yes or No.';
     else if (last === 'answer' || last === 'wrongIndex') msg = last === 'answer' ? 'Pick the right answer.' : 'Pick the wrong word.';
     else if (issue.code === 'too_small' && (issue as { origin?: string }).origin === 'array') {
       const min = Number((issue as { minimum?: number }).minimum ?? 1);

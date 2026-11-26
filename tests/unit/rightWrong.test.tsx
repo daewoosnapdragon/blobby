@@ -9,6 +9,7 @@ import { RightWrong } from '@/components/questions/RightWrong';
 import { QuestionPlayer } from '@/components/questions/QuestionPlayer';
 import { TypeForm } from '@/app/teacher/editor/TypeForms';
 import { QuestionAnswers } from '@/app/teacher/editor/QuestionAnswers';
+import { questionProblems } from '@/lib/questions/problems';
 
 vi.mock('@/lib/sound', async (orig) => ({ ...(await orig<typeof import('@/lib/sound')>()), playSound: vi.fn() }));
 
@@ -60,6 +61,17 @@ describe('right_wrong', () => {
     expect(document.getElementById('q-ask')).toHaveTextContent('Is this sentence right?');
     expect(screen.getByText('She don’t like carrots.')).toBeInTheDocument();
     expect(spokenStrings(rw)).toEqual(['Is this sentence right?', 'She don’t like carrots.']);
+  });
+
+  it('player: a miss shows the right_wrong hint', () => {
+    render(<QuestionPlayer questions={[{ id: 'q', question: rw }]} onAnswer={vi.fn()} onFinish={vi.fn()} blobColor="mint" stars={0} />);
+    fireEvent.click(screen.getByRole('button', { name: /Yes/ }));
+    expect(screen.getByText('Read it once more, slowly.')).toBeInTheDocument();
+  });
+
+  it('editor problems: a missing answer reads "Pick Yes or No."; a blank sentence names Sentence', () => {
+    expect(questionProblems('right_wrong', { sentence: 'x' })).toEqual(['Pick Yes or No.']);
+    expect(questionProblems('right_wrong', draftToPayload(emptyDraft('right_wrong')))).toEqual(['Sentence: fill this in.', 'Pick Yes or No.']);
   });
 
   it('tally copy', () => {
