@@ -8,6 +8,7 @@ import { FillBlank } from '@/components/questions/FillBlank';
 import { FindFix } from '@/components/questions/FindFix';
 import { BuildIt } from '@/components/questions/BuildIt';
 import { SortIt } from '@/components/questions/SortIt';
+import { spokenStrings } from '@/lib/spoken';
 import { QuestionPlayer } from '@/components/questions/QuestionPlayer';
 import { HearIt } from '@/components/ui/HearIt';
 
@@ -288,7 +289,9 @@ describe('QuestionPlayer sounds', () => {
   });
 
   it('does not pop for Hear it, so read-aloud is not covered', () => {
-    renderPlayer();
+    // Hear it only shows for a question with audio
+    const audio = Object.fromEntries(spokenStrings(pick).map((t) => [t, 'http://a/1.mp3']));
+    renderPlayer({ questions: [pq(QID, pick, audio), pq(QID2, listen)] });
     vi.mocked(playSound).mockClear();
     fireEvent.click(screen.getByRole('button', { name: 'Hear it' }));
     expect(playSound).not.toHaveBeenCalled();
