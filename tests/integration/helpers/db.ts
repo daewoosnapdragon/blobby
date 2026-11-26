@@ -6,9 +6,9 @@ import path from 'node:path';
 export const TEST_DATABASE_URL =
   process.env.TEST_DATABASE_URL ?? 'postgres://postgres:postgres@localhost:5432/wp_test';
 
-const MIGRATION = path.resolve(__dirname, '../../../supabase/migrations/0001_wp_init.sql');
+const MIGRATIONS = path.resolve(__dirname, '../../../supabase/migrations');
 
-/** Drops and recreates the test database, creates anon/authenticated roles, applies the migration. */
+/** Drops and recreates the test database, creates anon/authenticated roles, applies every migration in name order. */
 export async function resetTestDb(databaseUrl: string = TEST_DATABASE_URL): Promise<ReturnType<typeof postgres>> {
   const url = new URL(databaseUrl);
   const dbName = url.pathname.slice(1);
@@ -38,6 +38,8 @@ export async function resetTestDb(databaseUrl: string = TEST_DATABASE_URL): Prom
     await db.end();
   }
   const sql = postgres(databaseUrl, { ...pgOptions, max: 4, onnotice: () => {} });
-  await sql.unsafe(fs.readFileSync(MIGRATION, 'utf8'));
+  for (const f of fs.readdirSync(MIGRATIONS).filter((n) => n.endsWith('.sql')).sort()) {
+    await sql.unsafe(fs.readFileSync(path.join(MIGRATIONS, f), 'utf8'));
+  }
   return sql;
 }

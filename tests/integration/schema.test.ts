@@ -115,3 +115,14 @@ describe('constraints', () => {
     await rejects(sql`insert into wp_practice_days (student_id, day) values (${studentId}, '2026-12-01')`, UNIQUE);
   });
 });
+
+describe('practice students', () => {
+  it('is_preview defaults to false and a class has at most one practice student', async () => {
+    const [c] = await sql`insert into wp_classes (grade, name, class_code) values (3, 'Preview check', 'PRV234') returning id`;
+    const [kid] = await sql`insert into wp_students (id, class_id, display_name, link_secret)
+      values (gen_random_uuid(), ${c.id}, 'Kid', 'prv-kid') returning is_preview`;
+    expect(kid.is_preview).toBe(false);
+    await sql`insert into wp_students (id, class_id, display_name, link_secret, is_preview) values (gen_random_uuid(), ${c.id}, 'Teacher', 'prv-1', true)`;
+    await rejects(sql`insert into wp_students (id, class_id, display_name, link_secret, is_preview) values (gen_random_uuid(), ${c.id}, 'Teacher', 'prv-2', true)`, UNIQUE);
+  });
+});

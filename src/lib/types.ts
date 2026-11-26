@@ -10,6 +10,8 @@ export interface WpClass { id: string; grade: number; name: string; class_code: 
 export interface WpStudent {
   id: string; class_id: string; display_name: string; blob_color: string | null;
   link_secret: string; created_at: Date;
+  /** the class's hidden practice student ("Try it as a student") */
+  is_preview: boolean;
 }
 export interface WpPlan { id: string; title: string; kind: PlanKind; created_at: Date }
 export interface WpPlanAssignment {
