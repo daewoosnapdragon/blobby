@@ -179,3 +179,136 @@ describe('skills and the review bank', () => {
     ]);
   });
 });
+
+describe('update mode SQL (PART 1 look, PART 2 apply)', () => {
+  const pq = (n: number, prompt = `Q${n}?`) => ({ type: 'pick_one', prompt, choices: ['a', 'b'], answer: 0 });
+  const planFile = (prompts: Record<number, string> = {}, n = 9) => parseContent({
+    plan: { title: 'Update test', kind: 'test' },
+    assignTo: { grade: 3 },
+    weeks: [{ skill: 'Plurals', opensOn: '2026-01-05', lessons: [
+      { title: 'U1', questions: Array.from({ length: n }, (_, i) => ({ ...pq(i + 1, prompts[i + 1]), ...(i === 0 ? { skill: 'plurals' } : {}) })) },
+    ] }],
+  });
+  const part1 = (text: string) => text.slice(0, text.indexOf('-- >>> PART 2 STARTS HERE <<<'));
+  const part2 = (text: string) => text.slice(text.indexOf('-- >>> PART 2 STARTS HERE <<<'));
+  const rows = () => sql`select q.id, q.position, q.payload->>'prompt' as prompt, q.skill, q.deleted_at, q.updated_at
+    from wp_questions q join wp_lessons l on l.id = q.lesson_id join wp_weeks w on w.id = l.week_id join wp_plans p on p.id = w.plan_id
+    where p.title = 'Update test' order by q.position, q.id`;
+  let contentToSql: typeof import('@/lib/contentSql').contentToSql;
+  let bankToSql: typeof import('@/lib/contentSql').bankToSql;
+  let parseBank: typeof import('@/lib/bank').parseBank;
+
+  beforeAll(async () => {
+    ({ contentToSql, bankToSql } = await import('@/lib/contentSql'));
+    ({ parseBank } = await import('@/lib/bank'));
+    await sql.unsafe(contentToSql(planFile())); // the base, loaded add-only as before this pass
+  });
+
+  it('PART 1 only reads, and lists nothing when the app matches the base', async () => {
+    const before = await rows();
+    const text = contentToSql(planFile({ 2: 'Changed two?' }), { update: true, base: planFile() });
+    expect(await sql.unsafe(part1(text))).toEqual([]);
+    expect(await rows()).toEqual(before);
+  });
+
+  it('PART 1 without a base lists every existing row PART 2 would touch', async () => {
+    const text = contentToSql(planFile({}, 10), { update: true });
+    const listed = await sql.unsafe(part1(text));
+    expect(listed.map((r) => r.question_position)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+    expect(listed[0]).toMatchObject({ week_position: 1, lesson_position: 1, file_text: null });
+    expect(listed[0].app_text).toContain('Q1?');
+  });
+
+  it('PART 1 lists exactly the row the teacher edited in the app', async () => {
+    await sql`update wp_questions set payload = payload || '{"prompt":"Teacher three?"}'::jsonb, updated_at = now()
+      where payload->>'prompt' = 'Q3?'`;
+    const text = contentToSql(planFile({ 2: 'Changed two?' }, 10), { update: true, base: planFile() });
+    const listed = await sql.unsafe(part1(text));
+    expect(listed.length).toBe(1);
+    expect(listed[0]).toMatchObject({ week_position: 1, lesson_position: 1, question_position: 3 });
+    expect(listed[0].app_text).toContain('Teacher three?');
+    expect(listed[0].file_text).toContain('Q3?');
+  });
+
+  it('PART 2 updates in place, inserts missing positions, keeps a deleted position deleted, and a second run changes nothing', async () => {
+    await sql`update wp_questions set deleted_at = now() where payload->>'prompt' = 'Q7?'`;
+    const before = await rows();
+    const byPos = (rs: typeof before, p: number) => rs.filter((r) => r.position === p);
+    const next = planFile({ 2: 'Changed two?', 7: 'Changed seven?', 8: 'Changed eight?', 10: 'Brand new ten?' }, 10);
+    const text = contentToSql(next, { update: true, base: planFile() });
+    await new Promise((r) => setTimeout(r, 10));
+    await sql.unsafe(part2(text));
+    const after = await rows();
+    expect(after.length).toBe(10);
+    expect(byPos(after, 2)[0]).toMatchObject({ id: byPos(before, 2)[0].id, prompt: 'Changed two?' });
+    expect(byPos(after, 2)[0].updated_at.getTime()).toBeGreaterThan(byPos(before, 2)[0].updated_at.getTime());
+    expect(byPos(after, 3)[0]).toMatchObject({ id: byPos(before, 3)[0].id, prompt: 'Q3?' }); // the file wins in update mode
+    // Review Focus 3: the teacher-deleted position 7 is neither revived, edited nor re-inserted ...
+    expect(byPos(after, 7)).toEqual(byPos(before, 7));
+    expect(byPos(after, 7)[0].deleted_at).not.toBeNull();
+    // ... and the positions after it are still updated and inserted
+    expect(byPos(after, 8)[0]).toMatchObject({ id: byPos(before, 8)[0].id, prompt: 'Changed eight?' });
+    expect(byPos(after, 10)).toHaveLength(1);
+    expect(byPos(after, 10)[0]).toMatchObject({ prompt: 'Brand new ten?', deleted_at: null, skill: null });
+    // untouched rows keep their updated_at
+    expect(byPos(after, 5)).toEqual(byPos(before, 5));
+    expect(byPos(after, 1)[0].skill).toBe('plurals');
+
+    await new Promise((r) => setTimeout(r, 10));
+    await sql.unsafe(text.slice(text.indexOf('-- >>> PART 2 STARTS HERE <<<'))); // second run
+    expect(await rows()).toEqual(after);
+    // and running the whole file (PART 1 + PART 2) also changes nothing
+    await sql.unsafe(text);
+    expect(await rows()).toEqual(after);
+  });
+
+  it('PART 2 changes the skill tag when only the skill differs', async () => {
+    const f = planFile({ 2: 'Changed two?', 7: 'Changed seven?', 8: 'Changed eight?', 10: 'Brand new ten?' }, 10);
+    f.weeks[0].lessons[0].skills[1] = 'articles';
+    await sql.unsafe(part2(contentToSql(f, { update: true })));
+    const r = (await rows()).find((x) => x.position === 2)!;
+    expect(r.skill).toBe('articles');
+  });
+
+  describe('banks, by (bank_grade, skill, position)', () => {
+    const bq = (prompt: string) => ({ type: 'pick_one', prompt, choices: ['went', 'goed'], answer: 0 });
+    const bankFile = (prompts: string[]) => parseBank({ grade: 4, skills: { 'irregular-past': prompts.map(bq), 'was-were': [bq('Was?')] } });
+    const baseBank = () => bankFile(['B1?', 'B2?', 'B3?']);
+    const bankRows = () => sql`select id, skill, position, payload->>'prompt' as prompt, deleted_at, updated_at
+      from wp_questions where bank_grade = 4 order by skill, position, id`;
+
+    beforeAll(async () => { await sql.unsafe(bankToSql(baseBank())); });
+
+    it('PART 1 lists nothing against an equal base, and exactly the in-app edit after one', async () => {
+      const text = () => bankToSql(bankFile(['New one?', 'New two?', 'B3?', 'New four?']), { update: true, base: baseBank() });
+      expect(await sql.unsafe(part1(text()))).toEqual([]);
+      await sql`update wp_questions set payload = payload || '{"prompt":"Teacher B3?"}'::jsonb where bank_grade = 4 and payload->>'prompt' = 'B3?'`;
+      const listed = await sql.unsafe(part1(text()));
+      expect(listed.length).toBe(1);
+      expect(listed[0]).toMatchObject({ bank_grade: 4, skill: 'irregular-past', question_position: 3 });
+      expect(listed[0].app_text).toContain('Teacher B3?');
+      expect(listed[0].file_text).toContain('B3?');
+      // without a base, every existing row is listed
+      expect((await sql.unsafe(part1(bankToSql(bankFile(['x?']), { update: true })))).length).toBe(2);
+    });
+
+    it('PART 2 updates in place, inserts missing, keeps deleted positions deleted, and is idempotent', async () => {
+      await sql`update wp_questions set deleted_at = now() where bank_grade = 4 and payload->>'prompt' = 'B2?'`;
+      const before = await bankRows();
+      const at = (rs: typeof before, s: string, p: number) => rs.filter((r) => r.skill === s && r.position === p);
+      const text = bankToSql(bankFile(['New one?', 'New two?', 'B3?', 'New four?']), { update: true, base: baseBank() });
+      await new Promise((r) => setTimeout(r, 10));
+      await sql.unsafe(part2(text));
+      const after = await bankRows();
+      expect(after.length).toBe(5);
+      expect(at(after, 'irregular-past', 1)[0]).toMatchObject({ id: at(before, 'irregular-past', 1)[0].id, prompt: 'New one?' });
+      expect(at(after, 'irregular-past', 2)).toEqual(at(before, 'irregular-past', 2)); // still deleted, untouched
+      expect(at(after, 'irregular-past', 3)[0]).toMatchObject({ id: at(before, 'irregular-past', 3)[0].id, prompt: 'B3?' });
+      expect(at(after, 'irregular-past', 4)[0]).toMatchObject({ prompt: 'New four?', deleted_at: null });
+      expect(at(after, 'was-were', 1)).toEqual(at(before, 'was-were', 1));
+      await new Promise((r) => setTimeout(r, 10));
+      await sql.unsafe(part2(text));
+      expect(await bankRows()).toEqual(after);
+    });
+  });
+});
