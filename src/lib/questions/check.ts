@@ -30,6 +30,11 @@ export function checkAnswer(q: NonWatchQuestion, r: Response): boolean {
       return typeof x.yes === 'boolean' && x.yes === q.right;
     case 'odd_one_out':
       return isInt(x.choice) && x.choice === q.answer;
+    case 'tap_all': {
+      if (!Array.isArray(x.tapped) || !x.tapped.every(isInt)) return false;
+      const tapped = new Set(x.tapped);
+      return tapped.size === x.tapped.length && tapped.size === q.answers.length && q.answers.every((a) => tapped.has(a));
+    }
     default:
       return false;
   }

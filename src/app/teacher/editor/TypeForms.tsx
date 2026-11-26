@@ -152,6 +152,34 @@ function PictureFirstForm({ draft: d, onChange }: P<'picture_first'>) {
   );
 }
 
+const sentenceWords = (sentence: string) => sentence.trim().split(/\s+/).filter(Boolean);
+
+function TapAllForm({ draft: d, onChange }: P<'tap_all'>) {
+  const words = sentenceWords(d.sentence);
+  const toggle = (i: number, on: boolean) =>
+    onChange({ ...d, answers: on ? [...d.answers.filter((a) => a !== i), i].sort((a, b) => a - b) : d.answers.filter((a) => a !== i) });
+  return (
+    <>
+      <TextField label="Instruction" value={d.prompt} onChange={(prompt) => onChange({ ...d, prompt })} placeholder="Tap every noun." />
+      <TextField label="Sentence" hint="Type the whole sentence." value={d.sentence}
+        onChange={(sentence) => { const n = sentenceWords(sentence).length; onChange({ ...d, sentence, answers: d.answers.filter((a) => a < n) }); }} placeholder="The dog ate my shoe." />
+      <fieldset className={s.list}>
+        <legend>Which words?</legend>
+        {words.length === 0 ? <p className={s.hint}>Type the sentence above, then pick every word to tap.</p> : (
+          <div className={s.chips}>
+            {words.map((w, i) => (
+              <label key={i} className={s.chip}>
+                <input type="checkbox" checked={d.answers.includes(i)} onChange={(e) => toggle(i, e.target.checked)} />
+                <span>{w}</span>
+              </label>
+            ))}
+          </div>
+        )}
+      </fieldset>
+    </>
+  );
+}
+
 export function TypeForm({ draft, onChange }: { draft: NonWatchDraft; onChange: (d: NonWatchDraft) => void }) {
   switch (draft.type) {
     case 'pick_one': return <PickOneForm draft={draft} onChange={onChange} />;
@@ -163,6 +191,7 @@ export function TypeForm({ draft, onChange }: { draft: NonWatchDraft; onChange: 
     case 'right_wrong': return <RightWrongForm draft={draft} onChange={onChange} />;
     case 'odd_one_out': return <OddOneOutForm draft={draft} onChange={onChange} />;
     case 'picture_first': return <PictureFirstForm draft={draft} onChange={onChange} />;
+    case 'tap_all': return <TapAllForm draft={draft} onChange={onChange} />;
   }
 }
 

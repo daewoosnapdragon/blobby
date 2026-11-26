@@ -5,7 +5,7 @@ const LABEL: Record<string, string> = {
   prompt: 'Prompt', audioText: 'Spoken word', choices: 'Choice', answer: 'Right answer', words: 'Sentence',
   wrongIndex: 'Wrong word', fixes: 'Fix', tiles: 'Tile', distractors: 'Extra tile', groups: 'Group',
   items: 'Word', before: 'Text before the blank', after: 'Text after the blank', youtubeId: 'Video', text: 'Text',
-  sentence: 'Sentence', right: 'Right or not',
+  sentence: 'Sentence', right: 'Right or not', answers: 'Answer',
 };
 /** Labels that differ for one type: odd one out's `words` are separate words, not a sentence. */
 const TYPE_FIELD_LABEL: Record<string, Record<string, string>> = { odd_one_out: { words: 'Word' } };
@@ -48,6 +48,7 @@ export function questionProblems(type: string, payload: unknown): string[] {
     if (issue.code === 'invalid_union' || (path.length === 1 && path[0] === 'type')) msg = 'Pick a question type.';
     else if (last === 'right') msg = 'Pick Yes or No.';
     else if (last === 'picture' && qType === 'picture_first') msg = 'Pick a picture.';
+    else if (last === 'answers' && issue.code === 'too_small') msg = 'Tap at least one word.';
     else if (last === 'answer' && qType === 'odd_one_out') msg = 'Pick the odd one.';
     else if (last === 'answer' || last === 'wrongIndex') msg = last === 'answer' ? 'Pick the right answer.' : 'Pick the wrong word.';
     else if (issue.code === 'too_small' && (issue as { origin?: string }).origin === 'array') {

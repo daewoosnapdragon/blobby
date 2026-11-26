@@ -105,6 +105,15 @@ function BodyText({ question: q }: { question: NonWatchQuestion }) {
           </ul>
         </>
       );
+    case 'tap_all':
+      return (
+        <>
+          <p className={s.prompt}>{q.prompt}</p>
+          <p className={s.sentence}>
+            {q.words.map((w, i) => <span key={i}>{i > 0 ? ' ' : ''}{q.answers.includes(i) ? <Right>{w}</Right> : w}</span>)}
+          </p>
+        </>
+      );
   }
 }
 

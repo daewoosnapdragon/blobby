@@ -107,6 +107,17 @@ const pictureFirstPayload = z
   .refine((q) => q.answer < q.choices.length, { message: 'answer is out of range of choices', path: ['answer'] })
   .superRefine((q, ctx) => noRepeats(ctx, q.choices, 'choices', 'choice'));
 
+const tapAllPayload = z
+  .object({ prompt: text, words: z.array(text).min(2), answers: z.array(idx).min(1), picture })
+  .superRefine((q, ctx) => {
+    const seen = new Set<number>();
+    q.answers.forEach((a, i) => {
+      if (a >= q.words.length) ctx.addIssue({ code: 'custom', message: 'is out of range of words', path: ['answers', i] });
+      else if (seen.has(a)) ctx.addIssue({ code: 'custom', message: 'is repeated', path: ['answers', i] });
+      seen.add(a);
+    });
+  });
+
 const listenTapQ = listenTapPayload.extend({ type: z.literal('listen_tap') });
 const pickOneQ = pickOnePayload.extend({ type: z.literal('pick_one') });
 const findFixQ = findFixPayload.extend({ type: z.literal('find_fix') });
@@ -116,8 +127,9 @@ const fillBlankQ = fillBlankPayload.extend({ type: z.literal('fill_blank') });
 const rightWrongQ = rightWrongPayload.extend({ type: z.literal('right_wrong') });
 const oddOneOutQ = oddOneOutPayload.extend({ type: z.literal('odd_one_out') });
 const pictureFirstQ = pictureFirstPayload.extend({ type: z.literal('picture_first') });
+const tapAllQ = tapAllPayload.extend({ type: z.literal('tap_all') });
 
-const nonWatchSchema = z.discriminatedUnion('type', [listenTapQ, pickOneQ, findFixQ, buildItQ, sortItQ, fillBlankQ, rightWrongQ, oddOneOutQ, pictureFirstQ]);
+const nonWatchSchema = z.discriminatedUnion('type', [listenTapQ, pickOneQ, findFixQ, buildItQ, sortItQ, fillBlankQ, rightWrongQ, oddOneOutQ, pictureFirstQ, tapAllQ]);
 
 const watchAnswerPayload = z.object({
   youtubeId: z.string().trim().regex(YOUTUBE_ID_RE, 'needs an 11-character YouTube id'),
@@ -126,7 +138,7 @@ const watchAnswerPayload = z.object({
 const watchAnswerQ = watchAnswerPayload.extend({ type: z.literal('watch_answer') });
 
 export const questionSchema = z.discriminatedUnion('type', [
-  listenTapQ, pickOneQ, findFixQ, buildItQ, sortItQ, fillBlankQ, rightWrongQ, oddOneOutQ, pictureFirstQ, watchAnswerQ,
+  listenTapQ, pickOneQ, findFixQ, buildItQ, sortItQ, fillBlankQ, rightWrongQ, oddOneOutQ, pictureFirstQ, tapAllQ, watchAnswerQ,
 ]);
 
 const payloadSchemas = {
@@ -139,6 +151,7 @@ const payloadSchemas = {
   right_wrong: rightWrongPayload,
   odd_one_out: oddOneOutPayload,
   picture_first: pictureFirstPayload,
+  tap_all: tapAllPayload,
   watch_answer: watchAnswerPayload,
 } as const;
 
@@ -154,6 +167,7 @@ export type FillBlankPayload = z.infer<typeof fillBlankPayload>;
 export type RightWrongPayload = z.infer<typeof rightWrongPayload>;
 export type OddOneOutPayload = z.infer<typeof oddOneOutPayload>;
 export type PictureFirstPayload = z.infer<typeof pictureFirstPayload>;
+export type TapAllPayload = z.infer<typeof tapAllPayload>;
 export type WatchAnswerPayload = z.infer<typeof watchAnswerPayload>;
 
 export type NonWatchQuestion = z.infer<typeof nonWatchSchema>;
@@ -162,6 +176,7 @@ export type Question = z.infer<typeof questionSchema>;
 export type Response =
   | { choice: number }
   | { tapped: number; fix: number }
+  | { tapped: number[] }
   | { order: string[] }
   | { placement: number[] }
   | { yes: boolean };

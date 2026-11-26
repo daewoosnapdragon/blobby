@@ -11,7 +11,7 @@ import { PicturePicker } from './PicturePicker';
 import t from '../teacher.module.css';
 import s from './editor.module.css';
 
-const INNER_TYPES: NonWatchDraft['type'][] = ['pick_one', 'fill_blank', 'find_fix', 'build_it', 'sort_it', 'listen_tap', 'right_wrong', 'odd_one_out', 'picture_first'];
+const INNER_TYPES: NonWatchDraft['type'][] = ['pick_one', 'fill_blank', 'find_fix', 'build_it', 'sort_it', 'listen_tap', 'right_wrong', 'odd_one_out', 'picture_first', 'tap_all'];
 
 /** The questions the preview can show right now: every part that is already valid. */
 function previewQuestions(d: Draft): NonWatchQuestion[] {

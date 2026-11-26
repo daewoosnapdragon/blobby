@@ -21,6 +21,8 @@ function own(q: NonWatchQuestion): string[] {
       return [q.prompt, ...q.words];
     case 'picture_first':
       return [q.prompt, ...q.choices];
+    case 'tap_all':
+      return [q.prompt, q.words.join(' ')];
   }
 }
 
