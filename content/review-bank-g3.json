@@ -14,7 +14,7 @@
       },
       {
         "type": "pick_one",
-        "prompt": "Which one is a complete sentence?",
+        "prompt": "Tap the complete sentence.",
         "choices": [
           "A girl called Ruby, who was searching for her lost cat.",
           "A girl called Ruby was searching for her lost cat.",
@@ -24,7 +24,7 @@
       },
       {
         "type": "pick_one",
-        "prompt": "Which one is a complete sentence?",
+        "prompt": "Which one is a whole sentence?",
         "choices": [
           "When the bell rang at three o'clock.",
           "Everyone running outside when the bell rang.",

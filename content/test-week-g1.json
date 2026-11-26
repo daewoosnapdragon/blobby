@@ -427,7 +427,7 @@
             {
               "type": "pick_one",
               "skill": "capitals-names",
-              "prompt": "Which one has the capital letters and periods right?",
+              "prompt": "Tap the one with capitals and periods in the right places.",
               "choices": [
                 "ruby is my friend.",
                 "Ruby is my friend.",
@@ -438,7 +438,7 @@
             {
               "type": "pick_one",
               "skill": "sentence-ends",
-              "prompt": "Which one has the capital letters and periods right?",
+              "prompt": "Which sentence starts and ends the right way?",
               "choices": [
                 "I have a dog. it is brown.",
                 "I have a dog. It is brown.",

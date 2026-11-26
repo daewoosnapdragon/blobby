@@ -462,7 +462,7 @@
       },
       {
         "type": "pick_one",
-        "prompt": "Which one has the capital letters and periods right?",
+        "prompt": "Tap the one with capitals and periods in the right places.",
         "choices": [
           "I went to the park with nova.",
           "I went to the park with Nova.",
@@ -472,7 +472,7 @@
       },
       {
         "type": "pick_one",
-        "prompt": "Which one has the capital letters and periods right?",
+        "prompt": "Which sentence starts and ends the right way?",
         "choices": [
           "We went to the beach. We swam in the sea.",
           "We went to the beach we swam in the sea.",

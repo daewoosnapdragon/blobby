@@ -311,7 +311,7 @@
       },
       {
         "type": "pick_one",
-        "prompt": "Which one has the capital letters and periods right?",
+        "prompt": "Tap the one with capitals and periods in the right places.",
         "choices": [
           "Finn has a cat the cat is gray.",
           "Finn has a cat. the cat is gray.",
@@ -321,7 +321,7 @@
       },
       {
         "type": "pick_one",
-        "prompt": "Which one has the capital letters and periods right?",
+        "prompt": "Which sentence starts and ends the right way?",
         "choices": [
           "the bus is yellow.",
           "The bus is yellow.",
@@ -1199,7 +1199,7 @@
       },
       {
         "type": "pick_one",
-        "prompt": "Which one has the capital letters and periods right?",
+        "prompt": "Tap the one with capitals and periods in the right places.",
         "choices": [
           "otto and i are friends.",
           "Otto and I are friends.",
@@ -1209,7 +1209,7 @@
       },
       {
         "type": "pick_one",
-        "prompt": "Which one has the capital letters and periods right?",
+        "prompt": "Which sentence starts and ends the right way?",
         "choices": [
           "My name is Theo.",
           "My name is theo.",
