@@ -85,7 +85,8 @@ comma before and / but / so, place words, capitals for names). Content and the d
 ### Each kid's review skills
 
 New table `wp_student_skills`: `student_id`, `skill`, `source` (`pretest`, `next_step`, `auto`, `teacher`),
-`active` boolean, `added_at`, `changed_at`; unique (`student_id`, `skill`). Rows are never deleted; turning a skill
+`state` (`active`, `mastered`, `removed`), `spacing` (lessons between appearances when mastered: 3, 6, 12),
+`lessons_since` (lessons since it last appeared), `added_at`, `changed_at`; unique (`student_id`, `skill`). Rows are never deleted; turning a skill
 off sets `active = false`, so its history stays.
 
 ### Mixing into a lesson
@@ -124,8 +125,11 @@ Checked on the server when a lesson is completed and when a practice round ends:
 
 - **Add:** a skill with 2 or more first-try misses in that lesson run, not already active, becomes active with
   source `auto`. Missing questions in free practice never adds a skill.
-- **Remove:** a skill whose last 6 saved answers (any context) were all right becomes inactive, unless Kyla
-  added it herself (source `teacher`), which stays until she removes it.
+- **Mastered, then spaced out (Kyla, Nov 26):** a skill whose last 6 saved answers (any context) were all right
+  becomes **mastered**. A mastered skill is not dropped: it comes back less and less often (spaced repetition).
+  It is picked for a lesson only every 3rd lesson at first, then every 6th, then every 12th, each time it is
+  answered right again; a miss on it makes it **active** again at once. A skill Kyla added herself (source
+  `teacher`) stays active until she removes it.
 - **Kyla's word wins:** a skill Kyla removed is marked as removed by her and is never added back automatically;
   only she can turn it on again.
 - **At most 4 active skills, for automatic adds only.** When an auto-add would make 5, the oldest `auto` or
