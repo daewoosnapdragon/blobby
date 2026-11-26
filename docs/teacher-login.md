@@ -32,7 +32,8 @@ Kyla signs in to the teacher view with her email and password, through Supabase 
 Notes:
 - Anyone not on `TEACHER_EMAILS` gets the same "check your email" message and no email is sent. Password sign-in
   answers "That email and password didn't work." for a wrong password and for an email not on the list alike, and
-  never sends a non-listed email to Supabase.
+  never sends a non-listed email to Supabase. Both sign-in answers take at least one second whatever the email, so
+  timing the replies does not reveal which email is allowed (`src/lib/evenTiming.ts`).
 - Every teacher page and action re-checks the signed-in email against `TEACHER_EMAILS`; the middleware redirect is only a convenience.
 - Magic links are single-use and open in the same browser that asked for them.
 - In production `APP_URL` is required: without it no login email is sent (the page still answers neutrally),

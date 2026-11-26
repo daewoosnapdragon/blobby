@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 const auth = {
   signInWithPassword: vi.fn(),
+  signInWithOtp: vi.fn(),
   signOut: vi.fn(),
   updateUser: vi.fn(),
 };
@@ -14,8 +15,10 @@ vi.mock('next/navigation', () => ({
 vi.mock('next/cache', () => ({ revalidatePath: vi.fn() }));
 vi.mock('@/lib/supabase/server', () => server);
 vi.mock('@/lib/db/teacher', () => ({}));
+const timing = vi.hoisted(() => ({ holdUntil: vi.fn(), SIGNIN_MIN_MS: 1000 }));
+vi.mock('@/lib/evenTiming', () => timing);
 
-import { changePassword, saveTeacherName, signInWithPassword } from '@/app/teacher/actions';
+import { changePassword, requestLink, saveTeacherName, signInWithPassword } from '@/app/teacher/actions';
 
 function form(fields: Record<string, string>): FormData {
   const f = new FormData();
@@ -27,9 +30,37 @@ beforeEach(() => {
   process.env.TEACHER_EMAILS = 'kyla@example.com';
   for (const fn of Object.values(auth)) fn.mockReset();
   auth.signOut.mockResolvedValue({ error: null });
+  auth.signInWithOtp.mockResolvedValue({ data: {}, error: null });
   auth.updateUser.mockResolvedValue({ data: {}, error: null });
   server.teacherSupabase.mockReset().mockResolvedValue({ auth });
   server.requireTeacher.mockReset().mockResolvedValue('kyla@example.com');
+  timing.holdUntil.mockReset().mockResolvedValue(undefined);
+});
+
+describe('every sign-in answer takes the same minimum time', () => {
+  it('holds a non-listed email as long as a real check', async () => {
+    await expect(signInWithPassword(form({ email: 'stranger@example.com', password: 'secret123' }))).rejects.toThrow('REDIRECT');
+    expect(timing.holdUntil).toHaveBeenCalledTimes(1);
+  });
+
+  it('holds a listed email too', async () => {
+    auth.signInWithPassword.mockResolvedValue({ data: { user: null }, error: { code: 'invalid_credentials' } });
+    await expect(signInWithPassword(form({ email: 'kyla@example.com', password: 'wrongpass' }))).rejects.toThrow('REDIRECT');
+    expect(timing.holdUntil).toHaveBeenCalledTimes(1);
+  });
+
+  it('holds before answering, not after', async () => {
+    timing.holdUntil.mockRejectedValue(new Error('HELD'));
+    await expect(signInWithPassword(form({ email: 'stranger@example.com', password: 'secret123' }))).rejects.toThrow('HELD');
+  });
+
+  it('holds the email-link request for both kinds of email', async () => {
+    for (const email of ['stranger@example.com', 'kyla@example.com']) {
+      timing.holdUntil.mockClear();
+      await expect(requestLink(form({ email }))).rejects.toThrow('REDIRECT:/teacher/login?sent=1');
+      expect(timing.holdUntil).toHaveBeenCalledTimes(1);
+    }
+  });
 });
 
 describe('signInWithPassword', () => {

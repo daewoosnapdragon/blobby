@@ -40,6 +40,14 @@ test.describe('teacher side fails closed without a teacher session', () => {
     await expect(page.getByRole('alert').filter({ hasText: "That email and password didn't work." })).toBeVisible();
   });
 
+  test('asking for a link with no email does not claim one was sent', async ({ page }) => {
+    await page.goto('/teacher/login');
+    await page.getByRole('button', { name: 'Email me a link instead' }).click();
+    await page.waitForTimeout(1500);
+    await expect(page).not.toHaveURL(/sent=1/);
+    await expect(page.getByRole('status')).toHaveCount(0);
+  });
+
   test('a bad callback code goes back to login', async ({ page }) => {
     await page.goto('/teacher/auth/callback?code=nope');
     await expect(page).toHaveURL(/\/teacher\/login/);

@@ -8,9 +8,11 @@ import { NotFoundError } from '@/lib/db/kid';
 import { studentDetail, setDisplayName, reissueLink, DISPLAY_NAME_MAX } from '@/lib/db/teacher';
 import { UUID_RE } from '@/lib/uuid';
 import { passwordError, validateName, validatePassword } from '@/lib/teacherAccount';
+import { holdUntil } from '@/lib/evenTiming';
 
 /** Same neutral outcome whether or not the email is allowed: no allowlist leak. */
 export async function requestLink(formData: FormData): Promise<void> {
+  const start = Date.now();
   const email = String(formData.get('email') ?? '').trim().toLowerCase();
   if (email.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && isTeacherEmail(email)) {
     const supabase = await teacherSupabase();
@@ -23,11 +25,13 @@ export async function requestLink(formData: FormData): Promise<void> {
       }
     }
   }
+  await holdUntil(start);
   redirect('/teacher/login?sent=1');
 }
 
 /** Wrong password, unknown user, and an email not on TEACHER_EMAILS all end on the same neutral error. */
 export async function signInWithPassword(formData: FormData): Promise<void> {
+  const start = Date.now();
   const email = String(formData.get('email') ?? '').trim().toLowerCase();
   const password = String(formData.get('password') ?? '');
   let ok = false;
@@ -44,6 +48,7 @@ export async function signInWithPassword(formData: FormData): Promise<void> {
       }
     }
   }
+  await holdUntil(start);
   redirect(ok ? '/teacher' : '/teacher/login?error=signin');
 }
 

@@ -15,10 +15,10 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
           <label htmlFor="email">Email</label>
           <input id="email" name="email" type="email" required autoComplete="email" inputMode="email" />
           <label htmlFor="password">Password</label>
-          <input id="password" name="password" type="password" required autoComplete="current-password" />
+          {/* Not `required`: the link button below needs the email checked but the password left empty. The server rejects an empty password. */}
+          <input id="password" name="password" type="password" autoComplete="current-password" />
           <button type="submit" className={styles.solid}>Sign in</button>
-          {/* formNoValidate: asking for a link must work with the password left empty. */}
-          <button type="submit" formAction={requestLink} formNoValidate className={styles.ghost}>Email me a link instead</button>
+          <button type="submit" formAction={requestLink} className={styles.ghost}>Email me a link instead</button>
           <p className={styles.hint}>First time, or forgot your password? Use an email link, then set a password on your Account page.</p>
         </form>
         {sent ? <p className={styles.note} role="status">If that email can sign in, a link is on its way. Check your email.</p> : null}
