@@ -34,7 +34,7 @@ describe('odd_one_out', () => {
   it('checkAnswer: choice matches answer', () => {
     expect(checkAnswer(oo, { choice: 0 })).toBe(true);
     expect(checkAnswer(oo, { choice: 1 })).toBe(false);
-    expect(checkAnswer(oo, { choice: 0.5 } as never)).toBe(false);
+    expect(checkAnswer(oo, { choice: 0.5 })).toBe(false);
     expect(checkAnswer(oo, { yes: true })).toBe(false);
   });
 
@@ -97,6 +97,13 @@ describe('odd_one_out', () => {
       .toEqual(['Word 3: is the same as word 1.']);
   });
 
+  it('editor problems: inside watch and answer, an odd one out still names its words and its pick', () => {
+    expect(questionProblems('watch_answer', { youtubeId: 'dQw4w9WgXcQ', questions: [{ type: 'odd_one_out', prompt: 'p', words: ['a', 'b', 'a'], answer: 1 }] }))
+      .toEqual(['Question 1, Word 3: is the same as word 1.']);
+    expect(questionProblems('watch_answer', { youtubeId: 'dQw4w9WgXcQ', questions: [{ type: 'odd_one_out', prompt: 'p', words: ['a', 'b', 'c'], answer: -1 }] }))
+      .toEqual(['Pick the odd one.']);
+  });
+
   it('editor form: Instruction and the Words list with a radio per word', () => {
     const onChange = vi.fn();
     render(<TypeForm draft={emptyDraft('odd_one_out')} onChange={onChange} />);
@@ -113,10 +120,10 @@ describe('odd_one_out', () => {
   });
 
   it('editor form: no Add past four words, no Remove below three', () => {
-    render(<TypeForm draft={{ ...emptyDraft('odd_one_out'), words: ['a', 'b', 'c', 'd'] } as never} onChange={vi.fn()} />);
+    render(<TypeForm draft={{ type: 'odd_one_out', picture: '', prompt: '', words: ['a', 'b', 'c', 'd'], answer: -1 }} onChange={vi.fn()} />);
     expect(screen.getByRole('button', { name: /Add a word/ })).toBeDisabled();
     cleanup();
-    render(<TypeForm draft={emptyDraft('odd_one_out') as never} onChange={vi.fn()} />);
+    render(<TypeForm draft={emptyDraft('odd_one_out')} onChange={vi.fn()} />);
     expect(screen.getByRole('button', { name: 'Remove word 1' })).toBeDisabled();
   });
 
