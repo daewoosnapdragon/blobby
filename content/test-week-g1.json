@@ -1,0 +1,130 @@
+{
+  "plan": { "title": "Test week · Grade 1", "kind": "test" },
+  "assignTo": { "grade": 1 },
+  "weeks": [
+    {
+      "skill": "am / is / are and -ing",
+      "opensOn": "2026-11-26",
+      "lessons": [
+        {
+          "title": "Am, Is, Are",
+          "questions": [
+            { "type": "pick_one", "skill": "be", "prompt": "Pick the right sentence.", "choices": ["I am happy.", "I is happy.", "I are happy."], "answer": 0 },
+            { "type": "pick_one", "skill": "be", "prompt": "Pick the right sentence.", "choices": ["The dog are big.", "The dog am big.", "The dog is big."], "answer": 2 },
+            { "type": "pick_one", "skill": "be", "prompt": "Pick the right sentence.", "choices": ["The apples is red.", "The apples are red.", "The apples am red."], "answer": 1 },
+            { "type": "fill_blank", "skill": "be", "before": "My cat", "after": "black.", "choices": ["is", "are", "am"], "answer": 0 },
+            { "type": "fill_blank", "skill": "be", "before": "We", "after": "at school.", "choices": ["am", "is", "are"], "answer": 2 },
+            { "type": "fill_blank", "skill": "be", "before": "You", "after": "my friend.", "choices": ["is", "are", "am"], "answer": 1 },
+            { "type": "find_fix", "skill": "be", "words": ["Two", "cats", "is", "on", "the", "bed."], "wrongIndex": 2, "fixes": ["are", "am", "be"], "answer": 0 },
+            { "type": "find_fix", "skill": "be", "words": ["This", "ball", "are", "red."], "wrongIndex": 2, "fixes": ["am", "is", "be"], "answer": 1 },
+            { "type": "find_fix", "skill": "be", "words": ["My", "dad", "am", "tall."], "wrongIndex": 2, "fixes": ["is", "are", "be"], "answer": 0 },
+            { "type": "build_it", "skill": "be", "prompt": "Build the sentence.", "tiles": ["The", "sun", "is", "hot."], "distractors": ["are"] },
+            { "type": "build_it", "skill": "be", "prompt": "Build the sentence.", "tiles": ["My", "books", "are", "on", "the", "desk."], "distractors": ["is"] },
+            { "type": "sort_it", "skill": "be", "prompt": "Sort the words.", "groups": ["am", "is", "are"], "items": [
+              { "text": "I", "group": 0 },
+              { "text": "the cat", "group": 1 },
+              { "text": "we", "group": 2 },
+              { "text": "Ben", "group": 1 },
+              { "text": "you", "group": 2 }
+            ] }
+          ]
+        },
+        {
+          "title": "He, She, We, They",
+          "questions": [
+            { "type": "pick_one", "skill": "be", "prompt": "Ben and Tom are brothers. Pick the right sentence.", "choices": ["He are tall.", "They is tall.", "They are tall."], "answer": 2 },
+            { "type": "pick_one", "skill": "be", "prompt": "Pick the right sentence.", "choices": ["The boy are tall.", "The boy is tall.", "The boy tall."], "answer": 1 },
+            { "type": "pick_one", "skill": "be", "prompt": "Pick the right sentence.", "choices": ["Two children is in the park.", "Two children in the park.", "Two children are in the park."], "answer": 2 },
+            { "type": "fill_blank", "skill": "be", "before": "My mom and dad", "after": "at home.", "choices": ["is", "am", "are"], "answer": 2 },
+            { "type": "fill_blank", "skill": "be", "before": "Leo and Sam are my friends.", "after": "are seven.", "choices": ["He", "They", "It"], "answer": 1 },
+            { "type": "fill_blank", "skill": "be", "before": "Mia is my sister.", "after": "is five.", "choices": ["She", "They", "We"], "answer": 0 },
+            { "type": "find_fix", "skill": "be", "words": ["Mom", "and", "I", "is", "in", "the", "kitchen."], "wrongIndex": 3, "fixes": ["am", "are", "be"], "answer": 1 },
+            { "type": "find_fix", "skill": "be", "words": ["Three", "girls", "is", "at", "school."], "wrongIndex": 2, "fixes": ["are", "am", "be"], "answer": 0 },
+            { "type": "find_fix", "skill": "be", "words": ["We", "is", "good", "friends."], "wrongIndex": 1, "fixes": ["am", "are", "be"], "answer": 1 },
+            { "type": "build_it", "skill": "be", "prompt": "Build the sentence.", "tiles": ["The", "children", "are", "in", "the", "garden."], "distractors": ["is"] },
+            { "type": "build_it", "skill": "be", "prompt": "Build the sentence.", "tiles": ["She", "is", "my", "best", "friend."], "distractors": ["are"] },
+            { "type": "sort_it", "skill": "be", "prompt": "Sort the words.", "groups": ["is", "are"], "items": [
+              { "text": "he", "group": 0 },
+              { "text": "they", "group": 1 },
+              { "text": "Mina", "group": 0 },
+              { "text": "my mom and dad", "group": 1 },
+              { "text": "the dogs", "group": 1 },
+              { "text": "it", "group": 0 }
+            ] }
+          ]
+        },
+        {
+          "title": "Capitals and Periods",
+          "questions": [
+            { "type": "pick_one", "skill": "sentence-ends", "prompt": "Pick the right sentence.", "choices": ["the cat is soft.", "The cat is soft", "The cat is soft."], "answer": 2 },
+            { "type": "pick_one", "skill": "capitals-names", "prompt": "Pick the right sentence.", "choices": ["mina is my friend.", "Mina is my friend.", "Mina is my Friend."], "answer": 1 },
+            { "type": "pick_one", "skill": "sentence-ends", "prompt": "Pick the right sentences.", "choices": ["I have a dog. it is brown.", "I have a dog. It is brown.", "I have a dog it is brown."], "answer": 1 },
+            { "type": "fill_blank", "skill": "capitals-names", "before": "My brother is", "after": "", "choices": ["sam.", "Sam.", "Sam"], "answer": 1 },
+            { "type": "fill_blank", "skill": "sentence-ends", "before": "", "after": "bag is blue.", "choices": ["my", "My"], "answer": 1 },
+            { "type": "fill_blank", "skill": "sentence-ends", "before": "I like my", "after": "", "choices": ["teacher.", "teacher", "Teacher."], "answer": 0 },
+            { "type": "find_fix", "skill": "capitals-names", "words": ["leo", "is", "in", "my", "class."], "wrongIndex": 0, "fixes": ["Leo", "Leo.", "leo."], "answer": 0 },
+            { "type": "find_fix", "skill": "sentence-ends", "words": ["We", "are", "at", "the", "zoo"], "wrongIndex": 4, "fixes": ["zoo.", "Zoo.", "zoo,"], "answer": 0 },
+            { "type": "find_fix", "skill": "sentence-ends", "words": ["I", "see", "a", "frog.", "it", "is", "green."], "wrongIndex": 4, "fixes": ["It", "It.", "it,"], "answer": 0 },
+            { "type": "build_it", "skill": "capitals-names", "prompt": "Build the sentence.", "tiles": ["Sam", "has", "a", "red", "ball."], "distractors": ["sam"] },
+            { "type": "build_it", "skill": "sentence-ends", "prompt": "Build the sentence.", "tiles": ["The", "milk", "is", "cold."], "distractors": ["the"] },
+            { "type": "sort_it", "skill": "capitals-names", "prompt": "Is the name written the right way?", "groups": ["Right", "Wrong"], "items": [
+              { "text": "Mina", "group": 0 },
+              { "text": "leo", "group": 1 },
+              { "text": "Tom", "group": 0 },
+              { "text": "sam", "group": 1 },
+              { "text": "Ben", "group": 0 },
+              { "text": "mia", "group": 1 }
+            ] }
+          ]
+        },
+        {
+          "title": "What Is Happening Now?",
+          "questions": [
+            { "type": "pick_one", "skill": "ing", "prompt": "Pick the right sentence.", "choices": ["Sam is play soccer.", "Sam is playing soccer.", "Sam playing soccer."], "answer": 1 },
+            { "type": "pick_one", "skill": "ing", "prompt": "Pick the right sentence.", "choices": ["Two children reading.", "Two children is reading.", "Two children are reading."], "answer": 2 },
+            { "type": "pick_one", "skill": "ing", "prompt": "Pick the right sentence.", "choices": ["Three kids are sitting.", "Three kids siting.", "Three Kids are sitting.", "Three kids is sitting."], "answer": 0 },
+            { "type": "fill_blank", "skill": "ing", "before": "Leo is", "after": "TV.", "choices": ["watch", "watching", "watches"], "answer": 1 },
+            { "type": "fill_blank", "skill": "ing", "before": "The children", "after": "swimming.", "choices": ["is", "are", "am"], "answer": 1 },
+            { "type": "fill_blank", "skill": "ing", "before": "The baby is", "after": "in her bed.", "choices": ["sleep", "sleeps", "sleeping"], "answer": 2 },
+            { "type": "find_fix", "skill": "ing", "words": ["My", "mom", "is", "do", "her", "work."], "wrongIndex": 3, "fixes": ["doing", "does", "did"], "answer": 0 },
+            { "type": "find_fix", "skill": "ing", "words": ["The", "dog", "is", "run", "in", "the", "yard."], "wrongIndex": 3, "fixes": ["runing", "running", "runs"], "answer": 1 },
+            { "type": "find_fix", "skill": "ing", "words": ["Ben", "and", "I", "is", "eating", "lunch."], "wrongIndex": 3, "fixes": ["are", "am", "be"], "answer": 0 },
+            { "type": "build_it", "skill": "ing", "prompt": "Build the sentence.", "tiles": ["The", "cat", "is", "eating", "fish."], "distractors": ["eat"] },
+            { "type": "build_it", "skill": "ing", "prompt": "Build the sentence.", "tiles": ["Two", "boys", "are", "riding", "bikes."], "distractors": ["is", "ride"] },
+            { "type": "sort_it", "skill": "ing", "prompt": "Sort the words.", "groups": ["is running", "are running"], "items": [
+              { "text": "the dog", "group": 0 },
+              { "text": "the dogs", "group": 1 },
+              { "text": "Mia and Sam", "group": 1 },
+              { "text": "my dad", "group": 0 },
+              { "text": "we", "group": 1 },
+              { "text": "it", "group": 0 }
+            ] }
+          ]
+        },
+        {
+          "title": "Big Review",
+          "questions": [
+            { "type": "pick_one", "skill": "be", "prompt": "Pick the right sentence.", "choices": ["I is have a cat.", "I have a cat.", "I am have a cat."], "answer": 1 },
+            { "type": "pick_one", "skill": "sentence-ends", "prompt": "Pick the right sentences.", "choices": ["I like apples. they are sweet.", "I like apples they are sweet.", "I like apples. They are sweet."], "answer": 2 },
+            { "type": "pick_one", "skill": "ing", "prompt": "Pick the right sentence.", "choices": ["The girls are dancing.", "The girls dancing.", "The girls is dancing."], "answer": 0 },
+            { "type": "fill_blank", "skill": "be", "before": "Mina and Mia are sisters.", "after": "are drawing.", "choices": ["She", "They", "He"], "answer": 1 },
+            { "type": "fill_blank", "skill": "ing", "before": "Tom is", "after": "his teeth.", "choices": ["brush", "brushing", "brushes"], "answer": 1 },
+            { "type": "fill_blank", "skill": "capitals-names", "before": "", "after": "and Leo are friends.", "choices": ["mia", "Mia", "mia."], "answer": 1 },
+            { "type": "find_fix", "skill": "be", "words": ["They", "is", "my", "dogs."], "wrongIndex": 1, "fixes": ["are", "am", "be"], "answer": 0 },
+            { "type": "find_fix", "skill": "ing", "words": ["Mia", "is", "watch", "a", "movie."], "wrongIndex": 2, "fixes": ["watches", "watching", "watched"], "answer": 1 },
+            { "type": "find_fix", "skill": "capitals-names", "words": ["I", "play", "with", "ben."], "wrongIndex": 3, "fixes": ["Ben.", "Ben", "ben,"], "answer": 0 },
+            { "type": "build_it", "skill": "ing", "prompt": "Build the sentence.", "tiles": ["My", "dad", "is", "washing", "the", "car."], "distractors": ["wash"] },
+            { "type": "build_it", "skill": "capitals-names", "prompt": "Build the sentence.", "tiles": ["Mina", "is", "at", "the", "beach."], "distractors": ["mina", "are"] },
+            { "type": "sort_it", "skill": "be", "prompt": "Sort the words.", "groups": ["am", "is", "are"], "items": [
+              { "text": "I", "group": 0 },
+              { "text": "my shoes", "group": 2 },
+              { "text": "Leo", "group": 1 },
+              { "text": "Mom and I", "group": 2 },
+              { "text": "the bird", "group": 1 }
+            ] }
+          ]
+        }
+      ]
+    }
+  ]
+}

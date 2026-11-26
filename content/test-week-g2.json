@@ -1,0 +1,132 @@
+{
+  "plan": { "title": "Test week · Grade 2", "kind": "test" },
+  "assignTo": { "grade": 2 },
+  "weeks": [
+    {
+      "skill": "a / an / the and there is / are",
+      "opensOn": "2026-11-26",
+      "lessons": [
+        {
+          "title": "A or an?",
+          "questions": [
+            { "type": "pick_one", "skill": "articles", "prompt": "Pick the right sentence.", "choices": ["Ben found a ant in his bag.", "Ben found an ant in his bag.", "Ben found ant in his bag."], "answer": 1 },
+            { "type": "pick_one", "skill": "articles", "prompt": "Pick the right sentence.", "choices": ["Leo has a old bike.", "Leo has old bike.", "Leo has an old bike."], "answer": 2 },
+            { "type": "pick_one", "skill": "articles", "prompt": "Which sentence is right?", "choices": ["Mom gave me a big apple.", "Mom gave me an big apple.", "Mom gave me big apple."], "answer": 0 },
+            { "type": "fill_blank", "skill": "articles", "before": "I see", "after": "owl in the tree.", "choices": ["a", "an", "two"], "answer": 1 },
+            { "type": "fill_blank", "skill": "articles", "before": "My dad drives", "after": "red car.", "choices": ["a", "an", "two"], "answer": 0 },
+            { "type": "fill_blank", "skill": "articles", "before": "This is", "after": "easy game.", "choices": ["two", "a", "an"], "answer": 2 },
+            { "type": "find_fix", "skill": "articles", "words": ["Tom", "ate", "a", "apple."], "wrongIndex": 2, "fixes": ["two", "an", "many"], "answer": 1 },
+            { "type": "find_fix", "skill": "articles", "words": ["Leo", "wants", "a", "orange."], "wrongIndex": 2, "fixes": ["an", "two", "many"], "answer": 0 },
+            { "type": "find_fix", "skill": "articles", "words": ["Sam", "has", "umbrella."], "wrongIndex": 2, "fixes": ["a umbrella.", "an umbrella.", "two umbrella."], "answer": 1 },
+            { "type": "build_it", "skill": "articles", "prompt": "Build the sentence.", "tiles": ["I", "ate", "an", "apple", "for", "lunch."], "distractors": ["a"] },
+            { "type": "build_it", "skill": "articles", "prompt": "Build the sentence.", "tiles": ["Ben", "drew", "an", "elephant", "today."], "distractors": ["a"] },
+            { "type": "sort_it", "skill": "articles", "prompt": "Sort the words.", "groups": ["a", "an"], "items": [
+              { "text": "egg", "group": 1 },
+              { "text": "banana", "group": 0 },
+              { "text": "igloo", "group": 1 },
+              { "text": "cup", "group": 0 },
+              { "text": "uncle", "group": 1 },
+              { "text": "horse", "group": 0 }
+            ] }
+          ]
+        },
+        {
+          "title": "A, an, or the?",
+          "questions": [
+            { "type": "pick_one", "skill": "articles", "prompt": "Pick the right sentence.", "choices": ["I gave it to teacher.", "I gave it to the teacher.", "I gave it to an teacher."], "answer": 1 },
+            { "type": "pick_one", "skill": "articles", "prompt": "Which sentence is right?", "choices": ["The sky is blue today.", "Sky is blue today.", "A sky is blue today."], "answer": 0 },
+            { "type": "pick_one", "skill": "articles", "prompt": "Pick the right sentence.", "choices": ["We played with boring computer.", "We played with an boring computer.", "We played with a boring computer."], "answer": 2 },
+            { "type": "fill_blank", "skill": "articles", "before": "I have a dog.", "after": "dog is brown.", "choices": ["An", "The", "Two"], "answer": 1 },
+            { "type": "fill_blank", "skill": "articles", "before": "Mia is reading", "after": "book about frogs.", "choices": ["an", "a", "many"], "answer": 1 },
+            { "type": "fill_blank", "skill": "articles", "before": "At night, we can see", "after": "moon.", "choices": ["the", "an", "many"], "answer": 0 },
+            { "type": "find_fix", "skill": "articles", "words": ["Mina", "spilled", "cup", "of", "milk."], "wrongIndex": 2, "fixes": ["a cup", "an cup", "two cup"], "answer": 0 },
+            { "type": "find_fix", "skill": "articles", "words": ["Ben", "sat", "on", "chair."], "wrongIndex": 3, "fixes": ["an chair.", "a chair.", "two chair."], "answer": 1 },
+            { "type": "find_fix", "skill": "articles", "words": ["Tom", "is", "eating", "a", "banana", "in", "kitchen."], "wrongIndex": 6, "fixes": ["two kitchen.", "an kitchen.", "the kitchen."], "answer": 2 },
+            { "type": "build_it", "skill": "articles", "prompt": "Build the sentence.", "tiles": ["The", "sun", "is", "very", "hot", "today."], "distractors": ["A"] },
+            { "type": "build_it", "skill": "articles", "prompt": "Build the sentence.", "tiles": ["We", "played", "with", "a", "new", "computer."], "distractors": ["an"] },
+            { "type": "sort_it", "skill": "articles", "prompt": "Right or wrong?", "groups": ["Right", "Wrong"], "items": [
+              { "text": "an old hat", "group": 0 },
+              { "text": "a uncle", "group": 1 },
+              { "text": "the sky", "group": 0 },
+              { "text": "an bus", "group": 1 },
+              { "text": "a big egg", "group": 0 },
+              { "text": "a ugly bug", "group": 1 }
+            ] }
+          ]
+        },
+        {
+          "title": "There is, there are",
+          "questions": [
+            { "type": "pick_one", "skill": "there-is-are", "prompt": "Pick the right sentence.", "choices": ["There is a two people in the room.", "There are two people in the room.", "There is two people in the room."], "answer": 1 },
+            { "type": "pick_one", "skill": "there-is-are", "prompt": "Which sentence is right?", "choices": ["There are books on the desk.", "There is books on the desk.", "There are book on the desk."], "answer": 0 },
+            { "type": "pick_one", "skill": "there-is-are", "prompt": "Pick the right sentence.", "choices": ["There is very many birds in the sky.", "There are many bird in the sky.", "There are many birds in the sky."], "answer": 2 },
+            { "type": "fill_blank", "skill": "there-is-are", "before": "There", "after": "a cat under the table.", "choices": ["is", "are", "have"], "answer": 0 },
+            { "type": "fill_blank", "skill": "there-is-are", "before": "There are two", "after": "on the plate.", "choices": ["peaches", "peachs", "peach"], "answer": 0 },
+            { "type": "fill_blank", "skill": "there-is-are", "before": "There", "after": "many children in the park.", "choices": ["is", "are", "am"], "answer": 1 },
+            { "type": "find_fix", "skill": "there-is-are", "words": ["There", "is", "three", "dogs", "in", "the", "yard."], "wrongIndex": 1, "fixes": ["are", "am", "be"], "answer": 0 },
+            { "type": "find_fix", "skill": "there-is-are", "words": ["There", "are", "many", "book", "in", "my", "bag."], "wrongIndex": 3, "fixes": ["booke", "books", "bookes"], "answer": 1 },
+            { "type": "find_fix", "skill": "there-is-are", "words": ["There", "are", "a", "girl", "at", "the", "door."], "wrongIndex": 1, "fixes": ["were", "am", "is"], "answer": 2 },
+            { "type": "build_it", "skill": "there-is-are", "prompt": "Build the sentence.", "tiles": ["There", "are", "two", "cats", "on", "the", "sofa."], "distractors": ["is"] },
+            { "type": "build_it", "skill": "there-is-are", "prompt": "Build the sentence.", "tiles": ["There", "is", "an", "egg", "in", "my", "lunchbox."], "distractors": ["are"] },
+            { "type": "sort_it", "skill": "there-is-are", "prompt": "There is or there are?", "groups": ["There is", "There are"], "items": [
+              { "text": "a big tree", "group": 0 },
+              { "text": "many stars", "group": 1 },
+              { "text": "an old car", "group": 0 },
+              { "text": "three boxes", "group": 1 },
+              { "text": "one cookie", "group": 0 },
+              { "text": "some kids", "group": 1 }
+            ] }
+          ]
+        },
+        {
+          "title": "Is, are, was, were",
+          "questions": [
+            { "type": "pick_one", "skill": "ing", "prompt": "Pick the right sentence.", "choices": ["The boy riding a bike.", "The boy are riding a bike.", "The boy is riding a bike."], "answer": 2 },
+            { "type": "pick_one", "skill": "ing", "prompt": "Which sentence is right?", "choices": ["The kids is playing tag.", "The kids are playing tag.", "The kids playing tag."], "answer": 1 },
+            { "type": "pick_one", "skill": "was-were", "prompt": "Pick the right sentence.", "choices": ["There was four adult and five kids.", "There were four adults and five kids.", "There were four adult and five kids."], "answer": 1 },
+            { "type": "fill_blank", "skill": "ing", "before": "Grandpa", "after": "drinking his tea.", "choices": ["is", "are", "am"], "answer": 0 },
+            { "type": "fill_blank", "skill": "ing", "before": "Two girls are singing, and one girl", "after": "dancing.", "choices": ["are", "is", "were"], "answer": 1 },
+            { "type": "fill_blank", "skill": "was-were", "before": "Yesterday, Mia and Leo", "after": "at the park.", "choices": ["was", "were", "is"], "answer": 1 },
+            { "type": "find_fix", "skill": "ing", "words": ["Mina", "and", "Sam", "is", "running."], "wrongIndex": 3, "fixes": ["are", "am", "be"], "answer": 0 },
+            { "type": "find_fix", "skill": "ing", "words": ["My", "mom", "cooking", "dinner."], "wrongIndex": 2, "fixes": ["are cooking", "is cooking", "be cooking"], "answer": 1 },
+            { "type": "find_fix", "skill": "was-were", "words": ["Mia", "and", "Ben", "was", "at", "the", "beach", "yesterday."], "wrongIndex": 3, "fixes": ["were", "is", "are"], "answer": 0 },
+            { "type": "build_it", "skill": "ing", "prompt": "Build the sentence.", "tiles": ["The", "kids", "are", "playing", "in", "the", "snow."], "distractors": ["is"] },
+            { "type": "build_it", "skill": "was-were", "prompt": "Build the sentence.", "tiles": ["The", "cookies", "were", "on", "the", "table."], "distractors": ["was"] },
+            { "type": "sort_it", "skill": "was-were", "prompt": "Was or were?", "groups": ["was", "were"], "items": [
+              { "text": "I", "group": 0 },
+              { "text": "we", "group": 1 },
+              { "text": "Mia", "group": 0 },
+              { "text": "the dogs", "group": 1 },
+              { "text": "my cat", "group": 0 },
+              { "text": "Sam and Ben", "group": 1 }
+            ] }
+          ]
+        },
+        {
+          "title": "Mixed review",
+          "questions": [
+            { "type": "pick_one", "skill": "ing", "prompt": "Pick the right sentence.", "choices": ["Every students is reading.", "Every student is reading.", "Every student are reading."], "answer": 1 },
+            { "type": "pick_one", "skill": "articles", "prompt": "Which sentence is right?", "choices": ["I need a pencil and an eraser.", "I need an pencil and a eraser.", "I need a pencil and a eraser."], "answer": 0 },
+            { "type": "pick_one", "skill": "there-is-are", "prompt": "Pick the right sentence.", "choices": ["There is three mice in the barn.", "There are three mouses in the barn.", "There are three mice in the barn."], "answer": 2 },
+            { "type": "fill_blank", "skill": "was-were", "before": "Last night, there", "after": "a big storm.", "choices": ["were", "was", "are"], "answer": 1 },
+            { "type": "fill_blank", "skill": "articles", "before": "My aunt is", "after": "artist.", "choices": ["a", "an"], "answer": 1 },
+            { "type": "fill_blank", "skill": "ing", "before": "Look! The babies", "after": "sleeping.", "choices": ["is", "are", "was"], "answer": 1 },
+            { "type": "find_fix", "skill": "there-is-are", "words": ["There", "is", "five", "people", "on", "the", "bus."], "wrongIndex": 1, "fixes": ["are", "am", "be"], "answer": 0 },
+            { "type": "find_fix", "skill": "articles", "words": ["We", "saw", "a", "eagle", "and", "a", "fox."], "wrongIndex": 2, "fixes": ["two", "an", "many"], "answer": 1 },
+            { "type": "find_fix", "skill": "was-were", "words": ["Tom", "and", "Leo", "was", "playing", "soccer."], "wrongIndex": 3, "fixes": ["is", "were", "am"], "answer": 1 },
+            { "type": "build_it", "skill": "articles", "prompt": "Build the sentence.", "tiles": ["Mina", "has", "an", "old", "umbrella."], "distractors": ["a"] },
+            { "type": "build_it", "skill": "there-is-are", "prompt": "Build the sentence.", "tiles": ["There", "are", "many", "apples", "in", "the", "basket."], "distractors": ["is", "apple"] },
+            { "type": "sort_it", "skill": "ing", "prompt": "Is or are?", "groups": ["is", "are"], "items": [
+              { "text": "the kids", "group": 1 },
+              { "text": "my sister", "group": 0 },
+              { "text": "Leo and Mia", "group": 1 },
+              { "text": "one boy", "group": 0 },
+              { "text": "every student", "group": 0 },
+              { "text": "two birds", "group": 1 }
+            ] }
+          ]
+        }
+      ]
+    }
+  ]
+}

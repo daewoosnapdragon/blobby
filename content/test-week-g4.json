@@ -761,17 +761,16 @@
               "type": "find_fix",
               "skill": "plurals",
               "words": [
-                "Three",
+                "There",
+                "were",
+                "three",
                 "student",
-                "and",
-                "their",
-                "teacher",
-                "walked",
-                "to",
+                "in",
                 "the",
-                "library."
+                "art",
+                "room."
               ],
-              "wrongIndex": 1,
+              "wrongIndex": 3,
               "fixes": [
                 "students",
                 "student's",
