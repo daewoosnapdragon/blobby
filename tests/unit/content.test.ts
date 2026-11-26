@@ -51,3 +51,14 @@ describe('keptSummary', () => {
     expect(keptSummary(zero, true)).toEqual([expect.stringMatching(/file replaced/)]);
   });
 });
+
+describe('skills on content questions', () => {
+  it('keeps each question skill, in order, with null where there is none', () => {
+    const c = parseContent(file([{ ...pick, skill: 'past-tense' }, pick]));
+    expect(c.weeks[0].lessons[1].skills).toEqual(['past-tense', null]);
+    expect(c.weeks[0].lessons[0].skills).toEqual([null]);
+  });
+  it('rejects an unknown skill and says which question', () => {
+    expect(() => parseContent(file([{ ...pick, skill: 'magic' }]))).toThrow(/week 1, lesson 2, question 1: unknown skill "magic"/);
+  });
+});

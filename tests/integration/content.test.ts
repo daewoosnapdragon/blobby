@@ -135,3 +135,47 @@ describe('importContent', () => {
     expect(await count('wp_plans')).toBe(1);
   });
 });
+
+describe('skills and the review bank', () => {
+  const tagged = () => {
+    const b = base();
+    b.plan.title = 'Skill test';
+    (b.weeks[0].lessons[0].questions[0] as Record<string, unknown>).skill = 'plurals';
+    return b;
+  };
+
+  it('importContent stores each question skill, and a re-import fills it in without touching edits', async () => {
+    const c = parseContent(tagged());
+    await importContent(sql, c);
+    const rows = await sql`select q.position, q.skill from wp_questions q join wp_lessons l on l.id = q.lesson_id join wp_weeks w on w.id = l.week_id join wp_plans p on p.id = w.plan_id where p.title = 'Skill test' and l.position = 1 order by q.position`;
+    expect(rows.map((r) => r.skill)).toEqual(['plurals', null]);
+    await sql`update wp_questions set skill = null, payload = payload || '{"prompt":"Edited."}'::jsonb where skill = 'plurals'`;
+    await importContent(sql, c);
+    const [q] = await sql`select q.skill, q.payload->>'prompt' as prompt from wp_questions q join wp_lessons l on l.id = q.lesson_id join wp_weeks w on w.id = l.week_id join wp_plans p on p.id = w.plan_id where p.title = 'Skill test' and l.position = 1 and q.position = 1`;
+    expect(q).toEqual({ skill: 'plurals', prompt: 'Edited.' });
+  });
+
+  it('contentToSql loads skills and is safe to run twice', async () => {
+    const { contentToSql } = await import('@/lib/contentSql');
+    const b = tagged(); b.plan.title = 'SQL skill test';
+    const text = contentToSql(parseContent(b));
+    await sql.unsafe(text);
+    await sql.unsafe(text);
+    const rows = await sql`select q.skill from wp_questions q join wp_lessons l on l.id = q.lesson_id join wp_weeks w on w.id = l.week_id join wp_plans p on p.id = w.plan_id where p.title = 'SQL skill test' order by l.position, q.position`;
+    expect(rows.map((r) => r.skill)).toEqual(['plurals', null, null]);
+  });
+
+  it('bankToSql adds bank questions once, by grade and skill', async () => {
+    const { bankToSql } = await import('@/lib/contentSql');
+    const { parseBank } = await import('@/lib/bank');
+    const pick = { type: 'pick_one', prompt: 'Pick.', choices: ['went', 'goed'], answer: 0 };
+    const text = bankToSql(parseBank({ grade: 3, skills: { 'past-tense': [pick, { ...pick, prompt: 'Again.' }] } }));
+    await sql.unsafe(text);
+    await sql.unsafe(text);
+    const rows = await sql`select bank_grade, skill, position, lesson_id from wp_questions where bank_grade is not null order by position`;
+    expect(rows).toEqual([
+      { bank_grade: 3, skill: 'past-tense', position: 1, lesson_id: null },
+      { bank_grade: 3, skill: 'past-tense', position: 2, lesson_id: null },
+    ]);
+  });
+});

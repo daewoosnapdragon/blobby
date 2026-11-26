@@ -2,6 +2,7 @@
 import { z } from 'zod';
 import type postgres from 'postgres';
 import { parseQuestion, type Question } from './questions/schema';
+import { isSkillKey, type SkillKey } from './skills';
 
 const dateStr = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'must be YYYY-MM-DD').refine(
   (s) => { const d = new Date(`${s}T00:00:00Z`); return !isNaN(+d) && d.toISOString().startsWith(s); },
@@ -22,7 +23,8 @@ const fileSchema = z.object({
 export interface ContentFile {
   plan: { title: string; kind: 'test' | 'winter' | 'homework' };
   assignTo: { grade: number };
-  weeks: { skill: string; opensOn: string; lessons: { title: string; questions: Question[] }[] }[];
+  /** skills[i] is questions[i]'s skill key (src/lib/skills.ts), or null */
+  weeks: { skill: string; opensOn: string; lessons: { title: string; questions: Question[]; skills: (SkillKey | null)[] }[] }[];
 }
 
 /** Validates the whole file; the error names week, lesson and 1-based question position. */
@@ -46,12 +48,18 @@ export function parseContent(raw: unknown): ContentFile {
       opensOn: w.opensOn,
       lessons: w.lessons.map((l, li) => ({
         title: l.title,
+        skills: l.questions.map((raw, qi) => {
+          const skill = raw && typeof raw === 'object' ? (raw as { skill?: unknown }).skill : undefined;
+          if (skill === undefined || skill === null) return null;
+          if (!isSkillKey(skill)) throw new Error(`week ${wi + 1}, lesson ${li + 1}, question ${qi + 1}: unknown skill ${JSON.stringify(skill)}`);
+          return skill;
+        }),
         questions: l.questions.map((raw, qi) => {
           const where = `week ${wi + 1}, lesson ${li + 1}, question ${qi + 1}`;
           if (!raw || typeof raw !== 'object' || typeof (raw as { type?: unknown }).type !== 'string') {
             throw new Error(`${where}: missing "type"`);
           }
-          const { type, ...payload } = raw as { type: string };
+          const { type, skill: _skill, ...payload } = raw as { type: string; skill?: unknown };
           try { return parseQuestion(type, payload); }
           catch (e) { throw new Error(`${where}: ${e instanceof Error ? e.message : String(e)}`); }
         }),
@@ -126,6 +134,7 @@ export async function importContent(sql: postgres.Sql, c: ContentFile, opts: { o
         }
         for (const [qi, q] of l.questions.entries()) {
           const { type, ...payload } = q;
+          const skill = l.skills[qi] ?? null;
           const [existing] = await tx`
             select id, type, payload, audio from wp_questions
             where lesson_id = ${lesson.id} and position = ${qi + 1} and deleted_at is null
@@ -137,10 +146,12 @@ export async function importContent(sql: postgres.Sql, c: ContentFile, opts: { o
           }
           if (!existing) {
             const [row] = await tx`
-              insert into wp_questions (lesson_id, position, type, payload)
-              values (${lesson.id}, ${qi + 1}, ${type}, ${tx.json(payload as never)}) returning id`;
+              insert into wp_questions (lesson_id, position, type, payload, skill)
+              values (${lesson.id}, ${qi + 1}, ${type}, ${tx.json(payload as never)}, ${skill}) returning id`;
             items.push({ id: row.id, question: q, audio: {} });
           } else {
+            // The skill tag isn't something Kyla edits in the app: the file's tag always wins.
+            await tx`update wp_questions set skill = ${skill} where id = ${existing.id} and skill is distinct from ${skill}`;
             const differs = existing.type !== type || stable(existing.payload) !== stable(payload);
             if (differs && opts.overwrite) {
               await tx`update wp_questions set type = ${type}, payload = ${tx.json(payload as never)}, updated_at = now()
