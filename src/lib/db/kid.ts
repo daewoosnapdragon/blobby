@@ -3,7 +3,7 @@ import type postgres from 'postgres';
 import { cookies } from 'next/headers';
 import { sql } from './admin';
 import { bonusPick, countRun, forgetPicks, mixIn, reviewQuestions, skillPractice, storedBonus } from './track';
-import { lessonBonusSeed } from '../bonus';
+import { isPracticeBonus, lessonBonusSeed } from '../bonus';
 import type { SkillKey } from '../skills';
 import { SESSION_COOKIE, verifyStudent } from '../session';
 import { UUID_RE } from '../uuid';
@@ -234,11 +234,13 @@ export async function recordAttempt(
       // A bank question belongs to no plan: its star counts toward the plan on the kid's home screen. No plan, no star.
       const planId = q.plan_id ?? (await getHome(studentId, now)).plan?.id ?? null;
       if (!planId) return { starsAwarded: 0 };
+      // The day of this answer decides, not the day the set was loaded.
+      const amount = isPracticeBonus(studentId, seoulDate(now), input.questionId) ? STAR_VALUES.freeBonus : STAR_VALUES.freeCorrect;
       const [ev] = await tx`
         insert into wp_star_events (student_id, plan_id, amount, reason, ref_id)
-        values (${studentId}, ${planId}, ${STAR_VALUES.freeCorrect}, 'free_correct', ${inserted.id})
+        values (${studentId}, ${planId}, ${amount}, 'free_correct', ${inserted.id})
         on conflict (student_id, reason, ref_id) do nothing returning id`;
-      if (ev) return { starsAwarded: STAR_VALUES.freeCorrect };
+      if (ev) return { starsAwarded: amount };
     }
     return { starsAwarded: 0 };
   });
@@ -567,7 +569,9 @@ export async function getPracticeSet(
 ): Promise<LessonQuestion[]> {
   const [pool, missed] = await Promise.all([practicePool(studentId, now), getMissedIds(studentId)]);
   const byId = new Map(pool.map((q) => [q.id, q]));
-  return pickFreePractice(pool.map((q) => ({ id: q.id, deleted: false })), missed, n, rand).map((qid) => byId.get(qid)!);
+  const day = seoulDate(now);
+  return pickFreePractice(pool.map((q) => ({ id: q.id, deleted: false })), missed, n, rand)
+    .map((qid) => ({ ...byId.get(qid)!, bonus: isPracticeBonus(studentId, day, qid) }));
 }
 
 /** Is there anything to practice yet? (Home shows the free-practice card as opening later when not.) */
@@ -592,5 +596,7 @@ export async function getPracticeStudent(studentId: string) {
 export async function getSkillPractice(studentId: string, skill: SkillKey, now: Date = new Date()): Promise<LessonQuestion[]> {
   const student = await studentWithGrade(studentId);
   const [pool, missed] = await Promise.all([practicePool(studentId, now), getMissedIds(studentId)]);
-  return skillPractice(student.id, student.grade, skill, new Set(pool.map((q) => q.id)), missed);
+  const day = seoulDate(now);
+  const set = await skillPractice(student.id, student.grade, skill, new Set(pool.map((q) => q.id)), missed);
+  return set.map((q) => ({ ...q, bonus: isPracticeBonus(studentId, day, q.id) }));
 }
