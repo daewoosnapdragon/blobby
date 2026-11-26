@@ -436,8 +436,9 @@ export async function getLesson(studentId: string, lessonId: string, now: Date =
   const done = new Set(lessons.filter((l) => l.done).map((l) => l.id));
   // "Just for you": saved for this kid and lesson until it is finished (a redo after that may differ).
   const review = await reviewQuestions(studentId, student.grade, lessonId, `${studentId}:${lessonId}:${done.has(lessonId) ? 1 : 0}`);
-  // The bonus is a class question, saved in the same row as the review picks (so after reviewQuestions).
-  const bonus = await bonusPick(studentId, lessonId, questions.map((q) => q.id), lessonBonusSeed(studentId, lessonId, done.has(lessonId)));
+  // The bonus is a class question (never a watch_answer), saved in the same row as the review picks (so after reviewQuestions).
+  const bonusable = questions.filter((q) => q.question.type !== 'watch_answer').map((q) => q.id);
+  const bonus = await bonusPick(studentId, lessonId, bonusable, lessonBonusSeed(studentId, lessonId, done.has(lessonId)));
   return {
     student: { id: student.id, displayName: student.display_name, blobColor: student.blob_color, grade: student.grade },
     totalStars,

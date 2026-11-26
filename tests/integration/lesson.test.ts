@@ -116,6 +116,31 @@ describe('getLesson', () => {
       await sql`delete from wp_questions where id in (${first}, ${last})`;
     }
   });
+
+  it('never picks a watch_answer question as the bonus', async () => {
+    const { getLesson } = await import('@/lib/db/kid');
+    const { pickLessonBonus, lessonBonusSeed } = await import('@/lib/bonus');
+    const watch = id(407);
+    await sql`delete from wp_review_picks where student_id = ${MINA} and lesson_id = ${L1}`;
+    await sql`update wp_questions set deleted_at = now() where id = ${Q.b}`;
+    await sql`insert into wp_questions (id, lesson_id, position, type, payload, audio) values
+      (${watch}, ${L1}, 0, 'watch_answer', ${sql.json({ youtubeId: 'dQw4w9WgXcQ', questions: [{ type: 'pick_one', ...pickOne('seen it') }] })}, '{}')`;
+    try {
+      const bonusOf = async () => (await getLesson(MINA, L1, NOW)).questions.filter((q) => q.bonus);
+      // an unfiltered fresh pick over [watch, Q.a] would choose the watch_answer
+      expect(pickLessonBonus([watch, Q.a], lessonBonusSeed(MINA, L1, false))).toBe(watch);
+      expect((await bonusOf()).map((q) => q.id)).toEqual([Q.a]);
+      // a stored watch_answer bonus is not kept either
+      await sql`update wp_review_picks set bonus_question_id = ${watch} where student_id = ${MINA} and lesson_id = ${L1}`;
+      const again = await bonusOf();
+      expect(again.map((q) => q.id)).toEqual([Q.a]);
+      expect(again[0].question.type).not.toBe('watch_answer');
+    } finally {
+      await sql`update wp_questions set deleted_at = null where id = ${Q.b}`;
+      await sql`update wp_review_picks set bonus_question_id = null where bonus_question_id = ${watch}`;
+      await sql`delete from wp_questions where id = ${watch}`;
+    }
+  });
 });
 
 describe('getWeekDone', () => {
