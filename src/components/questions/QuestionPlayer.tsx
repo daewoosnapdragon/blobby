@@ -21,6 +21,7 @@ import { RightWrong } from './RightWrong';
 import { OddOneOut } from './OddOneOut';
 import { PictureFirst } from './PictureFirst';
 import { TapAll } from './TapAll';
+import { MatchPairs } from './MatchPairs';
 import { TopBar } from './TopBar';
 import { WatchAnswer } from './WatchAnswer';
 import { QuestionPicture } from './QuestionPicture';
@@ -80,6 +81,7 @@ const TYPE_LABEL: Record<NonWatchQuestion['type'], string> = {
   odd_one_out: 'Odd one out',
   picture_first: 'Picture first',
   tap_all: 'Tap them all',
+  match_pairs: 'Match pairs',
 };
 const TYPE_TINT: Record<NonWatchQuestion['type'], string> = {
   listen_tap: '#A9D3FF',
@@ -92,6 +94,7 @@ const TYPE_TINT: Record<NonWatchQuestion['type'], string> = {
   odd_one_out: '#FFD95A',
   picture_first: '#FFE59A',
   tap_all: '#A9D3FF',
+  match_pairs: '#B7E1D1',
 };
 const HINT: Record<NonWatchQuestion['type'], string> = {
   listen_tap: 'Listen again, then look at each word.',
@@ -104,6 +107,7 @@ const HINT: Record<NonWatchQuestion['type'], string> = {
   odd_one_out: 'Say each word. Which one is different?',
   picture_first: 'Look at the picture again.',
   tap_all: 'Look at every word. Did you miss one?',
+  match_pairs: 'Say each pair out loud.',
 };
 
 function ask(q: NonWatchQuestion, found: boolean): string {
@@ -145,6 +149,7 @@ function Body({ q, status, onAnswer, onFound }: { q: NonWatchQuestion; status: S
     case 'odd_one_out': return <OddOneOut q={q} status={status} onAnswer={onAnswer} />;
     case 'picture_first': return <PictureFirst q={q} status={status} onAnswer={onAnswer} />;
     case 'tap_all': return <TapAll q={q} status={status} onAnswer={onAnswer} />;
+    case 'match_pairs': return <MatchPairs q={q} status={status} onAnswer={onAnswer} />;
   }
 }
 

@@ -12,6 +12,9 @@ export type QProps<T extends NonWatchQuestion['type']> = {
 
 export type Mark = 'right' | 'wrong' | 'selected' | undefined;
 
+/** Pastel tints for things that belong together: sort it's groups, match pairs' pairs. */
+export const GROUP_TINTS = ['#B7E1D1', '#FFB5C1', '#A9D3FF', '#FFE59A'];
+
 /** Deterministic shuffle (server and client render the same order). Never returns the original order for 2+ items. */
 export function seededShuffle<T>(items: T[], seedText: string): T[] {
   let h = 2166136261;

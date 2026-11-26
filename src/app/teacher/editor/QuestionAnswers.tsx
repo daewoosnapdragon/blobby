@@ -114,6 +114,15 @@ function BodyText({ question: q }: { question: NonWatchQuestion }) {
           </p>
         </>
       );
+    case 'match_pairs':
+      return (
+        <>
+          <p className={s.prompt}>{q.prompt}</p>
+          <ul className={s.choices}>
+            {q.pairs.map((p, i) => <li key={i} className={s.choice}>{p.left} → {p.right}</li>)}
+          </ul>
+        </>
+      );
   }
 }
 

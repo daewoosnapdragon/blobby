@@ -91,6 +91,14 @@
 .groupHead[data-armed] { outline: 2px dashed var(--ink); outline-offset: -5px; }
 .groupBody { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
 
+/* Match pairs: lefts in pair order, rights shuffled; a paired left carries a short line across the gap */
+.pairCols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 10px; column-gap: 28px; }
+.pairCell { position: relative; display: flex; }
+.pairCols .pairTile { width: 100%; min-height: 44px; padding: 4px 10px; font-size: 20px; overflow-wrap: anywhere; }
+.pairLine { position: absolute; left: 100%; top: 50%; width: 28px; height: 2px; margin-top: -1px; background: var(--ink); opacity: 0.25; pointer-events: none; }
+.pairCols [data-mark='right'].pairTile { box-shadow: inset 0 0 0 2px var(--ink), 0 3px 0 var(--ink); }
+.pairCols [data-mark='wrong'].pairTile { background: #FFF1F3; box-shadow: inset 0 0 0 2px #D9798B, 0 3px 0 #D9798B; }
+
 .appear { animation: var(--kf-pop) 250ms var(--ease-out) both; }
 
 /* Feedback: color, words and the blob (spec 5.6) */
@@ -156,6 +164,7 @@
   .groups { gap: 14px; }
   .group { min-height: 210px; padding: 10px; gap: 10px; border-radius: 26px; }
   .groupHead { min-height: 58px; border-radius: 18px; font-size: 21px; }
+  .pairCols .pairTile { min-height: 56px; font-size: 24px; }
   .helper { font-size: 16px; }
   /* the Check button replaces the helper line in the same reserved space (no jump) */
   .checkSlot { min-height: 66px; display: flex; flex-direction: column; justify-content: center; }

@@ -20,15 +20,18 @@ const picture = pictureName.optional();
  */
 const norm = (s: string) => s.trim().replace(/\s+/g, ' ');
 
-/** Adds one issue per repeated text, at the repeat's index: "is the same as {noun} {first}". */
-function noRepeats(ctx: z.RefinementCtx, texts: string[], field: string, noun: string) {
+/**
+ * Adds one issue per repeated text, at the repeat's index: "is the same as {noun} {first}".
+ * `at` builds the issue path for index i when the texts are a field of list items (default `[field, i]`).
+ */
+function noRepeats(ctx: z.RefinementCtx, texts: string[], field: string, noun: string, at: (i: number) => PropertyKey[] = (i) => [field, i]) {
   const first = new Map<string, number>();
   texts.forEach((t, i) => {
     const k = norm(t);
     if (k === '') return; // already "fill this in"
     const j = first.get(k);
     if (j === undefined) first.set(k, i);
-    else ctx.addIssue({ code: 'custom', message: `is the same as ${noun} ${j + 1}`, path: [field, i] });
+    else ctx.addIssue({ code: 'custom', message: `is the same as ${noun} ${j + 1}`, path: at(i) });
   });
 }
 
@@ -118,6 +121,13 @@ const tapAllPayload = z
     });
   });
 
+const matchPairsPayload = z
+  .object({ prompt: text, pairs: z.array(z.object({ left: text, right: text })).min(2).max(5), picture })
+  .superRefine((q, ctx) => {
+    noRepeats(ctx, q.pairs.map((p) => p.left), 'pairs', 'left', (i) => ['pairs', i, 'left']);
+    noRepeats(ctx, q.pairs.map((p) => p.right), 'pairs', 'right', (i) => ['pairs', i, 'right']);
+  });
+
 const listenTapQ = listenTapPayload.extend({ type: z.literal('listen_tap') });
 const pickOneQ = pickOnePayload.extend({ type: z.literal('pick_one') });
 const findFixQ = findFixPayload.extend({ type: z.literal('find_fix') });
@@ -128,8 +138,9 @@ const rightWrongQ = rightWrongPayload.extend({ type: z.literal('right_wrong') })
 const oddOneOutQ = oddOneOutPayload.extend({ type: z.literal('odd_one_out') });
 const pictureFirstQ = pictureFirstPayload.extend({ type: z.literal('picture_first') });
 const tapAllQ = tapAllPayload.extend({ type: z.literal('tap_all') });
+const matchPairsQ = matchPairsPayload.extend({ type: z.literal('match_pairs') });
 
-const nonWatchSchema = z.discriminatedUnion('type', [listenTapQ, pickOneQ, findFixQ, buildItQ, sortItQ, fillBlankQ, rightWrongQ, oddOneOutQ, pictureFirstQ, tapAllQ]);
+const nonWatchSchema = z.discriminatedUnion('type', [listenTapQ, pickOneQ, findFixQ, buildItQ, sortItQ, fillBlankQ, rightWrongQ, oddOneOutQ, pictureFirstQ, tapAllQ, matchPairsQ]);
 
 const watchAnswerPayload = z.object({
   youtubeId: z.string().trim().regex(YOUTUBE_ID_RE, 'needs an 11-character YouTube id'),
@@ -138,7 +149,7 @@ const watchAnswerPayload = z.object({
 const watchAnswerQ = watchAnswerPayload.extend({ type: z.literal('watch_answer') });
 
 export const questionSchema = z.discriminatedUnion('type', [
-  listenTapQ, pickOneQ, findFixQ, buildItQ, sortItQ, fillBlankQ, rightWrongQ, oddOneOutQ, pictureFirstQ, tapAllQ, watchAnswerQ,
+  listenTapQ, pickOneQ, findFixQ, buildItQ, sortItQ, fillBlankQ, rightWrongQ, oddOneOutQ, pictureFirstQ, tapAllQ, matchPairsQ, watchAnswerQ,
 ]);
 
 const payloadSchemas = {
@@ -152,6 +163,7 @@ const payloadSchemas = {
   odd_one_out: oddOneOutPayload,
   picture_first: pictureFirstPayload,
   tap_all: tapAllPayload,
+  match_pairs: matchPairsPayload,
   watch_answer: watchAnswerPayload,
 } as const;
 
@@ -168,6 +180,7 @@ export type RightWrongPayload = z.infer<typeof rightWrongPayload>;
 export type OddOneOutPayload = z.infer<typeof oddOneOutPayload>;
 export type PictureFirstPayload = z.infer<typeof pictureFirstPayload>;
 export type TapAllPayload = z.infer<typeof tapAllPayload>;
+export type MatchPairsPayload = z.infer<typeof matchPairsPayload>;
 export type WatchAnswerPayload = z.infer<typeof watchAnswerPayload>;
 
 export type NonWatchQuestion = z.infer<typeof nonWatchSchema>;
@@ -177,6 +190,7 @@ export type Response =
   | { choice: number }
   | { tapped: number; fix: number }
   | { tapped: number[] }
+  | { matches: number[] }
   | { order: string[] }
   | { placement: number[] }
   | { yes: boolean };

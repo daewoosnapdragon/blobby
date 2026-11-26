@@ -2,10 +2,8 @@
 import { useState } from 'react';
 import { checkAnswer } from '@/lib/questions/check';
 import { PillButton } from '@/components/ui/PillButton';
-import type { QProps } from './types';
+import { GROUP_TINTS, type QProps } from './types';
 import s from './questions.module.css';
-
-const GROUP_TINTS = ['#B7E1D1', '#FFB5C1', '#A9D3FF', '#FFE59A'];
 
 /** Sort it: tap a word, then the group it belongs to. Tap a sorted word to send it back. */
 export function SortIt({ q, status, onAnswer }: QProps<'sort_it'>) {

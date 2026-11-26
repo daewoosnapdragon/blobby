@@ -35,6 +35,8 @@ export function checkAnswer(q: NonWatchQuestion, r: Response): boolean {
       const tapped = new Set(x.tapped);
       return tapped.size === x.tapped.length && tapped.size === q.answers.length && q.answers.every((a) => tapped.has(a));
     }
+    case 'match_pairs':
+      return Array.isArray(x.matches) && x.matches.length === q.pairs.length && x.matches.every((m, i) => m === i);
     default:
       return false;
   }

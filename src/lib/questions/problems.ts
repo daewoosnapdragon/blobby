@@ -5,11 +5,11 @@ const LABEL: Record<string, string> = {
   prompt: 'Prompt', audioText: 'Spoken word', choices: 'Choice', answer: 'Right answer', words: 'Sentence',
   wrongIndex: 'Wrong word', fixes: 'Fix', tiles: 'Tile', distractors: 'Extra tile', groups: 'Group',
   items: 'Word', before: 'Text before the blank', after: 'Text after the blank', youtubeId: 'Video', text: 'Text',
-  sentence: 'Sentence', right: 'Right or not', answers: 'Answer',
+  sentence: 'Sentence', right: 'Right or not', answers: 'Answer', pairs: 'Pair',
 };
-/** Labels that differ for one type: odd one out's `words` are separate words, not a sentence. */
-const TYPE_FIELD_LABEL: Record<string, Record<string, string>> = { odd_one_out: { words: 'Word' } };
-const PLURAL: Record<string, string> = { choices: 'choices', fixes: 'fixes', tiles: 'tiles', groups: 'groups', items: 'words', words: 'words', questions: 'questions' };
+/** Labels that differ for one type: odd one out's `words` are separate words, not a sentence; a pair's sides. */
+const TYPE_FIELD_LABEL: Record<string, Record<string, string>> = { odd_one_out: { words: 'Word' }, match_pairs: { left: 'left', right: 'right' } };
+const PLURAL: Record<string, string> = { choices: 'choices', fixes: 'fixes', tiles: 'tiles', groups: 'groups', items: 'words', words: 'words', questions: 'questions', pairs: 'pairs' };
 
 function where(path: PropertyKey[], type: string): string {
   const parts: string[] = [];
@@ -21,6 +21,7 @@ function where(path: PropertyKey[], type: string): string {
   let label = TYPE_FIELD_LABEL[type]?.[String(field)] ?? LABEL[String(field)] ?? String(field);
   if (typeof n === 'number') label += ` ${n + 1}`;
   if (sub === 'group') label += ' group';
+  else if (typeof sub === 'string' && TYPE_FIELD_LABEL[type]?.[sub]) label += `, ${TYPE_FIELD_LABEL[type][sub]}`;
   parts.push(label);
   return parts.join(', ');
 }
@@ -46,7 +47,7 @@ export function questionProblems(type: string, payload: unknown): string[] {
     const qType = issueType(type, body, path);
     let msg: string;
     if (issue.code === 'invalid_union' || (path.length === 1 && path[0] === 'type')) msg = 'Pick a question type.';
-    else if (last === 'right') msg = 'Pick Yes or No.';
+    else if (last === 'right' && qType === 'right_wrong') msg = 'Pick Yes or No.';
     else if (last === 'picture' && qType === 'picture_first') msg = 'Pick a picture.';
     else if (last === 'answers' && issue.code === 'too_small') msg = 'Tap at least one word.';
     else if (last === 'answer' && qType === 'odd_one_out') msg = 'Pick the odd one.';

@@ -23,6 +23,8 @@ function own(q: NonWatchQuestion): string[] {
       return [q.prompt, ...q.choices];
     case 'tap_all':
       return [q.prompt, q.words.join(' ')];
+    case 'match_pairs':
+      return [q.prompt, ...q.pairs.flatMap((p) => [p.left, p.right])];
   }
 }
 

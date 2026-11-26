@@ -180,6 +180,29 @@ function TapAllForm({ draft: d, onChange }: P<'tap_all'>) {
   );
 }
 
+function MatchPairsForm({ draft: d, onChange }: P<'match_pairs'>) {
+  const setSide = (i: number, side: 'left' | 'right', v: string) =>
+    onChange({ ...d, pairs: d.pairs.map((p, j) => (j === i ? { ...p, [side]: v } : p)) });
+  return (
+    <>
+      <TextField label="Instruction" value={d.prompt} onChange={(prompt) => onChange({ ...d, prompt })} placeholder="Match today with yesterday." />
+      <fieldset className={s.list}>
+        <legend>Pairs</legend>
+        {d.pairs.map((p, i) => (
+          <div key={i} className={s.row}>
+            <span className={s.rowNum} aria-hidden="true">{i + 1}</span>
+            <input className={s.input} value={p.left} aria-label={`Left ${i + 1}`} autoComplete="off" onChange={(e) => setSide(i, 'left', e.target.value)} />
+            <input className={s.input} value={p.right} aria-label={`Right ${i + 1}`} autoComplete="off" onChange={(e) => setSide(i, 'right', e.target.value)} />
+            <button type="button" className={s.iconBtn} disabled={d.pairs.length <= 2} aria-label={`Remove pair ${i + 1}`}
+              onClick={() => onChange({ ...d, pairs: d.pairs.filter((_, j) => j !== i) })}><span aria-hidden="true">×</span></button>
+          </div>
+        ))}
+        <button type="button" className={s.addBtn} disabled={d.pairs.length >= 5} onClick={() => onChange({ ...d, pairs: [...d.pairs, { left: '', right: '' }] })}>+ Add a pair</button>
+      </fieldset>
+    </>
+  );
+}
+
 export function TypeForm({ draft, onChange }: { draft: NonWatchDraft; onChange: (d: NonWatchDraft) => void }) {
   switch (draft.type) {
     case 'pick_one': return <PickOneForm draft={draft} onChange={onChange} />;
@@ -192,6 +215,7 @@ export function TypeForm({ draft, onChange }: { draft: NonWatchDraft; onChange: 
     case 'odd_one_out': return <OddOneOutForm draft={draft} onChange={onChange} />;
     case 'picture_first': return <PictureFirstForm draft={draft} onChange={onChange} />;
     case 'tap_all': return <TapAllForm draft={draft} onChange={onChange} />;
+    case 'match_pairs': return <MatchPairsForm draft={draft} onChange={onChange} />;
   }
 }
 
