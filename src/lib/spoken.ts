@@ -19,6 +19,8 @@ function own(q: NonWatchQuestion): string[] {
       return [q.prompt, q.sentence];
     case 'odd_one_out':
       return [q.prompt, ...q.words];
+    case 'picture_first':
+      return [q.prompt, ...q.choices];
   }
 }
 

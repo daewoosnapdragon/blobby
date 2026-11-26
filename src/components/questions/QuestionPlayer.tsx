@@ -19,6 +19,7 @@ import { SortIt } from './SortIt';
 import { FillBlank } from './FillBlank';
 import { RightWrong } from './RightWrong';
 import { OddOneOut } from './OddOneOut';
+import { PictureFirst } from './PictureFirst';
 import { TopBar } from './TopBar';
 import { WatchAnswer } from './WatchAnswer';
 import { QuestionPicture } from './QuestionPicture';
@@ -76,6 +77,7 @@ const TYPE_LABEL: Record<NonWatchQuestion['type'], string> = {
   fill_blank: 'Fill the blank',
   right_wrong: 'Yes or no',
   odd_one_out: 'Odd one out',
+  picture_first: 'Picture first',
 };
 const TYPE_TINT: Record<NonWatchQuestion['type'], string> = {
   listen_tap: '#A9D3FF',
@@ -86,6 +88,7 @@ const TYPE_TINT: Record<NonWatchQuestion['type'], string> = {
   fill_blank: '#B7E1D1',
   right_wrong: '#FFB5C1',
   odd_one_out: '#FFD95A',
+  picture_first: '#FFE59A',
 };
 const HINT: Record<NonWatchQuestion['type'], string> = {
   listen_tap: 'Listen again, then look at each word.',
@@ -96,6 +99,7 @@ const HINT: Record<NonWatchQuestion['type'], string> = {
   fill_blank: 'Try each word in the sentence.',
   right_wrong: 'Read it once more, slowly.',
   odd_one_out: 'Say each word. Which one is different?',
+  picture_first: 'Look at the picture again.',
 };
 
 function ask(q: NonWatchQuestion, found: boolean): string {
@@ -135,6 +139,7 @@ function Body({ q, status, onAnswer, onFound }: { q: NonWatchQuestion; status: S
     case 'fill_blank': return <FillBlank q={q} status={status} onAnswer={onAnswer} />;
     case 'right_wrong': return <RightWrong q={q} status={status} onAnswer={onAnswer} />;
     case 'odd_one_out': return <OddOneOut q={q} status={status} onAnswer={onAnswer} />;
+    case 'picture_first': return <PictureFirst q={q} status={status} onAnswer={onAnswer} />;
   }
 }
 
@@ -306,7 +311,8 @@ export function QuestionPlayer({
               ) : null}
             </div>
             <div className={s.bubble}>
-              <QuestionPicture key={step.key} name={q.picture} className={s.qPicture} />
+              {/* Picture first shows its picture big, as the question itself; no small copy here. */}
+              {q.type === 'picture_first' ? null : <QuestionPicture key={step.key} name={q.picture} className={s.qPicture} />}
               {/* Both lines share one grid cell, so the card keeps its height when the words change. */}
               <div className={s.askStack}>
                 <div id="q-ask" ref={askRef} tabIndex={-1} className={s.ask}>{bubble}</div>

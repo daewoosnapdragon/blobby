@@ -11,7 +11,7 @@ import { PicturePicker } from './PicturePicker';
 import t from '../teacher.module.css';
 import s from './editor.module.css';
 
-const INNER_TYPES: NonWatchDraft['type'][] = ['pick_one', 'fill_blank', 'find_fix', 'build_it', 'sort_it', 'listen_tap', 'right_wrong', 'odd_one_out'];
+const INNER_TYPES: NonWatchDraft['type'][] = ['pick_one', 'fill_blank', 'find_fix', 'build_it', 'sort_it', 'listen_tap', 'right_wrong', 'odd_one_out', 'picture_first'];
 
 /** The questions the preview can show right now: every part that is already valid. */
 function previewQuestions(d: Draft): NonWatchQuestion[] {
@@ -62,7 +62,7 @@ export function QuestionForm({ lessonId, questionId, position, initial, isNew, c
                       onClick={() => setDraft({ ...draft, questions: draft.questions.filter((_, j) => j !== i) })}>Remove question {i + 1}</button>
                   </div>
                   <TypeForm draft={q} onChange={(next) => setDraft({ ...draft, questions: draft.questions.map((x, j) => (j === i ? next : x)) })} />
-                  <PicturePicker text={draftWords(q)} value={q.picture ?? ''}
+                  <PicturePicker text={draftWords(q)} value={q.picture ?? ''} required={q.type === 'picture_first'}
                     onChange={(picture) => setDraft({ ...draft, questions: draft.questions.map((x, j) => (j === i ? { ...x, picture } : x)) })} />
                 </fieldset>
               ))}
@@ -73,7 +73,7 @@ export function QuestionForm({ lessonId, questionId, position, initial, isNew, c
         ) : (
           <>
             <TypeForm draft={draft} onChange={setDraft} />
-            <PicturePicker text={draftWords(draft)} value={draft.picture ?? ''} onChange={(picture) => setDraft({ ...draft, picture })} />
+            <PicturePicker text={draftWords(draft)} value={draft.picture ?? ''} required={draft.type === 'picture_first'} onChange={(picture) => setDraft({ ...draft, picture })} />
           </>
         )}
 

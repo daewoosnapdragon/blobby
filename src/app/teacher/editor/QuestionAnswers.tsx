@@ -96,6 +96,15 @@ function BodyText({ question: q }: { question: NonWatchQuestion }) {
           </ul>
         </>
       );
+    case 'picture_first':
+      return (
+        <>
+          <p className={s.prompt}>{q.prompt}</p>
+          <ul className={s.choices}>
+            {q.choices.map((c, i) => <li key={i} className={i === q.answer ? s.choiceRight : s.choice}>{i === q.answer ? <Right>{c}</Right> : c}</li>)}
+          </ul>
+        </>
+      );
   }
 }
 

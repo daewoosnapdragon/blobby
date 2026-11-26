@@ -10,6 +10,7 @@ export function checkAnswer(q: NonWatchQuestion, r: Response): boolean {
     case 'listen_tap':
     case 'pick_one':
     case 'fill_blank':
+    case 'picture_first':
       return isInt(x.choice) && x.choice === q.answer;
     case 'find_fix':
       return isInt(x.tapped) && isInt(x.fix) && x.tapped === q.wrongIndex && x.fix === q.answer;

@@ -1,3 +1,4 @@
+import { PICTURE_NAME_RE } from '@/lib/pictures';
 import { YOUTUBE_ID_RE } from '@/lib/youtube';
 import { z } from 'zod';
 
@@ -10,7 +11,8 @@ import { z } from 'zod';
 const text = z.string().trim().min(1, 'must not be empty');
 const idx = z.number().int().min(0);
 /** An optional picture of the question's key noun: a file name in public/pictures (see src/lib/pictures.ts). */
-const picture = z.string().regex(/^[a-z0-9-]{1,64}$/, 'is not a picture name').optional();
+const pictureName = z.string({ error: 'is not a picture name' }).regex(PICTURE_NAME_RE, 'is not a picture name');
+const picture = pictureName.optional();
 
 /**
  * Form for "is this the same text?" checks: trimmed, inner spaces collapsed. Case-SENSITIVE on purpose:
@@ -100,6 +102,11 @@ const oddOneOutPayload = z
   .refine((q) => q.answer < q.words.length, { message: 'answer is out of range of words', path: ['answer'] })
   .superRefine((q, ctx) => noRepeats(ctx, q.words, 'words', 'word'));
 
+const pictureFirstPayload = z
+  .object({ picture: pictureName, prompt: text.default('Which one matches the picture?'), choices: z.array(text).min(2).max(4), answer: idx })
+  .refine((q) => q.answer < q.choices.length, { message: 'answer is out of range of choices', path: ['answer'] })
+  .superRefine((q, ctx) => noRepeats(ctx, q.choices, 'choices', 'choice'));
+
 const listenTapQ = listenTapPayload.extend({ type: z.literal('listen_tap') });
 const pickOneQ = pickOnePayload.extend({ type: z.literal('pick_one') });
 const findFixQ = findFixPayload.extend({ type: z.literal('find_fix') });
@@ -108,8 +115,9 @@ const sortItQ = sortItPayload.extend({ type: z.literal('sort_it') });
 const fillBlankQ = fillBlankPayload.extend({ type: z.literal('fill_blank') });
 const rightWrongQ = rightWrongPayload.extend({ type: z.literal('right_wrong') });
 const oddOneOutQ = oddOneOutPayload.extend({ type: z.literal('odd_one_out') });
+const pictureFirstQ = pictureFirstPayload.extend({ type: z.literal('picture_first') });
 
-const nonWatchSchema = z.discriminatedUnion('type', [listenTapQ, pickOneQ, findFixQ, buildItQ, sortItQ, fillBlankQ, rightWrongQ, oddOneOutQ]);
+const nonWatchSchema = z.discriminatedUnion('type', [listenTapQ, pickOneQ, findFixQ, buildItQ, sortItQ, fillBlankQ, rightWrongQ, oddOneOutQ, pictureFirstQ]);
 
 const watchAnswerPayload = z.object({
   youtubeId: z.string().trim().regex(YOUTUBE_ID_RE, 'needs an 11-character YouTube id'),
@@ -118,7 +126,7 @@ const watchAnswerPayload = z.object({
 const watchAnswerQ = watchAnswerPayload.extend({ type: z.literal('watch_answer') });
 
 export const questionSchema = z.discriminatedUnion('type', [
-  listenTapQ, pickOneQ, findFixQ, buildItQ, sortItQ, fillBlankQ, rightWrongQ, oddOneOutQ, watchAnswerQ,
+  listenTapQ, pickOneQ, findFixQ, buildItQ, sortItQ, fillBlankQ, rightWrongQ, oddOneOutQ, pictureFirstQ, watchAnswerQ,
 ]);
 
 const payloadSchemas = {
@@ -130,6 +138,7 @@ const payloadSchemas = {
   fill_blank: fillBlankPayload,
   right_wrong: rightWrongPayload,
   odd_one_out: oddOneOutPayload,
+  picture_first: pictureFirstPayload,
   watch_answer: watchAnswerPayload,
 } as const;
 
@@ -144,6 +153,7 @@ export type SortItPayload = z.infer<typeof sortItPayload>;
 export type FillBlankPayload = z.infer<typeof fillBlankPayload>;
 export type RightWrongPayload = z.infer<typeof rightWrongPayload>;
 export type OddOneOutPayload = z.infer<typeof oddOneOutPayload>;
+export type PictureFirstPayload = z.infer<typeof pictureFirstPayload>;
 export type WatchAnswerPayload = z.infer<typeof watchAnswerPayload>;
 
 export type NonWatchQuestion = z.infer<typeof nonWatchSchema>;

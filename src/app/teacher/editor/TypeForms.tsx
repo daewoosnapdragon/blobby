@@ -142,6 +142,16 @@ function OddOneOutForm({ draft: d, onChange }: P<'odd_one_out'>) {
   );
 }
 
+function PictureFirstForm({ draft: d, onChange }: P<'picture_first'>) {
+  return (
+    <>
+      <TextField label="Question" value={d.prompt} onChange={(prompt) => onChange({ ...d, prompt })} placeholder="Which one matches the picture?" />
+      <ListField legend="Choices" hint="Two to four. Select the one that matches the picture." itemLabel="Choice" addLabel="Add a choice" min={2} max={4}
+        items={d.choices} answer={d.answer} onChange={(choices, answer) => onChange({ ...d, choices, answer: answer ?? d.answer })} />
+    </>
+  );
+}
+
 export function TypeForm({ draft, onChange }: { draft: NonWatchDraft; onChange: (d: NonWatchDraft) => void }) {
   switch (draft.type) {
     case 'pick_one': return <PickOneForm draft={draft} onChange={onChange} />;
@@ -152,6 +162,7 @@ export function TypeForm({ draft, onChange }: { draft: NonWatchDraft; onChange: 
     case 'listen_tap': return <ListenTapForm draft={draft} onChange={onChange} />;
     case 'right_wrong': return <RightWrongForm draft={draft} onChange={onChange} />;
     case 'odd_one_out': return <OddOneOutForm draft={draft} onChange={onChange} />;
+    case 'picture_first': return <PictureFirstForm draft={draft} onChange={onChange} />;
   }
 }
 

@@ -47,6 +47,7 @@ export function questionProblems(type: string, payload: unknown): string[] {
     let msg: string;
     if (issue.code === 'invalid_union' || (path.length === 1 && path[0] === 'type')) msg = 'Pick a question type.';
     else if (last === 'right') msg = 'Pick Yes or No.';
+    else if (last === 'picture' && qType === 'picture_first') msg = 'Pick a picture.';
     else if (last === 'answer' && qType === 'odd_one_out') msg = 'Pick the odd one.';
     else if (last === 'answer' || last === 'wrongIndex') msg = last === 'answer' ? 'Pick the right answer.' : 'Pick the wrong word.';
     else if (issue.code === 'too_small' && (issue as { origin?: string }).origin === 'array') {
