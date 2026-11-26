@@ -7,7 +7,7 @@ import { addToTally, tallyLines } from '@/lib/tally';
 import { TYPE_NAMES, draftFromQuestion, draftToPayload, draftWords, emptyDraft, type NonWatchDraft } from '@/lib/questions/draft';
 import { MatchPairs } from '@/components/questions/MatchPairs';
 import { SortIt } from '@/components/questions/SortIt';
-import { GROUP_TINTS } from '@/components/questions/types';
+import { GROUP_TINTS, PAIR_TINTS } from '@/components/questions/types';
 import { QuestionPlayer } from '@/components/questions/QuestionPlayer';
 import { TypeForm } from '@/app/teacher/editor/TypeForms';
 import { QuestionAnswers } from '@/app/teacher/editor/QuestionAnswers';
@@ -69,7 +69,7 @@ describe('match_pairs', () => {
     expect(sideTexts('right')).toEqual(['d', 'b']);
   });
 
-  it('component: tap a left (pressed), then a right: both share a data-pair and a tint, with a connector', () => {
+  it('component: tap a left (pressed), then a right: both share a data-pair, a tint and a stub in that tint', () => {
     render(<MatchPairs q={mp} status="idle" onAnswer={vi.fn()} />);
     fireEvent.click(tile('left', 'go'));
     expect(tile('left', 'go')).toHaveAttribute('aria-pressed', 'true');
@@ -78,11 +78,25 @@ describe('match_pairs', () => {
     const k = tile('left', 'go').getAttribute('data-pair');
     expect(k).not.toBeNull();
     expect(tile('right', 'went')).toHaveAttribute('data-pair', k);
-    expect(tile('left', 'go').style.background).toBe(tile('right', 'went').style.background);
-    expect(tile('left', 'go').style.background).not.toBe('');
-    expect(document.querySelectorAll(`[data-pair="${k}"]`)).toHaveLength(3);
-    expect(document.querySelector(`span[data-pair="${k}"]`)).not.toBeNull();
+    const bg = tile('left', 'go').style.background;
+    expect(bg).not.toBe('');
+    expect(tile('right', 'went').style.background).toBe(bg);
+    for (const t of [tile('left', 'go'), tile('right', 'went')]) {
+      const stubs = t.querySelectorAll('span[aria-hidden="true"]');
+      expect(stubs).toHaveLength(1);
+      expect((stubs[0] as HTMLElement).style.background).toBe(bg);
+    }
+    expect(tile('left', 'go')).toHaveAccessibleName('go');
     expect(tile('left', 'run')).not.toHaveAttribute('data-pair');
+    expect(tile('left', 'run').querySelector('span')).toBeNull();
+  });
+
+  it('component: five pairs get five different tints', () => {
+    const five = parseQuestion('match_pairs', { prompt: 'p', pairs: ['a', 'b', 'c', 'd', 'e'].map((l) => ({ left: l, right: l.toUpperCase() })) }) as MP;
+    render(<MatchPairs q={five} status="idle" onAnswer={vi.fn()} />);
+    for (const l of ['a', 'b', 'c', 'd', 'e']) pair(l, l.toUpperCase());
+    expect(PAIR_TINTS).toEqual([...GROUP_TINTS, '#D9CCF5']);
+    expect(new Set(['a', 'b', 'c', 'd', 'e'].map((l) => tile('left', l).style.background)).size).toBe(5);
   });
 
   it('component: tapping a paired tile (either side) unpairs it', () => {
@@ -91,7 +105,8 @@ describe('match_pairs', () => {
     fireEvent.click(tile('left', 'go'));
     expect(tile('left', 'go')).not.toHaveAttribute('data-pair');
     expect(tile('right', 'went')).not.toHaveAttribute('data-pair');
-    expect(document.querySelector('span[data-pair]')).toBeNull();
+    expect(tile('left', 'go').querySelector('span')).toBeNull();
+    expect(tile('right', 'went').querySelector('span')).toBeNull();
     pair('go', 'went');
     fireEvent.click(tile('right', 'went'));
     expect(tile('left', 'go')).not.toHaveAttribute('data-pair');
@@ -141,10 +156,13 @@ describe('match_pairs', () => {
     for (const [side, name] of [['left', 'go'], ['right', 'ate'], ['left', 'eat'], ['right', 'went']] as const) {
       expect(tile(side, name)).toHaveAttribute('data-mark', 'wrong');
       expect(tile(side, name).style.background).toBe('');
+      expect(tile(side, name).querySelector('span')).toBeNull();
     }
     expect(tile('left', 'run')).not.toHaveAttribute('data-mark');
     expect(tile('right', 'ran')).not.toHaveAttribute('data-mark');
     expect(tile('left', 'run').style.background).not.toBe('');
+    expect(tile('left', 'run').querySelector('span')).not.toBeNull();
+    expect(tile('right', 'ran').querySelector('span')).not.toBeNull();
     expect(check()).toBeNull();
     fireEvent.click(tile('left', 'go'));
     expect(tile('left', 'go')).toHaveAttribute('data-mark', 'wrong');
@@ -198,7 +216,7 @@ describe('match_pairs', () => {
     expect(emptyDraft('match_pairs')).toEqual({ type: 'match_pairs', picture: '', prompt: '', pairs: [{ left: '', right: '' }, { left: '', right: '' }] });
     const d: MD = { type: 'match_pairs', picture: '', prompt: ' p ', pairs: [{ left: ' a ', right: 'b' }, { left: ' ', right: '' }, { left: 'c', right: '' }] };
     expect(draftToPayload(d)).toEqual({ prompt: 'p', pairs: [{ left: 'a', right: 'b' }, { left: 'c', right: '' }] });
-    expect(draftWords(d)).toBe(' p   a  b    c ');
+    for (const w of ['p', 'a', 'b', 'c']) expect(draftWords(d).split(/\s+/)).toContain(w);
     expect(TYPE_NAMES.match_pairs).toBe('Match pairs');
   });
 

@@ -14,6 +14,8 @@ export type Mark = 'right' | 'wrong' | 'selected' | undefined;
 
 /** Pastel tints for things that belong together: sort it's groups, match pairs' pairs. */
 export const GROUP_TINTS = ['#B7E1D1', '#FFB5C1', '#A9D3FF', '#FFE59A'];
+/** Match pairs: one more tint (grape, from the blob palette) so five pairs never share a color. */
+export const PAIR_TINTS = [...GROUP_TINTS, '#D9CCF5'];
 
 /** Deterministic shuffle (server and client render the same order). Never returns the original order for 2+ items. */
 export function seededShuffle<T>(items: T[], seedText: string): T[] {

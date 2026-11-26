@@ -2,7 +2,7 @@
 import { useMemo, useState } from 'react';
 import { checkAnswer } from '@/lib/questions/check';
 import { PillButton } from '@/components/ui/PillButton';
-import { GROUP_TINTS, seededShuffle, type QProps } from './types';
+import { PAIR_TINTS, seededShuffle, type QProps } from './types';
 import s from './questions.module.css';
 
 /**
@@ -42,16 +42,20 @@ export function MatchPairs({ q, status, onAnswer }: QProps<'match_pairs'>) {
   }
 
   const ready = matches.every((m) => m !== null);
+  /** Whether the pair whose left is `i` shows its tint (and stubs): paired, and not marked off after a miss. */
+  const tinted = (i: number | undefined): i is number => i !== undefined && matches[i] !== null && !(status === 'wrong' && matches[i] !== i);
   /** Mark and tint for the pair whose left is `i` (k = i), or nothing when `i` is unpaired. */
   function look(i: number | undefined) {
     if (i === undefined || matches[i] === null) return {};
-    const off = status === 'wrong' && matches[i] !== i;
     return {
       'data-pair': i,
-      'data-mark': status === 'right' ? 'right' : off ? 'wrong' : undefined,
-      style: off ? undefined : { background: GROUP_TINTS[i % GROUP_TINTS.length] },
+      'data-mark': status === 'right' ? 'right' : tinted(i) ? undefined : 'wrong',
+      style: tinted(i) ? { background: PAIR_TINTS[i % PAIR_TINTS.length] } : undefined,
     };
   }
+  /** A short bar in the pair's tint on the tile's inner edge; it never reaches the other column. */
+  const stub = (i: number | undefined) =>
+    tinted(i) ? <span className={s.pairStub} style={{ background: PAIR_TINTS[i % PAIR_TINTS.length] }} aria-hidden="true" /> : null;
 
   return (
     <div className={s.stack}>
@@ -59,19 +63,16 @@ export function MatchPairs({ q, status, onAnswer }: QProps<'match_pairs'>) {
         {q.pairs.map((p, i) => {
           const r = rightOrder[i];
           return [
-            <div key={`l${i}`} className={s.pairCell}>
-              <button type="button" className={`${s.tile} ${s.pairTile}`} data-side="left" aria-pressed={selected === i}
-                aria-disabled={locked || undefined} onClick={() => tapLeft(i)} {...look(i)}>
-                {p.left}
-              </button>
-              {matches[i] !== null ? <span className={s.pairLine} data-pair={i} aria-hidden="true" /> : null}
-            </div>,
-            <div key={`r${r}`} className={s.pairCell}>
-              <button type="button" className={`${s.tile} ${s.pairTile}`} data-side="right"
-                aria-disabled={locked || undefined} onClick={() => tapRight(r)} {...look(leftOf.get(r))}>
-                {q.pairs[r].right}
-              </button>
-            </div>,
+            <button key={`l${i}`} type="button" className={`${s.tile} ${s.pairTile}`} data-side="left" aria-pressed={selected === i}
+              aria-disabled={locked || undefined} onClick={() => tapLeft(i)} {...look(i)}>
+              {p.left}
+              {stub(i)}
+            </button>,
+            <button key={`r${r}`} type="button" className={`${s.tile} ${s.pairTile}`} data-side="right"
+              aria-disabled={locked || undefined} onClick={() => tapRight(r)} {...look(leftOf.get(r))}>
+              {q.pairs[r].right}
+              {stub(leftOf.get(r))}
+            </button>,
           ];
         })}
       </div>
