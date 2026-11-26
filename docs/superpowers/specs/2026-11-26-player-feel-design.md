@@ -1,6 +1,6 @@
 # Player feel: design
 
-*Status: draft for Kyla's approval · Nov 26, 2026*
+*Status: draft for Kyla's approval · Nov 26, 2026 · builder check done*
 
 ## Why
 
@@ -72,22 +72,30 @@ The other four items (tiers, lines, ding, recap) live entirely in the player and
 ### 1. Bonus question
 
 **In a lesson.** The server picks one of the lesson's own class questions (not "Just for you" picks, not a
-watch-and-answer video) with a seeded pick over the question list in position order. The seed is
-`${studentId}:${lessonId}:bonus:${lessonDone ? 1 : 0}`, the same shape the "Just for you" seed uses, so a kid's
-first run has a fixed bonus, and a redo gets a different one. The lesson page passes it to the player as
-`bonus: true` on that question, alongside the existing `forYou` flag.
+watch-and-answer video) with a seeded pick over the question list in position order, seed
+`${studentId}:${lessonId}:bonus`, and **stores the pick** so that pay time uses exactly the question the kid saw.
+This is how "Just for you" questions actually work today: `wp_review_picks` remembers them per kid and lesson and
+`forgetPicks` clears the row at completion. The bonus pick rides along as a new nullable `bonus_question_id`
+column on that table (a migration), written by `getLesson` when the row is first created, or on its own if the
+kid has no review picks. Recomputing instead of storing was considered and dropped: the pick is positional, so
+Kyla adding, deleting, or reordering a question while a kid is mid-lesson would move the bonus to a different
+question than the one that said "+2 stars." The lesson page passes it to the player as `bonus: true` on that
+question, alongside the existing `forYou` flag.
 
-Paying it happens in `completeLesson`, inside the same transaction as the lesson stars, and only when the lesson
-completion row was just inserted (first time through):
+Paying it happens in `completeLesson`, inside the same transaction as the lesson stars, before `forgetPicks`, and
+only when the lesson completion row was just inserted (first time through):
 
-1. Recompute the pick with `lessonDone = false`.
+1. Read the stored `bonus_question_id` for this kid and lesson. If there is none (an old row, or the kid never
+   loaded the page), no bonus is paid.
 2. Look up the run's first attempt at that question: the earliest `wp_attempts` row for this student, this
    `run_id`, and that `question_id`.
 3. If it exists and `correct`, insert a star event `reason = 'lesson_bonus'`, `amount = 2`, `ref_id = lessonId`.
    The unique key makes it idempotent and ties it to the first completion, like the lesson's 10.
 
-`starsAwarded` in the response includes it. The response also gains `bonusStars` (0 or 2) so the done screen can
-say so. A new migration widens the `reason` check to include `'lesson_bonus'`.
+Because the row is cleared at completion, a redo gets a fresh pick; using a different seed suffix for a redo
+(`:redo`) keeps it from landing on the same question. `starsAwarded` in the response includes the bonus. The
+response also gains `bonusStars` (0 or 2) so the done screen can say so. The migration also widens the `reason`
+check to include `'lesson_bonus'`.
 
 **In free practice.** Practice sets are drawn at random on each page load and never stored, so the server cannot
 recompute "the one bonus of this set." Instead a question is a bonus for a kid on a given Seoul day when
@@ -97,7 +105,8 @@ existing `free_correct` event with `amount = 2` instead of 1. A set of 8 usually
 two; that is accepted. Skill practice ("Practice again" from Tricky today) follows the same rule.
 
 Both picks live in one pure module, `src/lib/bonus.ts`, with unit tests: `pickLessonBonus(questionIds, seed)` and
-`isPracticeBonus(studentId, seoulDate, questionId)`.
+`isPracticeBonus(studentId, seoulDate, questionId)`. Storing the lesson pick is tested in integration: the paid
+question is the stored one even after a question is added or reordered mid-run.
 
 **Timing.** The lesson's finish must wait for outstanding attempt saves before posting lesson-complete, otherwise
 the bonus attempt may not be in the database yet. `useRecordAttempt` already returns a promise per save; the lesson
@@ -113,12 +122,18 @@ today and is accepted.
  │                                      │
  │  [Fill the blank]  [★ Bonus!]        │  <- yellow tag (#FFE59A), star icon, same pill as "Just for you"
  │                                      │
- │   (blob, idle)  "Bonus question!"    │  <- bubble, before answering
+ │   (blob, idle)  "Bonus! Which word    │  <- bubble, before answering (fill the blank and find and fix only;
+ │                  fits?"              │     see below)
  │                                      │
  │   Yesterday, we ____ pizza.          │
  │   [ ate ]  [ eat ]  [ eating ]       │
  └──────────────────────────────────────┘
 ```
+
+The yellow tag is what marks the bonus on every type. The bubble only adds "Bonus!" in front of its text for fill
+the blank and find and fix, where the bubble is a generic line ("Bonus! Which word fits?", "Bonus! Tap the
+mistake."). For pick one, build it, sort it, and listen and tap the bubble *is* the question's prompt and must
+stay as it is, so the tag alone carries it there.
 
 On a first-try right answer the feedback card shows `+2 stars` with the flying star, in free practice always and in
 a lesson only when `lessonDone` is false (a redo pays nothing, so it promises nothing). The player gets a
@@ -202,10 +217,12 @@ award from the server response, not the constant, so "+10" and "+2 bonus" are al
 
 ### Data and code touched
 
-- Migration: widen `wp_star_events.reason` check with `'lesson_bonus'`.
+- Migration: widen `wp_star_events.reason` check with `'lesson_bonus'`; add `wp_review_picks.bonus_question_id`
+  (nullable uuid).
 - `src/lib/bonus.ts` (new), `src/lib/feedbackLines.ts` (new), `src/lib/sound.ts` (rate), `src/lib/stars.ts`
   (`lessonBonus: 2`, `freeBonus: 2`).
-- `src/lib/db/kid.ts`: `getLesson` and the practice set builders flag `bonus`; `completeLesson` pays it;
+- `src/lib/db/kid.ts` and `track.ts`: `getLesson` stores and flags the bonus, the practice set builders flag it;
+  `completeLesson` pays the stored one;
   `recordAttempt` pays the practice bonus.
 - `src/app/api/lesson-complete/route.ts`: `bonusStars` in the response.
 - `QuestionPlayer`: `bonus` on `PlayerQuestion`, `bonusStars` prop, roll counter, rotating lines, tally in
@@ -224,7 +241,9 @@ server picks and pays the bonus.
 
 **Claude's calls (Kyla can override):** tiers at 3 and 5 only; the roll counts first tries and resets silently;
 the draft line pools; the blob names the answer only for fill the blank and find and fix; no read-aloud for lines;
-the 1-in-8 rule for practice bonuses; a redo gets a different bonus question and no bonus stars; the recap counts
+the 1-in-8 rule for practice bonuses; the lesson pick is stored, not recomputed, so a mid-lesson edit by Kyla
+can't move it; a redo gets a different bonus question and no bonus stars; the bubble says "Bonus!" only where it
+isn't already the prompt; the recap counts
 finished questions and shows at most three tags; semitone ding steps capped at five.
 
 **Left to the builder:** the spin keyframe and sparkle placement; the hash function (any stable one; the seeded
