@@ -33,7 +33,8 @@ this that these those there here and or but so because when if to of in on at by
 do does did done have has had not no yes very too can could will would should may might must just also than then
 some any many much more most one two three four five six seven eight nine ten first last next every each all
 red orange yellow green blue purple pink brown black white gray grey big small little new old good bad happy sad
-today yesterday tomorrow now later always never again what who where why how which right wrong`.split(/\s+/));
+today yesterday tomorrow now later always never again what who where why how which right wrong
+pick choose sentence sentences word words build sort fill blank find fix tap mistake correct answer question group groups`.split(/\s+/));
 
 /** Past and other verb forms that would match a picture by accident ("ate" -> pizza). Not nouns, so never suggested. */
 const VERBS = new Set(`ate ran went saw drew came took sat made found gave got had said told thought knew began became caught

@@ -17,6 +17,7 @@ const CATALOG: PictureEntry[] = [
   { n: 'mouse-trap', l: 'mouse trap', k: ['bait', 'trap'] },
   { n: 'tram-car', l: 'tram car', k: ['car', 'tram'] },
   { n: 'family-adult-child', l: 'family adult child', k: ['family'] },
+  { n: 'pick', l: 'pick', k: ['mining', 'tool'] },
 ];
 
 describe('singular', () => {
@@ -53,6 +54,10 @@ describe('suggestPictures', () => {
   });
   it('prefers the plain picture over a busy variant', () => {
     expect(suggestPictures('The children are in the garden.', CATALOG)[0].n).toBe('child');
+  });
+  it('ignores the question instructions', () => {
+    expect(suggestPictures('Pick the right sentence. Three mice ate the cheese.', CATALOG)[0].n).toBe('mouse');
+    expect(suggestPictures('Pick the right sentence.', CATALOG)).toEqual([]);
   });
   it('returns at most n, without repeats', () => {
     const r = suggestPictures('mouse mice mouse', CATALOG, 2);

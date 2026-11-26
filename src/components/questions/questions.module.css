@@ -161,3 +161,7 @@
   .option { min-height: 70px; font-size: 25px; padding: 16px 24px 16px 18px; }
   .word { min-height: 112px; }
 }
+
+/* The question's key-noun picture, at the top of the bubble */
+.qPicture { display: block; width: 88px; height: 88px; align-self: center; }
+@media (min-width: 640px) { .qPicture { width: 112px; height: 112px; } }

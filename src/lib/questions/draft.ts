@@ -103,3 +103,15 @@ function nonWatchPayload(d: NonWatchDraft): Payload {
     }
   }
 }
+
+/** All the words a kid will read in a draft, for picture suggestions. */
+export function draftWords(d: NonWatchDraft): string {
+  switch (d.type) {
+    case 'pick_one': return [d.prompt, ...d.choices].join(' ');
+    case 'listen_tap': return [d.audioText, ...d.choices].join(' ');
+    case 'find_fix': return [d.sentence, ...d.fixes].join(' ');
+    case 'build_it': return [...d.tiles, d.prompt].join(' ');
+    case 'sort_it': return [...d.items.map((i) => i.text), d.prompt].join(' ');
+    case 'fill_blank': return [d.before, ...d.choices, d.after].join(' ');
+  }
+}

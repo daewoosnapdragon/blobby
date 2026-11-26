@@ -108,3 +108,16 @@
 .subQuestions { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 10px; }
 .srOnly { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 @media (max-width: 560px) { .qBody { padding-left: 0; } }
+
+/* Pictures: thumbnail on cards, and the picker in the form */
+.qPic { align-self: flex-start; width: 48px; height: 48px; }
+.picBox { border: 2px solid #F0EAE3; border-radius: 18px; padding: 12px 14px 14px; margin: 0; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.picBox legend { padding: 0 6px; font-size: 14px; font-weight: 700; color: var(--muted); }
+.optional { font-weight: 500; }
+.picChosen { display: flex; align-items: center; gap: 12px; font-weight: 700; }
+.picRow, .picSearch { display: flex; flex-direction: column; gap: 6px; }
+.picLabel { font-size: 13px; font-weight: 700; color: var(--muted); }
+.picGrid { display: flex; flex-wrap: wrap; gap: 6px; max-height: 220px; overflow-y: auto; }
+.picBtn { width: 56px; height: 56px; border-radius: 14px; border: 2px solid #E6DFD7; background: var(--card); display: flex; align-items: center; justify-content: center; padding: 0; cursor: pointer; }
+.picBtn:hover { background: #FFF6D6; border-color: var(--yellow); }
+.picBtn:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }

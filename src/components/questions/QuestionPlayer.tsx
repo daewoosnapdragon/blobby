@@ -16,6 +16,7 @@ import { SortIt } from './SortIt';
 import { FillBlank } from './FillBlank';
 import { TopBar } from './TopBar';
 import { WatchAnswer } from './WatchAnswer';
+import { QuestionPicture } from './QuestionPicture';
 import type { Status } from './types';
 import s from './questions.module.css';
 
@@ -258,6 +259,7 @@ export function QuestionPlayer({
               <Blob key={reaction?.n ?? 0} color={blobColor} mood={mood} size="var(--q-blob, 136px)" reaction={reaction?.kind ?? null} hat={hat} accessory={nudge === 'bedtime' ? 'pajamas' : null} />
             </div>
             <div className={s.bubble}>
+              <QuestionPicture key={step.key} name={q.picture} className={s.qPicture} />
               {/* Both lines share one grid cell, so the card keeps its height when the words change. */}
               <div className={s.askStack}>
                 <div id="q-ask" ref={askRef} tabIndex={-1} className={s.ask}>{bubble}</div>

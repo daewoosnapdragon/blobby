@@ -1,12 +1,13 @@
 'use client';
 import Link from 'next/link';
 import { useActionState, useMemo, useState } from 'react';
-import { draftToPayload, emptyDraft, TYPE_NAMES, type Draft, type NonWatchDraft } from '@/lib/questions/draft';
+import { draftToPayload, draftWords, emptyDraft, TYPE_NAMES, type Draft, type NonWatchDraft } from '@/lib/questions/draft';
 import { parseQuestion, type NonWatchQuestion } from '@/lib/questions/schema';
 import { saveQuestionAction } from '../editorActions';
 import { TextField } from './fields';
 import { TypeForm } from './TypeForms';
 import { LivePreview } from './LivePreview';
+import { PicturePicker } from './PicturePicker';
 import t from '../teacher.module.css';
 import s from './editor.module.css';
 
@@ -61,6 +62,8 @@ export function QuestionForm({ lessonId, questionId, position, initial, isNew, c
                       onClick={() => setDraft({ ...draft, questions: draft.questions.filter((_, j) => j !== i) })}>Remove question {i + 1}</button>
                   </div>
                   <TypeForm draft={q} onChange={(next) => setDraft({ ...draft, questions: draft.questions.map((x, j) => (j === i ? next : x)) })} />
+                  <PicturePicker text={draftWords(q)} value={q.picture ?? ''}
+                    onChange={(picture) => setDraft({ ...draft, questions: draft.questions.map((x, j) => (j === i ? { ...x, picture } : x)) })} />
                 </fieldset>
               ))}
               <button type="button" className={s.addBtn} disabled={draft.questions.length >= 6}
@@ -68,7 +71,10 @@ export function QuestionForm({ lessonId, questionId, position, initial, isNew, c
             </div>
           </>
         ) : (
-          <TypeForm draft={draft} onChange={setDraft} />
+          <>
+            <TypeForm draft={draft} onChange={setDraft} />
+            <PicturePicker text={draftWords(draft)} value={draft.picture ?? ''} onChange={(picture) => setDraft({ ...draft, picture })} />
+          </>
         )}
 
         <div role="alert" className={s.problemsBox} hidden={!state || state.ok}>

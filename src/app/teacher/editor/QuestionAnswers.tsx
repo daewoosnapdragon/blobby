@@ -1,4 +1,5 @@
 import type { NonWatchQuestion, Question } from '@/lib/questions/schema';
+import { pictureSrc } from '@/lib/pictures';
 import s from './editor.module.css';
 
 /** The right answer, marked in color and for screen readers. */
@@ -12,6 +13,16 @@ function Others({ label, items }: { label: string; items: string[] }) {
 }
 
 function Body({ question: q }: { question: NonWatchQuestion }) {
+  return (
+    <>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      {q.picture ? <img src={pictureSrc(q.picture)} alt={`Picture: ${q.picture.replace(/-/g, ' ')}`} width={48} height={48} className={s.qPic} /> : null}
+      <BodyText question={q} />
+    </>
+  );
+}
+
+function BodyText({ question: q }: { question: NonWatchQuestion }) {
   switch (q.type) {
     case 'pick_one':
     case 'listen_tap':
