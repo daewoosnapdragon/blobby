@@ -301,7 +301,7 @@
     "sentence-ends": [
       {
         "type": "pick_one",
-        "prompt": "Pick the sentence that sounds right.",
+        "prompt": "Which one has the capital letters and periods right?",
         "choices": [
           "I have a ball. It is red.",
           "I have a ball. it is red.",
@@ -311,7 +311,7 @@
       },
       {
         "type": "pick_one",
-        "prompt": "A robot wrote these. Which one is right?",
+        "prompt": "Which one has the capital letters and periods right?",
         "choices": [
           "Finn has a cat the cat is gray.",
           "Finn has a cat. the cat is gray.",
@@ -321,7 +321,7 @@
       },
       {
         "type": "pick_one",
-        "prompt": "Which one would your teacher write?",
+        "prompt": "Which one has the capital letters and periods right?",
         "choices": [
           "the bus is yellow.",
           "The bus is yellow.",
@@ -1189,7 +1189,7 @@
     "capitals-names": [
       {
         "type": "pick_one",
-        "prompt": "A robot wrote these. Which one is right?",
+        "prompt": "Which one has the capital letters and periods right?",
         "choices": [
           "I like milo.",
           "i like Milo.",
@@ -1199,7 +1199,7 @@
       },
       {
         "type": "pick_one",
-        "prompt": "Which one would your teacher write?",
+        "prompt": "Which one has the capital letters and periods right?",
         "choices": [
           "otto and i are friends.",
           "Otto and I are friends.",
@@ -1209,7 +1209,7 @@
       },
       {
         "type": "pick_one",
-        "prompt": "Tap the sentence with no mistakes.",
+        "prompt": "Which one has the capital letters and periods right?",
         "choices": [
           "My name is Theo.",
           "My name is theo.",

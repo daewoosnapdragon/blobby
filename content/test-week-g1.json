@@ -415,7 +415,7 @@
             {
               "type": "pick_one",
               "skill": "sentence-ends",
-              "prompt": "Pick the sentence that sounds right.",
+              "prompt": "Which one has the capital letters and periods right?",
               "choices": [
                 "the cat is soft.",
                 "The cat is soft",
@@ -427,7 +427,7 @@
             {
               "type": "pick_one",
               "skill": "capitals-names",
-              "prompt": "A robot wrote these. Which one is right?",
+              "prompt": "Which one has the capital letters and periods right?",
               "choices": [
                 "ruby is my friend.",
                 "Ruby is my friend.",
@@ -438,7 +438,7 @@
             {
               "type": "pick_one",
               "skill": "sentence-ends",
-              "prompt": "Which one would your teacher write?",
+              "prompt": "Which one has the capital letters and periods right?",
               "choices": [
                 "I have a dog. it is brown.",
                 "I have a dog. It is brown.",
@@ -836,7 +836,7 @@
             {
               "type": "pick_one",
               "skill": "sentence-ends",
-              "prompt": "Pick the sentence that sounds right.",
+              "prompt": "Which one has the capital letters and periods right?",
               "choices": [
                 "I like apples. they are sweet.",
                 "I like apples they are sweet.",
@@ -848,7 +848,7 @@
             {
               "type": "pick_one",
               "skill": "ing",
-              "prompt": "A robot wrote these. Which one is right?",
+              "prompt": "Pick the sentence that sounds right.",
               "choices": [
                 "The girls are dancing.",
                 "The girls dancing.",

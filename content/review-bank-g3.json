@@ -982,7 +982,7 @@
       },
       {
         "type": "pick_one",
-        "prompt": "A robot wrote these. Which one is right?",
+        "prompt": "Which one has the capital letters and periods right?",
         "choices": [
           "We heard a noise. then the lights went out.",
           "We heard a noise then the lights went out.",
@@ -992,7 +992,7 @@
       },
       {
         "type": "pick_one",
-        "prompt": "Which one would your teacher write?",
+        "prompt": "A robot wrote these. Which one is right?",
         "choices": [
           "It started to rain, so they ran inside.",
           "It started to rain. so they ran inside.",
