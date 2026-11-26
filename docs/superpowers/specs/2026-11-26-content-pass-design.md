@@ -78,11 +78,12 @@ handed the rest of the calls to Claude.
 2. One-off edits by hand. Faster to start, but 630 questions is error-prone and a name veto means redoing it.
 3. Generating everything with a model at import time. Unreviewable; against the accuracy rule.
 
-**How new questions enter lessons** (Claude's call): interleaved at fixed slots (after class questions 3, 7 and
-11) rather than appended, so a lesson never ends with three new-format questions in a row. The importer is
-position-based, so this reshuffles which database row holds which question; that is harmless now (no kid has
-attempted a test-week question yet; bonus picks are cleared on completion) and it is why the import uses
-`--overwrite`.
+**How new questions enter lessons** (Claude's call): **appended** at positions 13 to 15, not interleaved. The
+test weeks opened on Nov 26 and parents may already be trying the app, so every existing database row must keep
+the same question (with its reworded prompt or renamed character), or kids' attempts, missed-question tracking
+and "Tricky today" would point at different questions. Appending keeps every row's identity; the three new
+questions end the lesson. Interleaving was considered and dropped for that reason. Bank questions are appended
+the same way (position 11 within the skill).
 
 **How Kyla reviews** (Claude's call): one Markdown file per pass, not eight diffs. Mechanical changes in a skim
 table, new and silly sentences as full questions with their answers marked.
@@ -104,8 +105,12 @@ table, new and silly sentences as full questions with their answers marked.
 | the mascot | **Blobby** | it | (new; used sparingly in new and silly sentences) |
 
 Mom, Dad, Grandpa, Grandma and "the teacher" stay as they are. The mapping preserves pronouns (every replaced
-name's dominant pronoun matches its replacement). The script replaces whole words only, including possessives
-(`Mia's` → `Nova's`), and never touches lowercase words (`sam` is not a name). If a question would end up with
+name's dominant pronoun matches its replacement). The script replaces the name as a word stem, **keeping the
+case and spelling of the original**, so the deliberate mistakes in capitals and apostrophes questions keep
+testing the same thing: `Mia's` → `Nova's`, `mina is my friend.` → `ruby is my friend.`, `Mias bag` →
+`Novas bag`, `Toms'` → `Theos'`. It matches `\b(name)(s|'s|s')?\b` case-insensitively and copies the first
+letter's case; a lowercase match is renamed only when the same question also contains the capitalized name
+(so a lowercase word that merely looks like a name is left alone). If a question would end up with
 the same name twice because two originals map to one target (Sam and Jun → Finn), the second occurrence takes
 the next unused name of the same pronoun. Kyla confirms none of the nine names is on a roster; if one is, she
 changes the table and the script is rerun.
@@ -124,9 +129,11 @@ Only the stock prompts rotate. A prompt that says something specific ("Which sen
 - **Sort it** stock: "Sort the words.", "Sort the sentences." → pool: Sort the words. · Put each word in its
   box. · Where does each one go? · Sort them out. (The "sentences" variant keeps "sentences" where the items
   are sentences: Sort the sentences. · Put each sentence in its box. · Where does each one go?)
-- **Right or wrong** stock (existing pick_one prompts "Right or wrong?", "Is the sentence right or wrong?")
-  → "Is this sentence right?" (these questions are two-choice pick ones today; they stay pick one with the
-  new prompt and choices as they are).
+- **Right or wrong sort its** (16 sort it questions with groups `Right` / `Wrong`, prompts "Right or wrong?",
+  "Is the sentence right or wrong?", "Is it written the right way?", "Is it right or wrong? Sort the words."):
+  the group label `Wrong` becomes **`Not right`** and the prompt becomes "Which ones are right? Sort them."
+  (one word and one prompt changed; they appear in the skim list). The one `Right` / `Needs a period` sort it
+  keeps its labels and gets the same prompt.
 
 Assignment is deterministic: within each lesson (or bank skill), stock prompts of a type cycle through the
 pool in order, starting at an offset from a hash of the lesson title, so consecutive questions never repeat
@@ -134,9 +141,9 @@ and the files are stable across reruns. Fill the blank and find and fix have no 
 
 ### 3. New-type questions
 
-**Where:** three per test-week lesson, interleaved after class questions 3, 7 and 11 (lessons go 12 → 15);
-one per review-bank skill, appended (10 → 11 per skill). That is 60 + 40 = 100 new questions, each tagged
-with the lesson's or skill's `skill` key.
+**Where:** three per test-week lesson, appended at positions 13 to 15 (lessons go 12 → 15); one per
+review-bank skill, appended (10 → 11 per skill). That is 60 + 39 = 99 new questions (the four banks hold 39
+skills in all), each tagged with the lesson's or skill's `skill` key.
 
 **Which types where.** Each lesson gets three different new types, chosen from what fits its skills:
 
@@ -187,8 +194,9 @@ Kyla marks fixes in the file or in the app after import; the file is the record 
 ### 6. Checker and importer changes (small code)
 
 - `scripts/check-content.ts` adds two hard rules: no lesson (or bank skill) where every question is
-  `right_wrong`; no kid-facing prompt contains the word "wrong" (case-insensitive, whole word). Both fail with
-  the file, lesson or skill, and the text.
+  `right_wrong`; no kid-facing prompt **or sort it group label** contains the word "wrong" (case-insensitive,
+  whole word). Both fail with the file, lesson or skill, and the text. (Choice texts and sentences may contain
+  it where it is the grammar being taught.)
 - `scripts/import-content.ts --dry-run` already counts differing questions; it now also prints each one
   (week, lesson, position, and the first 60 characters of the app's text and the file's text) so Kyla can see
   exactly which in-app edits `--overwrite` would replace. No importer semantics change.
@@ -213,14 +221,15 @@ Kyla marks fixes in the file or in the app after import; the file is the record 
 - Importer dry-run printing: an integration test asserting the differing lines appear for a changed payload.
 - Content: `npx tsx scripts/check-content.ts` on all eight files passes; a unit test asserts every lesson has
   15 questions, every bank skill 11, each lesson has exactly three new-type questions of three different
-  types, no lesson has two Yes or no, and every picture first picture exists.
+  types at positions 13 to 15, no lesson has two Yes or no, and every picture first picture exists.
 
 ## Decided vs. left to the builder
 
 **Decided by Kyla:** the light touch; keep reviewed sentences; prompts and cast mechanical; a few new-type and
 silly questions; review before Dec 10.
 
-**Claude's calls (Kyla can override):** the nine cast names and the mapping; the prompt pools and the no-repeat
+**Claude's calls (Kyla can override):** the nine cast names and the case-preserving mapping that also renames
+the deliberate mistakes; `Not right` as the sort it label and its prompt; the prompt pools and the no-repeat
 rotation; three new questions per lesson at slots 3, 7, 11 and one per bank skill; the type-by-skill table and
 the one-Yes-or-no-per-lesson rule; about 40 silly rewrites and their register; a committed Markdown review
 list; `--overwrite` import with a printed differing list first; the two new checker rules.
