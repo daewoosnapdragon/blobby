@@ -127,7 +127,7 @@ export const PROMPT_POOLS: { type: 'pick_one' | 'build_it' | 'sort_it'; stock: s
     pool: ['Build the sentence.', 'Put the words in order.', 'Make a sentence from the tiles.', 'Tap the tiles in order.', 'What does this say? Put it in order.', 'Build it!'],
   },
   { type: 'sort_it', stock: ['Sort the words.'], pool: ['Sort the words.', 'Put each word in its box.', 'Where does each one go?', 'Sort them out.'] },
-  { type: 'sort_it', stock: ['Sort the sentences.'], pool: ['Sort the sentences.', 'Put each sentence in its box.', 'Where does each one go?'] },
+  { type: 'sort_it', stock: ['Sort the sentences.'], pool: ['Sort the sentences.', 'Put each sentence in its box.', 'Where does each sentence go?'] },
 ];
 
 const RIGHT_PROMPT = 'Which ones are right? Sort them.';
@@ -150,29 +150,22 @@ export function relabelRightWrong(q: Question): Question {
 /**
  * Rotates stock prompts within one lesson or bank skill: each pool's members (stock ∪ pool) are reassigned
  * in sequence, starting at `hash32(seed) % pool.length`, so consecutive ones never repeat and a second run
- * reassigns the same prompts. Only `prompt` changes.
+ * reassigns the same prompts. Only `prompt` changes. Pool members that are not stock rotate too: that is
+ * deliberate, so the pass recognizes its own output and running it twice equals running it once.
  */
 export function rotatePrompts(questions: Question[], seed: string): Question[] {
   const members = PROMPT_POOLS.map((p) => new Set([...p.stock, ...p.pool]));
-  const candidates = (q: Question) =>
-    'prompt' in q && typeof q.prompt === 'string'
-      ? PROMPT_POOLS.flatMap((p, i) => (p.type === q.type && members[i].has(q.prompt as string) ? [i] : []))
-      : [];
-  // Pools that some question in this list belongs to unambiguously (to place a prompt shared by two pools).
-  const sure = new Set(questions.flatMap((q) => { const c = candidates(q); return c.length === 1 ? c : []; }));
+  // The pools of one type are disjoint, so a prompt names its pool.
+  const poolOf = (q: Question) =>
+    'prompt' in q && typeof q.prompt === 'string' ? PROMPT_POOLS.findIndex((p, i) => p.type === q.type && members[i].has(q.prompt as string)) : -1;
   const offset = hash32(seed);
   const counter = PROMPT_POOLS.map(() => 0);
-  const next = (i: number) => PROMPT_POOLS[i].pool[(offset + counter[i]) % PROMPT_POOLS[i].pool.length];
   return questions.map((q) => {
-    const c = candidates(q);
-    if (c.length === 0) return q;
-    const prompt = (q as { prompt: string }).prompt;
-    // A prompt in two pools ("Where does each one go?") came from the pool that would assign it here.
-    const fixed = c.filter((i) => next(i) === prompt);
-    const pick = fixed.length === 1 ? fixed[0] : (fixed.length ? fixed : c).find((i) => sure.has(i)) ?? (fixed.length ? fixed : c)[0];
-    const to = next(pick);
-    counter[pick]++;
-    return to === prompt ? q : ({ ...q, prompt: to } as Question);
+    const i = poolOf(q);
+    if (i < 0) return q;
+    const { pool } = PROMPT_POOLS[i];
+    const to = pool[(offset + counter[i]++) % pool.length];
+    return to === (q as { prompt: string }).prompt ? q : ({ ...q, prompt: to } as Question);
   });
 }
 

@@ -81,6 +81,9 @@ describe('content pass: rename', () => {
       ],
     });
   });
+  it('a new-cast name already in the question counts as used (Mia and Nova → Ruby and Nova)', () => {
+    expect(renameQuestion(pick('Mia and Nova are sisters.'))).toMatchObject({ prompt: 'Ruby and Nova are sisters.' });
+  });
   it('is a no-op when no old names remain', () => {
     const q = pick('Finn and Theo are brothers.');
     expect(renameQuestion(q)).toEqual(q);
@@ -109,6 +112,24 @@ describe('content pass: rotate and relabel', () => {
       expect(once[0].prompt).not.toBe(once[2].prompt);
       expect(once[1].prompt).not.toBe(once[3].prompt);
       expect(rotatePrompts(once, seed)).toEqual(once);
+    }
+  });
+  it('the two sort pools are disjoint, and mixed sort stocks are idempotent with no consecutive repeat for 200 seeds', () => {
+    const sortPools = PROMPT_POOLS.filter((p) => p.type === 'sort_it');
+    expect(sortPools[0].pool.filter((x) => sortPools[1].pool.includes(x))).toEqual([]);
+    const W = 'Sort the words.', S = 'Sort the sentences.';
+    const orders = [[S, S, W, W], [W, W, S, S], [W, S, W, S], [S, W, S, W], [W, S, S, W, W, S, W, S, S], [S, S, S, W, W, W, W, S]];
+    for (let n = 0; n < 200; n++) {
+      const seed = `s${n}`;
+      for (const order of orders) {
+        const once = rotatePrompts(order.map((p) => sortIt(p, ['x', 'y'])), seed) as SortIt[];
+        expect(rotatePrompts(once, seed)).toEqual(once);
+        for (const stock of [W, S]) {
+          const pool = sortPools.find((p) => p.stock.includes(stock))!.pool;
+          const mine = once.filter((_, i) => order[i] === stock).map((q) => q.prompt);
+          mine.forEach((p, i) => { expect(pool).toContain(p); if (i > 0) expect(p).not.toBe(mine[i - 1]); });
+        }
+      }
     }
   });
   it('relabels Right/Wrong sort-its and sets their prompt', () => {
