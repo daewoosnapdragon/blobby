@@ -163,8 +163,10 @@ export function niceDate(iso: string): string {
 }
 
 export function StudentView({
-  student, classId, className, history, renameAction, reissueAction, nameError, reissued,
+  student, classId, className, history, renameAction, reissueAction, nameError, reissued, children,
 }: {
+  /** sections shown after the name (the review track) */
+  children?: React.ReactNode;
   student: { id: string; displayName: string; blobColor: string | null };
   classId: string; className: string;
   history: { skill: string; dates: string[] }[];
@@ -191,6 +193,8 @@ export function StudentView({
           </form>
         </div>
       </div>
+
+      {children}
 
       <section className={styles.card} aria-labelledby="card-link">
         <h2 id="card-link" className={styles.h2}>QR card</h2>

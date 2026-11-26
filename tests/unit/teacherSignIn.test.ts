@@ -14,14 +14,14 @@ vi.mock('next/navigation', () => ({
 }));
 vi.mock('next/cache', () => ({ revalidatePath: vi.fn() }));
 vi.mock('@/lib/supabase/server', () => server);
-const teacherDb = vi.hoisted(() => ({ practiceStudentFor: vi.fn(), resetPracticeStudent: vi.fn() }));
+const teacherDb = vi.hoisted(() => ({ practiceStudentFor: vi.fn(), resetPracticeStudent: vi.fn(), setStudentSkill: vi.fn() }));
 vi.mock('@/lib/db/teacher', () => teacherDb);
 const jar = vi.hoisted(() => ({ set: vi.fn() }));
 vi.mock('next/headers', () => ({ cookies: async () => jar }));
 const timing = vi.hoisted(() => ({ holdUntil: vi.fn(), SIGNIN_MIN_MS: 1000 }));
 vi.mock('@/lib/evenTiming', () => timing);
 
-import { changePassword, requestLink, resetPracticeStudentAction, saveTeacherName, signInWithPassword, tryAsStudent } from '@/app/teacher/actions';
+import { addStudentSkill, changePassword, removeStudentSkill, requestLink, resetPracticeStudentAction, saveTeacherName, signInWithPassword, tryAsStudent } from '@/app/teacher/actions';
 
 function form(fields: Record<string, string>): FormData {
   const f = new FormData();
@@ -200,5 +200,27 @@ describe('practice student actions', () => {
   it('ignores a bad class id', async () => {
     await expect(tryAsStudent(form({ classId: 'nope' }))).rejects.toThrow('REDIRECT:/teacher');
     expect(teacherDb.practiceStudentFor).not.toHaveBeenCalled();
+  });
+});
+
+describe('review skill actions', () => {
+  const KID = '00000000-0000-4000-8000-000000000001';
+  beforeEach(() => { teacherDb.setStudentSkill.mockReset().mockResolvedValue(undefined); });
+
+  it('adds and removes a skill, then returns to the student page', async () => {
+    await expect(addStudentSkill(form({ studentId: KID, skill: 'past-tense' }))).rejects.toThrow(`REDIRECT:/teacher/student/${KID}#review-skills`);
+    expect(teacherDb.setStudentSkill).toHaveBeenCalledWith(KID, 'past-tense', 'add');
+    await expect(removeStudentSkill(form({ studentId: KID, skill: 'past-tense' }))).rejects.toThrow('REDIRECT');
+    expect(teacherDb.setStudentSkill).toHaveBeenLastCalledWith(KID, 'past-tense', 'remove');
+  });
+  it('ignores an unknown skill or student', async () => {
+    await expect(addStudentSkill(form({ studentId: KID, skill: 'magic' }))).rejects.toThrow('REDIRECT');
+    await expect(addStudentSkill(form({ studentId: 'nope', skill: 'be' }))).rejects.toThrow('REDIRECT:/teacher');
+    expect(teacherDb.setStudentSkill).not.toHaveBeenCalled();
+  });
+  it('does nothing for someone who is not a teacher', async () => {
+    server.requireTeacher.mockRejectedValue(new Error('REDIRECT:/teacher/login'));
+    await expect(addStudentSkill(form({ studentId: KID, skill: 'be' }))).rejects.toThrow('REDIRECT:/teacher/login');
+    expect(teacherDb.setStudentSkill).not.toHaveBeenCalled();
   });
 });

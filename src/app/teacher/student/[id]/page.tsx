@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { requireTeacherUser } from '@/lib/supabase/server';
-import { studentDetail } from '@/lib/db/teacher';
-import { renameStudent, reissueStudentLink, signOut } from '../../actions';
+import { studentDetail, studentSkills } from '@/lib/db/teacher';
+import { addStudentSkill, removeStudentSkill, renameStudent, reissueStudentLink, signOut } from '../../actions';
+import { ReviewSkills } from '../ReviewSkills';
 import { StudentView, TeacherShell } from '../../views';
 
 export const dynamic = 'force-dynamic';
@@ -12,11 +13,13 @@ export default async function StudentPage({ params, searchParams }: { params: Pr
   const me = await requireTeacherUser();
   const { id } = await params;
   const { name, reissued } = await searchParams;
-  const d = await studentDetail(id);
+  const [d, skills] = await Promise.all([studentDetail(id), studentSkills(id)]);
   if (!d) notFound();
   return (
     <TeacherShell signOut={signOut} who={me.name ?? me.email}>
-      <StudentView student={d.student} classId={d.classId} className={d.className} history={d.history} renameAction={renameStudent} reissueAction={reissueStudentLink} nameError={name === 'bad'} reissued={reissued === '1'} />
+      <StudentView student={d.student} classId={d.classId} className={d.className} history={d.history} renameAction={renameStudent} reissueAction={reissueStudentLink} nameError={name === 'bad'} reissued={reissued === '1'}>
+        <ReviewSkills studentId={d.student.id} skills={skills} addAction={addStudentSkill} removeAction={removeStudentSkill} />
+      </StudentView>
     </TeacherShell>
   );
 }

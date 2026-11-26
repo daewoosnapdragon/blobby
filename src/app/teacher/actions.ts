@@ -7,7 +7,8 @@ import { isTeacherEmail } from '@/lib/teacherAuth';
 import { appOrigin } from '@/lib/teacherUrl';
 import { NotFoundError, landingPath } from '@/lib/db/kid';
 import { SESSION_COOKIE, signStudent, sessionCookieOptions } from '@/lib/session';
-import { studentDetail, setDisplayName, reissueLink, DISPLAY_NAME_MAX, practiceStudentFor, resetPracticeStudent } from '@/lib/db/teacher';
+import { studentDetail, setDisplayName, reissueLink, DISPLAY_NAME_MAX, practiceStudentFor, resetPracticeStudent, setStudentSkill } from '@/lib/db/teacher';
+import { isSkillKey } from '@/lib/skills';
 import { UUID_RE } from '@/lib/uuid';
 import { passwordError, validateName, validatePassword } from '@/lib/teacherAccount';
 import { holdUntil } from '@/lib/evenTiming';
@@ -137,4 +138,26 @@ export async function resetPracticeStudentAction(formData: FormData): Promise<vo
   await resetPracticeStudent(classId);
   revalidatePath(`/teacher/class/${classId}`);
   redirect(`/teacher/class/${classId}?reset=1`);
+}
+
+async function changeSkill(formData: FormData, change: 'add' | 'remove'): Promise<void> {
+  await requireTeacher();
+  const studentId = String(formData.get('studentId') ?? '');
+  const skill = String(formData.get('skill') ?? '');
+  if (!UUID_RE.test(studentId)) redirect('/teacher');
+  if (isSkillKey(skill)) {
+    await setStudentSkill(studentId, skill, change);
+    revalidatePath(`/teacher/student/${studentId}`);
+  }
+  redirect(`/teacher/student/${studentId}#review-skills`);
+}
+
+/** Kyla adds a skill to a kid's review track (it stays until she removes it). */
+export async function addStudentSkill(formData: FormData): Promise<void> {
+  await changeSkill(formData, 'add');
+}
+
+/** Kyla removes a skill: it stays off, and practice never adds it back on its own. */
+export async function removeStudentSkill(formData: FormData): Promise<void> {
+  await changeSkill(formData, 'remove');
 }

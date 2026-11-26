@@ -117,3 +117,17 @@
 
 /* Wider pages (the question editor): header and main grow together */
 .wide .top, .wide .main { max-width: 1320px; }
+
+/* Student page: review skills */
+.h3 { margin: 14px 0 6px; font-size: 15px; font-weight: 800; color: var(--muted); }
+.trackList { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.trackList li { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; padding: 8px 12px; border-radius: 14px; background: var(--bg); }
+.trackList .skillName { font-weight: 700; }
+.skillMuted { color: var(--muted); font-weight: 700; }
+.sourceTag { font-size: 13px; font-weight: 700; color: var(--muted); }
+.inlineForm { margin-left: auto; }
+.textBtn { min-height: 36px; padding: 0 10px; border: none; background: transparent; color: #B3374B; font: inherit; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.textBtn:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; border-radius: 8px; }
+.addSkill { margin-top: 14px; display: flex; flex-direction: column; gap: 6px; max-width: 460px; }
+.addSkill label { font-size: 14px; font-weight: 700; color: var(--muted); }
+.addSkill select { flex: 1; min-width: 0; min-height: 44px; padding: 0 14px; border: 2px solid #E6DFD7; border-radius: 999px; background: var(--card); font: inherit; color: var(--ink); }
