@@ -17,7 +17,7 @@
             {
               "type": "pick_one",
               "skill": "be",
-              "prompt": "Pick the right sentence.",
+              "prompt": "One of these is right. Tap it.",
               "choices": [
                 "I am happy.",
                 "I is happy.",
@@ -28,7 +28,7 @@
             {
               "type": "pick_one",
               "skill": "be",
-              "prompt": "Pick the right sentence.",
+              "prompt": "Which sentence is right?",
               "choices": [
                 "The dog are big.",
                 "The dog am big.",
@@ -40,7 +40,7 @@
             {
               "type": "pick_one",
               "skill": "be",
-              "prompt": "Pick the right sentence.",
+              "prompt": "Which one is right?",
               "choices": [
                 "The apples is red.",
                 "The apples are red.",
@@ -145,7 +145,7 @@
             {
               "type": "build_it",
               "skill": "be",
-              "prompt": "Build the sentence.",
+              "prompt": "Build it!",
               "tiles": [
                 "The",
                 "sun",
@@ -177,7 +177,7 @@
             {
               "type": "sort_it",
               "skill": "be",
-              "prompt": "Sort the words.",
+              "prompt": "Sort them out.",
               "groups": [
                 "am",
                 "is",
@@ -197,7 +197,7 @@
                   "group": 2
                 },
                 {
-                  "text": "Ben",
+                  "text": "Otto",
                   "group": 1
                 },
                 {
@@ -214,7 +214,7 @@
             {
               "type": "pick_one",
               "skill": "be",
-              "prompt": "Ben and Tom are brothers. Pick the right sentence.",
+              "prompt": "Otto and Theo are brothers. Pick the right sentence.",
               "choices": [
                 "He are tall.",
                 "They is tall.",
@@ -225,7 +225,7 @@
             {
               "type": "pick_one",
               "skill": "be",
-              "prompt": "Pick the right sentence.",
+              "prompt": "A robot wrote these. Which one is right?",
               "choices": [
                 "The boy are tall.",
                 "The boy is tall.",
@@ -237,7 +237,7 @@
             {
               "type": "pick_one",
               "skill": "be",
-              "prompt": "Pick the right sentence.",
+              "prompt": "Which one would your teacher write?",
               "choices": [
                 "Two children is in the park.",
                 "Two children in the park.",
@@ -262,7 +262,7 @@
             {
               "type": "fill_blank",
               "skill": "be",
-              "before": "Leo and Sam are my friends.",
+              "before": "Milo and Finn are my friends.",
               "after": "are seven.",
               "choices": [
                 "He",
@@ -274,7 +274,7 @@
             {
               "type": "fill_blank",
               "skill": "be",
-              "before": "Mia is my sister.",
+              "before": "Nova is my sister.",
               "after": "is five.",
               "choices": [
                 "She",
@@ -343,7 +343,7 @@
             {
               "type": "build_it",
               "skill": "be",
-              "prompt": "Build the sentence.",
+              "prompt": "Make a sentence from the tiles.",
               "tiles": [
                 "The",
                 "children",
@@ -360,7 +360,7 @@
             {
               "type": "build_it",
               "skill": "be",
-              "prompt": "Build the sentence.",
+              "prompt": "Tap the tiles in order.",
               "tiles": [
                 "She",
                 "is",
@@ -375,7 +375,7 @@
             {
               "type": "sort_it",
               "skill": "be",
-              "prompt": "Sort the words.",
+              "prompt": "Where does each one go?",
               "groups": [
                 "is",
                 "are"
@@ -390,7 +390,7 @@
                   "group": 1
                 },
                 {
-                  "text": "Mina",
+                  "text": "Ruby",
                   "group": 0
                 },
                 {
@@ -415,7 +415,7 @@
             {
               "type": "pick_one",
               "skill": "sentence-ends",
-              "prompt": "Pick the right sentence.",
+              "prompt": "Pick the sentence that sounds right.",
               "choices": [
                 "the cat is soft.",
                 "The cat is soft",
@@ -427,18 +427,18 @@
             {
               "type": "pick_one",
               "skill": "capitals-names",
-              "prompt": "Pick the right sentence.",
+              "prompt": "A robot wrote these. Which one is right?",
               "choices": [
-                "mina is my friend.",
-                "Mina is my friend.",
-                "Mina is my Friend."
+                "ruby is my friend.",
+                "Ruby is my friend.",
+                "Ruby is my Friend."
               ],
               "answer": 1
             },
             {
               "type": "pick_one",
               "skill": "sentence-ends",
-              "prompt": "Pick the right sentences.",
+              "prompt": "Which one would your teacher write?",
               "choices": [
                 "I have a dog. it is brown.",
                 "I have a dog. It is brown.",
@@ -453,9 +453,9 @@
               "before": "My brother is",
               "after": "",
               "choices": [
-                "sam.",
-                "Sam.",
-                "Sam"
+                "finn.",
+                "Finn.",
+                "Finn"
               ],
               "answer": 1
             },
@@ -488,7 +488,7 @@
               "type": "find_fix",
               "skill": "capitals-names",
               "words": [
-                "leo",
+                "milo",
                 "is",
                 "in",
                 "my",
@@ -496,9 +496,9 @@
               ],
               "wrongIndex": 0,
               "fixes": [
-                "Leo",
-                "Leo.",
-                "leo."
+                "Milo",
+                "Milo.",
+                "milo."
               ],
               "answer": 0
             },
@@ -545,22 +545,22 @@
             {
               "type": "build_it",
               "skill": "capitals-names",
-              "prompt": "Build the sentence.",
+              "prompt": "Put the words in order.",
               "tiles": [
-                "Sam",
+                "Finn",
                 "has",
                 "a",
                 "red",
                 "ball."
               ],
               "distractors": [
-                "sam"
+                "finn"
               ]
             },
             {
               "type": "build_it",
               "skill": "sentence-ends",
-              "prompt": "Build the sentence.",
+              "prompt": "Make a sentence from the tiles.",
               "tiles": [
                 "The",
                 "milk",
@@ -575,14 +575,14 @@
             {
               "type": "sort_it",
               "skill": "capitals-names",
-              "prompt": "Is the name written the right way?",
+              "prompt": "Which ones are right? Sort them.",
               "groups": [
                 "Right",
-                "Wrong"
+                "Not right"
               ],
               "items": [
                 {
-                  "text": "Mina",
+                  "text": "Ruby",
                   "group": 0
                 },
                 {
@@ -590,7 +590,7 @@
                   "group": 1
                 },
                 {
-                  "text": "Tom",
+                  "text": "Theo",
                   "group": 0
                 },
                 {
@@ -598,7 +598,7 @@
                   "group": 1
                 },
                 {
-                  "text": "Ben",
+                  "text": "Otto",
                   "group": 0
                 },
                 {
@@ -615,11 +615,11 @@
             {
               "type": "pick_one",
               "skill": "ing",
-              "prompt": "Pick the right sentence.",
+              "prompt": "Which sentence is right?",
               "choices": [
-                "Sam is play soccer.",
-                "Sam is playing soccer.",
-                "Sam playing soccer."
+                "Finn is play soccer.",
+                "Finn is playing soccer.",
+                "Finn playing soccer."
               ],
               "answer": 1,
               "picture": "soccer-ball"
@@ -627,7 +627,7 @@
             {
               "type": "pick_one",
               "skill": "ing",
-              "prompt": "Pick the right sentence.",
+              "prompt": "Which one is right?",
               "choices": [
                 "Two children reading.",
                 "Two children is reading.",
@@ -639,7 +639,7 @@
             {
               "type": "pick_one",
               "skill": "ing",
-              "prompt": "Pick the right sentence.",
+              "prompt": "Pick the sentence that sounds right.",
               "choices": [
                 "Three kids are sitting.",
                 "Three kids siting.",
@@ -652,7 +652,7 @@
             {
               "type": "fill_blank",
               "skill": "ing",
-              "before": "Leo is",
+              "before": "Milo is",
               "after": "TV.",
               "choices": [
                 "watch",
@@ -732,7 +732,7 @@
               "type": "find_fix",
               "skill": "ing",
               "words": [
-                "Ben",
+                "Otto",
                 "and",
                 "I",
                 "is",
@@ -751,7 +751,7 @@
             {
               "type": "build_it",
               "skill": "ing",
-              "prompt": "Build the sentence.",
+              "prompt": "What does this say? Put it in order.",
               "tiles": [
                 "The",
                 "cat",
@@ -767,7 +767,7 @@
             {
               "type": "build_it",
               "skill": "ing",
-              "prompt": "Build the sentence.",
+              "prompt": "Build it!",
               "tiles": [
                 "Two",
                 "boys",
@@ -784,7 +784,7 @@
             {
               "type": "sort_it",
               "skill": "ing",
-              "prompt": "Sort the words.",
+              "prompt": "Where does each one go?",
               "groups": [
                 "is running",
                 "are running"
@@ -799,7 +799,7 @@
                   "group": 1
                 },
                 {
-                  "text": "Mia and Sam",
+                  "text": "Nova and Finn",
                   "group": 1
                 },
                 {
@@ -824,7 +824,7 @@
             {
               "type": "pick_one",
               "skill": "be",
-              "prompt": "Pick the right sentence.",
+              "prompt": "Which one is right?",
               "choices": [
                 "I is have a cat.",
                 "I have a cat.",
@@ -836,7 +836,7 @@
             {
               "type": "pick_one",
               "skill": "sentence-ends",
-              "prompt": "Pick the right sentences.",
+              "prompt": "Pick the sentence that sounds right.",
               "choices": [
                 "I like apples. they are sweet.",
                 "I like apples they are sweet.",
@@ -848,7 +848,7 @@
             {
               "type": "pick_one",
               "skill": "ing",
-              "prompt": "Pick the right sentence.",
+              "prompt": "A robot wrote these. Which one is right?",
               "choices": [
                 "The girls are dancing.",
                 "The girls dancing.",
@@ -860,7 +860,7 @@
             {
               "type": "fill_blank",
               "skill": "be",
-              "before": "Mina and Mia are sisters.",
+              "before": "Ruby and Nova are sisters.",
               "after": "are drawing.",
               "choices": [
                 "She",
@@ -873,7 +873,7 @@
             {
               "type": "fill_blank",
               "skill": "ing",
-              "before": "Tom is",
+              "before": "Theo is",
               "after": "his teeth.",
               "choices": [
                 "brush",
@@ -887,11 +887,11 @@
               "type": "fill_blank",
               "skill": "capitals-names",
               "before": "",
-              "after": "and Leo are friends.",
+              "after": "and Milo are friends.",
               "choices": [
-                "mia",
-                "Mia",
-                "mia."
+                "nova",
+                "Nova",
+                "nova."
               ],
               "answer": 1
             },
@@ -917,7 +917,7 @@
               "type": "find_fix",
               "skill": "ing",
               "words": [
-                "Mia",
+                "Nova",
                 "is",
                 "watch",
                 "a",
@@ -939,20 +939,20 @@
                 "I",
                 "play",
                 "with",
-                "ben."
+                "otto."
               ],
               "wrongIndex": 3,
               "fixes": [
-                "Ben.",
-                "Ben",
-                "ben,"
+                "Otto.",
+                "Otto",
+                "otto,"
               ],
               "answer": 0
             },
             {
               "type": "build_it",
               "skill": "ing",
-              "prompt": "Build the sentence.",
+              "prompt": "Tap the tiles in order.",
               "tiles": [
                 "My",
                 "dad",
@@ -969,16 +969,16 @@
             {
               "type": "build_it",
               "skill": "capitals-names",
-              "prompt": "Build the sentence.",
+              "prompt": "What does this say? Put it in order.",
               "tiles": [
-                "Mina",
+                "Ruby",
                 "is",
                 "at",
                 "the",
                 "beach."
               ],
               "distractors": [
-                "mina",
+                "ruby",
                 "are"
               ],
               "picture": "beach-with-umbrella"
@@ -986,7 +986,7 @@
             {
               "type": "sort_it",
               "skill": "be",
-              "prompt": "Sort the words.",
+              "prompt": "Sort them out.",
               "groups": [
                 "am",
                 "is",
@@ -1002,7 +1002,7 @@
                   "group": 2
                 },
                 {
-                  "text": "Leo",
+                  "text": "Milo",
                   "group": 1
                 },
                 {

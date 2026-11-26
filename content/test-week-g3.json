@@ -17,7 +17,7 @@
             {
               "type": "pick_one",
               "skill": "past-tense",
-              "prompt": "Which sentence is right?",
+              "prompt": "Which one would your teacher write?",
               "choices": [
                 "Last night the baby cryed, so Mom picked her up.",
                 "Last night the baby cried, so Mom picked her up.",
@@ -29,11 +29,11 @@
             {
               "type": "pick_one",
               "skill": "past-tense",
-              "prompt": "Which sentence is right?",
+              "prompt": "Tap the sentence with no mistakes.",
               "choices": [
-                "Mia smiled when she opened the old book.",
-                "Mia smiled when she open the old book.",
-                "Mia smileed when she opened the old book."
+                "Nova smiled when she opened the old book.",
+                "Nova smiled when she open the old book.",
+                "Nova smileed when she opened the old book."
               ],
               "answer": 0,
               "picture": "open-book"
@@ -41,11 +41,11 @@
             {
               "type": "pick_one",
               "skill": "past-tense",
-              "prompt": "Which sentence is right?",
+              "prompt": "One of these is right. Tap it.",
               "choices": [
-                "After school, they wait for Jun and then hurried home.",
-                "After school, they waited for Jun and then hurryed home.",
-                "After school, they waited for Jun and then hurried home."
+                "After school, they wait for Finn and then hurried home.",
+                "After school, they waited for Finn and then hurryed home.",
+                "After school, they waited for Finn and then hurried home."
               ],
               "answer": 2,
               "picture": "school"
@@ -66,7 +66,7 @@
             {
               "type": "fill_blank",
               "skill": "past-tense",
-              "before": "Last night, Sam",
+              "before": "Last night, Finn",
               "after": "his spelling words for an hour.",
               "choices": [
                 "studyed",
@@ -79,7 +79,7 @@
             {
               "type": "fill_blank",
               "skill": "past-tense",
-              "before": "Mina",
+              "before": "Ruby",
               "after": "the ghost story, so she read it again.",
               "choices": [
                 "liked",
@@ -138,7 +138,7 @@
               "type": "find_fix",
               "skill": "past-tense",
               "words": [
-                "Ben",
+                "Otto",
                 "hopped",
                 "over",
                 "the",
@@ -159,7 +159,7 @@
             {
               "type": "build_it",
               "skill": "past-tense",
-              "prompt": "Build the sentence.",
+              "prompt": "What does this say? Put it in order.",
               "tiles": [
                 "The",
                 "baby",
@@ -177,7 +177,7 @@
             {
               "type": "build_it",
               "skill": "past-tense",
-              "prompt": "Build the sentence.",
+              "prompt": "Build it!",
               "tiles": [
                 "We",
                 "planned",
@@ -236,11 +236,11 @@
             {
               "type": "pick_one",
               "skill": "irregular-past",
-              "prompt": "Which sentence is right?",
+              "prompt": "Pick the sentence that sounds right.",
               "choices": [
-                "Jun took his book and sat by the window.",
-                "Jun taked his book and sat by the window.",
-                "Jun took his book and sitted by the window."
+                "Finn took his book and sat by the window.",
+                "Finn taked his book and sat by the window.",
+                "Finn took his book and sitted by the window."
               ],
               "answer": 0,
               "picture": "window"
@@ -248,11 +248,11 @@
             {
               "type": "pick_one",
               "skill": "irregular-past",
-              "prompt": "Which sentence is right?",
+              "prompt": "A robot wrote these. Which one is right?",
               "choices": [
-                "Last week Mia readed a book about a ghost and told her brother the whole story.",
-                "Last week Mia read a book about a ghost and telled her brother the whole story.",
-                "Last week Mia read a book about a ghost and told her brother the whole story."
+                "Last week Nova readed a book about a ghost and told her brother the whole story.",
+                "Last week Nova read a book about a ghost and telled her brother the whole story.",
+                "Last week Nova read a book about a ghost and told her brother the whole story."
               ],
               "answer": 2,
               "picture": "ghost"
@@ -260,7 +260,7 @@
             {
               "type": "pick_one",
               "skill": "irregular-past",
-              "prompt": "Which sentence is right?",
+              "prompt": "Which one would your teacher write?",
               "choices": [
                 "We heared a noise, so we ran outside.",
                 "We heard a noise, so we ran outside.",
@@ -284,7 +284,7 @@
             {
               "type": "fill_blank",
               "skill": "irregular-past",
-              "before": "Ben looked everywhere, and at last he",
+              "before": "Otto looked everywhere, and at last he",
               "after": "his lost key under the mat.",
               "choices": [
                 "finded",
@@ -297,7 +297,7 @@
             {
               "type": "fill_blank",
               "skill": "irregular-past",
-              "before": "Sam threw the ball, and Leo",
+              "before": "Finn threw the ball, and Milo",
               "after": "it with one hand.",
               "choices": [
                 "catched",
@@ -336,7 +336,7 @@
               "type": "find_fix",
               "skill": "irregular-past",
               "words": [
-                "Mina",
+                "Ruby",
                 "find",
                 "a",
                 "note",
@@ -381,7 +381,7 @@
             {
               "type": "build_it",
               "skill": "irregular-past",
-              "prompt": "Build the sentence.",
+              "prompt": "Tap the tiles in order.",
               "tiles": [
                 "The",
                 "children",
@@ -401,9 +401,9 @@
             {
               "type": "build_it",
               "skill": "irregular-past",
-              "prompt": "Build the sentence.",
+              "prompt": "What does this say? Put it in order.",
               "tiles": [
-                "Tom",
+                "Theo",
                 "thought",
                 "the",
                 "test",
@@ -460,9 +460,9 @@
               "skill": "past-tense",
               "prompt": "Which story stays in the past?",
               "choices": [
-                "Leo went to the library. He finds a book about ghosts.",
-                "Leo went to the library. He found a book about ghosts.",
-                "Leo goes to the library. He found a book about ghosts."
+                "Milo went to the library. He finds a book about ghosts.",
+                "Milo went to the library. He found a book about ghosts.",
+                "Milo goes to the library. He found a book about ghosts."
               ],
               "answer": 1,
               "picture": "books"
@@ -470,7 +470,7 @@
             {
               "type": "pick_one",
               "skill": "did-didnt",
-              "prompt": "Which sentence is right?",
+              "prompt": "A robot wrote these. Which one is right?",
               "choices": [
                 "A ghost floated into the library. The librarian did not noticed it.",
                 "A ghost floated into the library. The librarian not noticed it.",
@@ -482,11 +482,11 @@
             {
               "type": "pick_one",
               "skill": "past-tense",
-              "prompt": "Which sentence is right?",
+              "prompt": "Which one would your teacher write?",
               "choices": [
-                "Sam came home late. Mom asked him what happened.",
-                "Sam came home late. Mom asked him what had happen.",
-                "Sam came home late. Mom asked him what happen."
+                "Finn came home late. Mom asked him what happened.",
+                "Finn came home late. Mom asked him what had happen.",
+                "Finn came home late. Mom asked him what happen."
               ],
               "answer": 0,
               "picture": "house"
@@ -494,7 +494,7 @@
             {
               "type": "fill_blank",
               "skill": "irregular-past",
-              "before": "It was dark in the hall. Mia turned on her flashlight and",
+              "before": "It was dark in the hall. Nova turned on her flashlight and",
               "after": "a small white cat.",
               "choices": [
                 "sees",
@@ -507,7 +507,7 @@
             {
               "type": "fill_blank",
               "skill": "did-didnt",
-              "before": "Jun looked for his pencil, but he didn't",
+              "before": "Finn looked for his pencil, but he didn't",
               "after": "it anywhere.",
               "choices": [
                 "find",
@@ -559,9 +559,9 @@
               "type": "find_fix",
               "skill": "past-tense",
               "words": [
-                "Ben",
+                "Otto",
                 "and",
-                "Mia",
+                "Nova",
                 "got",
                 "to",
                 "the",
@@ -588,7 +588,7 @@
               "type": "find_fix",
               "skill": "did-didnt",
               "words": [
-                "Tom",
+                "Theo",
                 "was",
                 "reading",
                 "a",
@@ -612,7 +612,7 @@
             {
               "type": "build_it",
               "skill": "did-didnt",
-              "prompt": "Build the sentence.",
+              "prompt": "What does this say? Put it in order.",
               "tiles": [
                 "She",
                 "didn't",
@@ -630,7 +630,7 @@
             {
               "type": "build_it",
               "skill": "did-didnt",
-              "prompt": "Build the sentence.",
+              "prompt": "Build it!",
               "tiles": [
                 "We",
                 "didn't",
@@ -688,7 +688,7 @@
             {
               "type": "pick_one",
               "skill": "articles",
-              "prompt": "Which sentence is right?",
+              "prompt": "Which one would your teacher write?",
               "choices": [
                 "There is man at the door.",
                 "There is a man at the door.",
@@ -700,7 +700,7 @@
             {
               "type": "pick_one",
               "skill": "third-person-s",
-              "prompt": "Which sentence is right?",
+              "prompt": "Tap the sentence with no mistakes.",
               "choices": [
                 "Our teacher have a red cup on her desk.",
                 "Teacher has a red cup on her desk.",
@@ -712,11 +712,11 @@
             {
               "type": "pick_one",
               "skill": "third-person-s",
-              "prompt": "Which sentence is right?",
+              "prompt": "One of these is right. Tap it.",
               "choices": [
-                "After school, Sam finishes his homework and plays outside.",
-                "After school, Sam finish his homework and plays outside.",
-                "After school, Sam finishes his homework and play outside."
+                "After school, Finn finishes his homework and plays outside.",
+                "After school, Finn finish his homework and plays outside.",
+                "After school, Finn finishes his homework and play outside."
               ],
               "answer": 0,
               "picture": "memo"
@@ -724,7 +724,7 @@
             {
               "type": "fill_blank",
               "skill": "articles",
-              "before": "Every Friday, Mina goes to",
+              "before": "Every Friday, Ruby goes to",
               "after": "to get new books.",
               "choices": [
                 "library",
@@ -750,7 +750,7 @@
             {
               "type": "fill_blank",
               "skill": "third-person-s",
-              "before": "Leo always",
+              "before": "Milo always",
               "after": "the bus because he lives far away.",
               "choices": [
                 "take",
@@ -835,7 +835,7 @@
             {
               "type": "build_it",
               "skill": "third-person-s",
-              "prompt": "Build the sentence.",
+              "prompt": "Put the words in order.",
               "tiles": [
                 "My",
                 "sister",
@@ -853,7 +853,7 @@
             {
               "type": "build_it",
               "skill": "third-person-s",
-              "prompt": "Build the sentence.",
+              "prompt": "Make a sentence from the tiles.",
               "tiles": [
                 "The",
                 "ghost",
@@ -911,11 +911,11 @@
             {
               "type": "pick_one",
               "skill": "past-tense",
-              "prompt": "Which sentence is right?",
+              "prompt": "One of these is right. Tap it.",
               "choices": [
-                "The librarian nutice that Mia took two books.",
-                "The librarian noticed that Mia took two books.",
-                "The librarian noticed that Mia taked two books."
+                "The librarian nutice that Nova took two books.",
+                "The librarian noticed that Nova took two books.",
+                "The librarian noticed that Nova taked two books."
               ],
               "answer": 1,
               "picture": "books"
@@ -935,11 +935,11 @@
             {
               "type": "pick_one",
               "skill": "did-didnt",
-              "prompt": "Which sentence is right?",
+              "prompt": "Which one is right?",
               "choices": [
-                "Jun didn't bring his lunch, so he was hungry later.",
-                "Jun didn't brought his lunch, so he was hungry later.",
-                "Jun not bring his lunch, so he was hungry later."
+                "Finn didn't bring his lunch, so he was hungry later.",
+                "Finn didn't brought his lunch, so he was hungry later.",
+                "Finn not bring his lunch, so he was hungry later."
               ],
               "answer": 0,
               "picture": "sandwich"
@@ -947,7 +947,7 @@
             {
               "type": "fill_blank",
               "skill": "articles",
-              "before": "Ben found a little box under his bed.",
+              "before": "Otto found a little box under his bed.",
               "after": "box was full of old coins.",
               "choices": [
                 "A",
@@ -959,7 +959,7 @@
             {
               "type": "fill_blank",
               "skill": "irregular-past",
-              "before": "Tom",
+              "before": "Theo",
               "after": "the whole book in one day, and then he told me the ending.",
               "choices": [
                 "reads",
@@ -972,7 +972,7 @@
             {
               "type": "fill_blank",
               "skill": "third-person-s",
-              "before": "Every Saturday, Mina",
+              "before": "Every Saturday, Ruby",
               "after": "to the library with her dad.",
               "choices": [
                 "goes",
@@ -1032,7 +1032,7 @@
               "type": "find_fix",
               "skill": "irregular-past",
               "words": [
-                "Leo",
+                "Milo",
                 "opened",
                 "his",
                 "bag",
@@ -1054,9 +1054,9 @@
             {
               "type": "build_it",
               "skill": "did-didnt",
-              "prompt": "Build the sentence.",
+              "prompt": "What does this say? Put it in order.",
               "tiles": [
-                "Sam",
+                "Finn",
                 "didn't",
                 "eat",
                 "his",
@@ -1072,7 +1072,7 @@
             {
               "type": "build_it",
               "skill": "irregular-past",
-              "prompt": "Build the sentence.",
+              "prompt": "Build it!",
               "tiles": [
                 "She",
                 "caught",
@@ -1082,7 +1082,7 @@
                 "gave",
                 "it",
                 "to",
-                "Ben."
+                "Otto."
               ],
               "distractors": [
                 "catched"

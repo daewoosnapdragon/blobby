@@ -17,12 +17,12 @@
             {
               "type": "pick_one",
               "skill": "past-tense",
-              "prompt": "Which sentence is right?",
+              "prompt": "One of these is right. Tap it.",
               "choices": [
-                "Mia droped her spoon and picked it up.",
-                "Mia drop her spoon and picked it up.",
-                "Mia dropped her spoon and pick it up.",
-                "Mia dropped her spoon and picked it up."
+                "Nova droped her spoon and picked it up.",
+                "Nova drop her spoon and picked it up.",
+                "Nova dropped her spoon and pick it up.",
+                "Nova dropped her spoon and picked it up."
               ],
               "answer": 3,
               "picture": "spoon"
@@ -32,10 +32,10 @@
               "skill": "past-tense",
               "prompt": "Which sentence is right?",
               "choices": [
-                "Ben carryed the heavy box upstairs.",
-                "Ben carried the heavy box upstairs.",
-                "Ben caried the heavy box upstairs.",
-                "Ben carry the heavy box upstairs."
+                "Otto carryed the heavy box upstairs.",
+                "Otto carried the heavy box upstairs.",
+                "Otto caried the heavy box upstairs.",
+                "Otto carry the heavy box upstairs."
               ],
               "answer": 1,
               "picture": "package"
@@ -43,12 +43,12 @@
             {
               "type": "pick_one",
               "skill": "past-tense",
-              "prompt": "Which sentence is right?",
+              "prompt": "Which one is right?",
               "choices": [
-                "Yesterday, Leo decided to clean his room, and he started with the bed.",
-                "Yesterday, Leo decideed to clean his room, and he started with the bed.",
-                "Yesterday, Leo decided to clean his room, and he start with the bed.",
-                "Yesterday, Leo decide to clean his room, and he started with the bed."
+                "Yesterday, Milo decided to clean his room, and he started with the bed.",
+                "Yesterday, Milo decideed to clean his room, and he started with the bed.",
+                "Yesterday, Milo decided to clean his room, and he start with the bed.",
+                "Yesterday, Milo decide to clean his room, and he started with the bed."
               ],
               "answer": 0,
               "picture": "bed"
@@ -96,7 +96,7 @@
               "type": "find_fix",
               "skill": "past-tense",
               "words": [
-                "Mina",
+                "Ruby",
                 "hurried",
                 "to",
                 "the",
@@ -121,7 +121,7 @@
               "type": "find_fix",
               "skill": "past-tense",
               "words": [
-                "Jun",
+                "Finn",
                 "studyed",
                 "for",
                 "two",
@@ -167,9 +167,9 @@
             {
               "type": "build_it",
               "skill": "past-tense",
-              "prompt": "Build the sentence.",
+              "prompt": "Build it!",
               "tiles": [
-                "Stella",
+                "Zara",
                 "tried",
                 "to",
                 "open",
@@ -247,12 +247,12 @@
             {
               "type": "pick_one",
               "skill": "irregular-past",
-              "prompt": "Which sentence is right?",
+              "prompt": "Pick the sentence that sounds right.",
               "choices": [
-                "Sam throw the ball, and his dog caught it.",
-                "Sam threw the ball, and his dog catched it.",
-                "Sam threw the ball, and his dog caught it.",
-                "Sam threwed the ball, and his dog caught it."
+                "Finn throw the ball, and his dog caught it.",
+                "Finn threw the ball, and his dog catched it.",
+                "Finn threw the ball, and his dog caught it.",
+                "Finn threwed the ball, and his dog caught it."
               ],
               "answer": 2,
               "picture": "dog"
@@ -260,11 +260,11 @@
             {
               "type": "pick_one",
               "skill": "irregular-past",
-              "prompt": "Which sentence is right?",
+              "prompt": "A robot wrote these. Which one is right?",
               "choices": [
-                "Mina drank a glass of milk and felt better.",
-                "Mina drinked a glass of milk and felt better.",
-                "Mina drank a glass of milk and feeled better."
+                "Ruby drank a glass of milk and felt better.",
+                "Ruby drinked a glass of milk and felt better.",
+                "Ruby drank a glass of milk and feeled better."
               ],
               "answer": 0,
               "picture": "glass-of-milk"
@@ -272,7 +272,7 @@
             {
               "type": "pick_one",
               "skill": "irregular-past",
-              "prompt": "Which sentence is right?",
+              "prompt": "Which one would your teacher write?",
               "choices": [
                 "Over the years, the little seed becomed a tall tree.",
                 "Over the years, the little seed became a tall tree.",
@@ -285,7 +285,7 @@
             {
               "type": "fill_blank",
               "skill": "irregular-past",
-              "before": "Leo",
+              "before": "Milo",
               "after": "his little sister's hand as they crossed the street.",
               "choices": [
                 "holded",
@@ -310,7 +310,7 @@
             {
               "type": "fill_blank",
               "skill": "irregular-past",
-              "before": "Tom",
+              "before": "Theo",
               "after": "the blue shirt because it was his favorite color.",
               "choices": [
                 "chose",
@@ -324,7 +324,7 @@
               "type": "find_fix",
               "skill": "irregular-past",
               "words": [
-                "Mia",
+                "Nova",
                 "brang",
                 "cookies",
                 "to",
@@ -348,7 +348,7 @@
               "type": "find_fix",
               "skill": "irregular-past",
               "words": [
-                "Ben",
+                "Otto",
                 "slipped",
                 "on",
                 "the",
@@ -370,7 +370,7 @@
               "type": "find_fix",
               "skill": "irregular-past",
               "words": [
-                "Stella",
+                "Zara",
                 "leaved",
                 "her",
                 "bag",
@@ -397,9 +397,9 @@
             {
               "type": "build_it",
               "skill": "irregular-past",
-              "prompt": "Build the sentence.",
+              "prompt": "Tap the tiles in order.",
               "tiles": [
-                "Jun",
+                "Finn",
                 "kept",
                 "the",
                 "secret",
@@ -416,7 +416,7 @@
             {
               "type": "build_it",
               "skill": "irregular-past",
-              "prompt": "Build the sentence.",
+              "prompt": "What does this say? Put it in order.",
               "tiles": [
                 "I",
                 "felt",
@@ -489,7 +489,7 @@
             {
               "type": "pick_one",
               "skill": "irregular-past",
-              "prompt": "Which sentence is right?",
+              "prompt": "A robot wrote these. Which one is right?",
               "choices": [
                 "From the top of the hill, we can saw the whole town.",
                 "From the top of the hill, we could saw the whole town.",
@@ -515,7 +515,7 @@
             {
               "type": "fill_blank",
               "skill": "past-tense",
-              "before": "Leo tripped on a rock. He",
+              "before": "Milo tripped on a rock. He",
               "after": "to stand up, but his knee hurt.",
               "choices": [
                 "trying",
@@ -540,7 +540,7 @@
             {
               "type": "fill_blank",
               "skill": "irregular-past",
-              "before": "The race started. Mia",
+              "before": "The race started. Nova",
               "after": "as fast as she could and won first place.",
               "choices": [
                 "run",
@@ -554,7 +554,7 @@
               "type": "find_fix",
               "skill": "irregular-past",
               "words": [
-                "Tom",
+                "Theo",
                 "was",
                 "thirsty",
                 "after",
@@ -580,7 +580,7 @@
               "type": "find_fix",
               "skill": "irregular-past",
               "words": [
-                "Mina",
+                "Ruby",
                 "heard",
                 "a",
                 "noise.",
@@ -608,7 +608,7 @@
               "type": "find_fix",
               "skill": "irregular-past",
               "words": [
-                "Ben's",
+                "Otto's",
                 "kite",
                 "flew",
                 "high.",
@@ -636,13 +636,13 @@
             {
               "type": "build_it",
               "skill": "irregular-past",
-              "prompt": "Build the sentence.",
+              "prompt": "What does this say? Put it in order.",
               "tiles": [
                 "It",
                 "was",
                 "cloudy,",
                 "so",
-                "Leo",
+                "Milo",
                 "could",
                 "not",
                 "see",
@@ -658,7 +658,7 @@
             {
               "type": "build_it",
               "skill": "irregular-past",
-              "prompt": "Build the sentence.",
+              "prompt": "Build it!",
               "tiles": [
                 "The",
                 "bell",
@@ -717,7 +717,7 @@
             {
               "type": "pick_one",
               "skill": "irregular-plurals",
-              "prompt": "Which sentence is right?",
+              "prompt": "Which one would your teacher write?",
               "choices": [
                 "The childrens looked at the mice in the cage.",
                 "The children looked at the mouses in the cage.",
@@ -730,7 +730,7 @@
             {
               "type": "pick_one",
               "skill": "plurals",
-              "prompt": "Which sentence is right?",
+              "prompt": "Tap the sentence with no mistakes.",
               "choices": [
                 "Every students in our class has a library book.",
                 "Every student in our class has a library book.",
@@ -743,12 +743,12 @@
             {
               "type": "pick_one",
               "skill": "comparatives",
-              "prompt": "Which sentence is right?",
+              "prompt": "One of these is right. Tap it.",
               "choices": [
-                "Mia's drawing is better than mine.",
-                "Mia's drawing is gooder than mine.",
-                "Mia's drawing is more better than mine.",
-                "Mia's drawing is best than mine."
+                "Nova's drawing is better than mine.",
+                "Nova's drawing is gooder than mine.",
+                "Nova's drawing is more better than mine.",
+                "Nova's drawing is best than mine."
               ],
               "answer": 0,
               "picture": "artist-palette"
@@ -845,7 +845,7 @@
               "type": "find_fix",
               "skill": "comparatives",
               "words": [
-                "Ben",
+                "Otto",
                 "is",
                 "the",
                 "strongiest",
@@ -854,7 +854,7 @@
                 "our",
                 "class,",
                 "but",
-                "Leo",
+                "Milo",
                 "is",
                 "faster."
               ],
@@ -870,9 +870,9 @@
             {
               "type": "build_it",
               "skill": "comparatives",
-              "prompt": "Build the sentence.",
+              "prompt": "Tap the tiles in order.",
               "tiles": [
-                "Mina's",
+                "Ruby's",
                 "story",
                 "was",
                 "better",
@@ -888,7 +888,7 @@
             {
               "type": "build_it",
               "skill": "irregular-plurals",
-              "prompt": "Build the sentence.",
+              "prompt": "What does this say? Put it in order.",
               "tiles": [
                 "Every",
                 "child",
@@ -908,7 +908,7 @@
             {
               "type": "sort_it",
               "skill": "irregular-plurals",
-              "prompt": "Sort the words.",
+              "prompt": "Put each word in its box.",
               "groups": [
                 "One",
                 "More than one"
@@ -948,7 +948,7 @@
             {
               "type": "pick_one",
               "skill": "plurals",
-              "prompt": "Which sentence is right?",
+              "prompt": "One of these is right. Tap it.",
               "choices": [
                 "The wizard has lots of magics and many books.",
                 "The wizard has lots of magic and many book.",
@@ -986,7 +986,7 @@
             {
               "type": "fill_blank",
               "skill": "irregular-past",
-              "before": "Stella",
+              "before": "Zara",
               "after": "the ball high, and it landed on the roof.",
               "choices": [
                 "throw",
@@ -1071,7 +1071,7 @@
               "type": "find_fix",
               "skill": "past-tense",
               "words": [
-                "Leo",
+                "Milo",
                 "spill",
                 "his",
                 "juice,",
@@ -1097,9 +1097,9 @@
             {
               "type": "build_it",
               "skill": "irregular-past",
-              "prompt": "Build the sentence.",
+              "prompt": "Tap the tiles in order.",
               "tiles": [
-                "Mia",
+                "Nova",
                 "caught",
                 "a",
                 "cold,",
@@ -1116,7 +1116,7 @@
             {
               "type": "build_it",
               "skill": "comparatives",
-              "prompt": "Build the sentence.",
+              "prompt": "What does this say? Put it in order.",
               "tiles": [
                 "My",
                 "grandma",
@@ -1136,10 +1136,10 @@
             {
               "type": "sort_it",
               "skill": "comparatives",
-              "prompt": "Is it right or wrong? Sort the words.",
+              "prompt": "Which ones are right? Sort them.",
               "groups": [
                 "Right",
-                "Wrong"
+                "Not right"
               ],
               "items": [
                 {

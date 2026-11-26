@@ -17,11 +17,11 @@
             {
               "type": "pick_one",
               "skill": "articles",
-              "prompt": "Pick the right sentence.",
+              "prompt": "Tap the sentence with no mistakes.",
               "choices": [
-                "Ben found a ant in his bag.",
-                "Ben found an ant in his bag.",
-                "Ben found ant in his bag."
+                "Otto found a ant in his bag.",
+                "Otto found an ant in his bag.",
+                "Otto found ant in his bag."
               ],
               "answer": 1,
               "picture": "ant"
@@ -29,11 +29,11 @@
             {
               "type": "pick_one",
               "skill": "articles",
-              "prompt": "Pick the right sentence.",
+              "prompt": "One of these is right. Tap it.",
               "choices": [
-                "Leo has a old bike.",
-                "Leo has old bike.",
-                "Leo has an old bike."
+                "Milo has a old bike.",
+                "Milo has old bike.",
+                "Milo has an old bike."
               ],
               "answer": 2,
               "picture": "bicycle"
@@ -93,7 +93,7 @@
               "type": "find_fix",
               "skill": "articles",
               "words": [
-                "Tom",
+                "Theo",
                 "ate",
                 "a",
                 "apple."
@@ -111,7 +111,7 @@
               "type": "find_fix",
               "skill": "articles",
               "words": [
-                "Leo",
+                "Milo",
                 "wants",
                 "a",
                 "orange."
@@ -129,7 +129,7 @@
               "type": "find_fix",
               "skill": "articles",
               "words": [
-                "Sam",
+                "Finn",
                 "has",
                 "umbrella."
               ],
@@ -145,7 +145,7 @@
             {
               "type": "build_it",
               "skill": "articles",
-              "prompt": "Build the sentence.",
+              "prompt": "Tap the tiles in order.",
               "tiles": [
                 "I",
                 "ate",
@@ -162,9 +162,9 @@
             {
               "type": "build_it",
               "skill": "articles",
-              "prompt": "Build the sentence.",
+              "prompt": "What does this say? Put it in order.",
               "tiles": [
-                "Ben",
+                "Otto",
                 "drew",
                 "an",
                 "elephant",
@@ -178,7 +178,7 @@
             {
               "type": "sort_it",
               "skill": "articles",
-              "prompt": "Sort the words.",
+              "prompt": "Put each word in its box.",
               "groups": [
                 "a",
                 "an"
@@ -218,7 +218,7 @@
             {
               "type": "pick_one",
               "skill": "articles",
-              "prompt": "Pick the right sentence.",
+              "prompt": "Tap the sentence with no mistakes.",
               "choices": [
                 "I gave it to teacher.",
                 "I gave it to the teacher.",
@@ -230,7 +230,7 @@
             {
               "type": "pick_one",
               "skill": "articles",
-              "prompt": "Which sentence is right?",
+              "prompt": "One of these is right. Tap it.",
               "choices": [
                 "The sky is blue today.",
                 "Sky is blue today.",
@@ -242,7 +242,7 @@
             {
               "type": "pick_one",
               "skill": "articles",
-              "prompt": "Pick the right sentence.",
+              "prompt": "Which sentence is right?",
               "choices": [
                 "We played with boring computer.",
                 "We played with an boring computer.",
@@ -267,7 +267,7 @@
             {
               "type": "fill_blank",
               "skill": "articles",
-              "before": "Mia is reading",
+              "before": "Nova is reading",
               "after": "book about frogs.",
               "choices": [
                 "an",
@@ -294,7 +294,7 @@
               "type": "find_fix",
               "skill": "articles",
               "words": [
-                "Mina",
+                "Ruby",
                 "spilled",
                 "cup",
                 "of",
@@ -313,7 +313,7 @@
               "type": "find_fix",
               "skill": "articles",
               "words": [
-                "Ben",
+                "Otto",
                 "sat",
                 "on",
                 "chair."
@@ -331,7 +331,7 @@
               "type": "find_fix",
               "skill": "articles",
               "words": [
-                "Tom",
+                "Theo",
                 "is",
                 "eating",
                 "a",
@@ -368,7 +368,7 @@
             {
               "type": "build_it",
               "skill": "articles",
-              "prompt": "Build the sentence.",
+              "prompt": "Put the words in order.",
               "tiles": [
                 "We",
                 "played",
@@ -385,10 +385,10 @@
             {
               "type": "sort_it",
               "skill": "articles",
-              "prompt": "Right or wrong?",
+              "prompt": "Which ones are right? Sort them.",
               "groups": [
                 "Right",
-                "Wrong"
+                "Not right"
               ],
               "items": [
                 {
@@ -425,7 +425,7 @@
             {
               "type": "pick_one",
               "skill": "there-is-are",
-              "prompt": "Pick the right sentence.",
+              "prompt": "Which one is right?",
               "choices": [
                 "There is a two people in the room.",
                 "There are two people in the room.",
@@ -436,7 +436,7 @@
             {
               "type": "pick_one",
               "skill": "there-is-are",
-              "prompt": "Which sentence is right?",
+              "prompt": "Pick the sentence that sounds right.",
               "choices": [
                 "There are books on the desk.",
                 "There is books on the desk.",
@@ -448,7 +448,7 @@
             {
               "type": "pick_one",
               "skill": "there-is-are",
-              "prompt": "Pick the right sentence.",
+              "prompt": "A robot wrote these. Which one is right?",
               "choices": [
                 "There is very many birds in the sky.",
                 "There are many bird in the sky.",
@@ -562,7 +562,7 @@
             {
               "type": "build_it",
               "skill": "there-is-are",
-              "prompt": "Build the sentence.",
+              "prompt": "Put the words in order.",
               "tiles": [
                 "There",
                 "are",
@@ -580,7 +580,7 @@
             {
               "type": "build_it",
               "skill": "there-is-are",
-              "prompt": "Build the sentence.",
+              "prompt": "Make a sentence from the tiles.",
               "tiles": [
                 "There",
                 "is",
@@ -638,7 +638,7 @@
             {
               "type": "pick_one",
               "skill": "ing",
-              "prompt": "Pick the right sentence.",
+              "prompt": "Which sentence is right?",
               "choices": [
                 "The boy riding a bike.",
                 "The boy are riding a bike.",
@@ -650,7 +650,7 @@
             {
               "type": "pick_one",
               "skill": "ing",
-              "prompt": "Which sentence is right?",
+              "prompt": "Which one is right?",
               "choices": [
                 "The kids is playing tag.",
                 "The kids are playing tag.",
@@ -662,7 +662,7 @@
             {
               "type": "pick_one",
               "skill": "was-were",
-              "prompt": "Pick the right sentence.",
+              "prompt": "Pick the sentence that sounds right.",
               "choices": [
                 "There was four adult and five kids.",
                 "There were four adults and five kids.",
@@ -699,7 +699,7 @@
             {
               "type": "fill_blank",
               "skill": "was-were",
-              "before": "Yesterday, Mia and Leo",
+              "before": "Yesterday, Nova and Milo",
               "after": "at the park.",
               "choices": [
                 "was",
@@ -713,9 +713,9 @@
               "type": "find_fix",
               "skill": "ing",
               "words": [
-                "Mina",
+                "Ruby",
                 "and",
-                "Sam",
+                "Finn",
                 "is",
                 "running."
               ],
@@ -750,9 +750,9 @@
               "type": "find_fix",
               "skill": "was-were",
               "words": [
-                "Mia",
+                "Nova",
                 "and",
-                "Ben",
+                "Otto",
                 "was",
                 "at",
                 "the",
@@ -771,7 +771,7 @@
             {
               "type": "build_it",
               "skill": "ing",
-              "prompt": "Build the sentence.",
+              "prompt": "Put the words in order.",
               "tiles": [
                 "The",
                 "kids",
@@ -789,7 +789,7 @@
             {
               "type": "build_it",
               "skill": "was-were",
-              "prompt": "Build the sentence.",
+              "prompt": "Make a sentence from the tiles.",
               "tiles": [
                 "The",
                 "cookies",
@@ -821,7 +821,7 @@
                   "group": 1
                 },
                 {
-                  "text": "Mia",
+                  "text": "Nova",
                   "group": 0
                 },
                 {
@@ -833,7 +833,7 @@
                   "group": 0
                 },
                 {
-                  "text": "Sam and Ben",
+                  "text": "Finn and Otto",
                   "group": 1
                 }
               ]
@@ -846,7 +846,7 @@
             {
               "type": "pick_one",
               "skill": "ing",
-              "prompt": "Pick the right sentence.",
+              "prompt": "Which one is right?",
               "choices": [
                 "Every students is reading.",
                 "Every student is reading.",
@@ -858,7 +858,7 @@
             {
               "type": "pick_one",
               "skill": "articles",
-              "prompt": "Which sentence is right?",
+              "prompt": "Pick the sentence that sounds right.",
               "choices": [
                 "I need a pencil and an eraser.",
                 "I need an pencil and a eraser.",
@@ -870,7 +870,7 @@
             {
               "type": "pick_one",
               "skill": "there-is-are",
-              "prompt": "Pick the right sentence.",
+              "prompt": "A robot wrote these. Which one is right?",
               "choices": [
                 "There is three mice in the barn.",
                 "There are three mouses in the barn.",
@@ -963,9 +963,9 @@
               "type": "find_fix",
               "skill": "was-were",
               "words": [
-                "Tom",
+                "Theo",
                 "and",
-                "Leo",
+                "Milo",
                 "was",
                 "playing",
                 "soccer."
@@ -982,9 +982,9 @@
             {
               "type": "build_it",
               "skill": "articles",
-              "prompt": "Build the sentence.",
+              "prompt": "Make a sentence from the tiles.",
               "tiles": [
-                "Mina",
+                "Ruby",
                 "has",
                 "an",
                 "old",
@@ -998,7 +998,7 @@
             {
               "type": "build_it",
               "skill": "there-is-are",
-              "prompt": "Build the sentence.",
+              "prompt": "Tap the tiles in order.",
               "tiles": [
                 "There",
                 "are",
@@ -1032,7 +1032,7 @@
                   "group": 0
                 },
                 {
-                  "text": "Leo and Mia",
+                  "text": "Milo and Nova",
                   "group": 1
                 },
                 {

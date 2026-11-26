@@ -16,8 +16,8 @@
         "type": "pick_one",
         "prompt": "Which one is a complete sentence?",
         "choices": [
-          "A girl called Mina, who was searching for her lost cat.",
-          "A girl called Mina was searching for her lost cat.",
+          "A girl called Ruby, who was searching for her lost cat.",
+          "A girl called Ruby was searching for her lost cat.",
           "Searching everywhere for her lost cat after school."
         ],
         "answer": 1
@@ -56,7 +56,7 @@
       },
       {
         "type": "fill_blank",
-        "before": "Mia couldn't find her pencil.",
+        "before": "Nova couldn't find her pencil.",
         "after": "under her chair.",
         "choices": [
           "It was",
@@ -88,9 +88,9 @@
       {
         "type": "find_fix",
         "words": [
-          "Leo",
+          "Milo",
           "and",
-          "Sam",
+          "Finn",
           "running",
           "to",
           "the",
@@ -108,7 +108,7 @@
       },
       {
         "type": "build_it",
-        "prompt": "Build the sentence.",
+        "prompt": "Make a sentence from the tiles.",
         "tiles": [
           "Because",
           "it",
@@ -124,7 +124,7 @@
       },
       {
         "type": "sort_it",
-        "prompt": "Sort the sentences.",
+        "prompt": "Where does each sentence go?",
         "groups": [
           "Complete",
           "Not complete"
@@ -139,11 +139,11 @@
             "group": 1
           },
           {
-            "text": "Jun read three books this week.",
+            "text": "Finn read three books this week.",
             "group": 0
           },
           {
-            "text": "A boy named Tom, who loved ghost stories.",
+            "text": "A boy named Theo, who loved ghost stories.",
             "group": 1
           },
           {
@@ -151,7 +151,7 @@
             "group": 1
           },
           {
-            "text": "Mia and Ben whispered in the library.",
+            "text": "Nova and Otto whispered in the library.",
             "group": 0
           }
         ]
@@ -170,7 +170,7 @@
       },
       {
         "type": "pick_one",
-        "prompt": "Which sentence is right?",
+        "prompt": "Which one is right?",
         "choices": [
           "Some people think the library is haunted.",
           "Some people thinks the library is haunted.",
@@ -180,7 +180,7 @@
       },
       {
         "type": "pick_one",
-        "prompt": "Which sentence is right?",
+        "prompt": "Pick the sentence that sounds right.",
         "choices": [
           "One boy don't know the answer, but the other kids do.",
           "One boy doesn't know the answer, but the other kids does.",
@@ -269,7 +269,7 @@
       },
       {
         "type": "build_it",
-        "prompt": "Build the sentence.",
+        "prompt": "Tap the tiles in order.",
         "tiles": [
           "The",
           "children",
@@ -285,10 +285,10 @@
       },
       {
         "type": "sort_it",
-        "prompt": "Sort the sentences.",
+        "prompt": "Which ones are right? Sort them.",
         "groups": [
           "Right",
-          "Wrong"
+          "Not right"
         ],
         "items": [
           {
@@ -321,7 +321,7 @@
     "prepositions": [
       {
         "type": "pick_one",
-        "prompt": "Which sentence is right?",
+        "prompt": "A robot wrote these. Which one is right?",
         "choices": [
           "We listened the story about a lost ghost.",
           "We listened to the story about a lost ghost.",
@@ -331,7 +331,7 @@
       },
       {
         "type": "pick_one",
-        "prompt": "Which sentence is right?",
+        "prompt": "Which one would your teacher write?",
         "choices": [
           "The bus arrived to school late, so we ran to class.",
           "The bus arrived at school late, so we ran at class.",
@@ -341,17 +341,17 @@
       },
       {
         "type": "pick_one",
-        "prompt": "Which sentence is right?",
+        "prompt": "Tap the sentence with no mistakes.",
         "choices": [
-          "Mia looked at the clock and went to the library.",
-          "Mia looked the clock and went to the library.",
-          "Mia looked at the clock and went the library."
+          "Nova looked at the clock and went to the library.",
+          "Nova looked the clock and went to the library.",
+          "Nova looked at the clock and went the library."
         ],
         "answer": 0
       },
       {
         "type": "fill_blank",
-        "before": "Every morning, Ben listens",
+        "before": "Every morning, Otto listens",
         "after": "music on the bus.",
         "choices": [
           "to",
@@ -373,7 +373,7 @@
       },
       {
         "type": "fill_blank",
-        "before": "Sam wants to sit somewhere quiet, so he goes",
+        "before": "Finn wants to sit somewhere quiet, so he goes",
         "after": "the library.",
         "choices": [
           "to",
@@ -385,7 +385,7 @@
       {
         "type": "find_fix",
         "words": [
-          "Leo",
+          "Milo",
           "waited",
           "for",
           "his",
@@ -434,7 +434,7 @@
       },
       {
         "type": "build_it",
-        "prompt": "Build the sentence.",
+        "prompt": "What does this say? Put it in order.",
         "tiles": [
           "The",
           "kids",
@@ -450,10 +450,10 @@
       },
       {
         "type": "sort_it",
-        "prompt": "Sort the sentences.",
+        "prompt": "Which ones are right? Sort them.",
         "groups": [
           "Right",
-          "Wrong"
+          "Not right"
         ],
         "items": [
           {
@@ -486,7 +486,7 @@
     "articles": [
       {
         "type": "pick_one",
-        "prompt": "Which sentence is right?",
+        "prompt": "Pick the sentence that sounds right.",
         "choices": [
           "On Friday, we go to library after lunch.",
           "On Friday, we go to the library after lunch.",
@@ -496,7 +496,7 @@
       },
       {
         "type": "pick_one",
-        "prompt": "Which sentence is right?",
+        "prompt": "A robot wrote these. Which one is right?",
         "choices": [
           "There is man at the door of the library.",
           "There is an man at the door of the library.",
@@ -506,17 +506,17 @@
       },
       {
         "type": "pick_one",
-        "prompt": "Which sentence is right?",
+        "prompt": "Which one would your teacher write?",
         "choices": [
-          "Tom put an apple and a banana in his bag.",
-          "Tom put a apple and a banana in his bag.",
-          "Tom put an apple and an banana in his bag."
+          "Theo put an apple and a banana in his bag.",
+          "Theo put a apple and a banana in his bag.",
+          "Theo put an apple and an banana in his bag."
         ],
         "answer": 0
       },
       {
         "type": "fill_blank",
-        "before": "Mina saw",
+        "before": "Ruby saw",
         "after": "huge owl in the tree outside her window.",
         "choices": [
           "a",
@@ -526,7 +526,7 @@
       },
       {
         "type": "fill_blank",
-        "before": "Every day after school, Sam plays",
+        "before": "Every day after school, Finn plays",
         "after": "with his friends.",
         "choices": [
           "soccer",
@@ -574,9 +574,9 @@
       {
         "type": "find_fix",
         "words": [
-          "Mia",
+          "Nova",
           "and",
-          "Leo",
+          "Milo",
           "went",
           "to",
           "they",
@@ -613,10 +613,10 @@
       },
       {
         "type": "sort_it",
-        "prompt": "Sort the sentences.",
+        "prompt": "Which ones are right? Sort them.",
         "groups": [
           "Right",
-          "Wrong"
+          "Not right"
         ],
         "items": [
           {
@@ -640,7 +640,7 @@
             "group": 0
           },
           {
-            "text": "Tom wants an new bike.",
+            "text": "Theo wants an new bike.",
             "group": 1
           }
         ]
@@ -649,7 +649,7 @@
     "plurals": [
       {
         "type": "pick_one",
-        "prompt": "Which sentence is right?",
+        "prompt": "Pick the sentence that sounds right.",
         "choices": [
           "Wait a few moment, and then you can come in.",
           "Wait a few moments, and then you can come in.",
@@ -659,7 +659,7 @@
       },
       {
         "type": "pick_one",
-        "prompt": "Which sentence is right?",
+        "prompt": "A robot wrote these. Which one is right?",
         "choices": [
           "Each chairs in the library has a soft cushion.",
           "Each chair in the library has a soft cushion.",
@@ -669,7 +669,7 @@
       },
       {
         "type": "pick_one",
-        "prompt": "Which sentence is right?",
+        "prompt": "Which one would your teacher write?",
         "choices": [
           "The children saw two mice under the shelf.",
           "The childs saw two mice under the shelf.",
@@ -690,7 +690,7 @@
       },
       {
         "type": "fill_blank",
-        "before": "Ben washed his hands and brushed his",
+        "before": "Otto washed his hands and brushed his",
         "after": "before bed.",
         "choices": [
           "teeth",
@@ -713,7 +713,7 @@
       {
         "type": "find_fix",
         "words": [
-          "Leo",
+          "Milo",
           "read",
           "three",
           "storys",
@@ -757,7 +757,7 @@
       },
       {
         "type": "build_it",
-        "prompt": "Build the sentence.",
+        "prompt": "Make a sentence from the tiles.",
         "tiles": [
           "My",
           "feet",
@@ -773,10 +773,10 @@
       },
       {
         "type": "sort_it",
-        "prompt": "Sort the sentences.",
+        "prompt": "Which ones are right? Sort them.",
         "groups": [
           "Right",
-          "Wrong"
+          "Not right"
         ],
         "items": [
           {
@@ -819,21 +819,21 @@
       },
       {
         "type": "pick_one",
-        "prompt": "Which sentence is right?",
+        "prompt": "Which one is right?",
         "choices": [
-          "Mia find a map and took it to the teacher.",
-          "Mia found a map and taked it to the teacher.",
-          "Mia found a map and took it to the teacher."
+          "Nova find a map and took it to the teacher.",
+          "Nova found a map and taked it to the teacher.",
+          "Nova found a map and took it to the teacher."
         ],
         "answer": 2
       },
       {
         "type": "pick_one",
-        "prompt": "Which sentence is right?",
+        "prompt": "Pick the sentence that sounds right.",
         "choices": [
-          "When Ben saw the ghost, he called his dad.",
-          "When Ben see the ghost, he called his dad.",
-          "When Ben saw the ghost, he call his dad."
+          "When Otto saw the ghost, he called his dad.",
+          "When Otto see the ghost, he called his dad.",
+          "When Otto saw the ghost, he call his dad."
         ],
         "answer": 0
       },
@@ -850,7 +850,7 @@
       },
       {
         "type": "fill_blank",
-        "before": "Last year, Sam",
+        "before": "Last year, Finn",
         "after": "the best reader in our class.",
         "choices": [
           "became",
@@ -873,7 +873,7 @@
       {
         "type": "find_fix",
         "words": [
-          "Jun",
+          "Finn",
           "readed",
           "the",
           "whole",
@@ -899,7 +899,7 @@
       {
         "type": "find_fix",
         "words": [
-          "Mia",
+          "Nova",
           "hopped",
           "over",
           "a",
@@ -920,7 +920,7 @@
       },
       {
         "type": "build_it",
-        "prompt": "Build the sentence.",
+        "prompt": "Tap the tiles in order.",
         "tiles": [
           "The",
           "ghost",
@@ -936,10 +936,10 @@
       },
       {
         "type": "sort_it",
-        "prompt": "Sort the sentences.",
+        "prompt": "Which ones are right? Sort them.",
         "groups": [
           "Right",
-          "Wrong"
+          "Not right"
         ],
         "items": [
           {
@@ -972,7 +972,7 @@
     "sentence-ends": [
       {
         "type": "pick_one",
-        "prompt": "Which sentence is right?",
+        "prompt": "Pick the sentence that sounds right.",
         "choices": [
           "The library was quiet, everyone was reading.",
           "The library was quiet. Everyone was reading.",
@@ -982,7 +982,7 @@
       },
       {
         "type": "pick_one",
-        "prompt": "Which sentence is right?",
+        "prompt": "A robot wrote these. Which one is right?",
         "choices": [
           "We heard a noise. then the lights went out.",
           "We heard a noise then the lights went out.",
@@ -992,7 +992,7 @@
       },
       {
         "type": "pick_one",
-        "prompt": "Which sentence is right?",
+        "prompt": "Which one would your teacher write?",
         "choices": [
           "It started to rain, so they ran inside.",
           "It started to rain. so they ran inside.",
@@ -1002,7 +1002,7 @@
       },
       {
         "type": "fill_blank",
-        "before": "Mina closed the",
+        "before": "Ruby closed the",
         "after": "she turned off the light.",
         "choices": [
           "book. Then",
@@ -1059,7 +1059,7 @@
       {
         "type": "find_fix",
         "words": [
-          "Leo",
+          "Milo",
           "was",
           "hungry,",
           "he",
@@ -1078,7 +1078,7 @@
       },
       {
         "type": "build_it",
-        "prompt": "Build the sentence.",
+        "prompt": "Tap the tiles in order.",
         "tiles": [
           "It",
           "was",
@@ -1095,10 +1095,10 @@
       },
       {
         "type": "sort_it",
-        "prompt": "Sort the sentences.",
+        "prompt": "Which ones are right? Sort them.",
         "groups": [
           "Right",
-          "Wrong"
+          "Not right"
         ],
         "items": [
           {
@@ -1118,11 +1118,11 @@
             "group": 1
           },
           {
-            "text": "Sam laughed he could not stop.",
+            "text": "Finn laughed he could not stop.",
             "group": 1
           },
           {
-            "text": "Mia smiled. She liked the book.",
+            "text": "Nova smiled. She liked the book.",
             "group": 0
           }
         ]
@@ -1131,7 +1131,7 @@
     "be": [
       {
         "type": "pick_one",
-        "prompt": "Which sentence is right?",
+        "prompt": "Which one is right?",
         "choices": [
           "Every school student were at the big meeting.",
           "Every school student was at the big meeting.",
@@ -1141,7 +1141,7 @@
       },
       {
         "type": "pick_one",
-        "prompt": "Which sentence is right?",
+        "prompt": "Pick the sentence that sounds right.",
         "choices": [
           "The students and the librarian were in the hall.",
           "The students and the librarian was in the hall.",
@@ -1151,7 +1151,7 @@
       },
       {
         "type": "pick_one",
-        "prompt": "Which sentence is right?",
+        "prompt": "A robot wrote these. Which one is right?",
         "choices": [
           "I is in the library, and my friends are outside.",
           "I am in the library, and my friends is outside.",
@@ -1161,7 +1161,7 @@
       },
       {
         "type": "fill_blank",
-        "before": "Mia and I",
+        "before": "Nova and I",
         "after": "late for the bus yesterday.",
         "choices": [
           "were",
@@ -1195,9 +1195,9 @@
       {
         "type": "find_fix",
         "words": [
-          "Ben",
+          "Otto",
           "and",
-          "Leo",
+          "Milo",
           "was",
           "in",
           "the",
@@ -1258,10 +1258,10 @@
       },
       {
         "type": "sort_it",
-        "prompt": "Sort the sentences.",
+        "prompt": "Which ones are right? Sort them.",
         "groups": [
           "Right",
-          "Wrong"
+          "Not right"
         ],
         "items": [
           {
@@ -1294,7 +1294,7 @@
     "third-person-s": [
       {
         "type": "pick_one",
-        "prompt": "Which sentence is right?",
+        "prompt": "A robot wrote these. Which one is right?",
         "choices": [
           "The librarian notices the open window and closes it.",
           "The librarian notice the open window and closes it.",
@@ -1304,17 +1304,17 @@
       },
       {
         "type": "pick_one",
-        "prompt": "Which sentence is right?",
+        "prompt": "Which one would your teacher write?",
         "choices": [
-          "Every day, Tom finish his work and goes outside.",
-          "Every day, Tom finishes his work and goes outside.",
-          "Every day, Tom finishes his work and go outside."
+          "Every day, Theo finish his work and goes outside.",
+          "Every day, Theo finishes his work and goes outside.",
+          "Every day, Theo finishes his work and go outside."
         ],
         "answer": 1
       },
       {
         "type": "pick_one",
-        "prompt": "Which sentence is right?",
+        "prompt": "Tap the sentence with no mistakes.",
         "choices": [
           "My sister watch TV after she does her homework.",
           "My sister watches TV after she do her homework.",
@@ -1346,7 +1346,7 @@
       },
       {
         "type": "fill_blank",
-        "before": "Jun",
+        "before": "Finn",
         "after": "the bus to school every morning.",
         "choices": [
           "catches",
@@ -1358,7 +1358,7 @@
       {
         "type": "find_fix",
         "words": [
-          "Mina",
+          "Ruby",
           "reads",
           "a",
           "book",
@@ -1418,10 +1418,10 @@
       },
       {
         "type": "sort_it",
-        "prompt": "Sort the sentences.",
+        "prompt": "Which ones are right? Sort them.",
         "groups": [
           "Right",
-          "Wrong"
+          "Not right"
         ],
         "items": [
           {

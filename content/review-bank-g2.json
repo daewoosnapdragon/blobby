@@ -4,27 +4,27 @@
     "articles": [
       {
         "type": "pick_one",
-        "prompt": "Pick the right sentence.",
+        "prompt": "Pick the sentence that sounds right.",
         "choices": [
-          "Mia gave the book to teacher.",
-          "Mia gave the book to an teacher.",
-          "Mia gave the book to the teacher."
+          "Nova gave the book to teacher.",
+          "Nova gave the book to an teacher.",
+          "Nova gave the book to the teacher."
         ],
         "answer": 2
       },
       {
         "type": "pick_one",
-        "prompt": "Pick the right sentence.",
+        "prompt": "A robot wrote these. Which one is right?",
         "choices": [
-          "Sam has an orange umbrella.",
-          "Sam has a orange umbrella.",
-          "Sam has orange umbrella."
+          "Finn has an orange umbrella.",
+          "Finn has a orange umbrella.",
+          "Finn has orange umbrella."
         ],
         "answer": 0
       },
       {
         "type": "pick_one",
-        "prompt": "Which sentence is right?",
+        "prompt": "Which one would your teacher write?",
         "choices": [
           "We looked at moon last night.",
           "We looked at the moon last night.",
@@ -34,7 +34,7 @@
       },
       {
         "type": "fill_blank",
-        "before": "Leo saw",
+        "before": "Milo saw",
         "after": "elephant at the zoo.",
         "choices": [
           "a",
@@ -45,7 +45,7 @@
       },
       {
         "type": "fill_blank",
-        "before": "Mina drew",
+        "before": "Ruby drew",
         "after": "big tree on her paper.",
         "choices": [
           "a",
@@ -56,7 +56,7 @@
       },
       {
         "type": "fill_blank",
-        "before": "Tom has a cat.",
+        "before": "Theo has a cat.",
         "after": "cat is very soft.",
         "choices": [
           "The",
@@ -68,7 +68,7 @@
       {
         "type": "find_fix",
         "words": [
-          "Sam",
+          "Finn",
           "spilled",
           "cup",
           "of",
@@ -85,7 +85,7 @@
       {
         "type": "find_fix",
         "words": [
-          "Ben",
+          "Otto",
           "is",
           "reading",
           "an",
@@ -104,7 +104,7 @@
         "type": "build_it",
         "prompt": "Build the sentence.",
         "tiles": [
-          "Sam",
+          "Finn",
           "found",
           "an",
           "egg",
@@ -154,7 +154,7 @@
     "third-person-s": [
       {
         "type": "pick_one",
-        "prompt": "Pick the right sentence.",
+        "prompt": "A robot wrote these. Which one is right?",
         "choices": [
           "She like pizza.",
           "She likes pizza.",
@@ -164,7 +164,7 @@
       },
       {
         "type": "pick_one",
-        "prompt": "Pick the right sentence.",
+        "prompt": "Which one would your teacher write?",
         "choices": [
           "My dog sleep on the sofa.",
           "My dog sleeping on the sofa.",
@@ -174,7 +174,7 @@
       },
       {
         "type": "pick_one",
-        "prompt": "Which sentence is right?",
+        "prompt": "Tap the sentence with no mistakes.",
         "choices": [
           "The girl comes to school by bus.",
           "The girl come to school by bus.",
@@ -195,7 +195,7 @@
       },
       {
         "type": "fill_blank",
-        "before": "Ben",
+        "before": "Otto",
         "after": "his teeth every night.",
         "choices": [
           "brush",
@@ -218,7 +218,7 @@
       {
         "type": "find_fix",
         "words": [
-          "Tom",
+          "Theo",
           "always",
           "crash",
           "his",
@@ -255,7 +255,7 @@
         "type": "build_it",
         "prompt": "Build the sentence.",
         "tiles": [
-          "Mina",
+          "Ruby",
           "watches",
           "TV",
           "after",
@@ -303,7 +303,7 @@
     "plurals": [
       {
         "type": "pick_one",
-        "prompt": "Pick the right sentence.",
+        "prompt": "Pick the sentence that sounds right.",
         "choices": [
           "Every students has a desk.",
           "Every student has a desk.",
@@ -313,7 +313,7 @@
       },
       {
         "type": "pick_one",
-        "prompt": "Pick the right sentence.",
+        "prompt": "A robot wrote these. Which one is right?",
         "choices": [
           "Many people are at the park.",
           "Many peoples are at the park.",
@@ -323,11 +323,11 @@
       },
       {
         "type": "pick_one",
-        "prompt": "Which sentence is right?",
+        "prompt": "Which one would your teacher write?",
         "choices": [
-          "Sam has three box.",
-          "Sam has three boxs.",
-          "Sam has three boxes."
+          "Finn has three box.",
+          "Finn has three boxs.",
+          "Finn has three boxes."
         ],
         "answer": 2
       },
@@ -367,7 +367,7 @@
       {
         "type": "find_fix",
         "words": [
-          "Mia",
+          "Nova",
           "saw",
           "4",
           "girl",
@@ -386,7 +386,7 @@
       {
         "type": "find_fix",
         "words": [
-          "Ben",
+          "Otto",
           "lost",
           "two",
           "tooths."
@@ -401,7 +401,7 @@
       },
       {
         "type": "build_it",
-        "prompt": "Build the sentence.",
+        "prompt": "Make a sentence from the tiles.",
         "tiles": [
           "The",
           "children",
@@ -452,7 +452,7 @@
     "sentence-ends": [
       {
         "type": "pick_one",
-        "prompt": "Pick the right sentence.",
+        "prompt": "Pick the sentence that sounds right.",
         "choices": [
           "my cat is black.",
           "My cat is black.",
@@ -462,17 +462,17 @@
       },
       {
         "type": "pick_one",
-        "prompt": "Pick the right sentence.",
+        "prompt": "A robot wrote these. Which one is right?",
         "choices": [
-          "I went to the park with mia.",
-          "I went to the park with Mia.",
-          "i went to the park with Mia."
+          "I went to the park with nova.",
+          "I went to the park with Nova.",
+          "i went to the park with Nova."
         ],
         "answer": 1
       },
       {
         "type": "pick_one",
-        "prompt": "Which one is written the right way?",
+        "prompt": "Which one would your teacher write?",
         "choices": [
           "We went to the beach. We swam in the sea.",
           "We went to the beach we swam in the sea.",
@@ -485,8 +485,8 @@
         "before": "My best friend is",
         "after": ".",
         "choices": [
-          "sam",
-          "Sam"
+          "finn",
+          "Finn"
         ],
         "answer": 1
       },
@@ -502,7 +502,7 @@
       },
       {
         "type": "fill_blank",
-        "before": "Leo has swim class on",
+        "before": "Milo has swim class on",
         "after": ".",
         "choices": [
           "monday",
@@ -513,24 +513,24 @@
       {
         "type": "find_fix",
         "words": [
-          "Tom",
+          "Theo",
           "and",
-          "leo",
+          "milo",
           "are",
           "brothers."
         ],
         "wrongIndex": 2,
         "fixes": [
-          "Leo",
-          "Leos",
-          "leo."
+          "Milo",
+          "Milos",
+          "milo."
         ],
         "answer": 0
       },
       {
         "type": "find_fix",
         "words": [
-          "Mia",
+          "Nova",
           "ate",
           "a",
           "big",
@@ -546,7 +546,7 @@
       },
       {
         "type": "build_it",
-        "prompt": "Build the sentence.",
+        "prompt": "Tap the tiles in order.",
         "tiles": [
           "My",
           "sister",
@@ -596,27 +596,27 @@
     "past-tense": [
       {
         "type": "pick_one",
-        "prompt": "Pick the right sentence.",
+        "prompt": "Which sentence is right?",
         "choices": [
-          "Yesterday, Mia spill water on the floor.",
-          "Yesterday, Mia spilled water on the floor.",
-          "Yesterday, Mia spilling water on the floor."
+          "Yesterday, Nova spill water on the floor.",
+          "Yesterday, Nova spilled water on the floor.",
+          "Yesterday, Nova spilling water on the floor."
         ],
         "answer": 1
       },
       {
         "type": "pick_one",
-        "prompt": "Pick the right sentence.",
+        "prompt": "Which one is right?",
         "choices": [
-          "Last night, Ben eat pizza.",
-          "Last night, Ben eated pizza.",
-          "Last night, Ben ate pizza."
+          "Last night, Otto eat pizza.",
+          "Last night, Otto eated pizza.",
+          "Last night, Otto ate pizza."
         ],
         "answer": 2
       },
       {
         "type": "pick_one",
-        "prompt": "Which sentence is right?",
+        "prompt": "Pick the sentence that sounds right.",
         "choices": [
           "Last summer, we went to the beach.",
           "Last summer, we go to the beach.",
@@ -626,7 +626,7 @@
       },
       {
         "type": "fill_blank",
-        "before": "Last week, Sam",
+        "before": "Last week, Finn",
         "after": "his toy car.",
         "choices": [
           "fix",
@@ -648,7 +648,7 @@
       },
       {
         "type": "fill_blank",
-        "before": "Two days ago, Leo",
+        "before": "Two days ago, Milo",
         "after": "a red crayon to draw a sun.",
         "choices": [
           "use",
@@ -661,7 +661,7 @@
         "type": "find_fix",
         "words": [
           "Yesterday,",
-          "Leo",
+          "Milo",
           "found",
           "a",
           "cookie",
@@ -700,9 +700,9 @@
       },
       {
         "type": "build_it",
-        "prompt": "Build the sentence.",
+        "prompt": "Tap the tiles in order.",
         "tiles": [
-          "Mina",
+          "Ruby",
           "dropped",
           "her",
           "cup",
@@ -751,7 +751,7 @@
     "be": [
       {
         "type": "pick_one",
-        "prompt": "Pick the right sentence.",
+        "prompt": "Which one is right?",
         "choices": [
           "The kids is happy.",
           "The kids are happy.",
@@ -761,7 +761,7 @@
       },
       {
         "type": "pick_one",
-        "prompt": "Pick the right sentence.",
+        "prompt": "Pick the sentence that sounds right.",
         "choices": [
           "There were four adults in the room.",
           "There was four adults in the room.",
@@ -771,7 +771,7 @@
       },
       {
         "type": "pick_one",
-        "prompt": "Which sentence is right?",
+        "prompt": "A robot wrote these. Which one is right?",
         "choices": [
           "One cat are on the bed.",
           "One cat were on the bed.",
@@ -803,7 +803,7 @@
       },
       {
         "type": "fill_blank",
-        "before": "Mia and Ben",
+        "before": "Nova and Otto",
         "after": "in my class.",
         "choices": [
           "is",
@@ -833,7 +833,7 @@
         "words": [
           "Last",
           "night,",
-          "Tom",
+          "Theo",
           "were",
           "sick."
         ],
@@ -877,7 +877,7 @@
             "group": 1
           },
           {
-            "text": "Mia",
+            "text": "Nova",
             "group": 0
           },
           {
@@ -885,7 +885,7 @@
             "group": 1
           },
           {
-            "text": "Tom and Sam",
+            "text": "Theo and Finn",
             "group": 1
           },
           {
@@ -898,17 +898,17 @@
     "because-when": [
       {
         "type": "pick_one",
-        "prompt": "Pick the right sentence.",
+        "prompt": "One of these is right. Tap it.",
         "choices": [
-          "Mia is happy because her dog is home.",
-          "Mia is happy. Because her dog is home.",
+          "Nova is happy because her dog is home.",
+          "Nova is happy. Because her dog is home.",
           "Because her dog is home."
         ],
         "answer": 0
       },
       {
         "type": "pick_one",
-        "prompt": "Pick the right sentence.",
+        "prompt": "Which sentence is right?",
         "choices": [
           "I wear a coat. When it is cold.",
           "I wear a coat when it is cold.",
@@ -918,7 +918,7 @@
       },
       {
         "type": "pick_one",
-        "prompt": "Which one is written the right way?",
+        "prompt": "Which one is right?",
         "choices": [
           "When the bell rang. We went outside.",
           "The bell rang. When we went outside.",
@@ -928,7 +928,7 @@
       },
       {
         "type": "fill_blank",
-        "before": "Sam closed the window",
+        "before": "Finn closed the window",
         "after": "it was cold.",
         "choices": [
           "because",
@@ -939,7 +939,7 @@
       },
       {
         "type": "fill_blank",
-        "before": "Tom was sleeping",
+        "before": "Theo was sleeping",
         "after": "the phone rang.",
         "choices": [
           "because",
@@ -962,7 +962,7 @@
       {
         "type": "find_fix",
         "words": [
-          "Leo",
+          "Milo",
           "is",
           "happy",
           "Because",
@@ -1000,9 +1000,9 @@
       },
       {
         "type": "build_it",
-        "prompt": "Build the sentence.",
+        "prompt": "Make a sentence from the tiles.",
         "tiles": [
-          "Sam",
+          "Finn",
           "is",
           "happy",
           "because",
@@ -1043,7 +1043,7 @@
             "group": 1
           },
           {
-            "text": "We cheered when Sam won.",
+            "text": "We cheered when Finn won.",
             "group": 0
           }
         ]
@@ -1052,17 +1052,17 @@
     "compound-comma": [
       {
         "type": "pick_one",
-        "prompt": "Pick the right sentence.",
+        "prompt": "Which one would your teacher write?",
         "choices": [
-          "Ben is reading, but Tom is sleeping.",
-          "Ben is reading but, Tom is sleeping.",
-          "Ben is reading, but, Tom is sleeping."
+          "Otto is reading, but Theo is sleeping.",
+          "Otto is reading but, Theo is sleeping.",
+          "Otto is reading, but, Theo is sleeping."
         ],
         "answer": 0
       },
       {
         "type": "pick_one",
-        "prompt": "Pick the right sentence.",
+        "prompt": "Tap the sentence with no mistakes.",
         "choices": [
           "It was raining so, we stayed inside.",
           "It was raining, so we stayed inside.",
@@ -1072,11 +1072,11 @@
       },
       {
         "type": "pick_one",
-        "prompt": "Which sentence is right?",
+        "prompt": "One of these is right. Tap it.",
         "choices": [
-          "Mia likes cats and, Sam likes dogs.",
-          "Mia likes cats, Sam likes dogs.",
-          "Mia likes cats, and Sam likes dogs."
+          "Nova likes cats and, Finn likes dogs.",
+          "Nova likes cats, Finn likes dogs.",
+          "Nova likes cats, and Finn likes dogs."
         ],
         "answer": 2
       },
@@ -1093,7 +1093,7 @@
       },
       {
         "type": "fill_blank",
-        "before": "Leo wanted to play,",
+        "before": "Milo wanted to play,",
         "after": "it was time for bed.",
         "choices": [
           "so",
@@ -1104,8 +1104,8 @@
       },
       {
         "type": "fill_blank",
-        "before": "Tom has a red ball,",
-        "after": "Mia has a blue ball.",
+        "before": "Theo has a red ball,",
+        "after": "Nova has a blue ball.",
         "choices": [
           "so",
           "because",
@@ -1116,7 +1116,7 @@
       {
         "type": "find_fix",
         "words": [
-          "Sam",
+          "Finn",
           "was",
           "tired,",
           "so,",
@@ -1136,22 +1136,22 @@
       {
         "type": "find_fix",
         "words": [
-          "Mina",
+          "Ruby",
           "sang,",
-          "Leo",
+          "Milo",
           "danced."
         ],
         "wrongIndex": 2,
         "fixes": [
-          "and Leo",
-          "Leo,",
-          "the Leo"
+          "and Milo",
+          "Milo,",
+          "the Milo"
         ],
         "answer": 0
       },
       {
         "type": "build_it",
-        "prompt": "Build the sentence.",
+        "prompt": "What does this say? Put it in order.",
         "tiles": [
           "It",
           "was",
@@ -1202,7 +1202,7 @@
     "ing": [
       {
         "type": "pick_one",
-        "prompt": "Pick the right sentence.",
+        "prompt": "Which one is right?",
         "choices": [
           "The girl reading a book.",
           "The girl is reading a book.",
@@ -1212,17 +1212,17 @@
       },
       {
         "type": "pick_one",
-        "prompt": "Pick the right sentence.",
+        "prompt": "Pick the sentence that sounds right.",
         "choices": [
-          "Ben is drinking his juice.",
-          "Ben drinking his juice.",
-          "Ben is drink his juice."
+          "Otto is drinking his juice.",
+          "Otto drinking his juice.",
+          "Otto is drink his juice."
         ],
         "answer": 0
       },
       {
         "type": "pick_one",
-        "prompt": "Which sentence is right?",
+        "prompt": "A robot wrote these. Which one is right?",
         "choices": [
           "The boys is running in the park.",
           "The boys running in the park.",
@@ -1232,7 +1232,7 @@
       },
       {
         "type": "fill_blank",
-        "before": "Look! Mia",
+        "before": "Look! Nova",
         "after": "in the pool.",
         "choices": [
           "is swimming",
@@ -1300,7 +1300,7 @@
       },
       {
         "type": "build_it",
-        "prompt": "Build the sentence.",
+        "prompt": "Build it!",
         "tiles": [
           "The",
           "dog",
@@ -1316,10 +1316,10 @@
       },
       {
         "type": "sort_it",
-        "prompt": "Is the sentence right?",
+        "prompt": "Which ones are right? Sort them.",
         "groups": [
           "right",
-          "wrong"
+          "not right"
         ],
         "items": [
           {
@@ -1339,7 +1339,7 @@
             "group": 1
           },
           {
-            "text": "Mia running.",
+            "text": "Nova running.",
             "group": 1
           },
           {
@@ -1352,7 +1352,7 @@
     "prepositions": [
       {
         "type": "pick_one",
-        "prompt": "Pick the right sentence.",
+        "prompt": "A robot wrote these. Which one is right?",
         "choices": [
           "The book is in table.",
           "The book is on the table.",
@@ -1362,17 +1362,17 @@
       },
       {
         "type": "pick_one",
-        "prompt": "Pick the right sentence.",
+        "prompt": "Which one would your teacher write?",
         "choices": [
-          "Leo gave the note his mom.",
-          "Leo gave the note at his mom.",
-          "Leo gave the note to his mom."
+          "Milo gave the note his mom.",
+          "Milo gave the note at his mom.",
+          "Milo gave the note to his mom."
         ],
         "answer": 2
       },
       {
         "type": "pick_one",
-        "prompt": "Which sentence is right?",
+        "prompt": "Tap the sentence with no mistakes.",
         "choices": [
           "I go to school every day.",
           "I go at school every day.",
@@ -1404,7 +1404,7 @@
       },
       {
         "type": "fill_blank",
-        "before": "Sam said hello",
+        "before": "Finn said hello",
         "after": "his friend.",
         "choices": [
           "at",
@@ -1416,7 +1416,7 @@
       {
         "type": "find_fix",
         "words": [
-          "Tom",
+          "Theo",
           "put",
           "his",
           "cup",
@@ -1435,7 +1435,7 @@
       {
         "type": "find_fix",
         "words": [
-          "Mina",
+          "Ruby",
           "sent",
           "a",
           "letter",
@@ -1452,9 +1452,9 @@
       },
       {
         "type": "build_it",
-        "prompt": "Build the sentence.",
+        "prompt": "What does this say? Put it in order.",
         "tiles": [
-          "Mia",
+          "Nova",
           "goes",
           "to",
           "school",
