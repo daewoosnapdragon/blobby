@@ -126,7 +126,7 @@ How answering works:
 - **The blob reacts:** a happy hop when they're right, a gentle wobble when they're wrong.
 - **Feedback is never only motion.** Color and words always say right or wrong too.
 
-**Bonus question:** each lesson has one bonus question, marked with a yellow **Bonus!** tag. The server picks it (one of the lesson's own questions, never a "Just for you" pick or a video) and saves the pick, so it stays put on a reload. If the kid's first try at it is right, the lesson pays **+2 stars** on top of its 10, the first time through only; a redo pays nothing. In free practice about one question in eight is a bonus for that kid and day, and a first-try right on it pays 2 instead of 1. The server picks and pays both; the phone only shows the tag.
+**Bonus question:** each lesson has one bonus question, marked with a yellow **Bonus!** tag. The server picks it (one of the lesson's own questions, never a "Just for you" pick and never a watch-and-answer question) and saves the pick, so it stays put on a reload. If the kid's first try at it is right, the lesson pays **+2 stars** on top of its 10, the first time through only; a redo pays nothing. In free practice about one question in eight is a bonus for that kid and day, and a first-try right on it pays 2 instead of 1. The server picks and pays both; the phone only shows the tag.
 
 ### 5.7 Read-aloud
 - Every Grades 1–2 prompt and answer is read aloud, and there's a **Hear it** button on every question for every grade.

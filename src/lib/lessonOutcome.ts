@@ -10,8 +10,9 @@ export interface LessonPageState {
 export interface CompleteResult { studentId: string; starsAwarded: number; weekDone: boolean; lessonStars?: number; bonusStars?: number }
 
 /**
- * firstTime: this completion earned the lesson's stars. A retried POST returns {0, false}, so the page's own
- * knowledge ("not done before") also counts, but only while the page still belongs to the kid who was written to.
+ * firstTime: this completion earned the lesson's stars. A retried POST (or a second tab) returns starsAwarded 0, with
+ * lessonStars/bonusStars reporting what the first call paid, so the page's own knowledge ("not done before") also
+ * counts, but only while the page still belongs to the kid who was written to.
  * toWeekDone: the week is done now and wasn't before.
  */
 export function lessonOutcome(page: LessonPageState, res: CompleteResult): { firstTime: boolean; toWeekDone: boolean } {

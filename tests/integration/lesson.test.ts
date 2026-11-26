@@ -207,8 +207,9 @@ describe('lesson bonus', () => {
     expect(ev).toHaveLength(1);
     expect(ev[0].amount).toBe(2);
     expect(ev[0].plan_id).toBe(PLAN); // covered by the test-star reset, which deletes by plan_id
+    // A retried or second-tab call pays nothing more but reports what this lesson already paid.
     const again = await completeLesson(JUN, L1, NOW, RUN);
-    expect(again).toEqual({ starsAwarded: 0, weekDone: false, lessonStars: 0, bonusStars: 0 });
+    expect(again).toEqual({ starsAwarded: 0, weekDone: false, lessonStars: 10, bonusStars: 2 });
   });
 
   it('pays nothing when the first attempt was wrong, even if a later one was right', async () => {
@@ -222,6 +223,8 @@ describe('lesson bonus', () => {
     const res = await completeLesson(JUN, L1, NOW, RUN);
     expect(res).toEqual({ starsAwarded: 10, weekDone: false, lessonStars: 10, bonusStars: 0 });
     expect(await sql`select 1 from wp_star_events where student_id = ${JUN} and reason = 'lesson_bonus'`).toHaveLength(0);
+    // a repeat call reports the lesson stars already paid and no bonus
+    expect(await completeLesson(JUN, L1, NOW, RUN)).toEqual({ starsAwarded: 0, weekDone: false, lessonStars: 10, bonusStars: 0 });
   });
 
   it('pays nothing without a runId, or when the run never answered the bonus', async () => {
@@ -247,7 +250,8 @@ describe('lesson bonus', () => {
     const RUN = id(905);
     await answer(951, await bonusOf(), true, RUN); // the redo's own stored pick
     const res = await completeLesson(JUN, L1, NOW, RUN);
-    expect(res).toEqual({ starsAwarded: 0, weekDone: false, lessonStars: 0, bonusStars: 0 });
+    // nothing paid this call; it reports the first completion's 10 (that run had no bonus)
+    expect(res).toEqual({ starsAwarded: 0, weekDone: false, lessonStars: 10, bonusStars: 0 });
     expect(await sql`select 1 from wp_star_events where student_id = ${JUN} and reason = 'lesson_bonus'`).toHaveLength(0);
   });
 

@@ -143,7 +143,7 @@ export async function completeLesson(
         const [first] = await tx<{ correct: boolean }[]>`
           select correct from wp_attempts
           where student_id = ${studentId} and run_id = ${runId} and question_id = ${bonusId}
-          order by created_at asc limit 1`;
+          order by created_at asc, id asc limit 1`;
         if (first?.correct) {
           const [bonusEv] = await tx`
             insert into wp_star_events (student_id, plan_id, amount, reason, ref_id)
@@ -154,6 +154,16 @@ export async function completeLesson(
             bonusStars = STAR_VALUES.lessonBonus;
           }
         }
+      }
+    } else {
+      // Already complete (a retried POST, a second tab, or a redo): nothing is paid now, but report what this
+      // lesson already paid so the done screen still shows "+10 stars" and any bonus line.
+      const paid = await tx<{ reason: string; amount: number }[]>`
+        select reason, amount from wp_star_events
+        where student_id = ${studentId} and ref_id = ${lessonId} and reason in ('lesson', 'lesson_bonus')`;
+      for (const p of paid) {
+        if (p.reason === 'lesson') lessonStars = p.amount;
+        else bonusStars = p.amount;
       }
     }
 
@@ -410,7 +420,7 @@ export interface LessonQuestion {
   skill?: string | null;
   /** a review-track question chosen for this kid ("Just for you") */
   forYou?: boolean;
-  /** this lesson's bonus class question for this kid (never a "just for you" one) */
+  /** marks the lesson's stored bonus question for this kid (a class question, never a "just for you" one), or a free-practice day bonus */
   bonus?: boolean;
 }
 

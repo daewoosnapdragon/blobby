@@ -104,7 +104,7 @@ export function LessonDone({ state, name, color, stars, onRetry, tricky = [], ta
             <p className={styles.stars}>Nice practice!</p>
           )}
           {saved && !saved.firstTime ? <p className={styles.result}>You already got the stars for this one.</p> : null}
-          {saved && saved.bonusStars > 0 ? <p className={styles.bonus}>+{saved.bonusStars} bonus stars</p> : null}
+          {saved?.firstTime && saved.bonusStars > 0 ? <p className={styles.bonus}>+{saved.bonusStars} bonus stars</p> : null}
           {saved && saved.nextHref !== '/' ? <p className={styles.result}>And that finishes the week!</p> : null}
           {saved ? <Recap tally={tally} /> : null}
           {saved ? <TrickyToday skills={tricky} /> : null}

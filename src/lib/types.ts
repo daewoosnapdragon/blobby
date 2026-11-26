@@ -4,7 +4,7 @@
 
 export type PlanKind = 'test' | 'winter' | 'homework';
 export type AttemptContext = 'lesson' | 'free';
-export type StarReason = 'lesson' | 'week_bonus' | 'free_correct';
+export type StarReason = 'lesson' | 'lesson_bonus' | 'week_bonus' | 'free_correct';
 
 export interface WpClass { id: string; grade: number; name: string; class_code: string }
 export interface WpStudent {

@@ -106,6 +106,19 @@ test('free practice: first-try right earns +1 star (+2 on a bonus question), ret
   await expect(page).toHaveURL(/\/$/);
 });
 
+test('three right first try in a row: the blob sparkles on the third', async ({ page }) => {
+  await page.goto(`/s/${leo.secret}`);
+  await page.goto('/practice');
+  for (const n of [1, 2, 3]) {
+    await expect(page.getByRole('progressbar', { name: `Question ${n} of 4` })).toBeVisible();
+    await buttonFor(page, RIGHT).first().click();
+    await expect(rightCard(page)).toBeVisible();
+    if (n < 3) await expect(page.getByTestId('sparkles')).toHaveCount(0);
+    else await expect(page.getByTestId('sparkles')).toBeVisible();
+    await page.getByRole('button', { name: 'Next', exact: true }).click();
+  }
+});
+
 test('a kid who earned nothing sees "Nice practice!", never +0', async ({ page }) => {
   await page.goto(`/s/${leo.secret}`);
   await page.goto('/practice');

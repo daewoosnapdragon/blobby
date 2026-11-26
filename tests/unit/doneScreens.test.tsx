@@ -38,6 +38,16 @@ describe('LessonDone', () => {
     expect(screen.queryByText(/bonus stars/)).toBeNull();
     expect(screen.queryByTestId('recap')).toBeNull();
   });
+  it('shows the lesson stars the server reports, not a fixed 10', () => {
+    render(<LessonDone state={{ kind: 'saved', firstTime: true, nextHref: '/', starsBefore: 0, starsAfter: 7, lessonStars: 7, bonusStars: 0 }} name="Mina" color="mint" stars={0} onRetry={() => {}} />);
+    expect(screen.getByText('+7 stars')).toBeInTheDocument();
+  });
+  it('a redo says "Nice practice!" with no star or bonus lines, even when the server reports what was paid before', () => {
+    render(<LessonDone state={{ kind: 'saved', firstTime: false, nextHref: '/', starsBefore: 12, starsAfter: 12, lessonStars: 10, bonusStars: 2 }} name="Mina" color="mint" stars={12} onRetry={() => {}} />);
+    expect(screen.getByText('Nice practice!')).toBeInTheDocument();
+    expect(screen.queryByText(/\+\d+ stars/)).toBeNull();
+    expect(screen.queryByText(/bonus/i)).toBeNull();
+  });
 });
 
 describe('PracticeDone', () => {

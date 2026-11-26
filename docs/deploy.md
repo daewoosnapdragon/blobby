@@ -30,6 +30,7 @@ migration early is safe, because the old code ignores the new columns. Each file
 
 - `0001_wp_init.sql`: all the tables, locked down.
 - `0002_preview_student.sql`: the practice student behind **Try it as a student**.
+- `0004_player_feel.sql`: must run before the player-feel code deploys, because `getLesson` selects `wp_review_picks.bonus_question_id` and `completeLesson` inserts star events with reason `lesson_bonus`.
 
 ## Region
 

@@ -30,9 +30,20 @@ export function pickLine(pool: readonly string[], last: string | null, rand: () 
   return pool[i];
 }
 
+/** Drops the end punctuation a word or choice carries ("umbrella." → "umbrella"), so the line reads cleanly. */
+function bare(text: string): string {
+  return text.trim().replace(/[\s.,!?;:]+$/, '');
+}
+
 /** A line that names the answer, for the two types where it teaches something. */
 export function answerLine(q: NonWatchQuestion): string | null {
-  if (q.type === 'fill_blank') return `“${q.choices[q.answer]}” fits!`;
-  if (q.type === 'find_fix') return `${q.fixes[q.answer]}, not ${q.words[q.wrongIndex]}!`;
+  if (q.type === 'fill_blank') return `“${bare(q.choices[q.answer])}” fits!`;
+  if (q.type === 'find_fix') {
+    const fix = bare(q.fixes[q.answer]);
+    const wrong = bare(q.words[q.wrongIndex]);
+    // A punctuation- or capitalization-only fix would read "Ben, not ben!": the bubble uses a pool line instead.
+    if (fix.toLowerCase() === wrong.toLowerCase()) return null;
+    return `${fix}, not ${wrong}!`;
+  }
   return null;
 }

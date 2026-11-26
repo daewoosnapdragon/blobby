@@ -27,4 +27,15 @@ describe('feedbackLines', () => {
     expect(answerLine({ type: 'find_fix', words: ['She', 'goed', 'home.'], wrongIndex: 1, fixes: ['went', 'gone'], answer: 0 })).toBe('went, not goed!');
     expect(answerLine({ type: 'pick_one', prompt: 'p', choices: ['a', 'b'], answer: 0 })).toBeNull();
   });
+  it('answerLine strips punctuation the words and choices carry', () => {
+    expect(answerLine({ type: 'find_fix', words: ['I', 'want', 'an', 'umbrella.'], wrongIndex: 3, fixes: ['an umbrella.', 'a umbrella.'], answer: 0 }))
+      .toBe('an umbrella, not umbrella!');
+    expect(answerLine({ type: 'fill_blank', before: '', after: 'we ran inside.', choices: ['When it started to rain,', 'Rain'], answer: 0 }))
+      .toBe('“When it started to rain” fits!');
+  });
+  it('answerLine gives no line for a punctuation- or capitalization-only fix', () => {
+    expect(answerLine({ type: 'find_fix', words: ['I', 'saw', 'ben.'], wrongIndex: 2, fixes: ['Ben.', 'Ben!'], answer: 0 })).toBeNull();
+    expect(answerLine({ type: 'find_fix', words: ['We', 'went', 'to', 'the', 'zoo!'], wrongIndex: 4, fixes: ['zoo.', 'zoo?'], answer: 0 })).toBeNull();
+    expect(answerLine({ type: 'find_fix', words: ['It', 'rained', 'so,'], wrongIndex: 2, fixes: ['so', 'too'], answer: 0 })).toBeNull();
+  });
 });
