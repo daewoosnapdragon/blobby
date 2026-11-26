@@ -12,7 +12,7 @@ const leo = STUDENTS.leo;
 const RIGHT = ['I walked to school.', 'ate', 'She went home.', 'They played tag.'];
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-test('answering a question stamps today on /stamps, in the kid’s color', async ({ page }) => {
+test('answering a question stamps today on /stamps with a stamp from the set', async ({ page }) => {
   await sql`delete from wp_practice_days where student_id = ${leo.id}`;
   await page.goto(`/s/${leo.secret}`);
   await page.getByRole('link', { name: /Free practice/ }).click();
@@ -31,7 +31,11 @@ test('answering a question stamps today on /stamps, in the kid’s color', async
   const cell = page.getByLabel(`${MONTHS[m - 1]} ${d}, practiced`);
   await expect(cell).toBeVisible();
   await expect(cell).toHaveAttribute('aria-current', 'date');
-  await expect(cell.locator('[data-part="body"]')).toHaveAttribute('fill', '#B7E1D1');
+  await expect(cell.locator('img')).toHaveAttribute('src', '/stamps/star.webp');
+  // the date and the stamp never overlap
+  const num = (await cell.getByText(String(d), { exact: true }).boundingBox())!;
+  const img = (await cell.locator('img').boundingBox())!;
+  expect(num.y + num.height).toBeLessThanOrEqual(img.y + 1);
   await expect(page.getByTestId('stamp-summary')).toHaveText('You practiced 1 day this month');
   // no going past the current month
   await expect(page.getByRole('link', { name: 'Next month' })).toHaveCount(0);

@@ -2,9 +2,8 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { practicedDays, studentFromRequest } from '@/lib/db/kid';
 import { seoulDate } from '@/lib/dates';
-import { toBlobColor } from '@/lib/blobColors';
+import { stampFor, stampSrc } from '@/lib/stamps';
 import { canGoNext, dayLabel, monthGrid, monthOf, monthTitle, pickMonth, shiftMonth } from '@/lib/calendar';
-import { MiniBlob } from '@/components/blob/MiniBlob';
 import { ArrowIcon } from '@/components/ui/icons';
 import styles from './stamps.module.css';
 
@@ -27,7 +26,6 @@ export default async function Stamps({ searchParams }: { searchParams: Promise<{
   const current = monthOf(today);
   const month = pickMonth((await searchParams).month, current);
   const practiced = new Set(await practicedDays(student.id, month));
-  const color = toBlobColor(student.blob_color);
   const next = canGoNext(month, current);
   const href = (m: string) => (m === current ? '/stamps' : `/stamps?month=${m}`);
 
@@ -60,14 +58,15 @@ export default async function Stamps({ searchParams }: { searchParams: Promise<{
             return (
               <li
                 key={d}
-                className={`${styles.day} ${d === today ? styles.today : ''}`}
+                className={`${styles.day} ${did ? styles.got : ''} ${d === today ? styles.today : ''} ${d > today ? styles.later : ''}`}
                 aria-label={dayLabel(d, did)}
                 aria-current={d === today ? 'date' : undefined}
                 data-day={d}
                 data-practiced={did ? '' : undefined}
               >
-                {did ? <span className={styles.stamp}><MiniBlob color={color} size={44} /></span> : null}
                 <span className={did ? styles.numOn : styles.num} aria-hidden="true">{Number(d.slice(8))}</span>
+                {/* eslint-disable-next-line @next/next/no-img-element -- a tiny static stamp; no layout shift to manage */}
+                {did ? <img className={styles.stamp} src={stampSrc(stampFor(student.id, d))} alt="" width={64} height={64} /> : null}
               </li>
             );
           })}
