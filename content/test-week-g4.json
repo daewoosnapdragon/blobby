@@ -24,7 +24,8 @@
                 "Mia dropped her spoon and pick it up.",
                 "Mia dropped her spoon and picked it up."
               ],
-              "answer": 3
+              "answer": 3,
+              "picture": "spoon"
             },
             {
               "type": "pick_one",
@@ -36,7 +37,8 @@
                 "Ben caried the heavy box upstairs.",
                 "Ben carry the heavy box upstairs."
               ],
-              "answer": 1
+              "answer": 1,
+              "picture": "package"
             },
             {
               "type": "pick_one",
@@ -48,7 +50,8 @@
                 "Yesterday, Leo decided to clean his room, and he start with the bed.",
                 "Yesterday, Leo decide to clean his room, and he started with the bed."
               ],
-              "answer": 0
+              "answer": 0,
+              "picture": "bed"
             },
             {
               "type": "fill_blank",
@@ -60,7 +63,8 @@
                 "cry",
                 "cried"
               ],
-              "answer": 2
+              "answer": 2,
+              "picture": "baby"
             },
             {
               "type": "fill_blank",
@@ -72,7 +76,8 @@
                 "stopped",
                 "stopping"
               ],
-              "answer": 1
+              "answer": 1,
+              "picture": "automobile"
             },
             {
               "type": "fill_blank",
@@ -84,7 +89,8 @@
                 "staied",
                 "stay"
               ],
-              "answer": 0
+              "answer": 0,
+              "picture": "water-wave"
             },
             {
               "type": "find_fix",
@@ -108,7 +114,8 @@
                 "waveed",
                 "waving"
               ],
-              "answer": 0
+              "answer": 0,
+              "picture": "bus-stop"
             },
             {
               "type": "find_fix",
@@ -131,7 +138,8 @@
                 "studied",
                 "studed"
               ],
-              "answer": 1
+              "answer": 1,
+              "picture": "popcorn"
             },
             {
               "type": "find_fix",
@@ -153,7 +161,8 @@
                 "shouts",
                 "shouted"
               ],
-              "answer": 2
+              "answer": 2,
+              "picture": "clapping-hands"
             },
             {
               "type": "build_it",
@@ -172,7 +181,8 @@
               ],
               "distractors": [
                 "tryed"
-              ]
+              ],
+              "picture": "jar"
             },
             {
               "type": "build_it",
@@ -190,7 +200,8 @@
               ],
               "distractors": [
                 "hurryed"
-              ]
+              ],
+              "picture": "circus-tent"
             },
             {
               "type": "sort_it",
@@ -243,7 +254,8 @@
                 "Sam threw the ball, and his dog caught it.",
                 "Sam threwed the ball, and his dog caught it."
               ],
-              "answer": 2
+              "answer": 2,
+              "picture": "dog"
             },
             {
               "type": "pick_one",
@@ -254,7 +266,8 @@
                 "Mina drinked a glass of milk and felt better.",
                 "Mina drank a glass of milk and feeled better."
               ],
-              "answer": 0
+              "answer": 0,
+              "picture": "glass-of-milk"
             },
             {
               "type": "pick_one",
@@ -266,7 +279,8 @@
                 "Over the years, the little seed become a tall tree.",
                 "Over the years, the little seed becamed a tall tree."
               ],
-              "answer": 1
+              "answer": 1,
+              "picture": "seedling"
             },
             {
               "type": "fill_blank",
@@ -290,7 +304,8 @@
                 "build",
                 "built"
               ],
-              "answer": 2
+              "answer": 2,
+              "picture": "bird"
             },
             {
               "type": "fill_blank",
@@ -302,7 +317,8 @@
                 "choosed",
                 "chosen"
               ],
-              "answer": 0
+              "answer": 0,
+              "picture": "t-shirt"
             },
             {
               "type": "find_fix",
@@ -325,7 +341,8 @@
                 "brought",
                 "brung"
               ],
-              "answer": 1
+              "answer": 1,
+              "picture": "cookie"
             },
             {
               "type": "find_fix",
@@ -346,7 +363,8 @@
                 "falled",
                 "fallen"
               ],
-              "answer": 0
+              "answer": 0,
+              "picture": "ice"
             },
             {
               "type": "find_fix",
@@ -373,7 +391,8 @@
                 "leaving",
                 "left"
               ],
-              "answer": 2
+              "answer": 2,
+              "picture": "bus"
             },
             {
               "type": "build_it",
@@ -391,7 +410,8 @@
               ],
               "distractors": [
                 "keeped"
-              ]
+              ],
+              "picture": "zipper-mouth-face"
             },
             {
               "type": "build_it",
@@ -410,7 +430,8 @@
               ],
               "distractors": [
                 "bringed"
-              ]
+              ],
+              "picture": "cold-face"
             },
             {
               "type": "sort_it",
@@ -462,7 +483,8 @@
                 "Mr. Pin opens the door. He looked outside and went back to bed.",
                 "Mr. Pin opened the door. He looks outside and went back to bed."
               ],
-              "answer": 1
+              "answer": 1,
+              "picture": "door"
             },
             {
               "type": "pick_one",
@@ -474,7 +496,8 @@
                 "From the top of the hill, we could seen the whole town.",
                 "From the top of the hill, we could see the whole town."
               ],
-              "answer": 3
+              "answer": 3,
+              "picture": "cityscape"
             },
             {
               "type": "pick_one",
@@ -486,7 +509,8 @@
                 "The witch waved her wand. Then she turned into a black cat.",
                 "The witch waved her wand. Then she turns into a black cat."
               ],
-              "answer": 2
+              "answer": 2,
+              "picture": "black-cat"
             },
             {
               "type": "fill_blank",
@@ -498,7 +522,8 @@
                 "tried",
                 "tries"
               ],
-              "answer": 1
+              "answer": 1,
+              "picture": "rock"
             },
             {
               "type": "fill_blank",
@@ -522,7 +547,8 @@
                 "runs",
                 "ran"
               ],
-              "answer": 2
+              "answer": 2,
+              "picture": "1st-place-medal"
             },
             {
               "type": "find_fix",
@@ -547,7 +573,8 @@
                 "drank",
                 "drunk"
               ],
-              "answer": 1
+              "answer": 1,
+              "picture": "cup-with-straw"
             },
             {
               "type": "find_fix",
@@ -574,7 +601,8 @@
                 "seen",
                 "seed"
               ],
-              "answer": 0
+              "answer": 0,
+              "picture": "mouse"
             },
             {
               "type": "find_fix",
@@ -602,7 +630,8 @@
                 "falls",
                 "fell"
               ],
-              "answer": 2
+              "answer": 2,
+              "picture": "kite"
             },
             {
               "type": "build_it",
@@ -623,7 +652,8 @@
               "distractors": [
                 "saw",
                 "can"
-              ]
+              ],
+              "picture": "crescent-moon"
             },
             {
               "type": "build_it",
@@ -641,7 +671,8 @@
               ],
               "distractors": [
                 "run"
-              ]
+              ],
+              "picture": "bell"
             },
             {
               "type": "sort_it",
@@ -693,7 +724,8 @@
                 "The children looked at the mice in the cage.",
                 "The childs looked at the mice in the cage."
               ],
-              "answer": 2
+              "answer": 2,
+              "picture": "mouse"
             },
             {
               "type": "pick_one",
@@ -705,7 +737,8 @@
                 "Every student in our class have a library book.",
                 "Every students in our class have library books."
               ],
-              "answer": 1
+              "answer": 1,
+              "picture": "books"
             },
             {
               "type": "pick_one",
@@ -717,7 +750,8 @@
                 "Mia's drawing is more better than mine.",
                 "Mia's drawing is best than mine."
               ],
-              "answer": 0
+              "answer": 0,
+              "picture": "artist-palette"
             },
             {
               "type": "fill_blank",
@@ -729,7 +763,8 @@
                 "feet",
                 "feets"
               ],
-              "answer": 1
+              "answer": 1,
+              "picture": "foot"
             },
             {
               "type": "fill_blank",
@@ -742,7 +777,8 @@
                 "most big",
                 "biggest"
               ],
-              "answer": 3
+              "answer": 3,
+              "picture": "whale"
             },
             {
               "type": "fill_blank",
@@ -755,7 +791,8 @@
                 "worst",
                 "most bad"
               ],
-              "answer": 2
+              "answer": 2,
+              "picture": "disappointed-face"
             },
             {
               "type": "find_fix",
@@ -776,7 +813,8 @@
                 "student's",
                 "studentes"
               ],
-              "answer": 0
+              "answer": 0,
+              "picture": "artist-palette"
             },
             {
               "type": "find_fix",
@@ -800,7 +838,8 @@
                 "mice",
                 "mices"
               ],
-              "answer": 1
+              "answer": 1,
+              "picture": "cheese-wedge"
             },
             {
               "type": "find_fix",
@@ -825,7 +864,8 @@
                 "strongerest",
                 "strongest"
               ],
-              "answer": 2
+              "answer": 2,
+              "picture": "flexed-biceps"
             },
             {
               "type": "build_it",
@@ -842,7 +882,8 @@
               "distractors": [
                 "gooder",
                 "best"
-              ]
+              ],
+              "picture": "open-book"
             },
             {
               "type": "build_it",
@@ -861,7 +902,8 @@
               "distractors": [
                 "children",
                 "foots"
-              ]
+              ],
+              "picture": "footprints"
             },
             {
               "type": "sort_it",
@@ -913,7 +955,8 @@
                 "The wizard has lots books and lots of magic.",
                 "The wizard has lots of magic and many books."
               ],
-              "answer": 3
+              "answer": 3,
+              "picture": "magic-wand"
             },
             {
               "type": "pick_one",
@@ -925,7 +968,8 @@
                 "Dad looked at my picture and said it was beautiful.",
                 "Dad looked at my picture and says it was beautiful."
               ],
-              "answer": 2
+              "answer": 2,
+              "picture": "framed-picture"
             },
             {
               "type": "pick_one",
@@ -936,7 +980,8 @@
                 "Winter is the coldiest season, and summer is the hottest.",
                 "Winter is the coldest season, and summer is the hotest."
               ],
-              "answer": 0
+              "answer": 0,
+              "picture": "snowman"
             },
             {
               "type": "fill_blank",
@@ -949,7 +994,8 @@
                 "throwed",
                 "thrown"
               ],
-              "answer": 1
+              "answer": 1,
+              "picture": "soccer-ball"
             },
             {
               "type": "fill_blank",
@@ -961,7 +1007,8 @@
                 "lots books",
                 "lots of books"
               ],
-              "answer": 2
+              "answer": 2,
+              "picture": "books"
             },
             {
               "type": "fill_blank",
@@ -973,7 +1020,8 @@
                 "can heard",
                 "could heard"
               ],
-              "answer": 0
+              "answer": 0,
+              "picture": "wind-face"
             },
             {
               "type": "find_fix",
@@ -995,7 +1043,8 @@
                 "bookes",
                 "books'"
               ],
-              "answer": 0
+              "answer": 0,
+              "picture": "books"
             },
             {
               "type": "find_fix",
@@ -1015,7 +1064,8 @@
                 "person",
                 "persones"
               ],
-              "answer": 1
+              "answer": 1,
+              "picture": "teacher"
             },
             {
               "type": "find_fix",
@@ -1041,7 +1091,8 @@
                 "spilling",
                 "spilled"
               ],
-              "answer": 2
+              "answer": 2,
+              "picture": "beverage-box"
             },
             {
               "type": "build_it",
@@ -1059,7 +1110,8 @@
               ],
               "distractors": [
                 "catched"
-              ]
+              ],
+              "picture": "face-with-thermometer"
             },
             {
               "type": "build_it",
@@ -1078,7 +1130,8 @@
               ],
               "distractors": [
                 "goodest"
-              ]
+              ],
+              "picture": "cookie"
             },
             {
               "type": "sort_it",

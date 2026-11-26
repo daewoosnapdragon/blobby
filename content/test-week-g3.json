@@ -23,7 +23,8 @@
                 "Last night the baby cried, so Mom picked her up.",
                 "Last night the baby cried, so Mom pick her up."
               ],
-              "answer": 1
+              "answer": 1,
+              "picture": "baby"
             },
             {
               "type": "pick_one",
@@ -34,7 +35,8 @@
                 "Mia smiled when she open the old book.",
                 "Mia smileed when she opened the old book."
               ],
-              "answer": 0
+              "answer": 0,
+              "picture": "open-book"
             },
             {
               "type": "pick_one",
@@ -45,7 +47,8 @@
                 "After school, they waited for Jun and then hurryed home.",
                 "After school, they waited for Jun and then hurried home."
               ],
-              "answer": 2
+              "answer": 2,
+              "picture": "school"
             },
             {
               "type": "fill_blank",
@@ -57,7 +60,8 @@
                 "stopped",
                 "stopping"
               ],
-              "answer": 1
+              "answer": 1,
+              "picture": "bus"
             },
             {
               "type": "fill_blank",
@@ -69,7 +73,8 @@
                 "studies",
                 "studied"
               ],
-              "answer": 2
+              "answer": 2,
+              "picture": "pencil"
             },
             {
               "type": "fill_blank",
@@ -81,7 +86,8 @@
                 "likeed",
                 "liking"
               ],
-              "answer": 0
+              "answer": 0,
+              "picture": "ghost"
             },
             {
               "type": "find_fix",
@@ -103,7 +109,8 @@
                 "calls",
                 "calling"
               ],
-              "answer": 0
+              "answer": 0,
+              "picture": "police-car"
             },
             {
               "type": "find_fix",
@@ -124,7 +131,8 @@
                 "opened",
                 "openned"
               ],
-              "answer": 1
+              "answer": 1,
+              "picture": "door"
             },
             {
               "type": "find_fix",
@@ -163,7 +171,8 @@
               ],
               "distractors": [
                 "cryed"
-              ]
+              ],
+              "picture": "spoon"
             },
             {
               "type": "build_it",
@@ -180,7 +189,8 @@
               ],
               "distractors": [
                 "planed"
-              ]
+              ],
+              "picture": "giraffe"
             },
             {
               "type": "sort_it",
@@ -232,7 +242,8 @@
                 "Jun taked his book and sat by the window.",
                 "Jun took his book and sitted by the window."
               ],
-              "answer": 0
+              "answer": 0,
+              "picture": "window"
             },
             {
               "type": "pick_one",
@@ -243,7 +254,8 @@
                 "Last week Mia read a book about a ghost and telled her brother the whole story.",
                 "Last week Mia read a book about a ghost and told her brother the whole story."
               ],
-              "answer": 2
+              "answer": 2,
+              "picture": "ghost"
             },
             {
               "type": "pick_one",
@@ -266,7 +278,8 @@
                 "begun",
                 "beginned"
               ],
-              "answer": 0
+              "answer": 0,
+              "picture": "popcorn"
             },
             {
               "type": "fill_blank",
@@ -278,7 +291,8 @@
                 "found",
                 "find"
               ],
-              "answer": 1
+              "answer": 1,
+              "picture": "key"
             },
             {
               "type": "fill_blank",
@@ -290,7 +304,8 @@
                 "catch",
                 "caught"
               ],
-              "answer": 2
+              "answer": 2,
+              "picture": "baseball"
             },
             {
               "type": "find_fix",
@@ -314,7 +329,8 @@
                 "becomed",
                 "becomes"
               ],
-              "answer": 0
+              "answer": 0,
+              "picture": "books"
             },
             {
               "type": "find_fix",
@@ -336,7 +352,8 @@
                 "found",
                 "finding"
               ],
-              "answer": 1
+              "answer": 1,
+              "picture": "memo"
             },
             {
               "type": "find_fix",
@@ -358,7 +375,8 @@
                 "runned",
                 "running"
               ],
-              "answer": 0
+              "answer": 0,
+              "picture": "bell"
             },
             {
               "type": "build_it",
@@ -377,7 +395,8 @@
               "distractors": [
                 "seen",
                 "runned"
-              ]
+              ],
+              "picture": "ghost"
             },
             {
               "type": "build_it",
@@ -393,7 +412,8 @@
               ],
               "distractors": [
                 "thinked"
-              ]
+              ],
+              "picture": "memo"
             },
             {
               "type": "sort_it",
@@ -444,7 +464,8 @@
                 "Leo went to the library. He found a book about ghosts.",
                 "Leo goes to the library. He found a book about ghosts."
               ],
-              "answer": 1
+              "answer": 1,
+              "picture": "books"
             },
             {
               "type": "pick_one",
@@ -455,7 +476,8 @@
                 "A ghost floated into the library. The librarian not noticed it.",
                 "A ghost floated into the library. The librarian did not notice it."
               ],
-              "answer": 2
+              "answer": 2,
+              "picture": "ghost"
             },
             {
               "type": "pick_one",
@@ -466,7 +488,8 @@
                 "Sam came home late. Mom asked him what had happen.",
                 "Sam came home late. Mom asked him what happen."
               ],
-              "answer": 0
+              "answer": 0,
+              "picture": "house"
             },
             {
               "type": "fill_blank",
@@ -478,7 +501,8 @@
                 "saw",
                 "seen"
               ],
-              "answer": 1
+              "answer": 1,
+              "picture": "flashlight"
             },
             {
               "type": "fill_blank",
@@ -490,7 +514,8 @@
                 "found",
                 "finds"
               ],
-              "answer": 0
+              "answer": 0,
+              "picture": "pencil"
             },
             {
               "type": "fill_blank",
@@ -502,7 +527,8 @@
                 "falls",
                 "fall"
               ],
-              "answer": 2
+              "answer": 2,
+              "picture": "cloud-with-rain"
             },
             {
               "type": "find_fix",
@@ -526,7 +552,8 @@
                 "goed",
                 "goes"
               ],
-              "answer": 0
+              "answer": 0,
+              "picture": "bell"
             },
             {
               "type": "find_fix",
@@ -554,7 +581,8 @@
                 "waited",
                 "waitted"
               ],
-              "answer": 1
+              "answer": 1,
+              "picture": "bus-stop"
             },
             {
               "type": "find_fix",
@@ -578,7 +606,8 @@
                 "hears",
                 "heared"
               ],
-              "answer": 0
+              "answer": 0,
+              "picture": "mobile-phone"
             },
             {
               "type": "build_it",
@@ -595,7 +624,8 @@
               ],
               "distractors": [
                 "saw"
-              ]
+              ],
+              "picture": "ghost"
             },
             {
               "type": "build_it",
@@ -664,7 +694,8 @@
                 "There is a man at the door.",
                 "There is a man at door."
               ],
-              "answer": 1
+              "answer": 1,
+              "picture": "door"
             },
             {
               "type": "pick_one",
@@ -675,7 +706,8 @@
                 "Teacher has a red cup on her desk.",
                 "Our teacher has a red cup on her desk."
               ],
-              "answer": 2
+              "answer": 2,
+              "picture": "teacher"
             },
             {
               "type": "pick_one",
@@ -686,7 +718,8 @@
                 "After school, Sam finish his homework and plays outside.",
                 "After school, Sam finishes his homework and play outside."
               ],
-              "answer": 0
+              "answer": 0,
+              "picture": "memo"
             },
             {
               "type": "fill_blank",
@@ -698,7 +731,8 @@
                 "the library",
                 "librarys"
               ],
-              "answer": 1
+              "answer": 1,
+              "picture": "books"
             },
             {
               "type": "fill_blank",
@@ -710,7 +744,8 @@
                 "brush",
                 "brushs"
               ],
-              "answer": 0
+              "answer": 0,
+              "picture": "toothbrush"
             },
             {
               "type": "fill_blank",
@@ -722,7 +757,8 @@
                 "taked",
                 "takes"
               ],
-              "answer": 2
+              "answer": 2,
+              "picture": "bus"
             },
             {
               "type": "find_fix",
@@ -743,7 +779,8 @@
                 "mans",
                 "man's"
               ],
-              "answer": 0
+              "answer": 0,
+              "picture": "coat"
             },
             {
               "type": "find_fix",
@@ -767,7 +804,8 @@
                 "opens",
                 "opening"
               ],
-              "answer": 1
+              "answer": 1,
+              "picture": "potted-plant"
             },
             {
               "type": "find_fix",
@@ -791,7 +829,8 @@
                 "dos",
                 "doing"
               ],
-              "answer": 0
+              "answer": 0,
+              "picture": "television"
             },
             {
               "type": "build_it",
@@ -808,7 +847,8 @@
               ],
               "distractors": [
                 "reading"
-              ]
+              ],
+              "picture": "open-book"
             },
             {
               "type": "build_it",
@@ -825,7 +865,8 @@
               ],
               "distractors": [
                 "live"
-              ]
+              ],
+              "picture": "ghost"
             },
             {
               "type": "sort_it",
@@ -876,7 +917,8 @@
                 "The librarian noticed that Mia took two books.",
                 "The librarian noticed that Mia taked two books."
               ],
-              "answer": 1
+              "answer": 1,
+              "picture": "books"
             },
             {
               "type": "pick_one",
@@ -887,7 +929,8 @@
                 "Every day, she rides bike to school.",
                 "Every day, she rides a bike to school."
               ],
-              "answer": 2
+              "answer": 2,
+              "picture": "bicycle"
             },
             {
               "type": "pick_one",
@@ -898,7 +941,8 @@
                 "Jun didn't brought his lunch, so he was hungry later.",
                 "Jun not bring his lunch, so he was hungry later."
               ],
-              "answer": 0
+              "answer": 0,
+              "picture": "sandwich"
             },
             {
               "type": "fill_blank",
@@ -909,7 +953,8 @@
                 "A",
                 "The"
               ],
-              "answer": 1
+              "answer": 1,
+              "picture": "coin"
             },
             {
               "type": "fill_blank",
@@ -921,7 +966,8 @@
                 "readed",
                 "read"
               ],
-              "answer": 2
+              "answer": 2,
+              "picture": "closed-book"
             },
             {
               "type": "fill_blank",
@@ -933,7 +979,8 @@
                 "go",
                 "gos"
               ],
-              "answer": 0
+              "answer": 0,
+              "picture": "books"
             },
             {
               "type": "find_fix",
@@ -957,7 +1004,8 @@
                 "sat",
                 "sits"
               ],
-              "answer": 1
+              "answer": 1,
+              "picture": "ghost"
             },
             {
               "type": "find_fix",
@@ -1000,7 +1048,8 @@
                 "taken",
                 "took"
               ],
-              "answer": 2
+              "answer": 2,
+              "picture": "flashlight"
             },
             {
               "type": "build_it",
@@ -1017,7 +1066,8 @@
               ],
               "distractors": [
                 "ate"
-              ]
+              ],
+              "picture": "carrot"
             },
             {
               "type": "build_it",
@@ -1036,7 +1086,8 @@
               ],
               "distractors": [
                 "catched"
-              ]
+              ],
+              "picture": "fish"
             },
             {
               "type": "sort_it",
