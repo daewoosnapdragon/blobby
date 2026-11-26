@@ -4,7 +4,7 @@ import { resetTestDb } from './helpers/db';
 const TABLES = [
   'wp_classes', 'wp_students', 'wp_plans', 'wp_plan_assignments', 'wp_weeks',
   'wp_lessons', 'wp_questions', 'wp_attempts', 'wp_lesson_completions',
-  'wp_star_events', 'wp_practice_days',
+  'wp_star_events', 'wp_practice_days', 'wp_student_skills',
 ];
 
 let sql: Awaited<ReturnType<typeof resetTestDb>>;
@@ -17,13 +17,13 @@ async function rejects(p: PromiseLike<unknown>, code: string) {
 const CHECK = '23514', UNIQUE = '23505';
 
 describe('lockdown', () => {
-  it('has all 11 tables', async () => {
+  it('has all 12 tables', async () => {
     const rows = await sql`select tablename from pg_tables where schemaname='public' and tablename like 'wp\\_%'`;
     expect(rows.map((r) => r.tablename).sort()).toEqual([...TABLES].sort());
   });
   it('enables RLS on every table', async () => {
     const rows = await sql`select relname, relrowsecurity from pg_class where relname = any(${TABLES}) and relkind='r'`;
-    expect(rows).toHaveLength(11);
+    expect(rows).toHaveLength(TABLES.length);
     for (const r of rows) expect(r.relrowsecurity, r.relname).toBe(true);
   });
   it('has zero policies on wp_ tables', async () => {
@@ -124,5 +124,35 @@ describe('practice students', () => {
     expect(kid.is_preview).toBe(false);
     await sql`insert into wp_students (id, class_id, display_name, link_secret, is_preview) values (gen_random_uuid(), ${c.id}, 'Teacher', 'prv-1', true)`;
     await rejects(sql`insert into wp_students (id, class_id, display_name, link_secret, is_preview) values (gen_random_uuid(), ${c.id}, 'Teacher', 'prv-2', true)`, UNIQUE);
+  });
+});
+
+describe('review tracks', () => {
+  it('a bank question has a grade instead of a lesson; exactly one of the two', async () => {
+    await sql`insert into wp_questions (bank_grade, position, type, payload, skill) values (3, 1, 'pick_one', '{}'::jsonb, 'past-tense')`;
+    await rejects(sql`insert into wp_questions (position, type, payload) values (1, 'pick_one', '{}'::jsonb)`, CHECK);
+    const [c] = await sql`insert into wp_classes (grade, name, class_code) values (3, 'Bank check', 'BNK234') returning id`;
+    const [p] = await sql`insert into wp_plans (title, kind) values ('Bank check plan', 'test') returning id`;
+    const [w] = await sql`insert into wp_weeks (plan_id, position, skill) values (${p.id}, 1, 'x') returning id`;
+    const [l] = await sql`insert into wp_lessons (week_id, position, title) values (${w.id}, 1, 'x') returning id`;
+    await rejects(sql`insert into wp_questions (lesson_id, bank_grade, position, type, payload) values (${l.id}, 3, 1, 'pick_one', '{}'::jsonb)`, CHECK);
+    void c;
+  });
+  it('attempts can carry a run id', async () => {
+    const [col] = await sql`select data_type from information_schema.columns where table_name = 'wp_attempts' and column_name = 'run_id'`;
+    expect(col.data_type).toBe('uuid');
+  });
+  it('wp_student_skills exists, is locked down, and checks its values', async () => {
+    const [t] = await sql`select relrowsecurity from pg_class where relname = 'wp_student_skills'`;
+    expect(t.relrowsecurity).toBe(true);
+    const [g] = await sql`select has_table_privilege('anon', 'wp_student_skills', 'select') as anon`;
+    expect(g.anon).toBe(false);
+    const [c] = await sql`insert into wp_classes (grade, name, class_code) values (2, 'Skill check', 'SKL234') returning id`;
+    const [s] = await sql`insert into wp_students (id, class_id, display_name, link_secret) values (gen_random_uuid(), ${c.id}, 'K', 'skl-1') returning id`;
+    const [row] = await sql`insert into wp_student_skills (student_id, skill, source, state) values (${s.id}, 'past-tense', 'pretest', 'active') returning spacing, lessons_since, removed_by_teacher`;
+    expect(row).toEqual({ spacing: 3, lessons_since: 0, removed_by_teacher: false });
+    await rejects(sql`insert into wp_student_skills (student_id, skill, source, state) values (${s.id}, 'be', 'magic', 'active')`, CHECK);
+    await rejects(sql`insert into wp_student_skills (student_id, skill, source, state) values (${s.id}, 'be', 'auto', 'gone')`, CHECK);
+    await rejects(sql`insert into wp_student_skills (student_id, skill, source, state) values (${s.id}, 'past-tense', 'auto', 'active')`, UNIQUE);
   });
 });

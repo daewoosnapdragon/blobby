@@ -22,13 +22,20 @@ export interface WpWeek {
 }
 export interface WpLesson { id: string; week_id: string; position: number; title: string }
 export interface WpQuestion {
-  id: string; lesson_id: string; position: number; type: string;
+  /** lesson_id for class questions; bank_grade for review-bank questions (exactly one is set) */
+  id: string; lesson_id: string | null; bank_grade: number | null; skill: string | null; position: number; type: string;
   payload: unknown; audio: Record<string, unknown>;
   deleted_at: Date | null; updated_at: Date;
 }
 export interface WpAttempt {
   id: string; student_id: string; question_id: string; client_attempt_id: string;
-  correct: boolean; context: AttemptContext; created_at: Date;
+  correct: boolean; context: AttemptContext; created_at: Date; run_id: string | null;
+}
+export type SkillSource = 'pretest' | 'next_step' | 'auto' | 'teacher';
+export type SkillState = 'active' | 'mastered' | 'removed';
+export interface WpStudentSkill {
+  student_id: string; skill: string; source: SkillSource; state: SkillState;
+  spacing: number; lessons_since: number; removed_by_teacher: boolean; added_at: Date; changed_at: Date;
 }
 export interface WpLessonCompletion {
   id: string; student_id: string; lesson_id: string; completed_at: Date;
