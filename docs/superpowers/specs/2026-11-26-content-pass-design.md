@@ -1,6 +1,6 @@
 # Content pass (light touch): design
 
-*Status: draft for Kyla's approval · Nov 26, 2026*
+*Status: draft for Kyla's approval · Nov 26, 2026 · builder check done; SQL-only path confirmed by Kyla*
 
 ## Why
 
@@ -54,12 +54,18 @@ handed the rest of the calls to Claude.
 - Content lives in `content/test-week-g{1..4}.json` (plan files: weeks → lessons → questions, each with a
   `skill`) and `content/review-bank-g{1..4}.json` (`{ grade, skills: { key: [questions] } }`). Both are
   validated by `parseContent` / `parseBank` and the schema; `scripts/check-content.ts` runs them.
-- **The importer matches questions by position within a lesson** and, by default, keeps the app's payload when
-  the file differs ("teacher edits win"). Any reworded prompt or renamed character is a differing payload, so
-  this pass must be imported with `--overwrite`, which also discards in-app edits. Before that, Kyla must be
-  able to see what she would lose.
-- Audio is keyed by text and voice; only changed or new strings are synthesized on import (about 140 new
-  sentences plus about 250 new prompt strings: roughly 15,000 characters, well under a dollar).
+- **Kyla loads content only through the Supabase SQL editor** (confirmed Nov 26). She does not run the
+  terminal importer. Today the SQL path (`scripts/content-to-sql.ts`) only adds questions where none exist and
+  makes no audio, so this pass needs an update mode and another way to make audio.
+- Questions are matched by position within a lesson (or within a bank skill). Rewording a prompt or renaming a
+  character changes an existing row's payload in place; the row keeps its id, so kids' attempts stay attached
+  to the same question.
+- Audio is keyed by text and voice and lives in Supabase Storage; the app's server has the voice key and the
+  storage key, the SQL editor has neither. About 140 new sentences and about 250 new prompt strings need audio
+  (roughly 15,000 characters, well under a dollar). Grades 1–2 hear every prompt read aloud, so the new strings
+  must have audio before kids meet them.
+- In-app edits by Kyla must not be lost silently: `wp_questions.updated_at` moves when she saves in the editor,
+  so edited rows can be listed before an update.
 - Questions never use real students' names. Grade 1–2 kids hear prompts read aloud and mostly cannot read
   instructions, so prompts stay short and plain.
 - The two content rules from the question-types design hold: never a lesson of only Yes or no; picture first
@@ -191,17 +197,41 @@ plus the authored additions, with three sections per file:
 
 Kyla marks fixes in the file or in the app after import; the file is the record of what changed.
 
-### 6. Checker and importer changes (small code)
+### 6. Getting it live: SQL update mode and a "Make missing audio" button
+
+**Approaches considered** (Claude's call, after Kyla said she uses only the SQL editor): (a) Kyla runs the
+terminal importer once with the keys in her shell: she declined. (b) SQL only, no audio: Grades 1–2 would get
+silent prompts; ruled out. (c) **(Picked) SQL editor for the content, the app for the audio**: the SQL script
+gains an update mode that rewrites payloads by position, and the teacher side gains a button that makes any
+missing audio using the keys the server already has.
+
+- `scripts/content-to-sql.ts --update` writes one SQL file per content file in two parts, in the style of
+  `supabase/reset-test-stars.sql`:
+  - **PART 1 (read only):** lists the plan's (or bank grade's) questions that were edited in the app
+    (`updated_at > created_at`), with week, lesson, position and the first 60 characters of the text, so Kyla
+    sees what PART 2 would replace and can re-apply her edits afterwards.
+  - **PART 2:** inside one transaction, for every position in the file: `update` the existing row's `type`,
+    `payload` and `skill` (keeping its id), or `insert` it where no row exists; questions the teacher deleted
+    stay deleted. Plans, weeks and lessons are upserted as today. Safe to run twice (the second run changes
+    nothing).
+  - Without `--update` the script behaves as today (add only).
+- **"Make missing audio"** on the teacher Plans page: a card that says how many spoken strings across all
+  questions (lessons and banks, not deleted) have no audio yet, with one button. Each press synthesizes up to 20
+  strings with the existing `ensureAudio` path (same voice, same storage keys), updates those rows' `audio`
+  maps, and shows the new remaining count; it keeps going by itself until the count is zero, and it can be
+  stopped and resumed. Errors from the voice service show as a plain message and leave the rest untouched. This
+  is the one new product feature in this pass, and it is reusable for every future content change made through
+  SQL.
+
+### 7. Checker changes (small code)
 
 - `scripts/check-content.ts` adds two hard rules: no lesson (or bank skill) where every question is
   `right_wrong`; no kid-facing prompt **or sort it group label** contains the word "wrong" (case-insensitive,
   whole word). Both fail with the file, lesson or skill, and the text. (Choice texts and sentences may contain
   it where it is the grammar being taught.)
-- `scripts/import-content.ts --dry-run` already counts differing questions; it now also prints each one
-  (week, lesson, position, and the first 60 characters of the app's text and the file's text) so Kyla can see
-  exactly which in-app edits `--overwrite` would replace. No importer semantics change.
+- `scripts/import-content.ts` is unchanged.
 
-### 7. Order of work and the import
+### 8. Order of work and the import
 
 1. Script: cast mapping and prompt rotation, with unit tests on a small fixture (idempotent, collision rule,
    specific prompts untouched, possessives).
@@ -209,8 +239,9 @@ Kyla marks fixes in the file or in the app after import; the file is the record 
    G1, G2, G3, G4, then banks). `check-content` green after each file.
 3. Generate the review list; run the full checker on all eight files; run the content unit tests.
 4. Kyla reads the review list (about an evening) and fixes anything in the files or notes it.
-5. Import: `--dry-run` per file, read the differing list, then `--overwrite` per file. Audio generates for
-   the new strings on the same run.
+5. Deploy the app (for the audio button). Then, per file: run PART 1 in the SQL editor and read the edited
+   list; run PART 2; finally press "Make missing audio" once and let it finish. Kids should not open the
+   changed lessons until the audio count reads zero (a few minutes).
 
 ### Tests
 
@@ -218,7 +249,11 @@ Kyla marks fixes in the file or in the app after import; the file is the record 
   possessive behavior, no lowercase matches, the collision rule; `rotatePrompts(questions, seedTitle)`
   determinism, no consecutive repeats, specific prompts untouched, idempotence (running twice equals once).
 - Checker unit tests for the two new rules.
-- Importer dry-run printing: an integration test asserting the differing lines appear for a changed payload.
+- `contentSql` update mode: unit tests on the generated SQL (update where a row exists, insert where not,
+  deleted stays deleted, idempotent), and an integration test that runs the generated SQL against the test
+  database twice and checks row ids are unchanged and payloads updated.
+- "Make missing audio": unit tests for the pure "which strings lack audio" helper; an integration test for the
+  action with a fake voice service (20 per press, remaining count, resumable, an error leaves others intact).
 - Content: `npx tsx scripts/check-content.ts` on all eight files passes; a unit test asserts every lesson has
   15 questions, every bank skill 11, each lesson has exactly three new-type questions of three different
   types at positions 13 to 15, no lesson has two Yes or no, and every picture first picture exists.
@@ -232,7 +267,8 @@ silly questions; review before Dec 10.
 the deliberate mistakes; `Not right` as the sort it label and its prompt; the prompt pools and the no-repeat
 rotation; three new questions per lesson at slots 3, 7, 11 and one per bank skill; the type-by-skill table and
 the one-Yes-or-no-per-lesson rule; about 40 silly rewrites and their register; a committed Markdown review
-list; `--overwrite` import with a printed differing list first; the two new checker rules.
+list; the SQL update mode with a PART 1 edited-rows list; the "Make missing audio" button on the Plans page
+(20 strings per press, self-continuing); the two new checker rules.
 
 **Left to the builder:** the exact new sentences (within the voice rules); which existing questions go silly;
 picture choices for new and rewritten questions; hash and cycling details in the rotation; the review list's
