@@ -111,6 +111,98 @@ function ListenTapForm({ draft: d, onChange }: P<'listen_tap'>) {
   );
 }
 
+function RightWrongForm({ draft: d, onChange }: P<'right_wrong'>) {
+  const group = useId();
+  return (
+    <>
+      <TextField label="Question" value={d.prompt} onChange={(prompt) => onChange({ ...d, prompt })} />
+      <TextField label="Sentence" value={d.sentence} onChange={(sentence) => onChange({ ...d, sentence })} placeholder="She don’t like carrots." />
+      <fieldset className={s.list}>
+        <legend>Is it right?</legend>
+        <div className={s.chips}>
+          {([true, false] as const).map((yes) => (
+            <label key={String(yes)} className={s.chip}>
+              <input type="radio" name={group} checked={d.right === yes} onChange={() => onChange({ ...d, right: yes })} />
+              <span>{yes ? 'Yes' : 'No'}</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+    </>
+  );
+}
+
+function OddOneOutForm({ draft: d, onChange }: P<'odd_one_out'>) {
+  return (
+    <>
+      <TextField label="Instruction" value={d.prompt} onChange={(prompt) => onChange({ ...d, prompt })} placeholder="Which word doesn’t belong?" />
+      <ListField legend="Words" hint="Three or four words. Select the odd one." itemLabel="Word" addLabel="Add a word" min={3} max={4}
+        items={d.words} answer={d.answer} onChange={(words, answer) => onChange({ ...d, words, answer: answer ?? d.answer })} />
+    </>
+  );
+}
+
+function PictureFirstForm({ draft: d, onChange }: P<'picture_first'>) {
+  return (
+    <>
+      <TextField label="Question" value={d.prompt} onChange={(prompt) => onChange({ ...d, prompt })} placeholder="Which one matches the picture?" />
+      <ListField legend="Choices" hint="Two to four. Select the one that matches the picture." itemLabel="Choice" addLabel="Add a choice" min={2} max={4}
+        items={d.choices} answer={d.answer} onChange={(choices, answer) => onChange({ ...d, choices, answer: answer ?? d.answer })} />
+    </>
+  );
+}
+
+const sentenceWords = (sentence: string) => sentence.trim().split(/\s+/).filter(Boolean);
+
+function TapAllForm({ draft: d, onChange }: P<'tap_all'>) {
+  const words = sentenceWords(d.sentence);
+  const toggle = (i: number, on: boolean) =>
+    onChange({ ...d, answers: on ? [...d.answers.filter((a) => a !== i), i].sort((a, b) => a - b) : d.answers.filter((a) => a !== i) });
+  return (
+    <>
+      <TextField label="Instruction" value={d.prompt} onChange={(prompt) => onChange({ ...d, prompt })} placeholder="Tap every noun." />
+      <TextField label="Sentence" hint="Type the whole sentence." value={d.sentence}
+        onChange={(sentence) => { const n = sentenceWords(sentence).length; onChange({ ...d, sentence, answers: d.answers.filter((a) => a < n) }); }} placeholder="The dog ate my shoe." />
+      <fieldset className={s.list}>
+        <legend>Which words?</legend>
+        {words.length === 0 ? <p className={s.hint}>Type the sentence above, then pick every word to tap.</p> : (
+          <div className={s.chips}>
+            {words.map((w, i) => (
+              <label key={i} className={s.chip}>
+                <input type="checkbox" checked={d.answers.includes(i)} onChange={(e) => toggle(i, e.target.checked)} />
+                <span>{w}</span>
+              </label>
+            ))}
+          </div>
+        )}
+      </fieldset>
+    </>
+  );
+}
+
+function MatchPairsForm({ draft: d, onChange }: P<'match_pairs'>) {
+  const setSide = (i: number, side: 'left' | 'right', v: string) =>
+    onChange({ ...d, pairs: d.pairs.map((p, j) => (j === i ? { ...p, [side]: v } : p)) });
+  return (
+    <>
+      <TextField label="Instruction" value={d.prompt} onChange={(prompt) => onChange({ ...d, prompt })} placeholder="Match today with yesterday." />
+      <fieldset className={s.list}>
+        <legend>Pairs</legend>
+        {d.pairs.map((p, i) => (
+          <div key={i} className={s.row}>
+            <span className={s.rowNum} aria-hidden="true">{i + 1}</span>
+            <input className={s.input} value={p.left} aria-label={`Left ${i + 1}`} autoComplete="off" onChange={(e) => setSide(i, 'left', e.target.value)} />
+            <input className={s.input} value={p.right} aria-label={`Right ${i + 1}`} autoComplete="off" onChange={(e) => setSide(i, 'right', e.target.value)} />
+            <button type="button" className={s.iconBtn} disabled={d.pairs.length <= 2} aria-label={`Remove pair ${i + 1}`}
+              onClick={() => onChange({ ...d, pairs: d.pairs.filter((_, j) => j !== i) })}><span aria-hidden="true">×</span></button>
+          </div>
+        ))}
+        <button type="button" className={s.addBtn} disabled={d.pairs.length >= 5} onClick={() => onChange({ ...d, pairs: [...d.pairs, { left: '', right: '' }] })}>+ Add a pair</button>
+      </fieldset>
+    </>
+  );
+}
+
 export function TypeForm({ draft, onChange }: { draft: NonWatchDraft; onChange: (d: NonWatchDraft) => void }) {
   switch (draft.type) {
     case 'pick_one': return <PickOneForm draft={draft} onChange={onChange} />;
@@ -119,6 +211,11 @@ export function TypeForm({ draft, onChange }: { draft: NonWatchDraft; onChange: 
     case 'build_it': return <BuildItForm draft={draft} onChange={onChange} />;
     case 'sort_it': return <SortItForm draft={draft} onChange={onChange} />;
     case 'listen_tap': return <ListenTapForm draft={draft} onChange={onChange} />;
+    case 'right_wrong': return <RightWrongForm draft={draft} onChange={onChange} />;
+    case 'odd_one_out': return <OddOneOutForm draft={draft} onChange={onChange} />;
+    case 'picture_first': return <PictureFirstForm draft={draft} onChange={onChange} />;
+    case 'tap_all': return <TapAllForm draft={draft} onChange={onChange} />;
+    case 'match_pairs': return <MatchPairsForm draft={draft} onChange={onChange} />;
   }
 }
 

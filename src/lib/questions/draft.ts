@@ -10,7 +10,14 @@ export type NonWatchDraft = WithPicture & (
   | { type: 'find_fix'; sentence: string; wrongIndex: number; fixes: string[]; answer: number }
   | { type: 'build_it'; prompt: string; tiles: string[]; distractors: string[] }
   | { type: 'sort_it'; prompt: string; groups: string[]; items: { text: string; group: number }[] }
-  | { type: 'fill_blank'; before: string; after: string; choices: string[]; answer: number });
+  | { type: 'fill_blank'; before: string; after: string; choices: string[]; answer: number }
+  | { type: 'right_wrong'; prompt: string; sentence: string; right: boolean | null }
+  | { type: 'odd_one_out'; prompt: string; words: string[]; answer: number }
+  /** `picture` is required for this type: '' means not picked yet, and the payload leaves it out so validation says so. */
+  | { type: 'picture_first'; prompt: string; choices: string[]; answer: number }
+  /** `answers` are indexes into the sentence's words. */
+  | { type: 'tap_all'; prompt: string; sentence: string; answers: number[] }
+  | { type: 'match_pairs'; prompt: string; pairs: { left: string; right: string }[] });
 export type WatchDraft = { type: 'watch_answer'; video: string; questions: NonWatchDraft[] };
 export type Draft = NonWatchDraft | WatchDraft;
 
@@ -21,6 +28,11 @@ export const TYPE_NAMES: Record<QuestionType, string> = {
   build_it: 'Build it',
   sort_it: 'Sort it',
   listen_tap: 'Listen and tap',
+  right_wrong: 'Right or wrong',
+  odd_one_out: 'Odd one out',
+  picture_first: 'Picture first',
+  tap_all: 'Tap them all',
+  match_pairs: 'Match pairs',
   watch_answer: 'Watch and answer',
 };
 
@@ -34,6 +46,11 @@ export function emptyDraft(type: QuestionType): Draft {
     case 'build_it': return { type, picture: '', prompt: '', tiles: ['', ''], distractors: [] };
     case 'sort_it': return { type, picture: '', prompt: '', groups: ['', ''], items: [{ text: '', group: 0 }] };
     case 'fill_blank': return { type, picture: '', before: '', after: '', choices: ['', ''], answer: -1 };
+    case 'right_wrong': return { type, picture: '', prompt: 'Is this sentence right?', sentence: '', right: null };
+    case 'odd_one_out': return { type, picture: '', prompt: '', words: ['', '', ''], answer: -1 };
+    case 'picture_first': return { type, picture: '', prompt: 'Which one matches the picture?', choices: ['', ''], answer: -1 };
+    case 'tap_all': return { type, picture: '', prompt: '', sentence: '', answers: [] };
+    case 'match_pairs': return { type, picture: '', prompt: '', pairs: [{ left: '', right: '' }, { left: '', right: '' }] };
     case 'watch_answer': return { type, video: '', questions: [emptyDraft('pick_one')] };
   }
 }
@@ -46,6 +63,11 @@ export function draftFromQuestion(q: Question): Draft {
     case 'build_it': return { type: q.type, picture: q.picture ?? '', prompt: q.prompt, tiles: [...q.tiles], distractors: [...(q.distractors ?? [])] };
     case 'sort_it': return { type: q.type, picture: q.picture ?? '', prompt: q.prompt, groups: [...q.groups], items: q.items.map((i) => ({ ...i })) };
     case 'fill_blank': return { type: q.type, picture: q.picture ?? '', before: q.before, after: q.after, choices: [...q.choices], answer: q.answer };
+    case 'right_wrong': return { type: q.type, picture: q.picture ?? '', prompt: q.prompt, sentence: q.sentence, right: q.right };
+    case 'odd_one_out': return { type: q.type, picture: q.picture ?? '', prompt: q.prompt, words: [...q.words], answer: q.answer };
+    case 'picture_first': return { type: q.type, picture: q.picture, prompt: q.prompt, choices: [...q.choices], answer: q.answer };
+    case 'tap_all': return { type: q.type, picture: q.picture ?? '', prompt: q.prompt, sentence: q.words.join(' '), answers: [...q.answers] };
+    case 'match_pairs': return { type: q.type, picture: q.picture ?? '', prompt: q.prompt, pairs: q.pairs.map((p) => ({ ...p })) };
     case 'watch_answer': return { type: q.type, video: q.youtubeId, questions: q.questions.map((x) => draftFromQuestion(x) as NonWatchDraft) };
   }
 }
@@ -101,6 +123,25 @@ function nonWatchPayload(d: NonWatchDraft): Payload {
       const c = compact(d.choices, d.answer);
       return { before: d.before.trim(), after: d.after.trim(), choices: c.list, answer: c.answer };
     }
+    case 'right_wrong':
+      return { prompt: d.prompt.trim(), sentence: d.sentence.trim(), ...(d.right === null ? {} : { right: d.right }) };
+    case 'odd_one_out': {
+      const c = compact(d.words, d.answer);
+      return { prompt: d.prompt.trim(), words: c.list, answer: c.answer };
+    }
+    case 'picture_first': {
+      const c = compact(d.choices, d.answer);
+      return { prompt: d.prompt.trim(), choices: c.list, answer: c.answer };
+    }
+    case 'tap_all': {
+      const words = d.sentence.trim().split(/\s+/).filter(Boolean);
+      return { prompt: d.prompt.trim(), words, answers: d.answers.filter((a) => a < words.length).sort((a, b) => a - b) };
+    }
+    case 'match_pairs':
+      return {
+        prompt: d.prompt.trim(),
+        pairs: d.pairs.map((p) => ({ left: p.left.trim(), right: p.right.trim() })).filter((p) => p.left || p.right),
+      };
   }
 }
 
@@ -113,5 +154,10 @@ export function draftWords(d: NonWatchDraft): string {
     case 'build_it': return [...d.tiles, d.prompt].join(' ');
     case 'sort_it': return [...d.items.map((i) => i.text), d.prompt].join(' ');
     case 'fill_blank': return [d.before, ...d.choices, d.after].join(' ');
+    case 'right_wrong': return d.sentence;
+    case 'odd_one_out': return [d.prompt, ...d.words].join(' ');
+    case 'picture_first': return [d.prompt, ...d.choices].join(' ');
+    case 'tap_all': return [d.prompt, d.sentence].join(' ');
+    case 'match_pairs': return [d.prompt, ...d.pairs.flatMap((p) => [p.left, p.right])].join(' ');
   }
 }

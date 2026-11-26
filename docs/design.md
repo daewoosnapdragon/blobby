@@ -108,7 +108,7 @@ Saving only on the kid's device was ruled out: progress is lost when the browser
 - **Missed questions come back:** questions the kid got wrong in lessons show up more often in free practice until they answer them correctly.
 
 ### 5.6 Question types
-All seven check themselves.
+All twelve check themselves.
 
 | Type | What the kid does |
 |---|---|
@@ -118,6 +118,11 @@ All seven check themselves.
 | Build it | Taps word tiles into order to make the sentence |
 | Sort it | Puts words into groups (noun/verb, short a/long a) |
 | Fill the blank | Chooses the word that fits |
+| Yes or no (right or wrong) | Reads one sentence and taps **Yes** if it's right or **No** if it isn't |
+| Odd one out | Taps the one word of 3–4 that doesn't belong with the others (say, the verb among nouns) |
+| Picture first | Sees a big picture first (160px, from `public/pictures`), then taps which of 2–4 words or sentences matches it |
+| Tap them all | Taps every word in a sentence that fits (say, all the nouns), then **Check**; a miss marks only the extra words |
+| Match pairs | Pairs 2–5 left tiles with their right tiles (today/yesterday, singular/plural), then **Check**; a miss marks only the off pairs |
 | Watch and answer | Watches a YouTube video inside the app (e.g. a long e phonics song), then answers a few questions of the types above |
 
 How answering works:
@@ -257,6 +262,8 @@ These timings are already in the mockup code:
   - Roughly 600+ questions in all.
 - **Accuracy matters most.** Kyla's rule for teacher materials is that obvious mistakes make people stop using them; the same goes for kids and parents. Content gets reviewed before the test weeks.
 - **About 8 questions per lesson** (Claude's proposal). Free practice needs enough variety that kids aren't just memorizing answers.
+- **Never a lesson of only yes or no.** A right-or-wrong question is a coin flip, so it mixes with other types; a lesson made of only those would reward guessing.
+- **Picture first only for what an emoji can show:** a thing or an animal (a frog, two frogs), never tense: a picture can't say yesterday. Every picture first picture must be a file in `public/pictures`; `npx tsx scripts/check-content.ts <file>` fails, naming the lesson (or review skill) and the picture, when one is missing.
 
 ## 9. Built for homework later
 

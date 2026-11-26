@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll, afterEach, vi } from 'vitest';
 import { resetTestDb, TEST_DATABASE_URL } from './helpers/db';
-import { seed, seedPlan, CLASS, STUDENTS, PLAN } from '../e2e/fixtures/seed';
+import { seed, seedPlan, CLASS, STUDENTS, PLAN, NEW_TYPES_LESSON } from '../e2e/fixtures/seed';
+import { parseQuestion } from '@/lib/questions/schema';
 import { audioKey } from '@/lib/tts';
 
 process.env.DATABASE_URL = TEST_DATABASE_URL;
@@ -141,6 +142,31 @@ describe('saveQuestion', () => {
     const [row] = await sql`select id, audio from wp_questions where id = ${first.id}`;
     expect(row.audio['Keep my sound?']).toBe(old['Keep my sound?']);
     expect(row.audio['I walking.']).toBeUndefined();
+  });
+
+  it('saves one question of each newer type and reads it back as the same question', async () => {
+    const { saveQuestion } = await import('@/lib/db/teacher');
+    const a = fakeAudio();
+    // its own lesson (no questions yet) in the open week, so other tests' positions don't move
+    const lessonId = NEW_TYPES_LESSON.id;
+    await sql`insert into wp_lessons (id, week_id, position, title) values (${lessonId}, ${PLAN.weeks.open.id}, 3, ${NEW_TYPES_LESSON.title})`;
+    try {
+      for (const [i, q] of NEW_TYPES_LESSON.questions.entries()) {
+        const r = await saveQuestion(lessonId, {}, q.type, q.payload, { audio: a.deps });
+        expect(r.audio).toBe('ok');
+        const [row] = await sql<{ position: number; type: string; payload: unknown }[]>`
+          select position, type, payload from wp_questions where id = ${r.id}`;
+        expect(row.position).toBe(i + 1);
+        expect(row.type).toBe(q.type);
+        expect(parseQuestion(row.type, row.payload)).toEqual(parseQuestion(q.type, q.payload));
+      }
+      const types = await sql<{ type: string }[]>`select type from wp_questions where lesson_id = ${lessonId} and deleted_at is null order by position`;
+      expect(types.map((t) => t.type)).toEqual(['right_wrong', 'odd_one_out', 'picture_first', 'tap_all', 'match_pairs']);
+    } finally {
+      // later tests list the open week's lessons as the seed has them
+      await sql`delete from wp_questions where lesson_id = ${lessonId}`;
+      await sql`delete from wp_lessons where id = ${lessonId}`;
+    }
   });
 });
 

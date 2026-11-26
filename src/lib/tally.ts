@@ -1,10 +1,10 @@
 import type { NonWatchQuestion } from '@/lib/questions/schema';
 
-/** What a kid did this session, by question type (pure). Words for sort_it, questions otherwise. */
+/** What a kid did this session, by question type (pure). Words for sort_it and tap_all, pairs for match_pairs, questions otherwise. */
 export type Tally = Partial<Record<NonWatchQuestion['type'], number>>;
 
 export function addToTally(t: Tally, q: NonWatchQuestion): Tally {
-  const add = q.type === 'sort_it' ? q.items.length : 1;
+  const add = q.type === 'sort_it' ? q.items.length : q.type === 'tap_all' ? q.answers.length : q.type === 'match_pairs' ? q.pairs.length : 1;
   return { ...t, [q.type]: (t[q.type] ?? 0) + add };
 }
 
@@ -16,6 +16,11 @@ const COPY: [NonWatchQuestion['type'], string, string, string][] = [
   ['fill_blank', 'You filled', 'blank', 'blanks'],
   ['pick_one', 'You picked', 'right sentence', 'right sentences'],
   ['listen_tap', 'You matched', 'word', 'words'],
+  ['right_wrong', 'You checked', 'sentence', 'sentences'],
+  ['odd_one_out', 'You spotted', 'odd one', 'odd ones'],
+  ['picture_first', 'You matched', 'picture', 'pictures'],
+  ['tap_all', 'You tapped', 'word', 'words'],
+  ['match_pairs', 'You made', 'pair', 'pairs'],
 ];
 
 export function tallyLines(t: Tally): string[] {

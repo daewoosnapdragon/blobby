@@ -20,11 +20,12 @@ function Thumb({ p, onPick }: { p: PictureEntry; onPick: (name: string) => void 
 }
 
 /** Picture box in the question form: the chosen picture, suggestions from the question's words, and a keyword search. */
-export function PicturePicker({ text, value, onChange, catalog: given }: {
+export function PicturePicker({ text, value, onChange, catalog: given, required = false }: {
   /** the question's words, for suggestions */ text: string;
   /** the chosen picture name, '' for none */ value: string;
   onChange: (name: string) => void;
   /** tests pass the list; the app fetches it */ catalog?: PictureEntry[];
+  /** the question type needs a picture (picture first) */ required?: boolean;
 }) {
   const [catalog, setCatalog] = useState<PictureEntry[]>(given ?? []);
   const [query, setQuery] = useState('');
@@ -36,7 +37,8 @@ export function PicturePicker({ text, value, onChange, catalog: given }: {
 
   return (
     <fieldset className={s.picBox}>
-      <legend>Picture <span className={s.optional}>(optional)</span></legend>
+      <legend>Picture{required ? null : <> <span className={s.optional}>(optional)</span></>}</legend>
+      {required ? <p className={s.hint}>Required for picture first</p> : null}
       {value ? (
         <div className={s.picChosen}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -45,7 +47,8 @@ export function PicturePicker({ text, value, onChange, catalog: given }: {
           <button type="button" className={s.linkBtn} onClick={() => onChange('')}>Remove picture</button>
         </div>
       ) : (
-        <p className={s.hint}>Show a picture of the key word above the question. It should never give the answer away.</p>
+        <p className={s.hint}>{required ? 'This picture is the question. Pick the thing the right answer names.'
+          : 'Show a picture of the key word above the question. It should never give the answer away.'}</p>
       )}
       {suggested.length > 0 ? (
         <div className={s.picRow}>

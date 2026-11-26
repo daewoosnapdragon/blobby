@@ -10,6 +10,7 @@ export function checkAnswer(q: NonWatchQuestion, r: Response): boolean {
     case 'listen_tap':
     case 'pick_one':
     case 'fill_blank':
+    case 'picture_first':
       return isInt(x.choice) && x.choice === q.answer;
     case 'find_fix':
       return isInt(x.tapped) && isInt(x.fix) && x.tapped === q.wrongIndex && x.fix === q.answer;
@@ -25,6 +26,17 @@ export function checkAnswer(q: NonWatchQuestion, r: Response): boolean {
         x.placement.length === q.items.length &&
         q.items.every((it, i) => x.placement && (x.placement as unknown[])[i] === it.group)
       );
+    case 'right_wrong':
+      return typeof x.yes === 'boolean' && x.yes === q.right;
+    case 'odd_one_out':
+      return isInt(x.choice) && x.choice === q.answer;
+    case 'tap_all': {
+      if (!Array.isArray(x.tapped) || !x.tapped.every(isInt)) return false;
+      const tapped = new Set(x.tapped);
+      return tapped.size === x.tapped.length && tapped.size === q.answers.length && q.answers.every((a) => tapped.has(a));
+    }
+    case 'match_pairs':
+      return Array.isArray(x.matches) && x.matches.length === q.pairs.length && x.matches.every((m, i) => m === i);
     default:
       return false;
   }

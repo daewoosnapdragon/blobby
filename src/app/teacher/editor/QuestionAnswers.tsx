@@ -80,6 +80,49 @@ function BodyText({ question: q }: { question: NonWatchQuestion }) {
           </div>
         </>
       );
+    case 'right_wrong':
+      return (
+        <>
+          <p className={s.sentence}>{q.sentence}</p>
+          <p className={s.others}>{q.right ? <Right>Right</Right> : 'Not right'}</p>
+        </>
+      );
+    case 'odd_one_out':
+      return (
+        <>
+          <p className={s.prompt}>{q.prompt}</p>
+          <ul className={s.choices}>
+            {q.words.map((w, i) => <li key={i} className={i === q.answer ? s.choiceRight : s.choice}>{i === q.answer ? <Right>{w}</Right> : w}</li>)}
+          </ul>
+        </>
+      );
+    case 'picture_first':
+      return (
+        <>
+          <p className={s.prompt}>{q.prompt}</p>
+          <ul className={s.choices}>
+            {q.choices.map((c, i) => <li key={i} className={i === q.answer ? s.choiceRight : s.choice}>{i === q.answer ? <Right>{c}</Right> : c}</li>)}
+          </ul>
+        </>
+      );
+    case 'tap_all':
+      return (
+        <>
+          <p className={s.prompt}>{q.prompt}</p>
+          <p className={s.sentence}>
+            {q.words.map((w, i) => <span key={i}>{i > 0 ? ' ' : ''}{q.answers.includes(i) ? <Right>{w}</Right> : w}</span>)}
+          </p>
+        </>
+      );
+    case 'match_pairs':
+      return (
+        <>
+          <p className={s.prompt}>{q.prompt}</p>
+          <ul className={s.choices}>
+            {q.pairs.map((p, i) => <li key={i} className={s.choice}>{p.left} → {p.right}</li>)}
+          </ul>
+        </>
+      );
   }
 }
 

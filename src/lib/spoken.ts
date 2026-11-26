@@ -15,6 +15,16 @@ function own(q: NonWatchQuestion): string[] {
       return [q.prompt, ...q.items.map((i) => i.text)];
     case 'build_it':
       return [q.prompt];
+    case 'right_wrong':
+      return [q.prompt, q.sentence];
+    case 'odd_one_out':
+      return [q.prompt, ...q.words];
+    case 'picture_first':
+      return [q.prompt, ...q.choices];
+    case 'tap_all':
+      return [q.prompt, q.words.join(' ')];
+    case 'match_pairs':
+      return [q.prompt, ...q.pairs.flatMap((p) => [p.left, p.right])];
   }
 }
 

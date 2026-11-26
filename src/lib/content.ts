@@ -68,6 +68,29 @@ export function parseContent(raw: unknown): ContentFile {
   };
 }
 
+/**
+ * The pictures that picture first questions need but that don't exist (each name once, in order), looking
+ * inside watch and answer questions too. Only picture first is checked: its picture is the question, while
+ * other types' pictures are decorative and simply hide when missing. `exists` says whether
+ * public/pictures/<name>.svg is there.
+ */
+export function missingPictures(
+  questions: readonly { type: string; picture?: unknown; questions?: unknown }[],
+  exists: (name: string) => boolean,
+): string[] {
+  const missing: string[] = [];
+  const walk = (qs: readonly unknown[]) => {
+    for (const q of qs) {
+      if (!q || typeof q !== 'object') continue;
+      const { type, picture, questions: inner } = q as { type?: unknown; picture?: unknown; questions?: unknown };
+      if (type === 'picture_first' && typeof picture === 'string' && !exists(picture) && !missing.includes(picture)) missing.push(picture);
+      if (type === 'watch_answer' && Array.isArray(inner)) walk(inner);
+    }
+  };
+  walk(questions);
+  return missing;
+}
+
 export interface ImportedQuestion { id: string; question: Question; audio: Record<string, unknown> }
 export interface ImportResult {
   weeks: number; lessons: number; questions: number; items: ImportedQuestion[];

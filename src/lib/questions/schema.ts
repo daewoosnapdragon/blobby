@@ -1,3 +1,4 @@
+import { PICTURE_NAME_RE } from '@/lib/pictures';
 import { YOUTUBE_ID_RE } from '@/lib/youtube';
 import { z } from 'zod';
 
@@ -10,7 +11,8 @@ import { z } from 'zod';
 const text = z.string().trim().min(1, 'must not be empty');
 const idx = z.number().int().min(0);
 /** An optional picture of the question's key noun: a file name in public/pictures (see src/lib/pictures.ts). */
-const picture = z.string().regex(/^[a-z0-9-]{1,64}$/, 'is not a picture name').optional();
+const pictureName = z.string({ error: 'is not a picture name' }).regex(PICTURE_NAME_RE, 'is not a picture name');
+const picture = pictureName.optional();
 
 /**
  * Form for "is this the same text?" checks: trimmed, inner spaces collapsed. Case-SENSITIVE on purpose:
@@ -18,15 +20,18 @@ const picture = z.string().regex(/^[a-z0-9-]{1,64}$/, 'is not a picture name').o
  */
 const norm = (s: string) => s.trim().replace(/\s+/g, ' ');
 
-/** Adds one issue per repeated text, at the repeat's index: "is the same as {noun} {first}". */
-function noRepeats(ctx: z.RefinementCtx, texts: string[], field: string, noun: string) {
+/**
+ * Adds one issue per repeated text, at the repeat's index: "is the same as {noun} {first}".
+ * `at` builds the issue path for index i when the texts are a field of list items (default `[field, i]`).
+ */
+function noRepeats(ctx: z.RefinementCtx, texts: string[], field: string, noun: string, at: (i: number) => PropertyKey[] = (i) => [field, i]) {
   const first = new Map<string, number>();
   texts.forEach((t, i) => {
     const k = norm(t);
     if (k === '') return; // already "fill this in"
     const j = first.get(k);
     if (j === undefined) first.set(k, i);
-    else ctx.addIssue({ code: 'custom', message: `is the same as ${noun} ${j + 1}`, path: [field, i] });
+    else ctx.addIssue({ code: 'custom', message: `is the same as ${noun} ${j + 1}`, path: at(i) });
   });
 }
 
@@ -93,14 +98,49 @@ const fillBlankPayload = z
   .refine((q) => q.answer < q.choices.length, { message: 'answer is out of range of choices', path: ['answer'] })
   .superRefine((q, ctx) => noRepeats(ctx, q.choices, 'choices', 'choice'));
 
+const rightWrongPayload = z.object({ prompt: text.default('Is this sentence right?'), sentence: text, right: z.boolean(), picture });
+
+const oddOneOutPayload = z
+  .object({ prompt: text, words: z.array(text).min(3).max(4), answer: idx, picture })
+  .refine((q) => q.answer < q.words.length, { message: 'answer is out of range of words', path: ['answer'] })
+  .superRefine((q, ctx) => noRepeats(ctx, q.words, 'words', 'word'));
+
+const pictureFirstPayload = z
+  .object({ picture: pictureName, prompt: text.default('Which one matches the picture?'), choices: z.array(text).min(2).max(4), answer: idx })
+  .refine((q) => q.answer < q.choices.length, { message: 'answer is out of range of choices', path: ['answer'] })
+  .superRefine((q, ctx) => noRepeats(ctx, q.choices, 'choices', 'choice'));
+
+const tapAllPayload = z
+  .object({ prompt: text, words: z.array(text).min(2), answers: z.array(idx).min(1), picture })
+  .superRefine((q, ctx) => {
+    const seen = new Set<number>();
+    q.answers.forEach((a, i) => {
+      if (a >= q.words.length) ctx.addIssue({ code: 'custom', message: 'is out of range of words', path: ['answers', i] });
+      else if (seen.has(a)) ctx.addIssue({ code: 'custom', message: 'is repeated', path: ['answers', i] });
+      seen.add(a);
+    });
+  });
+
+const matchPairsPayload = z
+  .object({ prompt: text, pairs: z.array(z.object({ left: text, right: text })).min(2).max(5), picture })
+  .superRefine((q, ctx) => {
+    noRepeats(ctx, q.pairs.map((p) => p.left), 'pairs', 'left', (i) => ['pairs', i, 'left']);
+    noRepeats(ctx, q.pairs.map((p) => p.right), 'pairs', 'right', (i) => ['pairs', i, 'right']);
+  });
+
 const listenTapQ = listenTapPayload.extend({ type: z.literal('listen_tap') });
 const pickOneQ = pickOnePayload.extend({ type: z.literal('pick_one') });
 const findFixQ = findFixPayload.extend({ type: z.literal('find_fix') });
 const buildItQ = buildItPayload.extend({ type: z.literal('build_it') });
 const sortItQ = sortItPayload.extend({ type: z.literal('sort_it') });
 const fillBlankQ = fillBlankPayload.extend({ type: z.literal('fill_blank') });
+const rightWrongQ = rightWrongPayload.extend({ type: z.literal('right_wrong') });
+const oddOneOutQ = oddOneOutPayload.extend({ type: z.literal('odd_one_out') });
+const pictureFirstQ = pictureFirstPayload.extend({ type: z.literal('picture_first') });
+const tapAllQ = tapAllPayload.extend({ type: z.literal('tap_all') });
+const matchPairsQ = matchPairsPayload.extend({ type: z.literal('match_pairs') });
 
-const nonWatchSchema = z.discriminatedUnion('type', [listenTapQ, pickOneQ, findFixQ, buildItQ, sortItQ, fillBlankQ]);
+const nonWatchSchema = z.discriminatedUnion('type', [listenTapQ, pickOneQ, findFixQ, buildItQ, sortItQ, fillBlankQ, rightWrongQ, oddOneOutQ, pictureFirstQ, tapAllQ, matchPairsQ]);
 
 const watchAnswerPayload = z.object({
   youtubeId: z.string().trim().regex(YOUTUBE_ID_RE, 'needs an 11-character YouTube id'),
@@ -109,7 +149,7 @@ const watchAnswerPayload = z.object({
 const watchAnswerQ = watchAnswerPayload.extend({ type: z.literal('watch_answer') });
 
 export const questionSchema = z.discriminatedUnion('type', [
-  listenTapQ, pickOneQ, findFixQ, buildItQ, sortItQ, fillBlankQ, watchAnswerQ,
+  listenTapQ, pickOneQ, findFixQ, buildItQ, sortItQ, fillBlankQ, rightWrongQ, oddOneOutQ, pictureFirstQ, tapAllQ, matchPairsQ, watchAnswerQ,
 ]);
 
 const payloadSchemas = {
@@ -119,6 +159,11 @@ const payloadSchemas = {
   build_it: buildItPayload,
   sort_it: sortItPayload,
   fill_blank: fillBlankPayload,
+  right_wrong: rightWrongPayload,
+  odd_one_out: oddOneOutPayload,
+  picture_first: pictureFirstPayload,
+  tap_all: tapAllPayload,
+  match_pairs: matchPairsPayload,
   watch_answer: watchAnswerPayload,
 } as const;
 
@@ -131,6 +176,11 @@ export type FindFixPayload = z.infer<typeof findFixPayload>;
 export type BuildItPayload = z.infer<typeof buildItPayload>;
 export type SortItPayload = z.infer<typeof sortItPayload>;
 export type FillBlankPayload = z.infer<typeof fillBlankPayload>;
+export type RightWrongPayload = z.infer<typeof rightWrongPayload>;
+export type OddOneOutPayload = z.infer<typeof oddOneOutPayload>;
+export type PictureFirstPayload = z.infer<typeof pictureFirstPayload>;
+export type TapAllPayload = z.infer<typeof tapAllPayload>;
+export type MatchPairsPayload = z.infer<typeof matchPairsPayload>;
 export type WatchAnswerPayload = z.infer<typeof watchAnswerPayload>;
 
 export type NonWatchQuestion = z.infer<typeof nonWatchSchema>;
@@ -139,8 +189,11 @@ export type Question = z.infer<typeof questionSchema>;
 export type Response =
   | { choice: number }
   | { tapped: number; fix: number }
+  | { tapped: number[] }
+  | { matches: number[] }
   | { order: string[] }
-  | { placement: number[] };
+  | { placement: number[] }
+  | { yes: boolean };
 
 export function isQuestionType(t: unknown): t is QuestionType {
   return typeof t === 'string' && Object.hasOwn(payloadSchemas, t);

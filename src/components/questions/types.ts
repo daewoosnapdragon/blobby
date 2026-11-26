@@ -12,6 +12,14 @@ export type QProps<T extends NonWatchQuestion['type']> = {
 
 export type Mark = 'right' | 'wrong' | 'selected' | undefined;
 
+/** Pastel tints for things that belong together: sort it's groups, match pairs' pairs. */
+export const GROUP_TINTS = ['#B7E1D1', '#FFB5C1', '#A9D3FF', '#FFE59A'];
+/**
+ * Match pairs: the group tints plus grape (from the blob palette) so five pairs never share a color. Grape sits before
+ * the yellow so a pair rarely looks like the pressed (yellow) tile.
+ */
+export const PAIR_TINTS = ['#B7E1D1', '#FFB5C1', '#A9D3FF', '#D9CCF5', '#FFE59A'];
+
 /** Deterministic shuffle (server and client render the same order). Never returns the original order for 2+ items. */
 export function seededShuffle<T>(items: T[], seedText: string): T[] {
   let h = 2166136261;
@@ -24,4 +32,12 @@ export function seededShuffle<T>(items: T[], seedText: string): T[] {
   }
   if (out.length > 1 && out.every((x, i) => x.i === i)) out.push(out.shift()!);
   return out.map((x) => x.v);
+}
+
+/**
+ * Match pairs: the display order of the right column, as indices into `q.pairs`. One source for the board and for
+ * Hear it, so the audio always reads the rights in the order the screen shows them.
+ */
+export function rightOrder(q: { pairs: { left: string; right: string }[] }): number[] {
+  return seededShuffle(q.pairs.map((_, i) => i), q.pairs.map((p) => `${p.left}|${p.right}`).join('\n'));
 }
