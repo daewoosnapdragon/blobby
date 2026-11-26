@@ -33,8 +33,11 @@ describe('right_wrong', () => {
 
   it('component: shows the sentence; Yes/No buttons answer once and lock', () => {
     const onAnswer = vi.fn();
-    const { rerender } = render(<RightWrong q={rw} status="idle" onAnswer={onAnswer} />);
+    const { container, rerender } = render(<RightWrong q={rw} status="idle" onAnswer={onAnswer} />);
     expect(screen.getByText('She don’t like carrots.')).toBeInTheDocument();
+    // one stack root, so the sentence card and the buttons get the same gap as every other type
+    expect(container.childElementCount).toBe(1);
+    expect((container.firstElementChild as HTMLElement).className).toMatch(/stack/);
     fireEvent.click(screen.getByRole('button', { name: /No/ }));
     expect(onAnswer).toHaveBeenCalledWith(true);
     expect(onAnswer).toHaveBeenCalledTimes(1);

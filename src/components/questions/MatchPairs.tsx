@@ -2,7 +2,7 @@
 import { useMemo, useState } from 'react';
 import { checkAnswer } from '@/lib/questions/check';
 import { PillButton } from '@/components/ui/PillButton';
-import { PAIR_TINTS, seededShuffle, type QProps } from './types';
+import { PAIR_TINTS, rightOrder, type QProps } from './types';
 import s from './questions.module.css';
 
 /**
@@ -15,10 +15,7 @@ export function MatchPairs({ q, status, onAnswer }: QProps<'match_pairs'>) {
   const [matches, setMatches] = useState<(number | null)[]>(() => q.pairs.map(() => null));
   const [selected, setSelected] = useState<number | null>(null);
   const locked = status !== 'idle';
-  const rightOrder = useMemo(
-    () => seededShuffle(q.pairs.map((_, i) => i), q.pairs.map((p) => `${p.left}|${p.right}`).join('\n')),
-    [q.pairs],
-  );
+  const order = useMemo(() => rightOrder(q), [q]);
   /** right index → the left it is paired with */
   const leftOf = new Map<number, number>();
   matches.forEach((m, i) => { if (m !== null) leftOf.set(m, i); });
@@ -61,7 +58,7 @@ export function MatchPairs({ q, status, onAnswer }: QProps<'match_pairs'>) {
     <div className={s.stack}>
       <div className={s.pairCols} role="group" aria-label="Pairs">
         {q.pairs.map((p, i) => {
-          const r = rightOrder[i];
+          const r = order[i];
           return [
             <button key={`l${i}`} type="button" className={`${s.tile} ${s.pairTile}`} data-side="left" aria-pressed={selected === i}
               aria-disabled={locked || undefined} onClick={() => tapLeft(i)} {...look(i)}>

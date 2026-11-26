@@ -7,7 +7,8 @@ import { addToTally, tallyLines } from '@/lib/tally';
 import { TYPE_NAMES, draftFromQuestion, draftToPayload, draftWords, emptyDraft, type NonWatchDraft } from '@/lib/questions/draft';
 import { MatchPairs } from '@/components/questions/MatchPairs';
 import { SortIt } from '@/components/questions/SortIt';
-import { GROUP_TINTS, PAIR_TINTS } from '@/components/questions/types';
+import { GROUP_TINTS, PAIR_TINTS, rightOrder } from '@/components/questions/types';
+import { HearIt } from '@/components/ui/HearIt';
 import { QuestionPlayer } from '@/components/questions/QuestionPlayer';
 import { TypeForm } from '@/app/teacher/editor/TypeForms';
 import { QuestionAnswers } from '@/app/teacher/editor/QuestionAnswers';
@@ -18,6 +19,12 @@ vi.mock('@/lib/sound', async (orig) => ({ ...(await orig<typeof import('@/lib/so
 vi.mock('@/lib/questions/check', async (orig) => {
   const m = await orig<typeof import('@/lib/questions/check')>();
   return { ...m, checkAnswer: vi.fn(m.checkAnswer) };
+});
+
+// Calls through to the real button; wrapped so a test can read the texts the player hands it.
+vi.mock('@/components/ui/HearIt', async (orig) => {
+  const m = await orig<typeof import('@/components/ui/HearIt')>();
+  return { ...m, HearIt: vi.fn(m.HearIt) };
 });
 
 afterEach(cleanup);
@@ -95,7 +102,8 @@ describe('match_pairs', () => {
     const five = parseQuestion('match_pairs', { prompt: 'p', pairs: ['a', 'b', 'c', 'd', 'e'].map((l) => ({ left: l, right: l.toUpperCase() })) }) as MP;
     render(<MatchPairs q={five} status="idle" onAnswer={vi.fn()} />);
     for (const l of ['a', 'b', 'c', 'd', 'e']) pair(l, l.toUpperCase());
-    expect(PAIR_TINTS).toEqual([...GROUP_TINTS, '#D9CCF5']);
+    // grape before yellow: the yellow is also the pressed-tile color
+    expect(PAIR_TINTS).toEqual(['#B7E1D1', '#FFB5C1', '#A9D3FF', '#D9CCF5', '#FFE59A']);
     expect(new Set(['a', 'b', 'c', 'd', 'e'].map((l) => tile('left', l).style.background)).size).toBe(5);
   });
 
@@ -184,11 +192,28 @@ describe('match_pairs', () => {
     expect(tile('left', 'go').style.background).not.toBe('');
   });
 
-  it('player: tag, prompt in the bubble, spoken order', () => {
+  it('player: tag, prompt in the bubble, spoken strings (audio keys) unchanged', () => {
     render(<QuestionPlayer questions={[{ id: 'q', question: mp }]} onAnswer={vi.fn()} onFinish={vi.fn()} blobColor="mint" stars={0} />);
     expect(screen.getByText('Match pairs')).toBeInTheDocument();
     expect(document.getElementById('q-ask')).toHaveTextContent('Match today with yesterday.');
     expect(spokenStrings(mp)).toEqual(['Match today with yesterday.', 'run', 'ran', 'go', 'went', 'eat', 'ate']);
+  });
+
+  it('player: Hear it reads the prompt, the lefts, then the rights in screen order; autoplay reads the prompt only', () => {
+    vi.mocked(HearIt).mockClear();
+    const audio = Object.fromEntries(spokenStrings(mp).map((t, i) => [t, `http://a/${i}.mp3`]));
+    render(<QuestionPlayer questions={[{ id: 'q', question: mp, audio }]} onAnswer={vi.fn()} onFinish={vi.fn()} blobColor="mint" stars={0} />);
+    const props = vi.mocked(HearIt).mock.calls.at(-1)![0];
+    const order = rightOrder(mp);
+    const rights = order.map((r) => pairs[r].right);
+    expect(props.texts).toEqual(['Match today with yesterday.', 'run', 'go', 'eat', ...rights]);
+    // the audio's right order is the screen's
+    expect([...document.querySelectorAll('button[data-side="right"]')].map((b) => b.textContent)).toEqual(rights);
+    expect(props.autoPlayTexts).toEqual(['Match today with yesterday.']);
+    // not the answer key: never the first pair read together, never the pair-by-pair order
+    const t = props.texts;
+    expect(t.findIndex((x, i) => x === 'run' && t[i + 1] === 'ran')).toBe(-1);
+    expect(t).not.toEqual(spokenStrings(mp));
   });
 
   it('player: a miss shows the hint, and Try again keeps the pairs', () => {

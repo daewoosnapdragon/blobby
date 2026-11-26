@@ -49,7 +49,7 @@ export function questionProblems(type: string, payload: unknown): string[] {
     if (issue.code === 'invalid_union' || (path.length === 1 && path[0] === 'type')) msg = 'Pick a question type.';
     else if (last === 'right' && qType === 'right_wrong') msg = 'Pick Yes or No.';
     else if (last === 'picture' && qType === 'picture_first') msg = 'Pick a picture.';
-    else if (last === 'answers' && issue.code === 'too_small') msg = 'Tap at least one word.';
+    else if (last === 'answers' && issue.code === 'too_small') msg = 'Pick at least one word.';
     else if (last === 'answer' && qType === 'odd_one_out') msg = 'Pick the odd one.';
     else if (last === 'answer' || last === 'wrongIndex') msg = last === 'answer' ? 'Pick the right answer.' : 'Pick the wrong word.';
     else if (issue.code === 'too_small' && (issue as { origin?: string }).origin === 'array') {

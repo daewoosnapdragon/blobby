@@ -25,7 +25,7 @@ import { MatchPairs } from './MatchPairs';
 import { TopBar } from './TopBar';
 import { WatchAnswer } from './WatchAnswer';
 import { QuestionPicture } from './QuestionPicture';
-import type { Status } from './types';
+import { rightOrder, type Status } from './types';
 import s from './questions.module.css';
 
 export type PlayerQuestion = {
@@ -121,11 +121,20 @@ function ask(q: NonWatchQuestion, found: boolean): string {
   }
 }
 
-/** What Hear it reads, and what autoplay reads. listen_tap never reads its choices: that would give the answer away. */
+/**
+ * What Hear it reads, and what autoplay reads. listen_tap never reads its choices, and match pairs never reads a left
+ * next to its right (lefts first, then rights in screen order): either would give the answer away.
+ */
 function readAloud(q: NonWatchQuestion): { all: string[]; auto: string[] } {
   if (q.type === 'listen_tap') {
     const t = [q.prompt.trim(), q.audioText.trim()];
     return { all: t, auto: t };
+  }
+  if (q.type === 'match_pairs') {
+    const order = rightOrder(q);
+    const t = [q.prompt, ...q.pairs.map((p) => p.left), ...order.map((r) => q.pairs[r].right)];
+    const all = [...new Set(t.map((x) => x.trim()).filter(Boolean))];
+    return { all, auto: all.slice(0, 1) };
   }
   const all = spokenStrings(q);
   return { all, auto: all.slice(0, 1) };

@@ -44,9 +44,9 @@ export function TapAll({ q, status, onAnswer }: QProps<'tap_all'>) {
           <div className={s.appear}>
             <PillButton size="lg" onClick={() => onAnswer(checkAnswer(q, { tapped: [...tapped] }))}>Check</PillButton>
           </div>
-        ) : (
+        ) : !locked ? (
           <p className={s.helper}>Tap every word that fits, then check.</p>
-        )}
+        ) : null}
       </div>
     </div>
   );

@@ -73,6 +73,7 @@ describe('tap_all', () => {
     expect(word('shoe.')).toHaveAttribute('data-mark', 'right');
     expect(word('ate')).not.toHaveAttribute('data-mark');
     expect(screen.queryByRole('button', { name: 'Check' })).toBeNull();
+    expect(screen.queryByText('Tap every word that fits, then check.')).toBeNull();
     fireEvent.click(word('ate'));
     expect(word('ate')).toHaveAttribute('aria-pressed', 'false');
   });
@@ -89,6 +90,7 @@ describe('tap_all', () => {
     expect(word('dog')).toHaveAttribute('data-mark', 'selected');
     expect(word('shoe.')).not.toHaveAttribute('data-mark');
     expect(word('The')).not.toHaveAttribute('data-mark');
+    expect(screen.queryByText('Tap every word that fits, then check.')).toBeNull();
     rerender(<TapAll q={ta} status="idle" onAnswer={onAnswer} />);
     expect(word('dog')).toHaveAttribute('aria-pressed', 'true');
     expect(word('ate')).toHaveAttribute('aria-pressed', 'true');
@@ -129,9 +131,9 @@ describe('tap_all', () => {
 
   it('editor problems: an empty draft gives readable problems', () => {
     expect(questionProblems('tap_all', draftToPayload(emptyDraft('tap_all'))))
-      .toEqual(['Prompt: fill this in.', 'Add at least 2 words.', 'Tap at least one word.']);
+      .toEqual(['Prompt: fill this in.', 'Add at least 2 words.', 'Pick at least one word.']);
     expect(questionProblems('watch_answer', { youtubeId: 'dQw4w9WgXcQ', questions: [{ type: 'tap_all', prompt: 'p', words: ['a', 'b'], answers: [] }] }))
-      .toEqual(['Tap at least one word.']);
+      .toEqual(['Pick at least one word.']);
   });
 
   it('editor form: Instruction, Sentence, and a checkbox chip per word', () => {

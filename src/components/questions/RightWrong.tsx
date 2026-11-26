@@ -22,12 +22,12 @@ export function RightWrong({ q, status, onAnswer }: QProps<'right_wrong'>) {
     </button>
   );
   return (
-    <>
+    <div className={s.stack}>
       <p className={s.sentenceCard}>{q.sentence}</p>
       <div className={s.yesNo}>
         {button(true)}
         {button(false)}
       </div>
-    </>
+    </div>
   );
 }
