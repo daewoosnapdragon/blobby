@@ -134,7 +134,7 @@ Only the stock prompts rotate. A prompt that says something specific ("Which sen
   sentence from the tiles. · Tap the tiles in order. · What does this say? Put it in order. · Build it!
 - **Sort it** stock: "Sort the words.", "Sort the sentences." → pool: Sort the words. · Put each word in its
   box. · Where does each one go? · Sort them out. (The "sentences" variant keeps "sentences" where the items
-  are sentences: Sort the sentences. · Put each sentence in its box. · Where does each one go?)
+  are sentences: Sort the sentences. · Put each sentence in its box. · Where does each sentence go?)
 - **Right or wrong sort its** (16 sort it questions with groups `Right` / `Wrong`, prompts "Right or wrong?",
   "Is the sentence right or wrong?", "Is it written the right way?", "Is it right or wrong? Sort the words."):
   the group label `Wrong` becomes **`Not right`** and the prompt becomes "Which ones are right? Sort them."
