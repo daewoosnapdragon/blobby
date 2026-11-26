@@ -2,16 +2,18 @@
 // Validates content files with the importer's own rules and prints a short summary. Writes nothing.
 import fs from 'node:fs';
 import path from 'node:path';
-import { missingPictures, parseContent } from '../src/lib/content';
+import { contentRuleProblems, missingPictures, parseContent } from '../src/lib/content';
 import { parseBank } from '../src/lib/bank';
 
 const picturesDir = path.join(__dirname, '..', 'public', 'pictures');
 const pictureExists = (name: string) => fs.existsSync(path.join(picturesDir, `${name}.svg`));
 /** Throws naming where each picture first question's picture file is missing. */
-function checkPictures(groups: { where: string; questions: Parameters<typeof missingPictures>[0] }[]) {
-  const problems = groups.flatMap(({ where, questions }) =>
-    missingPictures(questions, pictureExists).map((name) => `${where}: picture first picture "${name}" has no public/pictures/${name}.svg`));
-  if (problems.length) throw new Error(problems.join('; '));
+function checkPictures(groups: { where: string; questions: Parameters<typeof contentRuleProblems>[0] }[]) {
+  const problems = groups.flatMap(({ where, questions }) => [
+    ...missingPictures(questions, pictureExists).map((name) => `${where}: picture first picture "${name}" has no public/pictures/${name}.svg`),
+    ...contentRuleProblems(questions, where),
+  ]);
+  if (problems.length) throw Object.assign(new Error(problems.join('; ')), { problems });
 }
 
 let failed = false;
@@ -37,7 +39,9 @@ for (const file of process.argv.slice(2)) {
     console.log(`OK ${file}: grade ${c.assignTo.grade}, ${c.weeks.length} week(s), questions ${counts}; ${[...types].map(([t, n]) => `${t} ${n}`).join(', ')}`);
   } catch (e) {
     failed = true;
-    console.log(`FAIL ${file}: ${e instanceof Error ? e.message : String(e)}`);
+    const problems = (e as { problems?: string[] }).problems;
+    if (problems) for (const p of problems) console.log(`FAIL ${file}: ${p}`);
+    else console.log(`FAIL ${file}: ${e instanceof Error ? e.message : String(e)}`);
   }
 }
 process.exit(failed ? 1 : 0);
