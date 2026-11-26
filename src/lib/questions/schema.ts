@@ -9,6 +9,8 @@ import { z } from 'zod';
 
 const text = z.string().trim().min(1, 'must not be empty');
 const idx = z.number().int().min(0);
+/** An optional picture of the question's key noun: a file name in public/pictures (see src/lib/pictures.ts). */
+const picture = z.string().regex(/^[a-z0-9-]{1,64}$/, 'is not a picture name').optional();
 
 /**
  * Form for "is this the same text?" checks: trimmed, inner spaces collapsed. Case-SENSITIVE on purpose:
@@ -32,6 +34,7 @@ const listenTapPayload = z
   .object({
     prompt: text,
     audioText: text,
+    picture,
     choices: z.array(z.object({ text, image: z.string().trim().min(1).optional() })).min(2),
     answer: idx,
   })
@@ -39,12 +42,12 @@ const listenTapPayload = z
   .superRefine((q, ctx) => noRepeats(ctx, q.choices.map((c) => c.text), 'choices', 'choice'));
 
 const pickOnePayload = z
-  .object({ prompt: text, choices: z.array(text).min(2).max(4), answer: idx })
+  .object({ prompt: text, choices: z.array(text).min(2).max(4), answer: idx, picture })
   .refine((q) => q.answer < q.choices.length, { message: 'answer is out of range of choices', path: ['answer'] })
   .superRefine((q, ctx) => noRepeats(ctx, q.choices, 'choices', 'choice'));
 
 const findFixPayload = z
-  .object({ words: z.array(text).min(1), wrongIndex: idx, fixes: z.array(text).min(2), answer: idx })
+  .object({ words: z.array(text).min(1), wrongIndex: idx, fixes: z.array(text).min(2), answer: idx, picture })
   .refine((q) => q.wrongIndex < q.words.length, { message: 'wrongIndex is out of range of words', path: ['wrongIndex'] })
   .refine((q) => q.answer < q.fixes.length, { message: 'answer is out of range of fixes', path: ['answer'] })
   .superRefine((q, ctx) => {
@@ -62,6 +65,7 @@ const buildItPayload = z
     prompt: text,
     tiles: z.array(text).min(2, 'needs at least 2 tiles'),
     distractors: z.array(text).optional(),
+    picture,
   })
   .superRefine((q, ctx) => {
     const tiles = new Set(q.tiles.map(norm));
@@ -75,6 +79,7 @@ const sortItPayload = z
     prompt: text,
     groups: z.array(text).min(2),
     items: z.array(z.object({ text, group: idx })).min(1),
+    picture,
   })
   .refine((q) => q.items.every((i) => i.group < q.groups.length), {
     message: 'item group is out of range of groups',
@@ -83,7 +88,7 @@ const sortItPayload = z
   .superRefine((q, ctx) => noRepeats(ctx, q.items.map((i) => i.text), 'items', 'word'));
 
 const fillBlankPayload = z
-  .object({ before: z.string(), after: z.string(), choices: z.array(text).min(2), answer: idx })
+  .object({ before: z.string(), after: z.string(), choices: z.array(text).min(2), answer: idx, picture })
   .refine((q) => q.before.trim() !== '' || q.after.trim() !== '', { message: 'before and after cannot both be empty', path: ['before'] })
   .refine((q) => q.answer < q.choices.length, { message: 'answer is out of range of choices', path: ['answer'] })
   .superRefine((q, ctx) => noRepeats(ctx, q.choices, 'choices', 'choice'));

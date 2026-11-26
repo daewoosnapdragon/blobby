@@ -2,13 +2,15 @@
 // draftToPayload cleans a draft into the payload parseQuestion checks. Pure and client-safe.
 import type { Question, QuestionType } from './schema';
 
-export type NonWatchDraft =
+/** Every non-video draft has a picture name ('' for none). */
+type WithPicture = { picture?: string };
+export type NonWatchDraft = WithPicture & (
   | { type: 'pick_one'; prompt: string; choices: string[]; answer: number }
   | { type: 'listen_tap'; prompt: string; audioText: string; choices: string[]; answer: number }
   | { type: 'find_fix'; sentence: string; wrongIndex: number; fixes: string[]; answer: number }
   | { type: 'build_it'; prompt: string; tiles: string[]; distractors: string[] }
   | { type: 'sort_it'; prompt: string; groups: string[]; items: { text: string; group: number }[] }
-  | { type: 'fill_blank'; before: string; after: string; choices: string[]; answer: number };
+  | { type: 'fill_blank'; before: string; after: string; choices: string[]; answer: number });
 export type WatchDraft = { type: 'watch_answer'; video: string; questions: NonWatchDraft[] };
 export type Draft = NonWatchDraft | WatchDraft;
 
@@ -26,24 +28,24 @@ export function emptyDraft(type: Exclude<QuestionType, 'watch_answer'>): NonWatc
 export function emptyDraft(type: QuestionType): Draft;
 export function emptyDraft(type: QuestionType): Draft {
   switch (type) {
-    case 'pick_one': return { type, prompt: '', choices: ['', ''], answer: -1 };
-    case 'listen_tap': return { type, prompt: 'Tap the word you hear.', audioText: '', choices: ['', ''], answer: -1 };
-    case 'find_fix': return { type, sentence: '', wrongIndex: -1, fixes: ['', ''], answer: -1 };
-    case 'build_it': return { type, prompt: '', tiles: ['', ''], distractors: [] };
-    case 'sort_it': return { type, prompt: '', groups: ['', ''], items: [{ text: '', group: 0 }] };
-    case 'fill_blank': return { type, before: '', after: '', choices: ['', ''], answer: -1 };
+    case 'pick_one': return { type, picture: '', prompt: '', choices: ['', ''], answer: -1 };
+    case 'listen_tap': return { type, picture: '', prompt: 'Tap the word you hear.', audioText: '', choices: ['', ''], answer: -1 };
+    case 'find_fix': return { type, picture: '', sentence: '', wrongIndex: -1, fixes: ['', ''], answer: -1 };
+    case 'build_it': return { type, picture: '', prompt: '', tiles: ['', ''], distractors: [] };
+    case 'sort_it': return { type, picture: '', prompt: '', groups: ['', ''], items: [{ text: '', group: 0 }] };
+    case 'fill_blank': return { type, picture: '', before: '', after: '', choices: ['', ''], answer: -1 };
     case 'watch_answer': return { type, video: '', questions: [emptyDraft('pick_one')] };
   }
 }
 
 export function draftFromQuestion(q: Question): Draft {
   switch (q.type) {
-    case 'pick_one': return { type: q.type, prompt: q.prompt, choices: [...q.choices], answer: q.answer };
-    case 'listen_tap': return { type: q.type, prompt: q.prompt, audioText: q.audioText, choices: q.choices.map((c) => c.text), answer: q.answer };
-    case 'find_fix': return { type: q.type, sentence: q.words.join(' '), wrongIndex: q.wrongIndex, fixes: [...q.fixes], answer: q.answer };
-    case 'build_it': return { type: q.type, prompt: q.prompt, tiles: [...q.tiles], distractors: [...(q.distractors ?? [])] };
-    case 'sort_it': return { type: q.type, prompt: q.prompt, groups: [...q.groups], items: q.items.map((i) => ({ ...i })) };
-    case 'fill_blank': return { type: q.type, before: q.before, after: q.after, choices: [...q.choices], answer: q.answer };
+    case 'pick_one': return { type: q.type, picture: q.picture ?? '', prompt: q.prompt, choices: [...q.choices], answer: q.answer };
+    case 'listen_tap': return { type: q.type, picture: q.picture ?? '', prompt: q.prompt, audioText: q.audioText, choices: q.choices.map((c) => c.text), answer: q.answer };
+    case 'find_fix': return { type: q.type, picture: q.picture ?? '', sentence: q.words.join(' '), wrongIndex: q.wrongIndex, fixes: [...q.fixes], answer: q.answer };
+    case 'build_it': return { type: q.type, picture: q.picture ?? '', prompt: q.prompt, tiles: [...q.tiles], distractors: [...(q.distractors ?? [])] };
+    case 'sort_it': return { type: q.type, picture: q.picture ?? '', prompt: q.prompt, groups: [...q.groups], items: q.items.map((i) => ({ ...i })) };
+    case 'fill_blank': return { type: q.type, picture: q.picture ?? '', before: q.before, after: q.after, choices: [...q.choices], answer: q.answer };
     case 'watch_answer': return { type: q.type, video: q.youtubeId, questions: q.questions.map((x) => draftFromQuestion(x) as NonWatchDraft) };
   }
 }
@@ -66,6 +68,12 @@ type Payload = Record<string, unknown>;
 
 /** The payload for parseQuestion(type, payload). For watch_answer the inner questions carry their `type`; `youtubeId` is whatever was typed (link or id). */
 export function draftToPayload(d: Draft): Payload {
+  if (d.type === 'watch_answer') return { youtubeId: d.video.trim(), questions: d.questions.map((q) => ({ type: q.type, ...draftToPayload(q) })) };
+  const pic = (d.picture ?? '').trim();
+  return { ...nonWatchPayload(d), ...(pic ? { picture: pic } : {}) };
+}
+
+function nonWatchPayload(d: NonWatchDraft): Payload {
   switch (d.type) {
     case 'pick_one': {
       const c = compact(d.choices, d.answer);
@@ -93,7 +101,5 @@ export function draftToPayload(d: Draft): Payload {
       const c = compact(d.choices, d.answer);
       return { before: d.before.trim(), after: d.after.trim(), choices: c.list, answer: c.answer };
     }
-    case 'watch_answer':
-      return { youtubeId: d.video.trim(), questions: d.questions.map((q) => ({ type: q.type, ...draftToPayload(q) })) };
   }
 }
