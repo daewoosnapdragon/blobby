@@ -87,6 +87,15 @@ function BodyText({ question: q }: { question: NonWatchQuestion }) {
           <p className={s.others}>{q.right ? <Right>Right</Right> : 'Not right'}</p>
         </>
       );
+    case 'odd_one_out':
+      return (
+        <>
+          <p className={s.prompt}>{q.prompt}</p>
+          <ul className={s.choices}>
+            {q.words.map((w, i) => <li key={i} className={i === q.answer ? s.choiceRight : s.choice}>{i === q.answer ? <Right>{w}</Right> : w}</li>)}
+          </ul>
+        </>
+      );
   }
 }
 

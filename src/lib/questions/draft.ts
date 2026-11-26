@@ -11,7 +11,8 @@ export type NonWatchDraft = WithPicture & (
   | { type: 'build_it'; prompt: string; tiles: string[]; distractors: string[] }
   | { type: 'sort_it'; prompt: string; groups: string[]; items: { text: string; group: number }[] }
   | { type: 'fill_blank'; before: string; after: string; choices: string[]; answer: number }
-  | { type: 'right_wrong'; prompt: string; sentence: string; right: boolean | null });
+  | { type: 'right_wrong'; prompt: string; sentence: string; right: boolean | null }
+  | { type: 'odd_one_out'; prompt: string; words: string[]; answer: number });
 export type WatchDraft = { type: 'watch_answer'; video: string; questions: NonWatchDraft[] };
 export type Draft = NonWatchDraft | WatchDraft;
 
@@ -23,6 +24,7 @@ export const TYPE_NAMES: Record<QuestionType, string> = {
   sort_it: 'Sort it',
   listen_tap: 'Listen and tap',
   right_wrong: 'Right or wrong',
+  odd_one_out: 'Odd one out',
   watch_answer: 'Watch and answer',
 };
 
@@ -37,6 +39,7 @@ export function emptyDraft(type: QuestionType): Draft {
     case 'sort_it': return { type, picture: '', prompt: '', groups: ['', ''], items: [{ text: '', group: 0 }] };
     case 'fill_blank': return { type, picture: '', before: '', after: '', choices: ['', ''], answer: -1 };
     case 'right_wrong': return { type, picture: '', prompt: 'Is this sentence right?', sentence: '', right: null };
+    case 'odd_one_out': return { type, picture: '', prompt: '', words: ['', '', ''], answer: -1 };
     case 'watch_answer': return { type, video: '', questions: [emptyDraft('pick_one')] };
   }
 }
@@ -50,6 +53,7 @@ export function draftFromQuestion(q: Question): Draft {
     case 'sort_it': return { type: q.type, picture: q.picture ?? '', prompt: q.prompt, groups: [...q.groups], items: q.items.map((i) => ({ ...i })) };
     case 'fill_blank': return { type: q.type, picture: q.picture ?? '', before: q.before, after: q.after, choices: [...q.choices], answer: q.answer };
     case 'right_wrong': return { type: q.type, picture: q.picture ?? '', prompt: q.prompt, sentence: q.sentence, right: q.right };
+    case 'odd_one_out': return { type: q.type, picture: q.picture ?? '', prompt: q.prompt, words: [...q.words], answer: q.answer };
     case 'watch_answer': return { type: q.type, video: q.youtubeId, questions: q.questions.map((x) => draftFromQuestion(x) as NonWatchDraft) };
   }
 }
@@ -107,6 +111,10 @@ function nonWatchPayload(d: NonWatchDraft): Payload {
     }
     case 'right_wrong':
       return { prompt: d.prompt.trim(), sentence: d.sentence.trim(), ...(d.right === null ? {} : { right: d.right }) };
+    case 'odd_one_out': {
+      const c = compact(d.words, d.answer);
+      return { prompt: d.prompt.trim(), words: c.list, answer: c.answer };
+    }
   }
 }
 
@@ -120,5 +128,6 @@ export function draftWords(d: NonWatchDraft): string {
     case 'sort_it': return [...d.items.map((i) => i.text), d.prompt].join(' ');
     case 'fill_blank': return [d.before, ...d.choices, d.after].join(' ');
     case 'right_wrong': return d.sentence;
+    case 'odd_one_out': return [d.prompt, ...d.words].join(' ');
   }
 }

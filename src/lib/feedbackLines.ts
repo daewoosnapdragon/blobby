@@ -35,9 +35,10 @@ function bare(text: string): string {
   return text.trim().replace(/[\s.,!?;:]+$/, '');
 }
 
-/** A line that names the answer, for the two types where it teaches something. */
+/** A line that names the answer, for the types where it teaches something. */
 export function answerLine(q: NonWatchQuestion): string | null {
   if (q.type === 'fill_blank') return `“${bare(q.choices[q.answer])}” fits!`;
+  if (q.type === 'odd_one_out') return `“${bare(q.words[q.answer])}” doesn’t belong!`;
   if (q.type === 'find_fix') {
     const fix = bare(q.fixes[q.answer]);
     const wrong = bare(q.words[q.wrongIndex]);

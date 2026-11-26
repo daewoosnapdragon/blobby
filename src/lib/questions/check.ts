@@ -27,6 +27,8 @@ export function checkAnswer(q: NonWatchQuestion, r: Response): boolean {
       );
     case 'right_wrong':
       return typeof x.yes === 'boolean' && x.yes === q.right;
+    case 'odd_one_out':
+      return isInt(x.choice) && x.choice === q.answer;
     default:
       return false;
   }

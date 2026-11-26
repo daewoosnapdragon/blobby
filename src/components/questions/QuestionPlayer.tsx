@@ -18,6 +18,7 @@ import { BuildIt } from './BuildIt';
 import { SortIt } from './SortIt';
 import { FillBlank } from './FillBlank';
 import { RightWrong } from './RightWrong';
+import { OddOneOut } from './OddOneOut';
 import { TopBar } from './TopBar';
 import { WatchAnswer } from './WatchAnswer';
 import { QuestionPicture } from './QuestionPicture';
@@ -74,6 +75,7 @@ const TYPE_LABEL: Record<NonWatchQuestion['type'], string> = {
   sort_it: 'Sort it',
   fill_blank: 'Fill the blank',
   right_wrong: 'Yes or no',
+  odd_one_out: 'Odd one out',
 };
 const TYPE_TINT: Record<NonWatchQuestion['type'], string> = {
   listen_tap: '#A9D3FF',
@@ -83,6 +85,7 @@ const TYPE_TINT: Record<NonWatchQuestion['type'], string> = {
   sort_it: '#A9D3FF',
   fill_blank: '#B7E1D1',
   right_wrong: '#FFB5C1',
+  odd_one_out: '#FFD95A',
 };
 const HINT: Record<NonWatchQuestion['type'], string> = {
   listen_tap: 'Listen again, then look at each word.',
@@ -92,6 +95,7 @@ const HINT: Record<NonWatchQuestion['type'], string> = {
   sort_it: 'Look at each word again.',
   fill_blank: 'Try each word in the sentence.',
   right_wrong: 'Read it once more, slowly.',
+  odd_one_out: 'Say each word. Which one is different?',
 };
 
 function ask(q: NonWatchQuestion, found: boolean): string {
@@ -130,6 +134,7 @@ function Body({ q, status, onAnswer, onFound }: { q: NonWatchQuestion; status: S
     case 'sort_it': return <SortIt q={q} status={status} onAnswer={onAnswer} />;
     case 'fill_blank': return <FillBlank q={q} status={status} onAnswer={onAnswer} />;
     case 'right_wrong': return <RightWrong q={q} status={status} onAnswer={onAnswer} />;
+    case 'odd_one_out': return <OddOneOut q={q} status={status} onAnswer={onAnswer} />;
   }
 }
 

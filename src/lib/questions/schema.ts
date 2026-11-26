@@ -95,6 +95,11 @@ const fillBlankPayload = z
 
 const rightWrongPayload = z.object({ prompt: text.default('Is this sentence right?'), sentence: text, right: z.boolean(), picture });
 
+const oddOneOutPayload = z
+  .object({ prompt: text, words: z.array(text).min(3).max(4), answer: idx, picture })
+  .refine((q) => q.answer < q.words.length, { message: 'answer is out of range of words', path: ['answer'] })
+  .superRefine((q, ctx) => noRepeats(ctx, q.words, 'words', 'word'));
+
 const listenTapQ = listenTapPayload.extend({ type: z.literal('listen_tap') });
 const pickOneQ = pickOnePayload.extend({ type: z.literal('pick_one') });
 const findFixQ = findFixPayload.extend({ type: z.literal('find_fix') });
@@ -102,8 +107,9 @@ const buildItQ = buildItPayload.extend({ type: z.literal('build_it') });
 const sortItQ = sortItPayload.extend({ type: z.literal('sort_it') });
 const fillBlankQ = fillBlankPayload.extend({ type: z.literal('fill_blank') });
 const rightWrongQ = rightWrongPayload.extend({ type: z.literal('right_wrong') });
+const oddOneOutQ = oddOneOutPayload.extend({ type: z.literal('odd_one_out') });
 
-const nonWatchSchema = z.discriminatedUnion('type', [listenTapQ, pickOneQ, findFixQ, buildItQ, sortItQ, fillBlankQ, rightWrongQ]);
+const nonWatchSchema = z.discriminatedUnion('type', [listenTapQ, pickOneQ, findFixQ, buildItQ, sortItQ, fillBlankQ, rightWrongQ, oddOneOutQ]);
 
 const watchAnswerPayload = z.object({
   youtubeId: z.string().trim().regex(YOUTUBE_ID_RE, 'needs an 11-character YouTube id'),
@@ -112,7 +118,7 @@ const watchAnswerPayload = z.object({
 const watchAnswerQ = watchAnswerPayload.extend({ type: z.literal('watch_answer') });
 
 export const questionSchema = z.discriminatedUnion('type', [
-  listenTapQ, pickOneQ, findFixQ, buildItQ, sortItQ, fillBlankQ, rightWrongQ, watchAnswerQ,
+  listenTapQ, pickOneQ, findFixQ, buildItQ, sortItQ, fillBlankQ, rightWrongQ, oddOneOutQ, watchAnswerQ,
 ]);
 
 const payloadSchemas = {
@@ -123,6 +129,7 @@ const payloadSchemas = {
   sort_it: sortItPayload,
   fill_blank: fillBlankPayload,
   right_wrong: rightWrongPayload,
+  odd_one_out: oddOneOutPayload,
   watch_answer: watchAnswerPayload,
 } as const;
 
@@ -136,6 +143,7 @@ export type BuildItPayload = z.infer<typeof buildItPayload>;
 export type SortItPayload = z.infer<typeof sortItPayload>;
 export type FillBlankPayload = z.infer<typeof fillBlankPayload>;
 export type RightWrongPayload = z.infer<typeof rightWrongPayload>;
+export type OddOneOutPayload = z.infer<typeof oddOneOutPayload>;
 export type WatchAnswerPayload = z.infer<typeof watchAnswerPayload>;
 
 export type NonWatchQuestion = z.infer<typeof nonWatchSchema>;

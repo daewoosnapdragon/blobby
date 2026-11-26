@@ -132,6 +132,16 @@ function RightWrongForm({ draft: d, onChange }: P<'right_wrong'>) {
   );
 }
 
+function OddOneOutForm({ draft: d, onChange }: P<'odd_one_out'>) {
+  return (
+    <>
+      <TextField label="Instruction" value={d.prompt} onChange={(prompt) => onChange({ ...d, prompt })} placeholder="Which word doesn’t belong?" />
+      <ListField legend="Words" hint="Three or four words. Select the odd one." itemLabel="Word" addLabel="Add a word" min={3} max={4}
+        items={d.words} answer={d.answer} onChange={(words, answer) => onChange({ ...d, words, answer: answer ?? d.answer })} />
+    </>
+  );
+}
+
 export function TypeForm({ draft, onChange }: { draft: NonWatchDraft; onChange: (d: NonWatchDraft) => void }) {
   switch (draft.type) {
     case 'pick_one': return <PickOneForm draft={draft} onChange={onChange} />;
@@ -141,6 +151,7 @@ export function TypeForm({ draft, onChange }: { draft: NonWatchDraft; onChange: 
     case 'sort_it': return <SortItForm draft={draft} onChange={onChange} />;
     case 'listen_tap': return <ListenTapForm draft={draft} onChange={onChange} />;
     case 'right_wrong': return <RightWrongForm draft={draft} onChange={onChange} />;
+    case 'odd_one_out': return <OddOneOutForm draft={draft} onChange={onChange} />;
   }
 }
 

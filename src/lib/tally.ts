@@ -17,6 +17,7 @@ const COPY: [NonWatchQuestion['type'], string, string, string][] = [
   ['pick_one', 'You picked', 'right sentence', 'right sentences'],
   ['listen_tap', 'You matched', 'word', 'words'],
   ['right_wrong', 'You checked', 'sentence', 'sentences'],
+  ['odd_one_out', 'You spotted', 'odd one', 'odd ones'],
 ];
 
 export function tallyLines(t: Tally): string[] {
