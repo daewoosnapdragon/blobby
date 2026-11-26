@@ -32,3 +32,13 @@ create table if not exists wp_student_skills (
 );
 alter table wp_student_skills enable row level security;
 revoke all on wp_student_skills from anon, authenticated;
+
+-- Lesson runs already counted for the track, so a repeated "lesson finished" call never counts a run twice.
+create table if not exists wp_track_runs (
+  student_id uuid not null references wp_students(id),
+  run_id     uuid not null,
+  counted_at timestamptz not null default now(),
+  primary key (student_id, run_id)
+);
+alter table wp_track_runs enable row level security;
+revoke all on wp_track_runs from anon, authenticated;

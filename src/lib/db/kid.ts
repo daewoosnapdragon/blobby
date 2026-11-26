@@ -2,6 +2,8 @@ import 'server-only';
 import type postgres from 'postgres';
 import { cookies } from 'next/headers';
 import { sql } from './admin';
+import { countRun, mixIn, reviewQuestions, skillPractice } from './track';
+import type { SkillKey } from '../skills';
 import { SESSION_COOKIE, verifyStudent } from '../session';
 import { UUID_RE } from '../uuid';
 import { isWeekOpen, seoulDate } from '../dates';
@@ -110,6 +112,8 @@ export async function completeLesson(
   studentId: string,
   lessonId: string,
   now: Date = new Date(),
+  /** the lesson run's id: its answers update the kid's review track (once per run) */
+  runId?: string,
 ): Promise<{ starsAwarded: number; weekDone: boolean }> {
   return sql.begin(async (tx) => {
     await lockStudent(tx, studentId);
@@ -145,6 +149,7 @@ export async function completeLesson(
         weekDone = true;
       }
     }
+    if (runId && UUID_RE.test(runId)) await countRun(tx, studentId, runId, now);
     return { starsAwarded, weekDone };
   });
 }
@@ -154,6 +159,8 @@ export interface AttemptInput {
   questionId: string;
   correct: boolean;
   context: 'lesson' | 'free';
+  /** the lesson or practice run this answer belongs to */
+  runId?: string;
 }
 
 export async function recordAttempt(
@@ -165,11 +172,18 @@ export async function recordAttempt(
     await lockStudent(tx, studentId);
     if (!UUID_RE.test(input.questionId)) throw new NotFoundError('question');
     // Soft-deleted questions still accept attempts: an in-progress lesson must be able to finish.
-    const [q] = await tx<{ plan_id: string; opens_on: string | null; preview: boolean }[]>`
-      select w.plan_id, w.opens_on, ${previewOf(tx, studentId)} as preview
-      from wp_questions qu join wp_lessons l on l.id = qu.lesson_id join wp_weeks w on w.id = l.week_id
-      where qu.id = ${input.questionId} and w.plan_id in (${assignedTo(tx, studentId)})`;
-    if (!q || !weekIsOpen(q.opens_on, now, q.preview)) throw new NotFoundError('question');
+    const [q] = await tx<{ plan_id: string | null; opens_on: string | null; preview: boolean; bank: boolean }[]>`
+      select w.plan_id, w.opens_on, ${previewOf(tx, studentId)} as preview, (qu.bank_grade is not null) as bank
+      from wp_questions qu left join wp_lessons l on l.id = qu.lesson_id left join wp_weeks w on w.id = l.week_id
+      where qu.id = ${input.questionId}
+        and (w.plan_id in (${assignedTo(tx, studentId)})
+          or qu.bank_grade = (select c.grade from wp_students s join wp_classes c on c.id = s.class_id where s.id = ${studentId}))`;
+    // Review-bank questions belong to a grade, not a week: no week to be open.
+    if (!q || (!q.bank && !weekIsOpen(q.opens_on, now, q.preview))) throw new NotFoundError('question');
+    // Stars on a bank question count toward the kid's newest assigned plan.
+    const planId = q.plan_id ?? (await tx<{ id: string }[]>`
+      select id from wp_plans where id in (${assignedTo(tx, studentId)}) order by created_at desc, id limit 1`)[0]?.id ?? null;
+    const runId = input.runId && UUID_RE.test(input.runId) ? input.runId : null;
 
     // Answering anything counts as practicing today (a stamp), even a retry; never touches seconds already counted.
     await tx`
@@ -177,8 +191,8 @@ export async function recordAttempt(
       on conflict (student_id, day) do nothing`;
 
     const [inserted] = await tx<{ id: string }[]>`
-      insert into wp_attempts (student_id, question_id, client_attempt_id, correct, context)
-      values (${studentId}, ${input.questionId}, ${input.clientAttemptId}, ${input.correct}, ${input.context})
+      insert into wp_attempts (student_id, question_id, client_attempt_id, correct, context, run_id)
+      values (${studentId}, ${input.questionId}, ${input.clientAttemptId}, ${input.correct}, ${input.context}, ${runId})
       on conflict (client_attempt_id) do nothing returning id`;
 
     if (!inserted) {
@@ -195,7 +209,7 @@ export async function recordAttempt(
     if (input.correct && input.context === 'free') {
       const [ev] = await tx`
         insert into wp_star_events (student_id, plan_id, amount, reason, ref_id)
-        values (${studentId}, ${q.plan_id}, ${STAR_VALUES.freeCorrect}, 'free_correct', ${inserted.id})
+        values (${studentId}, ${planId}, ${STAR_VALUES.freeCorrect}, 'free_correct', ${inserted.id})
         on conflict (student_id, reason, ref_id) do nothing returning id`;
       if (ev) return { starsAwarded: STAR_VALUES.freeCorrect };
     }
@@ -363,6 +377,10 @@ export interface LessonQuestion {
   question: Question;
   /** spoken text -> audio URL (spec 5.7); only string URLs are kept */
   audio: Record<string, string>;
+  /** the question's skill key (src/lib/skills.ts), if tagged */
+  skill?: string | null;
+  /** a review-track question chosen for this kid ("Just for you") */
+  forYou?: boolean;
 }
 
 export interface LessonData {
@@ -396,8 +414,8 @@ export async function getLesson(studentId: string, lessonId: string, now: Date =
     sql<{ id: string; done: boolean }[]>`
       select l.id, exists(select 1 from wp_lesson_completions c where c.lesson_id = l.id and c.student_id = ${studentId}) as done
       from wp_lessons l where l.week_id = ${auth.week_id}`,
-    sql<{ id: string; type: string; payload: unknown; audio: unknown }[]>`
-      select id, type, payload, audio from wp_questions
+    sql<{ id: string; type: string; payload: unknown; audio: unknown; skill: string | null }[]>`
+      select id, type, payload, audio, skill from wp_questions
       where lesson_id = ${lessonId} and deleted_at is null order by position, id`,
     totalStarsFor(studentId),
   ]);
@@ -405,13 +423,15 @@ export async function getLesson(studentId: string, lessonId: string, now: Date =
   const questions: LessonQuestion[] = [];
   for (const q of qs) {
     try {
-      questions.push({ id: q.id, question: parseQuestion(q.type, q.payload), audio: audioMap(q.audio) });
+      questions.push({ id: q.id, question: parseQuestion(q.type, q.payload), audio: audioMap(q.audio), skill: q.skill, forYou: false });
     } catch {
       // A malformed question is skipped rather than breaking the whole lesson for the kid.
     }
   }
 
   const done = new Set(lessons.filter((l) => l.done).map((l) => l.id));
+  // "Just for you": stable for this kid and lesson until it is finished (a redo after that may differ).
+  const review = await reviewQuestions(studentId, student.grade, `${studentId}:${lessonId}:${done.has(lessonId) ? 1 : 0}`);
   return {
     student: { id: student.id, displayName: student.display_name, blobColor: student.blob_color, grade: student.grade },
     totalStars,
@@ -422,7 +442,7 @@ export async function getLesson(studentId: string, lessonId: string, now: Date =
     },
     lessonDone: done.has(lessonId),
     otherLessonsDone: lessons.every((l) => l.id === lessonId || l.done),
-    questions,
+    questions: mixIn(questions, review),
   };
 }
 
@@ -534,4 +554,11 @@ export async function practiceAvailable(studentId: string, now: Date = new Date(
 export async function getPracticeStudent(studentId: string) {
   const [student, totalStars] = await Promise.all([studentWithGrade(studentId), totalStarsFor(studentId)]);
   return { id: student.id, displayName: student.display_name, blobColor: student.blob_color, grade: student.grade, totalStars };
+}
+
+/** Practice again: up to 5 questions on one skill (the kid's missed ones first, then the review bank, then open class questions). */
+export async function getSkillPractice(studentId: string, skill: SkillKey, now: Date = new Date()): Promise<LessonQuestion[]> {
+  const student = await studentWithGrade(studentId);
+  const [pool, missed] = await Promise.all([practicePool(studentId, now), getMissedIds(studentId)]);
+  return skillPractice(student.id, student.grade, skill, new Set(pool.map((q) => q.id)), missed);
 }

@@ -4,7 +4,7 @@ import { resetTestDb } from './helpers/db';
 const TABLES = [
   'wp_classes', 'wp_students', 'wp_plans', 'wp_plan_assignments', 'wp_weeks',
   'wp_lessons', 'wp_questions', 'wp_attempts', 'wp_lesson_completions',
-  'wp_star_events', 'wp_practice_days', 'wp_student_skills',
+  'wp_star_events', 'wp_practice_days', 'wp_student_skills', 'wp_track_runs',
 ];
 
 let sql: Awaited<ReturnType<typeof resetTestDb>>;
@@ -17,7 +17,7 @@ async function rejects(p: PromiseLike<unknown>, code: string) {
 const CHECK = '23514', UNIQUE = '23505';
 
 describe('lockdown', () => {
-  it('has all 12 tables', async () => {
+  it('has all 13 tables', async () => {
     const rows = await sql`select tablename from pg_tables where schemaname='public' and tablename like 'wp\\_%'`;
     expect(rows.map((r) => r.tablename).sort()).toEqual([...TABLES].sort());
   });

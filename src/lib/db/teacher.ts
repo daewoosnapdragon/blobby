@@ -4,6 +4,7 @@ import { starEventsFor, NotFoundError } from './kid';
 import { makeLinkSecret } from '../roster';
 import { UUID_RE } from '../uuid';
 import type { WpStudent } from '../types';
+import { isSkillKey } from '../skills';
 import { parseQuestion, type Question } from '../questions/schema';
 import { questionProblems } from '../questions/problems';
 import { spokenStrings } from '../spoken';
@@ -374,4 +375,39 @@ export async function resetPracticeStudent(classId: string): Promise<void> {
     await tx`delete from wp_practice_days where student_id = ${s.id}`;
     await tx`update wp_students set blob_color = null where id = ${s.id}`;
   });
+}
+
+// ---- Review tracks: a kid's review skills, as Kyla sees and changes them --------------------------
+
+export interface StudentSkillRow {
+  skill: string; source: 'pretest' | 'next_step' | 'auto' | 'teacher'; state: 'active' | 'mastered' | 'removed';
+  spacing: number; lessonsSince: number; removedByTeacher: boolean; addedAt: string; changedAt: string;
+}
+
+export async function studentSkills(studentId: string): Promise<StudentSkillRow[]> {
+  if (!UUID_RE.test(studentId)) return [];
+  return sql<StudentSkillRow[]>`
+    select skill, source, state, spacing, lessons_since as "lessonsSince", removed_by_teacher as "removedByTeacher",
+           added_at::text as "addedAt", changed_at::text as "changedAt"
+    from wp_student_skills where student_id = ${studentId}
+    order by case state when 'active' then 0 when 'mastered' then 1 else 2 end, added_at, skill`;
+}
+
+/**
+ * Kyla adds a skill (it becomes active, hers, and is never mastered away) or removes one (it stays removed: the
+ * app never adds it back on its own). Unknown skills or students are ignored.
+ */
+export async function setStudentSkill(studentId: string, skill: string, change: 'add' | 'remove'): Promise<void> {
+  if (!UUID_RE.test(studentId) || !isSkillKey(skill)) return;
+  if (change === 'add') {
+    await sql`
+      insert into wp_student_skills (student_id, skill, source, state)
+      select ${studentId}, ${skill}, 'teacher', 'active' where exists (select 1 from wp_students where id = ${studentId})
+      on conflict (student_id, skill) do update set source = 'teacher', state = 'active', removed_by_teacher = false,
+        spacing = 3, lessons_since = 0, changed_at = now()`;
+  } else {
+    await sql`
+      update wp_student_skills set state = 'removed', removed_by_teacher = true, changed_at = now()
+      where student_id = ${studentId} and skill = ${skill}`;
+  }
 }
