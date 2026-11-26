@@ -3,6 +3,7 @@ import { useState } from 'react';
 import type { LessonQuestion } from '@/lib/db/kid';
 import { toBlobColor } from '@/lib/blobColors';
 import { STAR_VALUES } from '@/lib/stars';
+import type { Tally } from '@/lib/tally';
 import { QuestionPlayer } from '@/components/questions/QuestionPlayer';
 import { useRecordAttempt, type FailedSave } from '@/components/questions/useRecordAttempt';
 import { SaveRetry } from '@/components/questions/SaveRetry';
@@ -20,6 +21,7 @@ type Student = { id: string; displayName: string; blobColor: string | null; grad
 export function PracticeScreen({ student, questions }: { student: Student; questions: LessonQuestion[] }) {
   const [phase, setPhase] = useState<'play' | 'done' | 'signedOut'>('play');
   const [earned, setEarned] = useState(0);
+  const [tally, setTally] = useState<Tally | null>(null);
   const [saving, setSaving] = useState(0);
   // First-try right answers whose save failed after every retry ("+1 star" already showed): tap to resend.
   const [failed, setFailed] = useState<FailedSave[]>([]);
@@ -54,7 +56,7 @@ export function PracticeScreen({ student, questions }: { student: Student; quest
   if (phase === 'done') {
     return (
       <>
-        <PracticeDone name={student.displayName} color={color} stars={stars} earned={earned} saving={saving > 0 || retrying} />
+        <PracticeDone name={student.displayName} color={color} stars={stars} earned={earned} saving={saving > 0 || retrying} tally={tally} />
         {retryNote}
       </>
     );
@@ -64,11 +66,12 @@ export function PracticeScreen({ student, questions }: { student: Student; quest
       <QuestionPlayer
         questions={questions}
         onAnswer={onAnswer}
-        onFinish={() => setPhase('done')}
+        onFinish={(t) => { setTally(t); setPhase('done'); }}
         blobColor={color}
         stars={stars}
         autoRead={student.grade <= 2}
         answerStars={STAR_VALUES.freeCorrect}
+        bonusStars={STAR_VALUES.freeBonus}
         closeLabel="Close practice"
       />
       {retryNote}

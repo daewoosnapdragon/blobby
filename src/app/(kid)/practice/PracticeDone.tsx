@@ -6,11 +6,15 @@ import { Blob, type BlobColor } from '@/components/blob/Blob';
 import { PillButton } from '@/components/ui/PillButton';
 import { StarIcon } from '@/components/ui/icons';
 import { TopBar } from '@/components/questions/TopBar';
+import { Recap } from '@/components/ui/Recap';
+import type { Tally } from '@/lib/tally';
 import styles from './practice.module.css';
 
-/** The end of a free-practice set: what the server says the kid earned, then another set or home. */
-export function PracticeDone({ name, color, stars, earned, saving }: {
+/** The end of a free-practice set: what the server says the kid earned, the recap, then another set or home. */
+export function PracticeDone({ name, color, stars, earned, saving, tally }: {
   name: string; color: BlobColor; stars: number; earned: number; saving: boolean;
+  /** what the kid did this set (the recap tags) */
+  tally?: Tally | null;
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -40,6 +44,7 @@ export function PracticeDone({ name, color, stars, earned, saving }: {
           ) : (
             <p className={styles.stars}>Nice practice!</p>
           )}
+          <Recap tally={tally} />
         </div>
 
         <div className={styles.spacer} />
