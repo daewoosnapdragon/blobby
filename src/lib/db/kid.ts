@@ -2,7 +2,7 @@ import 'server-only';
 import type postgres from 'postgres';
 import { cookies } from 'next/headers';
 import { sql } from './admin';
-import { bonusPick, countRun, forgetPicks, mixIn, reviewQuestions, skillPractice } from './track';
+import { bonusPick, countRun, forgetPicks, mixIn, reviewQuestions, skillPractice, storedBonus } from './track';
 import { lessonBonusSeed } from '../bonus';
 import type { SkillKey } from '../skills';
 import { SESSION_COOKIE, verifyStudent } from '../session';
@@ -115,11 +115,13 @@ export async function completeLesson(
   now: Date = new Date(),
   /** the lesson run's id: its answers update the kid's review track (once per run) */
   runId?: string,
-): Promise<{ starsAwarded: number; weekDone: boolean }> {
+): Promise<{ starsAwarded: number; weekDone: boolean; lessonStars: number; bonusStars: number }> {
   return sql.begin(async (tx) => {
     await lockStudent(tx, studentId);
     const lesson = await authorizedLesson(tx, studentId, lessonId, now);
     let starsAwarded = 0;
+    let lessonStars = 0;
+    let bonusStars = 0;
 
     const [completion] = await tx`
       insert into wp_lesson_completions (student_id, lesson_id) values (${studentId}, ${lessonId})
@@ -129,7 +131,30 @@ export async function completeLesson(
         insert into wp_star_events (student_id, plan_id, amount, reason, ref_id)
         values (${studentId}, ${lesson.plan_id}, ${STAR_VALUES.lesson}, 'lesson', ${lessonId})
         on conflict (student_id, reason, ref_id) do nothing returning id`;
-      if (ev) starsAwarded += STAR_VALUES.lesson;
+      if (ev) {
+        starsAwarded += STAR_VALUES.lesson;
+        lessonStars = STAR_VALUES.lesson;
+      }
+
+      // The bonus question stored for this play-through (read before forgetPicks drops it) pays only when
+      // this run's first attempt at it was right. Deleted or since-reordered questions still count: it's the stored id.
+      const bonusId = await storedBonus(tx, studentId, lessonId);
+      if (bonusId && runId && UUID_RE.test(runId)) {
+        const [first] = await tx<{ correct: boolean }[]>`
+          select correct from wp_attempts
+          where student_id = ${studentId} and run_id = ${runId} and question_id = ${bonusId}
+          order by created_at asc limit 1`;
+        if (first?.correct) {
+          const [bonusEv] = await tx`
+            insert into wp_star_events (student_id, plan_id, amount, reason, ref_id)
+            values (${studentId}, ${lesson.plan_id}, ${STAR_VALUES.lessonBonus}, 'lesson_bonus', ${lessonId})
+            on conflict (student_id, reason, ref_id) do nothing returning id`;
+          if (bonusEv) {
+            starsAwarded += STAR_VALUES.lessonBonus;
+            bonusStars = STAR_VALUES.lessonBonus;
+          }
+        }
+      }
     }
 
     // Checked even on a repeat call: harmless, because the bonus insert is itself idempotent.
@@ -152,7 +177,7 @@ export async function completeLesson(
     }
     if (runId && UUID_RE.test(runId)) await countRun(tx, studentId, runId, now);
     await forgetPicks(tx, studentId, lessonId);
-    return { starsAwarded, weekDone };
+    return { starsAwarded, weekDone, lessonStars, bonusStars };
   });
 }
 
@@ -456,7 +481,7 @@ export async function getLesson(studentId: string, lessonId: string, now: Date =
 export interface WeekDoneData {
   student: { id: string; displayName: string; blobColor: string | null };
   week: { id: string; number: number; skill: string; done: boolean };
-  /** this week's lesson stars + its week bonus (R24) */
+  /** this week's lesson stars, their lesson bonuses, and its week bonus (R24) */
   weekStars: number;
   totalStars: number;
 }
@@ -478,7 +503,7 @@ export async function getWeekDone(studentId: string, weekId: string, now: Date =
     sql<{ weekStars: number }[]>`
       select coalesce(sum(amount), 0)::int as "weekStars" from wp_star_events
       where student_id = ${studentId}
-        and ((reason = 'lesson' and ref_id in (select id from wp_lessons where week_id = ${weekId}))
+        and ((reason in ('lesson', 'lesson_bonus') and ref_id in (select id from wp_lessons where week_id = ${weekId}))
           or (reason = 'week_bonus' and ref_id = ${weekId}))`,
     totalStarsFor(studentId),
   ]);

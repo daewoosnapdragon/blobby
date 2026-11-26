@@ -7,7 +7,7 @@ export interface LessonPageState {
   weekDone: boolean;
   otherLessonsDone: boolean;
 }
-export interface CompleteResult { studentId: string; starsAwarded: number; weekDone: boolean }
+export interface CompleteResult { studentId: string; starsAwarded: number; weekDone: boolean; lessonStars?: number; bonusStars?: number }
 
 /**
  * firstTime: this completion earned the lesson's stars. A retried POST returns {0, false}, so the page's own

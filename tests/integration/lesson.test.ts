@@ -174,3 +174,128 @@ describe('getHome week numbers', () => {
     expect((await getHome(LEO, NOW)).weeks.map((w) => w.number)).toEqual([1, 2, 3]);
   });
 });
+
+describe('lesson bonus', () => {
+  // Jun is untouched by the tests above: each test starts him on a fresh L1/L2 with no stars.
+  const JUN = STUDENTS.jun.id;
+  const fresh = async () => {
+    await sql`delete from wp_lesson_completions where student_id = ${JUN}`;
+    await sql`delete from wp_star_events where student_id = ${JUN}`;
+    await sql`delete from wp_review_picks where student_id = ${JUN}`;
+  };
+  const bonusOf = async () => {
+    const { getLesson } = await import('@/lib/db/kid');
+    const [q] = (await getLesson(JUN, L1, NOW)).questions.filter((x) => x.bonus);
+    return q.id;
+  };
+  const answer = async (n: number, questionId: string, correct: boolean, runId: string) => {
+    const { recordAttempt } = await import('@/lib/db/kid');
+    await recordAttempt(JUN, { clientAttemptId: id(n), questionId, correct, context: 'lesson', runId }, NOW);
+  };
+  const other = (q: string) => (q === Q.a ? Q.b : Q.a);
+
+  it('pays +2 once when the run’s first attempt at the stored bonus was right', async () => {
+    const { completeLesson } = await import('@/lib/db/kid');
+    await fresh();
+    const RUN = id(901);
+    const bonus = await bonusOf();
+    await answer(911, bonus, true, RUN);
+    const res = await completeLesson(JUN, L1, NOW, RUN);
+    // L2 is not done, so no week bonus: 10 + 2
+    expect(res).toEqual({ starsAwarded: 12, weekDone: false, lessonStars: 10, bonusStars: 2 });
+    const ev = await sql`select amount, plan_id from wp_star_events where student_id = ${JUN} and reason = 'lesson_bonus' and ref_id = ${L1}`;
+    expect(ev).toHaveLength(1);
+    expect(ev[0].amount).toBe(2);
+    expect(ev[0].plan_id).toBe(PLAN); // covered by the test-star reset, which deletes by plan_id
+    const again = await completeLesson(JUN, L1, NOW, RUN);
+    expect(again).toEqual({ starsAwarded: 0, weekDone: false, lessonStars: 0, bonusStars: 0 });
+  });
+
+  it('pays nothing when the first attempt was wrong, even if a later one was right', async () => {
+    const { completeLesson } = await import('@/lib/db/kid');
+    await fresh();
+    const RUN = id(902);
+    const bonus = await bonusOf();
+    // the previous test's run got this question right first; only this run's attempts count
+    await answer(921, bonus, false, RUN);
+    await answer(922, bonus, true, RUN);
+    const res = await completeLesson(JUN, L1, NOW, RUN);
+    expect(res).toEqual({ starsAwarded: 10, weekDone: false, lessonStars: 10, bonusStars: 0 });
+    expect(await sql`select 1 from wp_star_events where student_id = ${JUN} and reason = 'lesson_bonus'`).toHaveLength(0);
+  });
+
+  it('pays nothing without a runId, or when the run never answered the bonus', async () => {
+    const { completeLesson } = await import('@/lib/db/kid');
+    await fresh();
+    const RUN = id(903);
+    await answer(931, await bonusOf(), true, RUN);
+    expect((await completeLesson(JUN, L1, NOW)).bonusStars).toBe(0);
+
+    await fresh();
+    const RUN2 = id(904);
+    await answer(941, other(await bonusOf()), true, RUN2);
+    const res = await completeLesson(JUN, L1, NOW, RUN2);
+    expect([res.lessonStars, res.bonusStars, res.starsAwarded]).toEqual([10, 0, 10]);
+    expect(await sql`select 1 from wp_star_events where student_id = ${JUN} and reason = 'lesson_bonus'`).toHaveLength(0);
+  });
+
+  it('pays nothing on a redo (the lesson was already complete)', async () => {
+    const { completeLesson } = await import('@/lib/db/kid');
+    await fresh();
+    await bonusOf();
+    await completeLesson(JUN, L1, NOW);
+    const RUN = id(905);
+    await answer(951, await bonusOf(), true, RUN); // the redo's own stored pick
+    const res = await completeLesson(JUN, L1, NOW, RUN);
+    expect(res).toEqual({ starsAwarded: 0, weekDone: false, lessonStars: 0, bonusStars: 0 });
+    expect(await sql`select 1 from wp_star_events where student_id = ${JUN} and reason = 'lesson_bonus'`).toHaveLength(0);
+  });
+
+  it('pays the stored question even after it was soft-deleted mid-run', async () => {
+    const { completeLesson } = await import('@/lib/db/kid');
+    await fresh();
+    const RUN = id(906);
+    const bonus = await bonusOf();
+    await answer(961, bonus, true, RUN);
+    await sql`update wp_questions set deleted_at = now() where id = ${bonus}`;
+    try {
+      const res = await completeLesson(JUN, L1, NOW, RUN);
+      expect(res.bonusStars).toBe(2);
+      expect(res.starsAwarded).toBe(12);
+    } finally {
+      await sql`update wp_questions set deleted_at = null where id = ${bonus}`;
+    }
+  });
+
+  it('pays the stored question, not a positional repick, after a question was inserted before it', async () => {
+    const { completeLesson } = await import('@/lib/db/kid');
+    const { pickLessonBonus, lessonBonusSeed } = await import('@/lib/bonus');
+    await fresh();
+    const RUN = id(907);
+    const bonus = await bonusOf();
+    const first = id(408);
+    await sql`insert into wp_questions (id, lesson_id, position, type, payload, audio) values
+      (${first}, ${L1}, 0, 'pick_one', ${sql.json(pickOne('zeroth'))}, '{}')`;
+    try {
+      // a fresh pick over the new list would land elsewhere, so only the stored pick pays
+      expect(pickLessonBonus([first, Q.a, Q.b], lessonBonusSeed(JUN, L1, false))).not.toBe(bonus);
+      await answer(971, bonus, true, RUN);
+      const res = await completeLesson(JUN, L1, NOW, RUN);
+      expect(res.bonusStars).toBe(2);
+    } finally {
+      await sql`delete from wp_questions where id = ${first}`;
+    }
+  });
+
+  it('getWeekDone.weekStars includes lesson bonus stars', async () => {
+    const { completeLesson, getWeekDone } = await import('@/lib/db/kid');
+    await fresh();
+    const RUN = id(908);
+    await answer(981, await bonusOf(), true, RUN);
+    expect((await completeLesson(JUN, L1, NOW, RUN)).bonusStars).toBe(2);
+    const res = await completeLesson(JUN, L2, NOW);
+    expect(res).toEqual({ starsAwarded: 20, weekDone: true, lessonStars: 10, bonusStars: 0 });
+    // L1 10 + bonus 2 + L2 10 + week bonus 10
+    expect((await getWeekDone(JUN, W1, NOW)).weekStars).toBe(32);
+  });
+});

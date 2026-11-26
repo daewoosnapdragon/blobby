@@ -47,18 +47,18 @@ const stars = async (student: string) =>
 describe('completeLesson', () => {
   it('awards 10 then 0 on a repeat', async () => {
     const { completeLesson } = await import('@/lib/db/kid');
-    expect(await completeLesson(JUN, L.solo, NOW)).toEqual({ starsAwarded: 20, weekDone: true }); // lesson + week bonus (single-lesson week)
-    expect(await completeLesson(JUN, L.solo, NOW)).toEqual({ starsAwarded: 0, weekDone: false });
+    expect(await completeLesson(JUN, L.solo, NOW)).toEqual({ starsAwarded: 20, weekDone: true, lessonStars: 10, bonusStars: 0 }); // lesson + week bonus (single-lesson week)
+    expect(await completeLesson(JUN, L.solo, NOW)).toEqual({ starsAwarded: 0, weekDone: false, lessonStars: 0, bonusStars: 0 });
     expect(await count('wp_lesson_completions', JUN)).toBe(1);
     expect(await stars(JUN)).toBe(20);
   });
 
   it('awards the week bonus once when the last lesson is completed twice', async () => {
     const { completeLesson } = await import('@/lib/db/kid');
-    expect(await completeLesson(LEO, L.a, NOW)).toEqual({ starsAwarded: 10, weekDone: false });
-    expect(await completeLesson(LEO, L.b, NOW)).toEqual({ starsAwarded: 10, weekDone: false });
-    expect(await completeLesson(LEO, L.c, NOW)).toEqual({ starsAwarded: 20, weekDone: true });
-    expect(await completeLesson(LEO, L.c, NOW)).toEqual({ starsAwarded: 0, weekDone: false });
+    expect(await completeLesson(LEO, L.a, NOW)).toEqual({ starsAwarded: 10, weekDone: false, lessonStars: 10, bonusStars: 0 });
+    expect(await completeLesson(LEO, L.b, NOW)).toEqual({ starsAwarded: 10, weekDone: false, lessonStars: 10, bonusStars: 0 });
+    expect(await completeLesson(LEO, L.c, NOW)).toEqual({ starsAwarded: 20, weekDone: true, lessonStars: 10, bonusStars: 0 });
+    expect(await completeLesson(LEO, L.c, NOW)).toEqual({ starsAwarded: 0, weekDone: false, lessonStars: 0, bonusStars: 0 });
     const bonus = await sql`select 1 from wp_star_events where student_id = ${LEO} and reason = 'week_bonus'`;
     expect(bonus).toHaveLength(1);
     expect(await stars(LEO)).toBe(40);
