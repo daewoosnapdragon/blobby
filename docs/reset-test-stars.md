@@ -4,6 +4,8 @@
 
 **What it does:** deletes the stars earned on test plans and removes the test plan from every class and kid, so it no longer shows on their home screen.
 
+Lesson bonus-question stars (`lesson_bonus`) go with the rest: like every star record, they carry the plan id.
+
 **What it keeps:** practice days (the calendar), blob colors, lesson completions, answers, and all stars from the winter and homework plans.
 
 Running it twice is safe: the second run finds nothing to do.

@@ -19,7 +19,7 @@ test('answering a question stamps today on /stamps with a stamp from the set', a
   await expect(page.getByRole('progressbar', { name: 'Question 1 of 4' })).toBeVisible();
   // any answer counts as practicing; a wrong first try is fine
   await page.getByRole('button', { name: new RegExp(`^(${RIGHT.join('|')})$`) }).first().click();
-  await expect(page.getByRole('status')).toContainText('That’s it!');
+  await expect(page.locator('[role="status"] [data-result="right"]')).toBeVisible();
   await expect.poll(async () => (await sql`select 1 from wp_practice_days where student_id = ${leo.id}`).length).toBe(1);
 
   await page.goto('/');

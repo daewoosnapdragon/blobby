@@ -34,7 +34,7 @@ test('a lesson mixes in "Just for you" questions; misses show Tricky today with 
 
   const wrongThenRight = async (wrong: string, right: string) => {
     await page.getByRole('button', { name: wrong, exact: true }).click();
-    await expect(page.getByRole('status')).toContainText('Almost!');
+    await expect(page.locator('[role="status"] [data-result="wrong"]')).toBeVisible();
     await page.getByRole('button', { name: 'Try again', exact: true }).click();
     await page.getByRole('button', { name: right, exact: true }).click();
     await page.getByRole('button', { name: /^(Next|Finish)/ }).click();

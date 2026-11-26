@@ -38,6 +38,6 @@ for (const vp of [{ name: '390x844', width: 390, height: 844 }, { name: '1280x80
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     await page.getByRole('button', { name: 'Skip video' }).click();
     await page.getByRole('button', { name: 'She went home.', exact: true }).click();
-    await expect(page.getByRole('status')).toContainText('That’s it!');
+    await expect(page.locator('[role="status"] [data-result="right"]')).toBeVisible();
   });
 }

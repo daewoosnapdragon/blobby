@@ -10,12 +10,22 @@ test.afterAll(async () => {
 const { lessons: L, questions: Q, weeks: W } = PLAN;
 
 const starPill = (page: Page, n: number) => page.getByLabel(`${n} stars`, { exact: true });
+const rightCard = (page: Page) => page.locator('[role="status"] [data-result="right"]');
+const wrongCard = (page: Page) => page.locator('[role="status"] [data-result="wrong"]');
+// exact: a fill_blank bonus also starts its bubble with "Bonus!"; the tag is the element whose whole text is "Bonus!"
+const bonusTag = (page: Page) => page.getByText('Bonus!', { exact: true });
 
 /** Answers the current question by tapping `choice`, expects the right card, then taps Next. */
 async function answerRight(page: Page, choice: string) {
   await page.getByRole('button', { name: choice, exact: true }).click();
-  await expect(page.getByRole('status')).toContainText('That’s it!');
+  await expect(rightCard(page)).toBeVisible();
   await page.getByRole('button', { name: 'Next', exact: true }).click();
+}
+
+/** Waits for question `n` of `total`, then says whether it carries the Bonus! tag. */
+async function bonusAt(page: Page, n: number, total: number): Promise<boolean> {
+  await expect(page.getByRole('progressbar', { name: `Question ${n} of ${total}` })).toBeVisible();
+  return bonusTag(page).isVisible();
 }
 
 async function attempts(studentId: string) {
@@ -32,7 +42,7 @@ async function eventually<T>(fn: () => Promise<T>, ok: (v: T) => boolean, ms = 8
   }
 }
 
-test('pick a blob, finish a lesson (+10), finish the week (+30 this week), redo for practice', async ({ page }) => {
+test('pick a blob, finish a lesson (+10, +2 for a first-try right bonus question), finish the week, redo for practice', async ({ page }) => {
   const jun = STUDENTS.jun;
   await page.goto(`/s/${jun.secret}`);
   await expect(page).toHaveURL(/\/pick$/);
@@ -61,58 +71,90 @@ test('pick a blob, finish a lesson (+10), finish the week (+30 this week), redo 
   // lesson 1 via Keep going
   await page.getByRole('link', { name: 'Keep going' }).click();
   await expect(page).toHaveURL(new RegExp(`/lesson/${L.one.id}$`));
-  await expect(page.getByRole('progressbar', { name: 'Question 1 of 2' })).toBeVisible();
+  const bonus1 = [await bonusAt(page, 1, 2)];
 
   // Review Focus #5: the audio 404s -> "Try again", and the question still works
   await page.getByRole('button', { name: 'Hear it' }).click();
   await expect(page.getByRole('button', { name: 'Try again to hear it' })).toBeVisible();
 
-  // wrong first, then right: only the first try is stored
+  // wrong first, then right: only the first try is stored (and a bonus question answered this way pays nothing)
   await page.getByRole('button', { name: 'I walk to school.', exact: true }).click();
-  await expect(page.getByRole('status')).toContainText('Almost!');
+  await expect(wrongCard(page)).toBeVisible();
   await page.getByRole('button', { name: 'Try again', exact: true }).click();
-  await answerRight(page, 'I walked to school.');
-  await answerRight(page, 'ate');
+  await page.getByRole('button', { name: 'I walked to school.', exact: true }).click();
+  await expect(rightCard(page)).toBeVisible();
+  await expect(rightCard(page)).not.toContainText(/\+\d+ stars?/);
+  await page.getByRole('button', { name: 'Next', exact: true }).click();
+  bonus1.push(await bonusAt(page, 2, 2));
+  await page.getByRole('button', { name: 'ate', exact: true }).click();
+  // in a lesson only the bonus question notes stars on its card, and only on a first-try right
+  if (bonus1[1]) await expect(rightCard(page)).toContainText('+2 stars');
+  else await expect(rightCard(page)).not.toContainText(/\+\d+ stars?/);
+  await page.getByRole('button', { name: 'Next', exact: true }).click();
 
+  // exactly one bonus question per lesson; it pays +2 only if its first try was right (q2 here, never q1)
+  expect(bonus1.filter(Boolean)).toHaveLength(1);
+  const one = 10 + (bonus1[1] ? 2 : 0);
   await expect(page.getByText('+10 stars')).toBeVisible();
-  await expect(starPill(page, 10)).toBeVisible();
+  if (bonus1[1]) await expect(page.getByText('+2 bonus stars')).toBeVisible();
+  else await expect(page.getByText(/bonus stars/)).toHaveCount(0);
+  await expect(page.locator('[data-testid="recap"] li').first()).toBeVisible();
+  await expect(starPill(page, one)).toBeVisible();
   const a = await eventually(() => attempts(jun.id), (r) => r.length >= 2);
   expect(a.map((r) => [r.question_id, r.correct, r.context])).toEqual([
     [Q.q1.id, false, 'lesson'],
     [Q.q2.id, true, 'lesson'],
   ]);
+  const bonusRows = await sql<{ amount: number; ref_id: string }[]>`
+    select amount, ref_id from wp_star_events where student_id = ${jun.id} and reason = 'lesson_bonus'`;
+  expect(bonusRows.map((r) => [r.amount, r.ref_id])).toEqual(bonus1[1] ? [[2, L.one.id]] : []);
 
   await page.getByRole('link', { name: 'Back to my plan' }).click();
   await expect(page).toHaveURL(/\/$/);
-  await expect(starPill(page, 10)).toBeVisible();
+  await expect(starPill(page, one)).toBeVisible();
   await expect(page.getByText('1 more lesson to finish the week')).toBeVisible();
 
   // the open week card leads to the week's lesson list
   await page.getByRole('link', { name: new RegExp(W.open.skill) }).last().click();
   await expect(page).toHaveURL(new RegExp(`/week/${W.open.id}$`));
   await page.getByRole('link', { name: new RegExp(L.two.title) }).click();
-  await answerRight(page, 'She went home.');
-  await answerRight(page, 'They played tag.');
+  const bonus2: boolean[] = [];
+  for (const [i, choice] of ['She went home.', 'They played tag.'].entries()) {
+    bonus2.push(await bonusAt(page, i + 1, 2));
+    await page.getByRole('button', { name: choice, exact: true }).click();
+    if (bonus2[i]) await expect(rightCard(page)).toContainText('+2 stars');
+    else await expect(rightCard(page)).not.toContainText(/\+\d+ stars?/);
+    await page.getByRole('button', { name: 'Next', exact: true }).click();
+  }
+  // all right first try: the bonus question pays +2
+  expect(bonus2.filter(Boolean)).toHaveLength(1);
   await expect(page.getByText('+10 stars')).toBeVisible();
-  await expect(starPill(page, 30)).toBeVisible(); // lesson + week bonus
+  await expect(page.getByText('+2 bonus stars')).toBeVisible();
+  await expect(page.locator('[data-testid="recap"] li').first()).toBeVisible();
+  const week = one + 12 + 10; // lesson one, lesson two + its bonus question, the week bonus
+  await expect(starPill(page, week)).toBeVisible();
 
-  // week done: lesson + lesson + bonus = 30 this week
+  // week done: both lessons, their bonus questions and the week bonus
   await page.getByRole('link', { name: 'Next', exact: true }).click();
   await expect(page).toHaveURL(new RegExp(`/week-done/${W.open.id}$`));
   await expect(page.getByRole('heading', { name: 'Week 1 done!' })).toBeVisible();
-  await expect(page.getByTestId('week-stars')).toHaveText('+30');
-  await expect(page.getByTestId('chest-total')).toHaveText('30');
+  await expect(page.getByTestId('week-stars')).toHaveText(`+${week}`);
+  await expect(page.getByTestId('chest-total')).toHaveText(String(week));
   await expect(page.getByText('Opens when you’re back at school')).toBeVisible();
   const [{ n }] = await sql<{ n: number }[]>`select coalesce(sum(amount),0)::int as n from wp_star_events where student_id = ${jun.id}`;
-  expect(n).toBe(30);
+  expect(n).toBe(week);
 
-  // redo: no stars, "Nice practice!", and no second week-done
+  // redo: no stars (not even for the bonus question), "Nice practice!", and no second week-done
   await page.goto(`/lesson/${L.one.id}`);
+  const redo = [await bonusAt(page, 1, 2)];
   await answerRight(page, 'I walked to school.');
+  redo.push(await bonusAt(page, 2, 2));
   await answerRight(page, 'ate');
+  expect(redo.filter(Boolean)).toHaveLength(1);
   await expect(page.getByText('Nice practice!')).toBeVisible();
   await expect(page.getByText('+10 stars')).toHaveCount(0);
-  await expect(starPill(page, 30)).toBeVisible();
+  await expect(page.getByText(/bonus stars/)).toHaveCount(0);
+  await expect(starPill(page, week)).toBeVisible();
   await expect(page.getByRole('link', { name: 'Back to my plan' })).toBeVisible();
 });
 

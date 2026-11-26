@@ -55,7 +55,7 @@ test('lesson player on desktop keeps the feedback near the answers', async ({ pa
   const last = page.getByRole('button', { name: 'She went home.', exact: true });
   await page.getByRole('button', { name: 'She goed home.', exact: true }).click();
   const fb = page.getByRole('status');
-  await expect(fb).toContainText('Almost!');
+  await expect(fb.locator('[data-result="wrong"]')).toBeVisible();
   const a = (await last.boundingBox())!;
   const b = (await fb.boundingBox())!;
   expect(b.y - (a.y + a.height)).toBeLessThan(120);

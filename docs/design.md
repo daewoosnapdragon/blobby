@@ -126,6 +126,8 @@ How answering works:
 - **The blob reacts:** a happy hop when they're right, a gentle wobble when they're wrong.
 - **Feedback is never only motion.** Color and words always say right or wrong too.
 
+**Bonus question:** each lesson has one bonus question, marked with a yellow **Bonus!** tag. The server picks it (one of the lesson's own questions, never a "Just for you" pick or a video) and saves the pick, so it stays put on a reload. If the kid's first try at it is right, the lesson pays **+2 stars** on top of its 10, the first time through only; a redo pays nothing. In free practice about one question in eight is a bonus for that kid and day, and a first-try right on it pays 2 instead of 1. The server picks and pays both; the phone only shows the tag.
+
 ### 5.7 Read-aloud
 - Every Grades 1–2 prompt and answer is read aloud, and there's a **Hear it** button on every question for every grade.
 - **Pre-generated audio,** not the phone's built-in voice, which sounds robotic or accented on many Korean phones.
@@ -137,6 +139,7 @@ How answering works:
 - Stars for finishing a lesson, plus a bonus for finishing a week.
 - Free practice gives smaller stars per correct answer.
 - **Starting values** (Claude's proposal, easy to tune): 10 per lesson, a 10-star week bonus, and 1 per correct answer in free practice.
+- **Bonus questions** (§5.6): +2 for a lesson's bonus question answered right on the first try, first time through only, and 2 instead of 1 for a free-practice bonus question. The week-done total counts lesson bonus stars too.
 - The total shows on the home screen at all times.
 - **Week done:** a celebration screen with the blob jumping, the stars counting up, and the running treasure chest total ("Opens when you're back at school").
 
@@ -150,6 +153,10 @@ How answering works:
   - A sleepy "good morning" stretch early in the day.
   - Pajamas and "Time for bed, see you tomorrow!" after 9 pm, using the device's local time. This is a nudge only; nothing gets locked.
 - **Flying stars:** an earned star flies from the answer to the star counter.
+- **On a roll:** the player counts first-try right answers in a row within one lesson or practice run. At 3 the blob cheers and sparkles pop around it; at 5 it spins and the sparkles come back. Nothing extra after that. A wrong first try sets the count back to 0, with no message or sound of its own.
+- **Rotating lines:** the feedback card's title comes from a pool of short lines (12 for right, 12 for almost, 5 for three in a row, 5 for five in a row), never the same line twice in a row. On a right answer the blob names the answer where it can (`“ate” fits!`, `went, not goed!`). Lines are not read aloud.
+- **Rising ding:** each first-try right in a row plays the ding a semitone higher, up to the fifth; a reset brings it back down.
+- **Recap:** the lesson-done and practice-done screens show up to three pastel tags with what the kid did ("You built 2 sentences", "You fixed 4 mistakes"). Never a score, a count of wrong answers, or a percentage.
 - **Friendly problem screens:**
   - Loading: the blob bounces.
   - No internet: the blob holds an umbrella.
