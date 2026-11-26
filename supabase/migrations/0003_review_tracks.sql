@@ -42,3 +42,15 @@ create table if not exists wp_track_runs (
 );
 alter table wp_track_runs enable row level security;
 revoke all on wp_track_runs from anon, authenticated;
+
+-- The "just for you" questions picked for a kid's lesson, kept until that play-through is finished,
+-- so a reload mid-lesson shows the same questions even after the kid has answered some.
+create table if not exists wp_review_picks (
+  student_id   uuid not null references wp_students(id),
+  lesson_id    uuid not null references wp_lessons(id),
+  question_ids uuid[] not null,
+  picked_at    timestamptz not null default now(),
+  primary key (student_id, lesson_id)
+);
+alter table wp_review_picks enable row level security;
+revoke all on wp_review_picks from anon, authenticated;

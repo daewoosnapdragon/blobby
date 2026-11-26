@@ -56,13 +56,14 @@ export async function classStats(classId: string): Promise<ClassView | null> {
     sql<{ studentId: string; lessonId: string }[]>`
       select student_id as "studentId", lesson_id as "lessonId" from wp_lesson_completions where student_id = any(${ids}::uuid[])`,
     lessonsForClass(classId),
-    // Only each kid's newest attempt is needed for "last skill". The join deliberately ignores
+    // Only each kid's newest class-question attempt is needed for "last skill" (review-bank questions belong to
+    // no lesson, so they are left out). The join deliberately ignores
     // wp_questions.deleted_at: an attempt on a since-deleted question is still practice.
     sql<StatAttempt[]>`
       select distinct on (a.student_id) a.student_id as "studentId", a.question_id as "questionId",
              q.lesson_id as "lessonId", a.created_at as "createdAt"
       from wp_attempts a join wp_questions q on q.id = a.question_id
-      where a.student_id = any(${ids}::uuid[])
+      where a.student_id = any(${ids}::uuid[]) and q.lesson_id is not null
       order by a.student_id, a.created_at desc`,
   ]);
 
@@ -373,6 +374,9 @@ export async function resetPracticeStudent(classId: string): Promise<void> {
     await tx`delete from wp_lesson_completions where student_id = ${s.id}`;
     await tx`delete from wp_attempts where student_id = ${s.id}`;
     await tx`delete from wp_practice_days where student_id = ${s.id}`;
+    await tx`delete from wp_student_skills where student_id = ${s.id}`;
+    await tx`delete from wp_track_runs where student_id = ${s.id}`;
+    await tx`delete from wp_review_picks where student_id = ${s.id}`;
     await tx`update wp_students set blob_color = null where id = ${s.id}`;
   });
 }

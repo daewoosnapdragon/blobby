@@ -2,7 +2,7 @@ import 'server-only';
 import type postgres from 'postgres';
 import { cookies } from 'next/headers';
 import { sql } from './admin';
-import { countRun, mixIn, reviewQuestions, skillPractice } from './track';
+import { countRun, forgetPicks, mixIn, reviewQuestions, skillPractice } from './track';
 import type { SkillKey } from '../skills';
 import { SESSION_COOKIE, verifyStudent } from '../session';
 import { UUID_RE } from '../uuid';
@@ -150,6 +150,7 @@ export async function completeLesson(
       }
     }
     if (runId && UUID_RE.test(runId)) await countRun(tx, studentId, runId, now);
+    await forgetPicks(tx, studentId, lessonId);
     return { starsAwarded, weekDone };
   });
 }
@@ -180,9 +181,6 @@ export async function recordAttempt(
           or qu.bank_grade = (select c.grade from wp_students s join wp_classes c on c.id = s.class_id where s.id = ${studentId}))`;
     // Review-bank questions belong to a grade, not a week: no week to be open.
     if (!q || (!q.bank && !weekIsOpen(q.opens_on, now, q.preview))) throw new NotFoundError('question');
-    // Stars on a bank question count toward the kid's newest assigned plan.
-    const planId = q.plan_id ?? (await tx<{ id: string }[]>`
-      select id from wp_plans where id in (${assignedTo(tx, studentId)}) order by created_at desc, id limit 1`)[0]?.id ?? null;
     const runId = input.runId && UUID_RE.test(input.runId) ? input.runId : null;
 
     // Answering anything counts as practicing today (a stamp), even a retry; never touches seconds already counted.
@@ -207,6 +205,9 @@ export async function recordAttempt(
     }
 
     if (input.correct && input.context === 'free') {
+      // A bank question belongs to no plan: its star counts toward the plan on the kid's home screen. No plan, no star.
+      const planId = q.plan_id ?? (await getHome(studentId, now)).plan?.id ?? null;
+      if (!planId) return { starsAwarded: 0 };
       const [ev] = await tx`
         insert into wp_star_events (student_id, plan_id, amount, reason, ref_id)
         values (${studentId}, ${planId}, ${STAR_VALUES.freeCorrect}, 'free_correct', ${inserted.id})
@@ -430,8 +431,8 @@ export async function getLesson(studentId: string, lessonId: string, now: Date =
   }
 
   const done = new Set(lessons.filter((l) => l.done).map((l) => l.id));
-  // "Just for you": stable for this kid and lesson until it is finished (a redo after that may differ).
-  const review = await reviewQuestions(studentId, student.grade, `${studentId}:${lessonId}:${done.has(lessonId) ? 1 : 0}`);
+  // "Just for you": saved for this kid and lesson until it is finished (a redo after that may differ).
+  const review = await reviewQuestions(studentId, student.grade, lessonId, `${studentId}:${lessonId}:${done.has(lessonId) ? 1 : 0}`);
   return {
     student: { id: student.id, displayName: student.display_name, blobColor: student.blob_color, grade: student.grade },
     totalStars,

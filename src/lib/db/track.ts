@@ -40,8 +40,12 @@ async function saveTrack(tx: Tx, studentId: string, before: TrackSkill[], after:
   }
 }
 
-/** The kid's due review questions for one lesson, chosen from their grade's bank (stable for a seed). */
-export async function reviewQuestions(studentId: string, grade: number, seed: string): Promise<LessonQuestion[]> {
+/**
+ * The kid's due review questions for one lesson, chosen from their grade's bank. The choice is saved per kid and
+ * lesson, so answering one and reloading shows the same questions; finishing the lesson clears it (forgetPicks).
+ * It is chosen again only if a saved question stopped being valid (deleted, or its skill no longer due).
+ */
+export async function reviewQuestions(studentId: string, grade: number, lessonId: string, seed: string): Promise<LessonQuestion[]> {
   const due = dueSkills(await loadTrack(sql, studentId));
   if (due.length === 0) return [];
   const rows = await sql<{ id: string; skill: string; type: string; payload: unknown; audio: unknown; correct: boolean | null; seen: string | null }[]>`
@@ -66,7 +70,23 @@ export async function reviewQuestions(studentId: string, grade: number, seed: st
     list.push({ id: r.id, lastAnswer: r.correct === null ? null : r.correct ? 'right' : 'missed', lastSeen: r.seen });
     bank.set(r.skill, list);
   }
-  return chooseReview(due, bank, seed).map((id) => byId.get(id)!);
+  const [saved] = await sql<{ question_ids: string[] }[]>`
+    select question_ids from wp_review_picks where student_id = ${studentId} and lesson_id = ${lessonId}`;
+  if (saved && saved.question_ids.length > 0 && saved.question_ids.every((id) => byId.has(id))) {
+    return saved.question_ids.map((id) => byId.get(id)!);
+  }
+  const ids = chooseReview(due, bank, seed);
+  if (ids.length > 0) {
+    await sql`
+      insert into wp_review_picks (student_id, lesson_id, question_ids) values (${studentId}, ${lessonId}, ${ids}::uuid[])
+      on conflict (student_id, lesson_id) do update set question_ids = excluded.question_ids, picked_at = now()`;
+  }
+  return ids.map((id) => byId.get(id)!);
+}
+
+/** A finished lesson's next play-through picks its "just for you" questions afresh. */
+export async function forgetPicks(tx: Tx, studentId: string, lessonId: string): Promise<void> {
+  await tx`delete from wp_review_picks where student_id = ${studentId} and lesson_id = ${lessonId}`;
 }
 
 /** Class questions with the review questions placed after class questions 4, 8 and 12. */

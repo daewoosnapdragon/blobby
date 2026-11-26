@@ -15,6 +15,7 @@ export type RunAnswer = { skill: SkillKey; right: boolean };
 
 export const MASTER_AFTER = 6;
 export const MAX_AUTO_ACTIVE = 4;
+const GIVE_WAY_AFTER = 3;
 const FIRST_SPACING = 3;
 const MAX_SPACING = 12;
 
@@ -69,11 +70,17 @@ export function afterLesson(skills: TrackSkill[], run: RunAnswer[], recent: Map<
     const last = (recent.get(k) ?? []).slice(-MASTER_AFTER);
     return last.length >= MASTER_AFTER && last.every(Boolean);
   };
-  const noRecentMiss = (k: SkillKey) => !(recent.get(k) ?? []).slice(-MASTER_AFTER).includes(false);
+  // A skill can step aside for a new one only once the kid has shown it: 3+ recent answers, none missed.
+  const steadyEnough = (k: SkillKey) => {
+    const last = (recent.get(k) ?? []).slice(-MASTER_AFTER);
+    return last.length >= GIVE_WAY_AFTER && !last.includes(false);
+  };
+  const recentMiss = (k: SkillKey) => (recent.get(k) ?? []).slice(-MASTER_AFTER).includes(false);
 
   for (const s of byKey.values()) {
     if (s.state === 'removed') continue;
-    const missed = missesInRun(s.skill) > 0;
+    // Any recent miss (this lesson, practice, or an unfinished lesson) brings a mastered skill back.
+    const missed = missesInRun(s.skill) > 0 || recentMiss(s.skill);
     if (s.state === 'mastered') {
       if (missed) set(s, { state: 'active', spacing: FIRST_SPACING, lessonsSince: 0 });
       else if (shown.includes(s.skill)) set(s, { spacing: Math.min(s.spacing * 2, MAX_SPACING), lessonsSince: 0 });
@@ -92,8 +99,8 @@ export function afterLesson(skills: TrackSkill[], run: RunAnswer[], recent: Map<
     const counted = [...byKey.values()].filter((s) => s.state === 'active' && s.source !== 'teacher');
     if (counted.length >= MAX_AUTO_ACTIVE) {
       const giveWay = counted
-        .filter((s) => (s.source === 'auto' || s.source === 'pretest') && noRecentMiss(s.skill))
-        .sort((a, b) => a.addedAt.localeCompare(b.addedAt))[0];
+        .filter((s) => (s.source === 'auto' || s.source === 'pretest') && steadyEnough(s.skill))
+        .sort((a, b) => a.addedAt.localeCompare(b.addedAt) || a.skill.localeCompare(b.skill))[0];
       if (!giveWay) continue;
       set(giveWay, { state: 'mastered', spacing: FIRST_SPACING, lessonsSince: 0 });
     }

@@ -60,6 +60,22 @@ describe('review tracks in lessons', () => {
     expect(b.questions.map((q) => q.id)).toEqual(a.questions.map((q) => q.id));
   });
 
+  it('keeps the same "just for you" questions after the kid answers one and reloads, until the lesson is finished', async () => {
+    const { kid } = await db();
+    const first = (await kid.getLesson(MINA, PLAN.lessons.one.id)).questions.filter((q) => q.forYou).map((q) => q.id);
+    await kid.recordAttempt(MINA, { clientAttemptId: randomUUID(), questionId: first[0], correct: true, context: 'lesson', runId: randomUUID() });
+    const again = (await kid.getLesson(MINA, PLAN.lessons.one.id)).questions.filter((q) => q.forYou).map((q) => q.id);
+    expect(again).toEqual(first);
+  });
+
+  it('finishing the lesson lets the next play-through pick again', async () => {
+    const { kid } = await db();
+    const run = randomUUID();
+    await kid.completeLesson(MINA, PLAN.lessons.one.id, new Date(), run);
+    const [{ n }] = await sql`select count(*)::int as n from wp_review_picks where student_id = ${MINA} and lesson_id = ${PLAN.lessons.one.id}`;
+    expect(n).toBe(0);
+  });
+
   it('a skill with no bank questions just adds nothing', async () => {
     const { kid, teacher } = await db();
     await teacher.setStudentSkill(LEO, 'comma-splice', 'add');
@@ -123,5 +139,54 @@ describe('review tracks in lessons', () => {
     expect(set.length).toBeLessThanOrEqual(5);
     expect(set[0].id).toBe(bankIds['past-tense'][3]);
     expect(set.every((q) => q.skill === 'past-tense')).toBe(true);
+  });
+});
+
+describe('review tracks and the rest of the app', () => {
+  it("the class page's last skill ignores review questions", async () => {
+    const { kid, teacher } = await db();
+    await kid.recordAttempt(LEO, { clientAttemptId: randomUUID(), questionId: PLAN.questions.q1.id, correct: true, context: 'lesson' });
+    await kid.recordAttempt(LEO, { clientAttemptId: randomUUID(), questionId: bankIds.articles[0], correct: true, context: 'free' });
+    const row = (await teacher.classStats(CLASS.id))!.rows.find((r) => r.studentId === LEO)!;
+    expect(row.lastSkill).not.toBeNull();
+  });
+
+  it('review-question stars go to the plan on the kid’s home screen, not just the newest plan', async () => {
+    const { kid } = await db();
+    // a newer plan whose only week has not opened: home still shows the seeded plan
+    const [p] = await sql`insert into wp_plans (title, kind) values ('Later plan', 'winter') returning id`;
+    await sql`insert into wp_plan_assignments (plan_id, class_id) values (${p.id}, ${CLASS.id})`;
+    await sql`insert into wp_weeks (plan_id, position, skill, opens_on) values (${p.id}, 1, 'Later', '2099-02-01')`;
+    const r = await kid.recordAttempt(MINA, { clientAttemptId: randomUUID(), questionId: bankIds.articles[1], correct: true, context: 'free' });
+    expect(r.starsAwarded).toBe(1);
+    const [ev] = await sql`select plan_id from wp_star_events where student_id = ${MINA} and reason = 'free_correct' order by created_at desc limit 1`;
+    expect(ev.plan_id).toBe(PLAN.id);
+  });
+
+  it('a kid with no plan gets no phantom star for a review question', async () => {
+    const { kid } = await db();
+    const r = await kid.recordAttempt(GRADE2_KID, { clientAttemptId: randomUUID(), questionId: grade2BankId, correct: true, context: 'free' });
+    expect(r.starsAwarded).toBe(0);
+  });
+
+  it('resetting the practice student clears its review track too', async () => {
+    const { teacher } = await db();
+    const p = await teacher.practiceStudentFor(CLASS.id);
+    await teacher.setStudentSkill(p.id, 'articles', 'add');
+    await sql`insert into wp_track_runs (student_id, run_id) values (${p.id}, ${randomUUID()})`;
+    await teacher.resetPracticeStudent(CLASS.id);
+    expect(await teacher.studentSkills(p.id)).toEqual([]);
+    const [{ n }] = await sql`select count(*)::int as n from wp_track_runs where student_id = ${p.id}`;
+    expect(n).toBe(0);
+  });
+
+  it('re-running the bank SQL updates a corrected question', async () => {
+    const { bankToSql } = await import('@/lib/contentSql');
+    const { parseBank } = await import('@/lib/bank');
+    const q = (answer: number) => ({ type: 'pick_one', prompt: 'Fixable.', choices: ['went', 'goed'], answer });
+    await sql.unsafe(bankToSql(parseBank({ grade: 3, skills: { 'be': [q(1)] } })));
+    await sql.unsafe(bankToSql(parseBank({ grade: 3, skills: { 'be': [q(0)] } })));
+    const rows = await sql`select payload->>'answer' as answer from wp_questions where bank_grade = 3 and skill = 'be'`;
+    expect(rows.map((r) => r.answer)).toEqual(['0']);
   });
 });

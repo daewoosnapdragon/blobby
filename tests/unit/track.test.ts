@@ -66,7 +66,7 @@ describe('afterLesson', () => {
   it('at 4 active skills, an old steady pretest skill steps aside for the new one', () => {
     const start = [sk('be', { addedAt: '2026-11-01' }), sk('ing', { addedAt: '2026-11-02' }), sk('articles', { addedAt: '2026-11-03' }), sk('plurals', { addedAt: '2026-11-04' })];
     // 'be' has no recent miss but too few answers to be mastered on its own, so only the swap can change it
-    const recent = new Map<SkillKey, boolean[]>([['be', right(2)], ['ing', [false]], ['articles', [false]], ['plurals', [false]]]);
+    const recent = new Map<SkillKey, boolean[]>([['be', right(3)], ['ing', [false]], ['articles', [false]], ['plurals', [false]]]);
     const r = afterLesson(start, [{ skill: 'was-were', right: false }, { skill: 'was-were', right: false }], recent, [], NOW);
     expect(find(r, 'was-were')).toMatchObject({ state: 'active' });
     expect(find(r, 'be')).toMatchObject({ state: 'mastered', spacing: 3 });
@@ -109,6 +109,27 @@ describe('afterLesson', () => {
     const r = afterLesson([sk('plurals', { state: 'mastered', spacing: 12, lessonsSince: 0 })], [{ skill: 'plurals', right: false }],
       new Map([['plurals', [...right(5), false]]]), ['plurals'], NOW);
     expect(find(r, 'plurals')).toMatchObject({ state: 'active', spacing: 3 });
+  });
+  it('a recent miss anywhere (practice too) makes a mastered skill a working skill again', () => {
+    const r = afterLesson([sk('plurals', { state: 'mastered', spacing: 6, lessonsSince: 1 })], [],
+      new Map([['plurals', [true, true, false]]]), [], NOW);
+    expect(find(r, 'plurals')).toMatchObject({ state: 'active', spacing: 3 });
+  });
+  it('a skill the kid has barely answered never steps aside for a new one', () => {
+    const start = [sk('be'), sk('ing'), sk('articles'), sk('plurals')];
+    const recent = new Map<SkillKey, boolean[]>([['be', []], ['ing', [true, true]], ['articles', [false]], ['plurals', [false]]]);
+    const r = afterLesson(start, [{ skill: 'was-were', right: false }, { skill: 'was-were', right: false }], recent, [], NOW);
+    expect(find(r, 'was-were')).toBeUndefined();
+    expect(r.every((s) => s.state === 'active')).toBe(true);
+  });
+  it('when two skills could step aside, the choice does not depend on row order', () => {
+    const start = [sk('ing'), sk('be'), sk('articles'), sk('plurals')];
+    const recent = new Map<SkillKey, boolean[]>([['be', [true, true, true]], ['ing', [true, true, true]], ['articles', [false]], ['plurals', [false]]]);
+    const run = [{ skill: 'was-were' as SkillKey, right: false }, { skill: 'was-were' as SkillKey, right: false }];
+    const a = afterLesson(start, run, recent, [], NOW);
+    const b = afterLesson([...start].reverse(), run, recent, [], NOW);
+    expect(find(a, 'be')!.state).toBe(find(b, 'be')!.state);
+    expect(find(a, 'be')).toMatchObject({ state: 'mastered' });
   });
   it('leaves everything alone after a lesson with nothing to change', () => {
     const start = [sk('past-tense')];

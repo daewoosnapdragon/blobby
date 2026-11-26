@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
-import { getPracticeSet, getPracticeStudent, getSkillPractice, studentFromRequest } from '@/lib/db/kid';
+import { getPracticeSet, getPracticeStudent, getSkillPractice, practiceAvailable, studentFromRequest } from '@/lib/db/kid';
 import { isSkillKey } from '@/lib/skills';
 import { toBlobColor } from '@/lib/blobColors';
 import { ProblemScreen } from '@/components/ui/ProblemScreen';
@@ -18,10 +18,9 @@ export default async function PracticePage({ searchParams }: { searchParams: Pro
   if (!student.blob_color) redirect('/pick');
   // ?skill=<key>: "Practice again" from Tricky today, 5 questions on that one skill.
   const skill = (await searchParams).skill;
-  const [kid, questions] = await Promise.all([
-    getPracticeStudent(student.id),
-    isSkillKey(skill) ? getSkillPractice(student.id, skill) : getPracticeSet(student.id),
-  ]);
+  // Practice opens with the first week, for one skill too (the review bank alone doesn't open it).
+  const [kid, open] = await Promise.all([getPracticeStudent(student.id), practiceAvailable(student.id)]);
+  const questions = !open ? [] : isSkillKey(skill) ? await getSkillPractice(student.id, skill) : await getPracticeSet(student.id);
 
   if (questions.length === 0) {
     return (

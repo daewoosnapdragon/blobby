@@ -1,7 +1,8 @@
 // SQL for the Supabase SQL editor (Kyla runs it; no script access to the live database).
 // contentToSql does what importContent does, without audio: plans upserted by title and assigned to their grade's
 // class; weeks, lessons and questions added only where missing (teacher edits and deletions are kept); skill tags
-// always follow the file. bankToSql adds review-bank questions once per (grade, skill, position).
+// always follow the file. bankToSql adds review-bank questions once per (grade, skill, position) and
+// updates one whose text changed in the file.
 import type { ContentFile } from './content';
 import type { BankFile } from './bank';
 
@@ -50,6 +51,8 @@ export function bankToSql(b: BankFile): string {
     const { type, ...payload } = question;
     out.push(`insert into wp_questions (bank_grade, skill, position, type, payload) select ${b.grade}, ${q(skill)}, ${position}, ${q(type)}, ${q(JSON.stringify(payload))}::jsonb`);
     out.push(`  where not exists (select 1 from wp_questions where bank_grade = ${b.grade} and skill = ${q(skill)} and position = ${position});`);
+    out.push(`update wp_questions set type = ${q(type)}, payload = ${q(JSON.stringify(payload))}::jsonb where bank_grade = ${b.grade} and skill = ${q(skill)} and position = ${position}`);
+    out.push(`  and (type <> ${q(type)} or payload <> ${q(JSON.stringify(payload))}::jsonb);`);
   }
   return out.join('\n');
 }
