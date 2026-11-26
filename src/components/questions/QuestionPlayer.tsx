@@ -17,6 +17,7 @@ import { FindFix } from './FindFix';
 import { BuildIt } from './BuildIt';
 import { SortIt } from './SortIt';
 import { FillBlank } from './FillBlank';
+import { RightWrong } from './RightWrong';
 import { TopBar } from './TopBar';
 import { WatchAnswer } from './WatchAnswer';
 import { QuestionPicture } from './QuestionPicture';
@@ -72,6 +73,7 @@ const TYPE_LABEL: Record<NonWatchQuestion['type'], string> = {
   build_it: 'Build it',
   sort_it: 'Sort it',
   fill_blank: 'Fill the blank',
+  right_wrong: 'Yes or no',
 };
 const TYPE_TINT: Record<NonWatchQuestion['type'], string> = {
   listen_tap: '#A9D3FF',
@@ -80,6 +82,7 @@ const TYPE_TINT: Record<NonWatchQuestion['type'], string> = {
   build_it: '#FFE59A',
   sort_it: '#A9D3FF',
   fill_blank: '#B7E1D1',
+  right_wrong: '#FFB5C1',
 };
 const HINT: Record<NonWatchQuestion['type'], string> = {
   listen_tap: 'Listen again, then look at each word.',
@@ -88,6 +91,7 @@ const HINT: Record<NonWatchQuestion['type'], string> = {
   build_it: 'Check the order of the words.',
   sort_it: 'Look at each word again.',
   fill_blank: 'Try each word in the sentence.',
+  right_wrong: 'Read the sentence again, word by word.',
 };
 
 function ask(q: NonWatchQuestion, found: boolean): string {
@@ -125,6 +129,7 @@ function Body({ q, status, onAnswer, onFound }: { q: NonWatchQuestion; status: S
     case 'build_it': return <BuildIt q={q} status={status} onAnswer={onAnswer} />;
     case 'sort_it': return <SortIt q={q} status={status} onAnswer={onAnswer} />;
     case 'fill_blank': return <FillBlank q={q} status={status} onAnswer={onAnswer} />;
+    case 'right_wrong': return <RightWrong q={q} status={status} onAnswer={onAnswer} />;
   }
 }
 

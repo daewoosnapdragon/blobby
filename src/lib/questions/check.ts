@@ -25,6 +25,8 @@ export function checkAnswer(q: NonWatchQuestion, r: Response): boolean {
         x.placement.length === q.items.length &&
         q.items.every((it, i) => x.placement && (x.placement as unknown[])[i] === it.group)
       );
+    case 'right_wrong':
+      return typeof x.yes === 'boolean' && x.yes === q.right;
     default:
       return false;
   }

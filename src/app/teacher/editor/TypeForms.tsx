@@ -111,6 +111,27 @@ function ListenTapForm({ draft: d, onChange }: P<'listen_tap'>) {
   );
 }
 
+function RightWrongForm({ draft: d, onChange }: P<'right_wrong'>) {
+  const group = useId();
+  return (
+    <>
+      <TextField label="Question" value={d.prompt} onChange={(prompt) => onChange({ ...d, prompt })} />
+      <TextField label="Sentence" value={d.sentence} onChange={(sentence) => onChange({ ...d, sentence })} placeholder="She don’t like carrots." />
+      <fieldset className={s.list}>
+        <legend>Is it right?</legend>
+        <div className={s.chips}>
+          {([true, false] as const).map((yes) => (
+            <label key={String(yes)} className={s.chip}>
+              <input type="radio" name={group} checked={d.right === yes} onChange={() => onChange({ ...d, right: yes })} />
+              <span>{yes ? 'Yes' : 'No'}</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+    </>
+  );
+}
+
 export function TypeForm({ draft, onChange }: { draft: NonWatchDraft; onChange: (d: NonWatchDraft) => void }) {
   switch (draft.type) {
     case 'pick_one': return <PickOneForm draft={draft} onChange={onChange} />;
@@ -119,6 +140,7 @@ export function TypeForm({ draft, onChange }: { draft: NonWatchDraft; onChange: 
     case 'build_it': return <BuildItForm draft={draft} onChange={onChange} />;
     case 'sort_it': return <SortItForm draft={draft} onChange={onChange} />;
     case 'listen_tap': return <ListenTapForm draft={draft} onChange={onChange} />;
+    case 'right_wrong': return <RightWrongForm draft={draft} onChange={onChange} />;
   }
 }
 

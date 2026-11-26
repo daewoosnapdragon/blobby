@@ -93,14 +93,17 @@ const fillBlankPayload = z
   .refine((q) => q.answer < q.choices.length, { message: 'answer is out of range of choices', path: ['answer'] })
   .superRefine((q, ctx) => noRepeats(ctx, q.choices, 'choices', 'choice'));
 
+const rightWrongPayload = z.object({ prompt: text.default('Is this sentence right?'), sentence: text, right: z.boolean(), picture });
+
 const listenTapQ = listenTapPayload.extend({ type: z.literal('listen_tap') });
 const pickOneQ = pickOnePayload.extend({ type: z.literal('pick_one') });
 const findFixQ = findFixPayload.extend({ type: z.literal('find_fix') });
 const buildItQ = buildItPayload.extend({ type: z.literal('build_it') });
 const sortItQ = sortItPayload.extend({ type: z.literal('sort_it') });
 const fillBlankQ = fillBlankPayload.extend({ type: z.literal('fill_blank') });
+const rightWrongQ = rightWrongPayload.extend({ type: z.literal('right_wrong') });
 
-const nonWatchSchema = z.discriminatedUnion('type', [listenTapQ, pickOneQ, findFixQ, buildItQ, sortItQ, fillBlankQ]);
+const nonWatchSchema = z.discriminatedUnion('type', [listenTapQ, pickOneQ, findFixQ, buildItQ, sortItQ, fillBlankQ, rightWrongQ]);
 
 const watchAnswerPayload = z.object({
   youtubeId: z.string().trim().regex(YOUTUBE_ID_RE, 'needs an 11-character YouTube id'),
@@ -109,7 +112,7 @@ const watchAnswerPayload = z.object({
 const watchAnswerQ = watchAnswerPayload.extend({ type: z.literal('watch_answer') });
 
 export const questionSchema = z.discriminatedUnion('type', [
-  listenTapQ, pickOneQ, findFixQ, buildItQ, sortItQ, fillBlankQ, watchAnswerQ,
+  listenTapQ, pickOneQ, findFixQ, buildItQ, sortItQ, fillBlankQ, rightWrongQ, watchAnswerQ,
 ]);
 
 const payloadSchemas = {
@@ -119,6 +122,7 @@ const payloadSchemas = {
   build_it: buildItPayload,
   sort_it: sortItPayload,
   fill_blank: fillBlankPayload,
+  right_wrong: rightWrongPayload,
   watch_answer: watchAnswerPayload,
 } as const;
 
@@ -131,6 +135,7 @@ export type FindFixPayload = z.infer<typeof findFixPayload>;
 export type BuildItPayload = z.infer<typeof buildItPayload>;
 export type SortItPayload = z.infer<typeof sortItPayload>;
 export type FillBlankPayload = z.infer<typeof fillBlankPayload>;
+export type RightWrongPayload = z.infer<typeof rightWrongPayload>;
 export type WatchAnswerPayload = z.infer<typeof watchAnswerPayload>;
 
 export type NonWatchQuestion = z.infer<typeof nonWatchSchema>;
@@ -140,7 +145,8 @@ export type Response =
   | { choice: number }
   | { tapped: number; fix: number }
   | { order: string[] }
-  | { placement: number[] };
+  | { placement: number[] }
+  | { yes: boolean };
 
 export function isQuestionType(t: unknown): t is QuestionType {
   return typeof t === 'string' && Object.hasOwn(payloadSchemas, t);

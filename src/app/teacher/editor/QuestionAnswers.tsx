@@ -80,6 +80,13 @@ function BodyText({ question: q }: { question: NonWatchQuestion }) {
           </div>
         </>
       );
+    case 'right_wrong':
+      return (
+        <>
+          <p className={s.sentence}>{q.sentence}</p>
+          <p className={s.others}>{q.right ? <Right>Right</Right> : 'Not right'}</p>
+        </>
+      );
   }
 }
 

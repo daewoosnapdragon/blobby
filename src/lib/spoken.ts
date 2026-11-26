@@ -15,6 +15,8 @@ function own(q: NonWatchQuestion): string[] {
       return [q.prompt, ...q.items.map((i) => i.text)];
     case 'build_it':
       return [q.prompt];
+    case 'right_wrong':
+      return [q.prompt, q.sentence];
   }
 }
 
