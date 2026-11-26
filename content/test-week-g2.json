@@ -66,7 +66,7 @@
             {
               "type": "fill_blank",
               "skill": "articles",
-              "before": "My dad drives",
+              "before": "My dog drives",
               "after": "red car.",
               "choices": [
                 "a",
@@ -74,7 +74,7 @@
                 "two"
               ],
               "answer": 0,
-              "picture": "automobile"
+              "picture": "dog"
             },
             {
               "type": "fill_blank",
@@ -209,6 +209,36 @@
                   "group": 0
                 }
               ]
+            },
+            {
+              "type": "right_wrong",
+              "skill": "articles",
+              "sentence": "Pip found a egg in the garden.",
+              "right": false,
+              "picture": "egg"
+            },
+            {
+              "type": "picture_first",
+              "skill": "articles",
+              "picture": "ear",
+              "choices": [
+                "This is a ear.",
+                "This is an ear.",
+                "This is ear."
+              ],
+              "answer": 1
+            },
+            {
+              "type": "odd_one_out",
+              "skill": "articles",
+              "prompt": "Three of these go with \"an\". Which one does not?",
+              "words": [
+                "apple",
+                "egg",
+                "kite",
+                "owl"
+              ],
+              "answer": 2
             }
           ]
         },
@@ -331,22 +361,22 @@
               "type": "find_fix",
               "skill": "articles",
               "words": [
-                "Theo",
+                "Pip",
                 "is",
                 "eating",
                 "a",
                 "banana",
                 "in",
-                "kitchen."
+                "bathtub."
               ],
               "wrongIndex": 6,
               "fixes": [
-                "two kitchen.",
-                "an kitchen.",
-                "the kitchen."
+                "two bathtub.",
+                "an bathtub.",
+                "the bathtub."
               ],
               "answer": 2,
-              "picture": "banana"
+              "picture": "bathtub"
             },
             {
               "type": "build_it",
@@ -416,6 +446,36 @@
                   "group": 1
                 }
               ]
+            },
+            {
+              "type": "right_wrong",
+              "skill": "articles",
+              "sentence": "Blobby has an big hat.",
+              "right": false,
+              "picture": "top-hat"
+            },
+            {
+              "type": "picture_first",
+              "skill": "articles",
+              "picture": "rainbow",
+              "choices": [
+                "Look at the rainbow!",
+                "Look at an rainbow!",
+                "Look at rainbow!"
+              ],
+              "answer": 0
+            },
+            {
+              "type": "odd_one_out",
+              "skill": "articles",
+              "prompt": "Which one has a mistake?",
+              "words": [
+                "the sky",
+                "an egg",
+                "a hat",
+                "a owl"
+              ],
+              "answer": 3
             }
           ]
         },
@@ -585,7 +645,7 @@
                 "There",
                 "is",
                 "an",
-                "egg",
+                "elephant",
                 "in",
                 "my",
                 "lunchbox."
@@ -593,7 +653,7 @@
               "distractors": [
                 "are"
               ],
-              "picture": "egg"
+              "picture": "elephant"
             },
             {
               "type": "sort_it",
@@ -629,6 +689,44 @@
                   "group": 1
                 }
               ]
+            },
+            {
+              "type": "right_wrong",
+              "skill": "there-is-are",
+              "sentence": "There is a frog in my shoe.",
+              "right": true,
+              "picture": "frog"
+            },
+            {
+              "type": "odd_one_out",
+              "skill": "there-is-are",
+              "prompt": "Three of these go with \"there are\". Which one does not?",
+              "words": [
+                "three cats",
+                "a pencil",
+                "two apples",
+                "many books"
+              ],
+              "answer": 1
+            },
+            {
+              "type": "match_pairs",
+              "skill": "there-is-are",
+              "prompt": "Match the two parts of each sentence.",
+              "pairs": [
+                {
+                  "left": "There is a",
+                  "right": "bird in the tree."
+                },
+                {
+                  "left": "There are two",
+                  "right": "birds in the tree."
+                },
+                {
+                  "left": "There is an",
+                  "right": "owl in the tree."
+                }
+              ]
             }
           ]
         },
@@ -652,12 +750,12 @@
               "skill": "ing",
               "prompt": "Which one is right?",
               "choices": [
-                "The kids is playing tag.",
-                "The kids are playing tag.",
-                "The kids playing tag."
+                "The ducks is playing tag.",
+                "The ducks are playing tag.",
+                "The ducks playing tag."
               ],
               "answer": 1,
-              "picture": "child"
+              "picture": "duck"
             },
             {
               "type": "pick_one",
@@ -837,6 +935,44 @@
                   "group": 1
                 }
               ]
+            },
+            {
+              "type": "right_wrong",
+              "skill": "was-were",
+              "sentence": "Last night, the moon were very big.",
+              "right": false,
+              "picture": "crescent-moon"
+            },
+            {
+              "type": "odd_one_out",
+              "skill": "was-were",
+              "prompt": "Three of these go with \"were\". Which one does not?",
+              "words": [
+                "the kids",
+                "Mom and Dad",
+                "the cookies",
+                "my cat"
+              ],
+              "answer": 3
+            },
+            {
+              "type": "match_pairs",
+              "skill": "ing",
+              "prompt": "Match the two parts of each sentence.",
+              "pairs": [
+                {
+                  "left": "Grandpa",
+                  "right": "is singing."
+                },
+                {
+                  "left": "The kids",
+                  "right": "are singing."
+                },
+                {
+                  "left": "I",
+                  "right": "am singing."
+                }
+              ]
             }
           ]
         },
@@ -895,14 +1031,14 @@
             {
               "type": "fill_blank",
               "skill": "articles",
-              "before": "My aunt is",
+              "before": "My cat is",
               "after": "artist.",
               "choices": [
                 "a",
                 "an"
               ],
               "answer": 1,
-              "picture": "artist-palette"
+              "picture": "cat"
             },
             {
               "type": "fill_blank",
@@ -1048,6 +1184,36 @@
                   "group": 1
                 }
               ]
+            },
+            {
+              "type": "picture_first",
+              "skill": "articles",
+              "picture": "kite",
+              "choices": [
+                "This is an kite.",
+                "This is kite.",
+                "This is a kite."
+              ],
+              "answer": 2
+            },
+            {
+              "type": "right_wrong",
+              "skill": "was-were",
+              "sentence": "Grandma was at the beach yesterday.",
+              "right": true,
+              "picture": "beach-with-umbrella"
+            },
+            {
+              "type": "odd_one_out",
+              "skill": "ing",
+              "prompt": "Three of these go with \"are playing\". Which one does not?",
+              "words": [
+                "the kids",
+                "my brother",
+                "Milo and Theo",
+                "we"
+              ],
+              "answer": 1
             }
           ]
         }

@@ -92,7 +92,7 @@
               "skill": "be",
               "words": [
                 "Two",
-                "cats",
+                "elephants",
                 "is",
                 "on",
                 "the",
@@ -105,7 +105,7 @@
                 "be"
               ],
               "answer": 0,
-              "picture": "cat"
+              "picture": "elephant"
             },
             {
               "type": "find_fix",
@@ -205,6 +205,44 @@
                   "group": 2
                 }
               ]
+            },
+            {
+              "type": "right_wrong",
+              "skill": "be",
+              "sentence": "The frog are green.",
+              "right": false,
+              "picture": "frog"
+            },
+            {
+              "type": "odd_one_out",
+              "skill": "be",
+              "prompt": "Three of these go with \"are\". Which one does not?",
+              "words": [
+                "we",
+                "you",
+                "I",
+                "they"
+              ],
+              "answer": 2
+            },
+            {
+              "type": "match_pairs",
+              "skill": "be",
+              "prompt": "Match each one to am, is or are.",
+              "pairs": [
+                {
+                  "left": "I",
+                  "right": "am"
+                },
+                {
+                  "left": "Pip",
+                  "right": "is"
+                },
+                {
+                  "left": "they",
+                  "right": "are"
+                }
+              ]
             }
           ]
         },
@@ -249,15 +287,15 @@
             {
               "type": "fill_blank",
               "skill": "be",
-              "before": "My mom and dad",
-              "after": "at home.",
+              "before": "The pigs",
+              "after": "at school.",
               "choices": [
                 "is",
                 "am",
                 "are"
               ],
               "answer": 2,
-              "picture": "house"
+              "picture": "pig"
             },
             {
               "type": "fill_blank",
@@ -404,6 +442,48 @@
                 {
                   "text": "it",
                   "group": 0
+                }
+              ]
+            },
+            {
+              "type": "right_wrong",
+              "skill": "be",
+              "sentence": "We is on the bus.",
+              "right": false,
+              "picture": "bus"
+            },
+            {
+              "type": "odd_one_out",
+              "skill": "be",
+              "prompt": "Three of these go with \"is\". Which one does not?",
+              "words": [
+                "he",
+                "they",
+                "she",
+                "it"
+              ],
+              "answer": 1
+            },
+            {
+              "type": "match_pairs",
+              "skill": "be",
+              "prompt": "Match each one to he, she, we or they.",
+              "pairs": [
+                {
+                  "left": "the boy",
+                  "right": "he"
+                },
+                {
+                  "left": "Grandma",
+                  "right": "she"
+                },
+                {
+                  "left": "Nova and I",
+                  "right": "we"
+                },
+                {
+                  "left": "Mom and Dad",
+                  "right": "they"
                 }
               ]
             }
@@ -563,14 +643,16 @@
               "prompt": "Make a sentence from the tiles.",
               "tiles": [
                 "The",
-                "milk",
+                "cake",
                 "is",
-                "cold."
+                "in",
+                "my",
+                "hat."
               ],
               "distractors": [
                 "the"
               ],
-              "picture": "glass-of-milk"
+              "picture": "birthday-cake"
             },
             {
               "type": "sort_it",
@@ -606,6 +688,42 @@
                   "group": 1
                 }
               ]
+            },
+            {
+              "type": "tap_all",
+              "skill": "capitals-names",
+              "prompt": "Tap every word that needs a capital letter.",
+              "words": [
+                "my",
+                "dog",
+                "pip",
+                "is",
+                "big."
+              ],
+              "answers": [
+                0,
+                2
+              ],
+              "picture": "dog"
+            },
+            {
+              "type": "right_wrong",
+              "skill": "sentence-ends",
+              "sentence": "The duck can swim.",
+              "right": true,
+              "picture": "duck"
+            },
+            {
+              "type": "odd_one_out",
+              "skill": "capitals-names",
+              "prompt": "Which name needs a capital letter?",
+              "words": [
+                "Nova",
+                "Theo",
+                "zara",
+                "Otto"
+              ],
+              "answer": 2
             }
           ]
         },
@@ -770,7 +888,7 @@
               "prompt": "Build it!",
               "tiles": [
                 "Two",
-                "boys",
+                "bears",
                 "are",
                 "riding",
                 "bikes."
@@ -779,7 +897,7 @@
                 "is",
                 "ride"
               ],
-              "picture": "bicycle"
+              "picture": "bear"
             },
             {
               "type": "sort_it",
@@ -813,6 +931,44 @@
                 {
                   "text": "it",
                   "group": 0
+                }
+              ]
+            },
+            {
+              "type": "right_wrong",
+              "skill": "ing",
+              "sentence": "The rabbit is jump.",
+              "right": false,
+              "picture": "rabbit"
+            },
+            {
+              "type": "odd_one_out",
+              "skill": "ing",
+              "prompt": "Three of these are right. Which one is not?",
+              "words": [
+                "is running",
+                "is sing",
+                "is jumping",
+                "is eating"
+              ],
+              "answer": 1
+            },
+            {
+              "type": "match_pairs",
+              "skill": "ing",
+              "prompt": "Match the words that go together.",
+              "pairs": [
+                {
+                  "left": "I",
+                  "right": "am jumping"
+                },
+                {
+                  "left": "Blobby",
+                  "right": "is jumping"
+                },
+                {
+                  "left": "the kids",
+                  "right": "are jumping"
                 }
               ]
             }
@@ -850,12 +1006,12 @@
               "skill": "ing",
               "prompt": "Pick the sentence that sounds right.",
               "choices": [
-                "The girls are dancing.",
-                "The girls dancing.",
-                "The girls is dancing."
+                "The cows are dancing.",
+                "The cows dancing.",
+                "The cows is dancing."
               ],
               "answer": 0,
-              "picture": "woman-dancing"
+              "picture": "cow"
             },
             {
               "type": "fill_blank",
@@ -1014,6 +1170,42 @@
                   "group": 1
                 }
               ]
+            },
+            {
+              "type": "tap_all",
+              "skill": "capitals-names",
+              "prompt": "Tap every word that needs a capital letter.",
+              "words": [
+                "nova",
+                "and",
+                "theo",
+                "like",
+                "pizza."
+              ],
+              "answers": [
+                0,
+                2
+              ],
+              "picture": "pizza"
+            },
+            {
+              "type": "right_wrong",
+              "skill": "ing",
+              "sentence": "Theo is eating a banana.",
+              "right": true,
+              "picture": "banana"
+            },
+            {
+              "type": "odd_one_out",
+              "skill": "be",
+              "prompt": "Three of these go with \"is\". Which one does not?",
+              "words": [
+                "Milo",
+                "the bird",
+                "my shoes",
+                "Grandma"
+              ],
+              "answer": 2
             }
           ]
         }
