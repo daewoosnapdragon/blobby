@@ -54,6 +54,11 @@ describe('Blob', () => {
     expect(container.firstElementChild!.hasAttribute('data-reaction')).toBe(false);
   });
 
+  it('renders the spin reaction', () => {
+    const { container } = render(<Blob color="sunny" mood="happy" size={100} reaction="spin" />);
+    expect(container.firstElementChild!.getAttribute('data-reaction')).toBe('spin');
+  });
+
   it('is aria-hidden and exposes mood', () => {
     const { container } = render(<Blob color="pink" mood="happy" size={100} />);
     const root = container.firstElementChild!;

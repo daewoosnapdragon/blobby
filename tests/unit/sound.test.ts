@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-type FakeAudio = { src: string; currentTime: number; volume: number; preload: string; play: ReturnType<typeof vi.fn>; load: ReturnType<typeof vi.fn> };
+type FakeAudio = { src: string; currentTime: number; volume: number; preload: string; playbackRate: number; preservesPitch: boolean; play: ReturnType<typeof vi.fn>; load: ReturnType<typeof vi.fn> };
 let made: FakeAudio[] = [];
 
 function installAudio(playImpl: () => Promise<void> | undefined = () => Promise.resolve()) {
@@ -10,6 +10,8 @@ function installAudio(playImpl: () => Promise<void> | undefined = () => Promise.
     this.currentTime = 0;
     this.volume = 1;
     this.preload = '';
+    this.playbackRate = 1;
+    this.preservesPitch = true;
     this.play = vi.fn(playImpl);
     this.load = vi.fn();
     made.push(this);
@@ -37,6 +39,15 @@ describe('playSound', () => {
     expect(made).toHaveLength(1);
     expect(made[0].src).toBe('/sounds/pop.mp3');
     expect(made[0].play).toHaveBeenCalledTimes(1);
+  });
+
+  it('plays at the given rate without preserving pitch, and at 1 by default', async () => {
+    const { playSound } = await load();
+    playSound('ding', { rate: 1.12 });
+    expect(made[0].playbackRate).toBe(1.12);
+    expect(made[0].preservesPitch).toBe(false);
+    playSound('ding');
+    expect(made[0].playbackRate).toBe(1);
   });
 
   it('does nothing while muted', async () => {

@@ -2,7 +2,7 @@ import styles from './Blob.module.css';
 
 export type BlobColor = 'sunny' | 'peach' | 'pink' | 'mint' | 'sky' | 'grape';
 export type Mood = 'idle' | 'happy' | 'oops' | 'sleepy';
-export type Reaction = 'hop' | 'wobble' | 'squish' | 'cheer';
+export type Reaction = 'hop' | 'wobble' | 'squish' | 'cheer' | 'spin';
 export type Hat = 'santa' | 'seollal';
 export type Accessory = 'umbrella' | 'pajamas' | null;
 
