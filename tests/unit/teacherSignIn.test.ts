@@ -190,6 +190,13 @@ describe('practice student actions', () => {
     expect(teacherDb.resetPracticeStudent).toHaveBeenCalledWith(CLASS);
   });
 
+  it('keeps the practice session short, so a shared device goes back to normal', async () => {
+    await expect(tryAsStudent(form({ classId: CLASS }))).rejects.toThrow('REDIRECT');
+    const options = jar.set.mock.calls[0][2];
+    expect(options.maxAge).toBe(2 * 60 * 60);
+    expect(options.httpOnly).toBe(true);
+  });
+
   it('ignores a bad class id', async () => {
     await expect(tryAsStudent(form({ classId: 'nope' }))).rejects.toThrow('REDIRECT:/teacher');
     expect(teacherDb.practiceStudentFor).not.toHaveBeenCalled();

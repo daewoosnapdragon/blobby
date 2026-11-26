@@ -1,4 +1,4 @@
-// Run after Kyla applies 0001_wp_init.sql:  npx tsx --env-file=.env.local scripts/check-schema.ts
+// Run after Kyla applies the migrations in supabase/migrations (0001, 0002, ...):  npx tsx --env-file=.env.local scripts/check-schema.ts
 // Needs SUPABASE_URL, SUPABASE_ANON_KEY, DATABASE_URL. Read-only. Does not import src/lib/db/admin.ts (server-only).
 import { createClient } from '@supabase/supabase-js';
 import postgres from 'postgres';

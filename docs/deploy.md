@@ -21,6 +21,16 @@ it needs and the order to load content in. See also `docs/teacher-login.md`, `do
 The scripts in `scripts/` read the same variables from the shell. They also use SSL for any database host
 that isn't `localhost`.
 
+## Database changes (migrations)
+
+The app's tables come from the SQL files in `supabase/migrations/`, run in order in the Supabase SQL editor.
+**Run a new migration before the code that needs it is deployed** (before merging to `main`): the app's queries use
+the new columns right away, so deploying first makes kid and class pages fail until the migration runs. Running a
+migration early is safe, because the old code ignores the new columns. Each file can be run more than once.
+
+- `0001_wp_init.sql`: all the tables, locked down.
+- `0002_preview_student.sql`: the practice student behind **Try it as a student**.
+
 ## Region
 
 Put the Vercel functions next to the database. Blobby's Supabase project is in **Sydney (`ap-southeast-2`)**, so

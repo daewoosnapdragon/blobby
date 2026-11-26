@@ -115,6 +115,8 @@ export async function changePassword(formData: FormData): Promise<void> {
   redirect('/teacher/account?saved=password');
 }
 
+const PRACTICE_SESSION_SECONDS = 2 * 60 * 60;
+
 /** Signs this browser into the kid screens as the class's hidden practice student (the teacher session is untouched). */
 export async function tryAsStudent(formData: FormData): Promise<void> {
   await requireTeacher();
@@ -122,7 +124,8 @@ export async function tryAsStudent(formData: FormData): Promise<void> {
   if (!UUID_RE.test(classId)) redirect('/teacher');
   let student;
   try { student = await practiceStudentFor(classId); } catch (e) { if (e instanceof NotFoundError) notFound(); throw e; }
-  (await cookies()).set(SESSION_COOKIE, signStudent(student.id), sessionCookieOptions());
+  // Two hours, not a kid's 120 days: tried on a shared classroom device, it soon stops being "Teacher".
+  (await cookies()).set(SESSION_COOKIE, signStudent(student.id), { ...sessionCookieOptions(), maxAge: PRACTICE_SESSION_SECONDS });
   redirect(landingPath(student));
 }
 
