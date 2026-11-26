@@ -23,9 +23,11 @@ that isn't `localhost`.
 
 ## Region
 
-Put the Vercel functions next to the database: **Vercel → Settings → Functions → Function Region** should be
-the same region as the Supabase project (the Supabase project settings show it, e.g. Seoul, `ap-northeast-2`).
-Every page makes several database calls, so a far-away region makes every screen slow.
+Put the Vercel functions next to the database. Blobby's Supabase project is in **Sydney (`ap-southeast-2`)**, so
+`vercel.json` pins the functions to **`syd1`** (Sydney). Every page makes several database calls in a row, so a
+far-away region makes every screen slow: with the functions in Washington, D.C. (Vercel's default, `iad1`), each
+click waited on several trips across the Pacific. If the database ever moves, change `vercel.json` to the matching
+Vercel region (Vercel → Settings → Functions shows the list).
 
 ## Loading content, in order
 
