@@ -79,7 +79,11 @@ export function ClassesView({ classes }: { classes: ClassCard[] }) {
 
 export type SortKey = 'name' | 'stars';
 
-export function ClassListView({ classId, className, classCode, rows, sort }: { classId: string; className: string; classCode: string; rows: StudentStats[]; sort: SortKey }) {
+export function ClassListView({ classId, className, classCode, rows, sort, tryAction, resetAction, reset }: {
+  classId: string; className: string; classCode: string; rows: StudentStats[]; sort: SortKey;
+  /** "Try it as a student" and its reset; left out, the buttons are not shown */
+  tryAction?: (formData: FormData) => Promise<void>; resetAction?: (formData: FormData) => Promise<void>; reset?: boolean;
+}) {
   const sorted = [...rows].sort((a, b) =>
     sort === 'stars' ? b.stars - a.stars || a.displayName.localeCompare(b.displayName) : a.displayName.localeCompare(b.displayName));
   const total = rows.reduce((n, r) => n + r.stars, 0);
@@ -92,6 +96,20 @@ export function ClassListView({ classId, className, classCode, rows, sort }: { c
         <Link href={`/teacher/class/${classId}/cards`} className={styles.ghost} style={{ display: 'inline-flex', alignItems: 'center', textDecoration: 'none' }}>Print cards</Link>
       </div>
       <p className={styles.sub}>{rows.length} {rows.length === 1 ? 'kid' : 'kids'} · {total} stars in all</p>
+      {tryAction && resetAction ? (
+        <div className={styles.practiceRow}>
+          <form action={tryAction}>
+            <input type="hidden" name="classId" value={classId} />
+            <button type="submit" className={styles.solid}>Try it as a student</button>
+          </form>
+          <form action={resetAction}>
+            <input type="hidden" name="classId" value={classId} />
+            <button type="submit" className={styles.ghost}>Reset practice student</button>
+          </form>
+          <p className={styles.hint}>Plays this class&apos;s lessons as a kid would, with every week open. The practice student isn&apos;t on your list or cards.</p>
+        </div>
+      ) : null}
+      {reset ? <p role="status" className={styles.okNote}>The practice student is back to a fresh start.</p> : null}
       {rows.length === 0 ? (
         <p className={styles.empty}>No kids in this class yet.</p>
       ) : (

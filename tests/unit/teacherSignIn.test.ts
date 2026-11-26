@@ -14,11 +14,14 @@ vi.mock('next/navigation', () => ({
 }));
 vi.mock('next/cache', () => ({ revalidatePath: vi.fn() }));
 vi.mock('@/lib/supabase/server', () => server);
-vi.mock('@/lib/db/teacher', () => ({}));
+const teacherDb = vi.hoisted(() => ({ practiceStudentFor: vi.fn(), resetPracticeStudent: vi.fn() }));
+vi.mock('@/lib/db/teacher', () => teacherDb);
+const jar = vi.hoisted(() => ({ set: vi.fn() }));
+vi.mock('next/headers', () => ({ cookies: async () => jar }));
 const timing = vi.hoisted(() => ({ holdUntil: vi.fn(), SIGNIN_MIN_MS: 1000 }));
 vi.mock('@/lib/evenTiming', () => timing);
 
-import { changePassword, requestLink, saveTeacherName, signInWithPassword } from '@/app/teacher/actions';
+import { changePassword, requestLink, resetPracticeStudentAction, saveTeacherName, signInWithPassword, tryAsStudent } from '@/app/teacher/actions';
 
 function form(fields: Record<string, string>): FormData {
   const f = new FormData();
@@ -155,5 +158,40 @@ describe('changePassword', () => {
     server.requireTeacher.mockRejectedValue(new Error('REDIRECT:/teacher/login'));
     await expect(changePassword(form({ password: 'longenough', confirm: 'longenough' }))).rejects.toThrow('REDIRECT:/teacher/login');
     expect(auth.updateUser).not.toHaveBeenCalled();
+  });
+});
+
+describe('practice student actions', () => {
+  const CLASS = '00000000-0000-4000-8000-0000000000c1';
+  beforeEach(() => {
+    process.env.SESSION_SECRET = 'unit-secret';
+    teacherDb.practiceStudentFor.mockReset().mockResolvedValue({ id: '00000000-0000-4000-8000-0000000000aa', blob_color: null });
+    teacherDb.resetPracticeStudent.mockReset().mockResolvedValue(undefined);
+    jar.set.mockReset();
+  });
+
+  it('signs in as the practice student and goes to the blob picker the first time', async () => {
+    await expect(tryAsStudent(form({ classId: CLASS }))).rejects.toThrow(/^REDIRECT:\/pick$/);
+    expect(teacherDb.practiceStudentFor).toHaveBeenCalledWith(CLASS);
+    expect(jar.set).toHaveBeenCalledWith('wp_student', expect.stringContaining('00000000-0000-4000-8000-0000000000aa.'), expect.any(Object));
+  });
+
+  it('does nothing for someone who is not a teacher', async () => {
+    server.requireTeacher.mockRejectedValue(new Error('REDIRECT:/teacher/login'));
+    await expect(tryAsStudent(form({ classId: CLASS }))).rejects.toThrow('REDIRECT:/teacher/login');
+    await expect(resetPracticeStudentAction(form({ classId: CLASS }))).rejects.toThrow('REDIRECT:/teacher/login');
+    expect(teacherDb.practiceStudentFor).not.toHaveBeenCalled();
+    expect(teacherDb.resetPracticeStudent).not.toHaveBeenCalled();
+    expect(jar.set).not.toHaveBeenCalled();
+  });
+
+  it('resets and returns to the class page', async () => {
+    await expect(resetPracticeStudentAction(form({ classId: CLASS }))).rejects.toThrow(`REDIRECT:/teacher/class/${CLASS}?reset=1`);
+    expect(teacherDb.resetPracticeStudent).toHaveBeenCalledWith(CLASS);
+  });
+
+  it('ignores a bad class id', async () => {
+    await expect(tryAsStudent(form({ classId: 'nope' }))).rejects.toThrow('REDIRECT:/teacher');
+    expect(teacherDb.practiceStudentFor).not.toHaveBeenCalled();
   });
 });

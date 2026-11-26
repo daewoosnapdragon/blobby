@@ -1,11 +1,13 @@
 'use server';
 import { redirect, notFound } from 'next/navigation';
+import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 import { requireTeacher, teacherSupabase } from '@/lib/supabase/server';
 import { isTeacherEmail } from '@/lib/teacherAuth';
 import { appOrigin } from '@/lib/teacherUrl';
-import { NotFoundError } from '@/lib/db/kid';
-import { studentDetail, setDisplayName, reissueLink, DISPLAY_NAME_MAX } from '@/lib/db/teacher';
+import { NotFoundError, landingPath } from '@/lib/db/kid';
+import { SESSION_COOKIE, signStudent, sessionCookieOptions } from '@/lib/session';
+import { studentDetail, setDisplayName, reissueLink, DISPLAY_NAME_MAX, practiceStudentFor, resetPracticeStudent } from '@/lib/db/teacher';
 import { UUID_RE } from '@/lib/uuid';
 import { passwordError, validateName, validatePassword } from '@/lib/teacherAccount';
 import { holdUntil } from '@/lib/evenTiming';
@@ -111,4 +113,25 @@ export async function changePassword(formData: FormData): Promise<void> {
   if (!result) redirect('/teacher/account?error=failed');
   if (result.error) redirect(`/teacher/account?error=${passwordError(result.error)}`);
   redirect('/teacher/account?saved=password');
+}
+
+/** Signs this browser into the kid screens as the class's hidden practice student (the teacher session is untouched). */
+export async function tryAsStudent(formData: FormData): Promise<void> {
+  await requireTeacher();
+  const classId = String(formData.get('classId') ?? '');
+  if (!UUID_RE.test(classId)) redirect('/teacher');
+  let student;
+  try { student = await practiceStudentFor(classId); } catch (e) { if (e instanceof NotFoundError) notFound(); throw e; }
+  (await cookies()).set(SESSION_COOKIE, signStudent(student.id), sessionCookieOptions());
+  redirect(landingPath(student));
+}
+
+/** Gives the practice student a fresh start: no stars, answers, finished lessons, stamps or blob color. */
+export async function resetPracticeStudentAction(formData: FormData): Promise<void> {
+  await requireTeacher();
+  const classId = String(formData.get('classId') ?? '');
+  if (!UUID_RE.test(classId)) redirect('/teacher');
+  await resetPracticeStudent(classId);
+  revalidatePath(`/teacher/class/${classId}`);
+  redirect(`/teacher/class/${classId}?reset=1`);
 }

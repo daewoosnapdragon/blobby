@@ -110,3 +110,7 @@
 .accountForm input { min-height: 48px; padding: 0 18px; border: 2px solid #E6DFD7; border-radius: 999px; font: inherit; font-size: 17px; color: var(--ink); }
 .accountForm input:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
 .accountForm .solid { align-self: flex-start; min-height: 48px; margin-top: 4px; }
+
+/* Class page: "Try it as a student" */
+.practiceRow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 0 0 20px; }
+.practiceRow .hint { flex-basis: 100%; }
