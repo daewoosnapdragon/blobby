@@ -1,14 +1,16 @@
 import Link from 'next/link';
 import type { PlansForClass } from '@/lib/db/teacher';
 import { WeekForm } from './WeekForm';
+import { MissingAudioCard } from './MissingAudioCard';
 import t from '../teacher.module.css';
 import s from './plans.module.css';
 
-export function PlansView({ classes }: { classes: PlansForClass[] }) {
+export function PlansView({ classes, missingAudio }: { classes: PlansForClass[]; missingAudio: number }) {
   return (
     <>
       <h1 className={t.h1}>Plans</h1>
       <p className={t.sub}>Each week opens on its date (Seoul time). Open a lesson to edit its questions.</p>
+      <MissingAudioCard initialRemaining={missingAudio} />
       {classes.length === 0 ? <p className={t.empty}>No classes yet. Import the roster to get started.</p> : null}
       {classes.map((c) => (
         <section key={c.id} className={s.classBlock} aria-labelledby={`class-${c.id}`}>

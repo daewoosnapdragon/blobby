@@ -31,3 +31,8 @@
   .status { grid-column: 2 / -1; }
   .lessons { grid-template-columns: 1fr 1fr; }
 }
+
+.audioCard { margin-top: 8px; }
+.audioCount { margin: 0; font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.audioProgress { margin: 4px 0 0; color: var(--muted); font-size: 15px; font-variant-numeric: tabular-nums; }
+.audioButtons { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 16px; }

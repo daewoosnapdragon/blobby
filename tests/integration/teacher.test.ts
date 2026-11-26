@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
 import { resetTestDb, TEST_DATABASE_URL } from './helpers/db';
 import { seed, seedPlan, CLASS, STUDENTS, PLAN } from '../e2e/fixtures/seed';
 
@@ -92,5 +92,90 @@ describe('teacher queries', () => {
     expect(one.students[0].secret).toBe(STUDENTS.mina.secret);
     expect(await cardsForClass('nope')).toBeNull();
     expect((await cardsForClass(CLASS.id, 'nope'))!.students).toEqual([]);
+  });
+});
+
+describe('missing audio', () => {
+  const VOICE = 'test-voice';
+  /** A fake voice + storage; `failOn` makes the nth synthesize call (1-based) throw. */
+  function fakeAudio(failOn?: number) {
+    const files = new Set<string>();
+    let calls = 0;
+    const synthesize = vi.fn(async (text: string) => {
+      calls += 1;
+      if (calls === failOn) throw new Error('voice service is down');
+      return Buffer.from(`mp3:${text}`);
+    });
+    return {
+      synthesize, files,
+      deps: async () => ({
+        voice: VOICE, synthesize,
+        storage: {
+          exists: async (k: string) => files.has(k),
+          upload: async (k: string) => { files.add(k); },
+          publicUrl: (k: string) => `https://audio.test/${k}.mp3`,
+        },
+      }),
+    };
+  }
+  const audioOf = async (id: string) => (await sql<{ audio: Record<string, string> }[]>`select audio from wp_questions where id = ${id}`)[0].audio;
+  const bankId = (n: number) => `00000000-0000-4000-8000-0000000ab${String(n).padStart(3, '0')}`;
+  async function bankRow(n: number, type: string, payload: unknown, opts: { skill?: string; position?: number } = {}) {
+    await sql`insert into wp_questions (id, bank_grade, skill, position, type, payload)
+      values (${bankId(n)}, 1, ${opts.skill ?? 'past_tense'}, ${opts.position ?? n}, ${type}, ${sql.json(payload as never)})`;
+  }
+
+  it('counts missing strings over lessons and banks, skipping deleted and malformed rows', async () => {
+    const { countMissingAudio } = await import('@/lib/db/teacher');
+    const before = await countMissingAudio();
+    // seeded lesson rows: q1 is soft-deleted above; q2..e406 are six rows of three strings with no audio
+    expect(before).toBe(18);
+    await bankRow(1, 'pick_one', { prompt: 'Bank one?', choices: ['A one.', 'B one.'], answer: 0 });
+    await bankRow(2, 'pick_one', { prompt: 'Bank two?', choices: ['A two.', 'B two.'], answer: 0 });
+    await bankRow(3, 'pick_one', { prompt: 'Bank three?', choices: ['A three.', 'B three.'], answer: 0 });
+    await bankRow(4, 'pick_one', { prompt: 'Bank four?', choices: ['A four.', 'B four.'], answer: 0 });
+    await bankRow(5, 'pick_one', { nonsense: true }); // malformed: skipped, never crashes
+    expect(await countMissingAudio()).toBe(30);
+  });
+
+  it('makes audio for about `limit` strings, whole rows at a time, and reports what is left', async () => {
+    const { fillMissingAudio, countMissingAudio } = await import('@/lib/db/teacher');
+    const { audioKey } = await import('@/lib/tts');
+    const deletedBefore = await audioOf(PLAN.questions.q1.id);
+    const a = fakeAudio();
+    const r = await fillMissingAudio(20, { audio: a.deps });
+    // every row has 3 missing strings, so 7 whole rows cover the 20
+    expect(r).toEqual({ done: 21, remaining: 9 });
+    expect(await countMissingAudio()).toBe(9);
+    expect(a.synthesize).toHaveBeenCalled(); // fewer than 21: seeded rows share sentences and storage keeps one file per text
+    expect(await audioOf(PLAN.questions.q1.id)).toEqual(deletedBefore); // deleted rows untouched
+    expect(await audioOf(PLAN.questions.q2.id)).toEqual({
+      'Yesterday, we … pizza.': `https://audio.test/${audioKey('Yesterday, we … pizza.', VOICE)}.mp3`,
+      eat: `https://audio.test/${audioKey('eat', VOICE)}.mp3`,
+      ate: `https://audio.test/${audioKey('ate', VOICE)}.mp3`,
+    });
+    const rest = await fillMissingAudio(20, { audio: a.deps });
+    expect(rest).toEqual({ done: 9, remaining: 0 });
+    expect(await fillMissingAudio(20, { audio: a.deps })).toEqual({ done: 0, remaining: 0 });
+  });
+
+  it('stops at the first failure, keeps rows already saved, and the next call resumes', async () => {
+    const { fillMissingAudio, countMissingAudio } = await import('@/lib/db/teacher');
+    // three one-string rows (build_it speaks only its prompt), after everything else already has audio
+    for (const n of [11, 12, 13]) {
+      await bankRow(n, 'build_it', { prompt: `Build sentence ${n}.`, tiles: ['I', 'ran.'] }, { skill: 'zz_last', position: n });
+    }
+    expect(await countMissingAudio()).toBe(3);
+    const failing = fakeAudio(3);
+    const r = await fillMissingAudio(20, { audio: failing.deps });
+    expect(r.done).toBe(2);
+    expect(r.remaining).toBe(1);
+    expect(r.error).toMatch(/voice service is down/);
+    expect(Object.keys(await audioOf(bankId(11)))).toEqual(['Build sentence 11.']);
+    expect(Object.keys(await audioOf(bankId(12)))).toEqual(['Build sentence 12.']);
+    expect(await audioOf(bankId(13))).toEqual({});
+    const again = await fillMissingAudio(20, { audio: fakeAudio().deps });
+    expect(again).toEqual({ done: 1, remaining: 0 });
+    expect(Object.keys(await audioOf(bankId(13)))).toEqual(['Build sentence 13.']);
   });
 });
