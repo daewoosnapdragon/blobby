@@ -3,6 +3,7 @@ import { sql } from './admin';
 import { starEventsFor, NotFoundError } from './kid';
 import { makeLinkSecret } from '../roster';
 import { UUID_RE } from '../uuid';
+import type { WpStudent } from '../types';
 import { parseQuestion, type Question } from '../questions/schema';
 import { questionProblems } from '../questions/problems';
 import { spokenStrings } from '../spoken';
@@ -16,7 +17,7 @@ export interface ClassCard { id: string; name: string; classCode: string; grade:
 export async function listClasses(): Promise<ClassCard[]> {
   const classes = await sql<{ id: string; name: string; class_code: string; grade: number }[]>`
     select id, name, class_code, grade from wp_classes order by grade, name`;
-  const kids = await sql<{ id: string; class_id: string }[]>`select id, class_id from wp_students`;
+  const kids = await sql<{ id: string; class_id: string }[]>`select id, class_id from wp_students where not is_preview`;
   const events = await starEventsFor(kids.map((k) => k.id));
   const classOf = new Map(kids.map((k) => [k.id, k.class_id]));
   return classes.map((c) => ({
@@ -44,7 +45,7 @@ export async function classStats(classId: string): Promise<ClassView | null> {
   const [cls] = await sql<{ id: string; name: string; class_code: string }[]>`select id, name, class_code from wp_classes where id = ${classId}`;
   if (!cls) return null;
   const kids = await sql<{ id: string; display_name: string; blob_color: string | null }[]>`
-    select id, display_name, blob_color from wp_students where class_id = ${classId} order by display_name, id`;
+    select id, display_name, blob_color from wp_students where class_id = ${classId} and not is_preview order by display_name, id`;
   const ids = kids.map((k) => k.id);
 
   const [starEvents, practiceDays, completions, lessons, attempts] = await Promise.all([
@@ -136,7 +137,7 @@ export async function cardsForClass(classId: string, studentId?: string): Promis
   const only = studentId !== undefined && UUID_RE.test(studentId) ? studentId : null;
   const kids = studentId !== undefined && only === null ? [] : await sql<{ id: string; display_name: string; blob_color: string | null; link_secret: string }[]>`
     select id, display_name, blob_color, link_secret from wp_students
-    where class_id = ${classId} and (${only}::uuid is null or id = ${only}::uuid)
+    where class_id = ${classId} and not is_preview and (${only}::uuid is null or id = ${only}::uuid)
     order by display_name, id`;
   return {
     className: cls.name, classCode: cls.class_code,
@@ -342,5 +343,35 @@ export async function softDeleteQuestion(id: string): Promise<void> {
     const [{ n }] = await tx<{ n: number }[]>`select count(*)::int as n from wp_questions where lesson_id = ${q.lesson_id} and deleted_at is null`;
     if (n <= 1) throw new EditorError(['A lesson needs at least one question.']);
     await tx`update wp_questions set deleted_at = now() where id = ${id} and deleted_at is null`;
+  });
+}
+
+// ---- Practice student ("Try it as a student") ------------------------------------------------
+
+/** The class's hidden practice student, created the first time it is asked for. NotFoundError for an unknown class. */
+export async function practiceStudentFor(classId: string): Promise<WpStudent> {
+  if (!UUID_RE.test(classId)) throw new NotFoundError('class');
+  const [cls] = await sql<{ id: string }[]>`select id from wp_classes where id = ${classId}`;
+  if (!cls) throw new NotFoundError('class');
+  // Two quick clicks race here: the partial unique index makes the second insert a no-op.
+  await sql`
+    insert into wp_students (id, class_id, display_name, link_secret, is_preview)
+    values (gen_random_uuid(), ${classId}, 'Teacher', ${makeLinkSecret()}, true)
+    on conflict (class_id) where is_preview do nothing`;
+  const [s] = await sql<WpStudent[]>`select * from wp_students where class_id = ${classId} and is_preview`;
+  return s;
+}
+
+/** Clears the practice student's answers, finished lessons, stars, practice days and blob color. Real kids are untouched. */
+export async function resetPracticeStudent(classId: string): Promise<void> {
+  if (!UUID_RE.test(classId)) throw new NotFoundError('class');
+  await sql.begin(async (tx) => {
+    const [s] = await tx<{ id: string }[]>`select id from wp_students where class_id = ${classId} and is_preview for update`;
+    if (!s) return;
+    await tx`delete from wp_star_events where student_id = ${s.id}`;
+    await tx`delete from wp_lesson_completions where student_id = ${s.id}`;
+    await tx`delete from wp_attempts where student_id = ${s.id}`;
+    await tx`delete from wp_practice_days where student_id = ${s.id}`;
+    await tx`update wp_students set blob_color = null where id = ${s.id}`;
   });
 }

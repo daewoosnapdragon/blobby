@@ -34,7 +34,7 @@ export async function classByCode(code: string): Promise<JoinNames | null> {
   const [cls] = await sql<{ id: string }[]>`select id from wp_classes where class_code = ${code.trim().toUpperCase()}`;
   if (!cls) return null;
   const rows = await sql<{ id: string; display_name: string; blob_color: string | null }[]>`
-    select id, display_name, blob_color from wp_students where class_id = ${cls.id} order by display_name`;
+    select id, display_name, blob_color from wp_students where class_id = ${cls.id} and not is_preview order by display_name`;
   return {
     classId: cls.id,
     names: rows.map((r) => ({ id: r.id, displayName: r.display_name, blobColor: r.blob_color })),
@@ -46,7 +46,7 @@ export async function studentForJoin(code: string, studentId: string): Promise<W
   if (!UUID_RE.test(studentId)) return null;
   const [row] = await sql<WpStudent[]>`
     select s.* from wp_students s join wp_classes c on c.id = s.class_id
-    where s.id = ${studentId} and c.class_code = ${code.trim().toUpperCase()}`;
+    where s.id = ${studentId} and c.class_code = ${code.trim().toUpperCase()} and not s.is_preview`;
   return row ?? null;
 }
 
@@ -88,17 +88,21 @@ const assignedTo = (tx: Tx | typeof sql, studentId: string) => tx`
   where a.student_id = ${studentId}
      or a.class_id = (select class_id from wp_students where id = ${studentId})`;
 
-/** A week with no opens_on date fails closed: it stays locked. */
-const weekIsOpen = (opensOn: string | null, now: Date) => opensOn !== null && isWeekOpen(opensOn, now);
+/** A week with no opens_on date fails closed: it stays locked. A practice student sees every week open. */
+const weekIsOpen = (opensOn: string | null, now: Date, preview = false) => preview || (opensOn !== null && isWeekOpen(opensOn, now));
+
+/** "Is this the class's practice student?", as a column for queries that already run. */
+const previewOf = (tx: Tx | typeof sql, studentId: string) =>
+  tx`coalesce((select is_preview from wp_students where id = ${studentId}), false)`;
 
 /** A lesson of an assigned plan in an open week, else NotFoundError. */
 async function authorizedLesson(tx: Tx | typeof sql, studentId: string, lessonId: string, now: Date) {
   if (!UUID_RE.test(lessonId)) throw new NotFoundError('lesson');
-  const [row] = await tx<{ week_id: string; plan_id: string; opens_on: string | null }[]>`
-    select l.week_id, w.plan_id, w.opens_on
+  const [row] = await tx<{ week_id: string; plan_id: string; opens_on: string | null; preview: boolean }[]>`
+    select l.week_id, w.plan_id, w.opens_on, ${previewOf(tx, studentId)} as preview
     from wp_lessons l join wp_weeks w on w.id = l.week_id
     where l.id = ${lessonId} and w.plan_id in (${assignedTo(tx, studentId)})`;
-  if (!row || !weekIsOpen(row.opens_on, now)) throw new NotFoundError('lesson');
+  if (!row || !weekIsOpen(row.opens_on, now, row.preview)) throw new NotFoundError('lesson');
   return row;
 }
 
@@ -161,11 +165,11 @@ export async function recordAttempt(
     await lockStudent(tx, studentId);
     if (!UUID_RE.test(input.questionId)) throw new NotFoundError('question');
     // Soft-deleted questions still accept attempts: an in-progress lesson must be able to finish.
-    const [q] = await tx<{ plan_id: string; opens_on: string | null }[]>`
-      select w.plan_id, w.opens_on
+    const [q] = await tx<{ plan_id: string; opens_on: string | null; preview: boolean }[]>`
+      select w.plan_id, w.opens_on, ${previewOf(tx, studentId)} as preview
       from wp_questions qu join wp_lessons l on l.id = qu.lesson_id join wp_weeks w on w.id = l.week_id
       where qu.id = ${input.questionId} and w.plan_id in (${assignedTo(tx, studentId)})`;
-    if (!q || !weekIsOpen(q.opens_on, now)) throw new NotFoundError('question');
+    if (!q || !weekIsOpen(q.opens_on, now, q.preview)) throw new NotFoundError('question');
 
     // Answering anything counts as practicing today (a stamp), even a retry; never touches seconds already counted.
     await tx`
@@ -235,7 +239,7 @@ export interface HomeData {
 type HomeWeek = HomeData['weeks'][number];
 
 /** The weeks (with this kid's lesson checks) of each given plan, in week/lesson order. */
-async function weeksByPlan(studentId: string, planIds: string[], now: Date): Promise<Map<string, HomeWeek[]>> {
+async function weeksByPlan(studentId: string, planIds: string[], now: Date, preview: boolean): Promise<Map<string, HomeWeek[]>> {
   const out = new Map<string, HomeWeek[]>(planIds.map((p) => [p, []]));
   if (planIds.length === 0) return out;
   const rows = await sql<{
@@ -253,7 +257,7 @@ async function weeksByPlan(studentId: string, planIds: string[], now: Date): Pro
   for (const r of rows) {
     let w = byWeek.get(r.week_id);
     if (!w) {
-      w = { id: r.week_id, number: r.position, skill: r.skill, opensOn: r.opens_on, open: weekIsOpen(r.opens_on, now), done: false, lessons: [] };
+      w = { id: r.week_id, number: r.position, skill: r.skill, opensOn: r.opens_on, open: weekIsOpen(r.opens_on, now, preview), done: false, lessons: [] };
       byWeek.set(r.week_id, w);
       out.get(r.plan_id)!.push(w);
     }
@@ -277,7 +281,7 @@ export async function getHome(studentId: string, now: Date = new Date()): Promis
   const plans = await sql<{ id: string; title: string }[]>`
     select id, title from wp_plans where id in (${assignedTo(sql, studentId)})
     order by created_at desc, id`;
-  const [total, byPlan] = await Promise.all([totalStarsFor(studentId), weeksByPlan(studentId, plans.map((p) => p.id), now)]);
+  const [total, byPlan] = await Promise.all([totalStarsFor(studentId), weeksByPlan(studentId, plans.map((p) => p.id), now, student.is_preview)]);
   const weeksOf = (p: { id: string }) => byPlan.get(p.id) ?? [];
   const plan =
     plans.find((p) => weeksOf(p).some((w) => w.open && !w.done)) ??
@@ -310,8 +314,8 @@ export async function getWeek(studentId: string, weekId: string, now: Date = new
   if (!student) return null;
   const [row] = await sql<{ plan_id: string; opens_on: string | null }[]>`
     select plan_id, opens_on from wp_weeks where id = ${weekId} and plan_id in (${assignedTo(sql, studentId)})`;
-  if (!row || !weekIsOpen(row.opens_on, now)) return null;
-  const [byPlan, totalStars] = await Promise.all([weeksByPlan(studentId, [row.plan_id], now), totalStarsFor(studentId)]);
+  if (!row || !weekIsOpen(row.opens_on, now, student.is_preview)) return null;
+  const [byPlan, totalStars] = await Promise.all([weeksByPlan(studentId, [row.plan_id], now, student.is_preview), totalStarsFor(studentId)]);
   const week = byPlan.get(row.plan_id)?.find((w) => w.id === weekId);
   if (!week) return null;
   return {
@@ -438,7 +442,7 @@ export async function getWeekDone(studentId: string, weekId: string, now: Date =
   const [week] = await sql<{ id: string; position: number; skill: string; opens_on: string | null }[]>`
     select id, position, skill, opens_on from wp_weeks
     where id = ${weekId} and plan_id in (${assignedTo(sql, studentId)})`;
-  if (!week || !weekIsOpen(week.opens_on, now)) throw new NotFoundError('week');
+  if (!week || !weekIsOpen(week.opens_on, now, student.is_preview)) throw new NotFoundError('week');
 
   const [lessons, [{ weekStars }], totalStars] = await Promise.all([
     sql<{ id: string; done: boolean }[]>`
@@ -482,8 +486,8 @@ export async function getMissedIds(studentId: string): Promise<Set<string>> {
 
 /** Every playable question of the kid's open weeks (assigned plans): not deleted, not watch_answer, not malformed. */
 async function practicePool(studentId: string, now: Date): Promise<LessonQuestion[]> {
-  const rows = await sql<{ id: string; type: string; payload: unknown; audio: unknown; opens_on: string | null }[]>`
-    select q.id, q.type, q.payload, q.audio, w.opens_on
+  const rows = await sql<{ id: string; type: string; payload: unknown; audio: unknown; opens_on: string | null; preview: boolean }[]>`
+    select q.id, q.type, q.payload, q.audio, w.opens_on, ${previewOf(sql, studentId)} as preview
     from wp_questions q
     join wp_lessons l on l.id = q.lesson_id
     join wp_weeks w on w.id = l.week_id
@@ -492,7 +496,7 @@ async function practicePool(studentId: string, now: Date): Promise<LessonQuestio
     order by w.position, l.position, q.position, q.id`;
   const pool: LessonQuestion[] = [];
   for (const r of rows) {
-    if (!weekIsOpen(r.opens_on, now)) continue;
+    if (!weekIsOpen(r.opens_on, now, r.preview)) continue;
     try {
       pool.push({ id: r.id, question: parseQuestion(r.type, r.payload), audio: audioMap(r.audio) });
     } catch {
@@ -516,14 +520,14 @@ export async function getPracticeSet(
 
 /** Is there anything to practice yet? (Home shows the free-practice card as opening later when not.) */
 export async function practiceAvailable(studentId: string, now: Date = new Date()): Promise<boolean> {
-  const weeks = await sql<{ opens_on: string | null }[]>`
-    select distinct w.opens_on
+  const weeks = await sql<{ opens_on: string | null; preview: boolean }[]>`
+    select distinct w.opens_on, ${previewOf(sql, studentId)} as preview
     from wp_questions q
     join wp_lessons l on l.id = q.lesson_id
     join wp_weeks w on w.id = l.week_id
     where q.deleted_at is null and q.type <> 'watch_answer'
       and w.plan_id in (${assignedTo(sql, studentId)})`;
-  return weeks.some((w) => weekIsOpen(w.opens_on, now));
+  return weeks.some((w) => weekIsOpen(w.opens_on, now, w.preview));
 }
 
 /** What the practice screen needs besides the questions. */
