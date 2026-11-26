@@ -3,6 +3,7 @@ import type postgres from 'postgres';
 import { sql } from './admin';
 import { parseQuestion } from '../questions/schema';
 import { isSkillKey, type SkillKey } from '../skills';
+import { pickLessonBonus } from '../bonus';
 import { afterLesson, chooseReview, dueSkills, type BankItem, type RunAnswer, type TrackSkill } from '../track';
 import type { WpStudentSkill } from '../types';
 import type { LessonQuestion } from './kid';
@@ -82,6 +83,29 @@ export async function reviewQuestions(studentId: string, grade: number, lessonId
       on conflict (student_id, lesson_id) do update set question_ids = excluded.question_ids, picked_at = now()`;
   }
   return ids.map((id) => byId.get(id)!);
+}
+
+/**
+ * The kid's bonus question for one lesson, picked among its class questions and saved with the lesson's picks, so a
+ * reload (or a question added to the lesson) keeps it; picked again only if the saved one is no longer in the lesson.
+ */
+export async function bonusPick(studentId: string, lessonId: string, classQuestionIds: string[], seed: string): Promise<string | null> {
+  const pick = pickLessonBonus(classQuestionIds, seed);
+  if (pick === null) return null;
+  const stored = await storedBonus(sql, studentId, lessonId);
+  if (stored !== null && classQuestionIds.includes(stored)) return stored;
+  await sql`
+    insert into wp_review_picks (student_id, lesson_id, question_ids, bonus_question_id)
+    values (${studentId}, ${lessonId}, '{}', ${pick})
+    on conflict (student_id, lesson_id) do update set bonus_question_id = excluded.bonus_question_id`;
+  return pick;
+}
+
+/** The bonus question saved for the kid's current play-through of a lesson, if any. */
+export async function storedBonus(tx: Tx, studentId: string, lessonId: string): Promise<string | null> {
+  const [row] = await tx<{ bonus_question_id: string | null }[]>`
+    select bonus_question_id from wp_review_picks where student_id = ${studentId} and lesson_id = ${lessonId}`;
+  return row?.bonus_question_id ?? null;
 }
 
 /** A finished lesson's next play-through picks its "just for you" questions afresh. */

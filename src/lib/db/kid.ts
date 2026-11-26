@@ -2,7 +2,8 @@ import 'server-only';
 import type postgres from 'postgres';
 import { cookies } from 'next/headers';
 import { sql } from './admin';
-import { countRun, forgetPicks, mixIn, reviewQuestions, skillPractice } from './track';
+import { bonusPick, countRun, forgetPicks, mixIn, reviewQuestions, skillPractice } from './track';
+import { lessonBonusSeed } from '../bonus';
 import type { SkillKey } from '../skills';
 import { SESSION_COOKIE, verifyStudent } from '../session';
 import { UUID_RE } from '../uuid';
@@ -382,6 +383,8 @@ export interface LessonQuestion {
   skill?: string | null;
   /** a review-track question chosen for this kid ("Just for you") */
   forYou?: boolean;
+  /** this lesson's bonus class question for this kid (never a "just for you" one) */
+  bonus?: boolean;
 }
 
 export interface LessonData {
@@ -433,6 +436,8 @@ export async function getLesson(studentId: string, lessonId: string, now: Date =
   const done = new Set(lessons.filter((l) => l.done).map((l) => l.id));
   // "Just for you": saved for this kid and lesson until it is finished (a redo after that may differ).
   const review = await reviewQuestions(studentId, student.grade, lessonId, `${studentId}:${lessonId}:${done.has(lessonId) ? 1 : 0}`);
+  // The bonus is a class question, saved in the same row as the review picks (so after reviewQuestions).
+  const bonus = await bonusPick(studentId, lessonId, questions.map((q) => q.id), lessonBonusSeed(studentId, lessonId, done.has(lessonId)));
   return {
     student: { id: student.id, displayName: student.display_name, blobColor: student.blob_color, grade: student.grade },
     totalStars,
@@ -443,7 +448,7 @@ export async function getLesson(studentId: string, lessonId: string, now: Date =
     },
     lessonDone: done.has(lessonId),
     otherLessonsDone: lessons.every((l) => l.id === lessonId || l.done),
-    questions: mixIn(questions, review),
+    questions: mixIn(questions.map((q) => ({ ...q, bonus: q.id === bonus })), review),
   };
 }
 

@@ -77,6 +77,45 @@ describe('getLesson', () => {
     // the future week opens on its date
     expect((await getLesson(LEO, LFUT, new Date('2026-02-01T00:00:00Z'))).questions).toHaveLength(1);
   });
+
+  it('flags exactly one class question as the bonus and keeps it across reloads', async () => {
+    const { getLesson } = await import('@/lib/db/kid');
+    const first = await getLesson(LEO, L1, NOW);
+    const bonus = first.questions.filter((q) => q.bonus);
+    expect(bonus).toHaveLength(1);
+    expect(bonus[0].forYou).toBeFalsy();
+    const again = await getLesson(LEO, L1, NOW);
+    expect(again.questions.find((q) => q.bonus)!.id).toBe(bonus[0].id);
+    const [row] = await sql<{ bonus_question_id: string }[]>`select bonus_question_id from wp_review_picks where student_id = ${LEO} and lesson_id = ${L1}`;
+    expect(row.bonus_question_id).toBe(bonus[0].id);
+  });
+
+  it('keeps the stored bonus when a question is added before it, and repicks when the stored one is deleted', async () => {
+    const { getLesson } = await import('@/lib/db/kid');
+    const { pickLessonBonus, lessonBonusSeed } = await import('@/lib/bonus');
+    const bonusOf = async () => (await getLesson(MINA, L1, NOW)).questions.filter((q) => q.bonus).map((q) => q.id);
+    const [before] = await bonusOf();
+    const [first, last] = [id(405), id(406)];
+    await sql`insert into wp_questions (id, lesson_id, position, type, payload, audio) values
+      (${first}, ${L1}, 0, 'pick_one', ${sql.json(pickOne('zeroth'))}, '{}'),
+      (${last}, ${L1}, 9, 'pick_one', ${sql.json(pickOne('ninth'))}, '{}')`;
+    try {
+      // a fresh pick over the new list would land elsewhere, so only the stored pick keeps it
+      expect(pickLessonBonus([first, Q.a, Q.b, last], lessonBonusSeed(MINA, L1, false))).not.toBe(before);
+      expect(await bonusOf()).toEqual([before]);
+      await sql`update wp_questions set deleted_at = now() where id = ${before}`;
+      const after = await bonusOf();
+      expect(after).toHaveLength(1);
+      expect(after[0]).not.toBe(before);
+      expect([first, Q.a, Q.b, last]).toContain(after[0]);
+      const [row] = await sql<{ bonus_question_id: string }[]>`select bonus_question_id from wp_review_picks where student_id = ${MINA} and lesson_id = ${L1}`;
+      expect(row.bonus_question_id).toBe(after[0]);
+    } finally {
+      if (before) await sql`update wp_questions set deleted_at = null where id = ${before}`;
+      await sql`update wp_review_picks set bonus_question_id = null where bonus_question_id in (${first}, ${last})`;
+      await sql`delete from wp_questions where id in (${first}, ${last})`;
+    }
+  });
 });
 
 describe('getWeekDone', () => {
