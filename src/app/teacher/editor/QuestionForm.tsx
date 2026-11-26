@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { useActionState, useMemo, useState } from 'react';
 import { draftToPayload, emptyDraft, TYPE_NAMES, type Draft, type NonWatchDraft } from '@/lib/questions/draft';
 import { parseQuestion, type NonWatchQuestion } from '@/lib/questions/schema';
+import { READ_ALOUD } from '@/lib/features';
 import { saveQuestionAction } from '../editorActions';
 import { TextField } from './fields';
 import { TypeForm } from './TypeForms';
@@ -10,7 +11,9 @@ import { LivePreview } from './LivePreview';
 import t from '../teacher.module.css';
 import s from './editor.module.css';
 
-const INNER_TYPES: NonWatchDraft['type'][] = ['pick_one', 'fill_blank', 'find_fix', 'build_it', 'sort_it', 'listen_tap'];
+const ALL_INNER_TYPES: NonWatchDraft['type'][] = ['pick_one', 'fill_blank', 'find_fix', 'build_it', 'sort_it', 'listen_tap'];
+/** Listen and tap needs read-aloud audio: hidden while that is off, unless this question already is one. */
+const innerTypes = (current: NonWatchDraft['type']) => ALL_INNER_TYPES.filter((k) => READ_ALOUD || k !== 'listen_tap' || k === current);
 
 /** The questions the preview can show right now: every part that is already valid. */
 function previewQuestions(d: Draft): NonWatchQuestion[] {
@@ -54,7 +57,7 @@ export function QuestionForm({ lessonId, questionId, position, initial, isNew, c
                     <label className={s.innerType}>
                       <span>Type</span>
                       <select className={s.select} value={q.type} onChange={(e) => setDraft({ ...draft, questions: draft.questions.map((x, j) => (j === i ? (emptyDraft(e.target.value as NonWatchDraft['type']) as NonWatchDraft) : x)) })}>
-                        {INNER_TYPES.map((k) => <option key={k} value={k}>{TYPE_NAMES[k]}</option>)}
+                        {innerTypes(q.type).map((k) => <option key={k} value={k}>{TYPE_NAMES[k]}</option>)}
                       </select>
                     </label>
                     <button type="button" className={s.linkBtn} disabled={draft.questions.length <= 1}

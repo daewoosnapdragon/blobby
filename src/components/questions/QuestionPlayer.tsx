@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import type { NonWatchQuestion, Question } from '@/lib/questions/schema';
 import { spokenStrings } from '@/lib/spoken';
 import { playSound } from '@/lib/sound';
+import { READ_ALOUD } from '@/lib/features';
 import { Blob, type BlobColor, type Hat, type Mood, type Reaction } from '@/components/blob/Blob';
 import { useNudge } from '@/components/blob/useNudge';
 import { HearIt } from '@/components/ui/HearIt';
@@ -43,6 +44,8 @@ export type QuestionPlayerProps = {
   stars: number;
   /** Grades 1–2: read the prompt aloud as each question appears (spec 5.7) */
   autoRead?: boolean;
+  /** show Hear it and allow autoRead; defaults to the READ_ALOUD switch (src/lib/features.ts) */
+  readAloud?: boolean;
   /** stars per first-try right answer, shown on the right card ("+1 star"); 0 in lessons */
   answerStars?: number;
   closeHref?: string;
@@ -123,7 +126,7 @@ function Body({ q, status, onAnswer, onFound }: { q: NonWatchQuestion; status: S
  * free practice (Task 12) and watch-and-answer (Task 14).
  */
 export function QuestionPlayer({
-  questions, onAnswer, onFinish, blobColor, hat = null, stars, autoRead = false, answerStars = 0, closeHref = '/', closeLabel = 'Close lesson', bare = false,
+  questions, onAnswer, onFinish, blobColor, hat = null, stars, autoRead = false, readAloud: readAloudOn = READ_ALOUD, answerStars = 0, closeHref = '/', closeLabel = 'Close lesson', bare = false,
 }: QuestionPlayerProps) {
   const nudge = useNudge();
   const steps = useMemo(
@@ -263,7 +266,7 @@ export function QuestionPlayer({
                 <div id="q-ask" ref={askRef} tabIndex={-1} className={s.ask}>{bubble}</div>
                 <div className={s.ask} aria-hidden="true" style={{ visibility: 'hidden' }}>{ask(q, found)}</div>
               </div>
-              <HearIt key={step.key + index} texts={aloud.all} audio={step.audio ?? {}} autoPlay={autoRead} autoPlayTexts={aloud.auto} />
+              {readAloudOn ? <HearIt key={step.key + index} texts={aloud.all} audio={step.audio ?? {}} autoPlay={autoRead} autoPlayTexts={aloud.auto} /> : null}
             </div>
           </div>
         </section>

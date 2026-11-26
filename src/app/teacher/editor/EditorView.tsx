@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import type { EditorLesson } from '@/lib/db/teacher';
-import { draftFromQuestion, emptyDraft, TYPE_NAMES } from '@/lib/questions/draft';
-import { QUESTION_TYPES, isQuestionType, type Question, type QuestionType } from '@/lib/questions/schema';
+import { addableTypes, draftFromQuestion, emptyDraft, TYPE_NAMES } from '@/lib/questions/draft';
+import { isQuestionType, type Question, type QuestionType } from '@/lib/questions/schema';
+import { READ_ALOUD } from '@/lib/features';
 import { BackIcon } from '@/components/ui/icons';
 import { deleteQuestionAction } from '../editorActions';
 import { DeleteButton } from './DeleteButton';
@@ -31,7 +32,7 @@ export function EditorView({ data, edit, add, banner, previewSrc }: {
 }) {
   const base = `/teacher/editor/${data.lesson.id}`;
   const editing = edit ? data.questions.find((q) => q.id === edit && q.question) : undefined;
-  const adding: QuestionType | undefined = !editing && add && isQuestionType(add) ? add : undefined;
+  const adding: QuestionType | undefined = !editing && add && isQuestionType(add) && addableTypes().includes(add) ? add : undefined;
   const nextPosition = data.questions.reduce((m, q) => Math.max(m, q.position), 0) + 1;
 
   return (
@@ -41,7 +42,7 @@ export function EditorView({ data, edit, add, banner, previewSrc }: {
       <p className={t.sub}>{data.plan.title} · Week {data.week.position}: {data.week.skill}</p>
 
       <div role="status" aria-live="polite">
-        {banner === 'saved' ? <p className={`${s.banner} ${s.ok}`}>Saved. Audio is ready.</p> : null}
+        {banner === 'saved' ? <p className={`${s.banner} ${s.ok}`}>{READ_ALOUD ? 'Saved. Audio is ready.' : 'Saved.'}</p> : null}
         {banner === 'noaudio' ? <p className={`${s.banner} ${s.warn}`}>Saved. Audio couldn&rsquo;t be made, so Hear it will be quiet for this question.</p> : null}
         {banner === 'last' ? <p className={`${s.banner} ${s.warn}`}>A lesson needs at least one question. Add another one first, then delete this one.</p> : null}
         {banner === 'deleted' ? <p className={`${s.banner} ${s.ok}`}>Deleted. Kids won&rsquo;t see it any more.</p> : null}
@@ -73,7 +74,7 @@ export function EditorView({ data, edit, add, banner, previewSrc }: {
       <section className={s.addSection} aria-labelledby="add-title">
         <h2 id="add-title" className={t.h2}>Add a question</h2>
         <ul className={s.typePicker}>
-          {QUESTION_TYPES.map((type) => (
+          {addableTypes().map((type) => (
             <li key={type}>
               <Link href={`${base}?add=${type}#form`} className={s.typeBtn} aria-current={adding === type ? 'true' : undefined}>{TYPE_NAMES[type]}</Link>
             </li>

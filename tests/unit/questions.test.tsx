@@ -265,6 +265,7 @@ function renderPlayer(props: Partial<Parameters<typeof QuestionPlayer>[0]> = {})
       onFinish={onFinish}
       blobColor="mint"
       stars={42}
+      readAloud
       {...props}
     />,
   );
@@ -367,6 +368,20 @@ describe('QuestionPlayer', () => {
     renderPlayer({ questions: [pq(QID, pick, { [pick.prompt]: 'http://a/p.mp3' })] });
     await flush();
     expect(played).toEqual([]);
+  });
+
+  it('with read-aloud off there is no Hear it and nothing plays, even with autoRead', async () => {
+    renderPlayer({ questions: [pq(QID, pick, { [pick.prompt]: 'http://a/p.mp3' })], autoRead: true, readAloud: false });
+    await flush();
+    expect(played).toEqual([]);
+    expect(screen.queryByRole('button', { name: /hear it/i })).toBeNull();
+  });
+
+  it('read-aloud is off by default for now (src/lib/features.ts)', async () => {
+    render(<QuestionPlayer questions={[pq(QID, pick, { [pick.prompt]: 'http://a/p.mp3' })]} onAnswer={vi.fn()} onFinish={vi.fn()} blobColor="mint" stars={0} autoRead />);
+    await flush();
+    expect(played).toEqual([]);
+    expect(screen.queryByRole('button', { name: /hear it/i })).toBeNull();
   });
 });
 

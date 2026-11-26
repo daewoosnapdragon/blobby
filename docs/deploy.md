@@ -13,10 +13,10 @@ it needs and the order to load content in. See also `docs/teacher-login.md`, `do
 | `APP_URL` | The app's public address, no trailing slash, e.g. `https://blobby.example.com`. Used for QR cards and the teacher sign-in link. Required in production. |
 | `SUPABASE_URL` | The project URL, `https://<project-ref>.supabase.co`. |
 | `SUPABASE_ANON_KEY` | The anon (public) key. Used only for teacher sign-in. |
-| `SUPABASE_SERVICE_ROLE_KEY` | The service role key. Server only; used for the audio Storage bucket. Never expose it to the browser. |
+| `SUPABASE_SERVICE_ROLE_KEY` | The service role key. Server only; used for the audio Storage bucket (only while read-aloud is on). Never expose it to the browser. |
 | `TEACHER_EMAILS` | Comma-separated emails allowed into `/teacher`. |
-| `OPENAI_API_KEY` | For read-aloud audio when the editor saves a question (and for the content importer). |
-| `TTS_MODEL`, `TTS_VOICE` | Optional. Default `tts-1` and `nova`. |
+| `OPENAI_API_KEY` | **Not needed while read-aloud is off** (it is, for now). Only for read-aloud audio when it is switched back on. |
+| `TTS_MODEL`, `TTS_VOICE` | Optional, and only with read-aloud on. Default `tts-1` and `nova`. |
 
 The scripts in `scripts/` read the same variables from the shell. They also use SSL for any database host
 that isn't `localhost`.
@@ -44,7 +44,10 @@ or lesson link, and their questions stay in free practice. So run the reset befo
 Re-importing a file keeps what the teacher changed in the app (week skills and dates, lesson titles, edited
 and deleted questions) and prints what it kept. Add `--overwrite` only when the file should replace those edits.
 
-## Read-aloud voice: shutdown date
+## Read-aloud voice
+
+Read-aloud audio is **switched off** for now (`READ_ALOUD` in `src/lib/features.ts`; see `docs/audio.md`). Nothing
+below matters until it is switched back on.
 
 OpenAI lists its TTS models for shutdown on **Jan 6, 2027**. Audio already made stays in Storage and keeps
 working; only new audio (editor saves, new imports) needs a voice service after that date. Swapping providers is

@@ -7,6 +7,7 @@ import { parseQuestion, type Question } from '../questions/schema';
 import { questionProblems } from '../questions/problems';
 import { spokenStrings } from '../spoken';
 import { ensureAudio, defaultAudioDeps, type AudioDeps } from '../tts';
+import { READ_ALOUD } from '../features';
 import { checkEmbeddable, parseYouTubeId } from '../youtube';
 import { isRealDate, weekdayName } from '../dates';
 import { computeClassStats, skillHistory, type StatLesson, type StatAttempt, type StudentStats } from '../stats';
@@ -232,7 +233,7 @@ export async function getEditorLesson(lessonId: string): Promise<EditorLesson | 
       let question: Question | null = null;
       try { question = parseQuestion(q.type, q.payload); } catch { /* shown as a problem in the list */ }
       const have = q.audio && typeof q.audio === 'object' ? (q.audio as Record<string, unknown>) : {};
-      const audioMissing = question ? spokenStrings(question).some((t) => typeof have[t] !== 'string' || !have[t]) : false;
+      const audioMissing = READ_ALOUD && question ? spokenStrings(question).some((t) => typeof have[t] !== 'string' || !have[t]) : false;
       return { id: q.id, position: q.position, type: q.type, audioMissing, question };
     }),
   };
@@ -242,6 +243,8 @@ export interface SaveDeps {
   audio?: () => Promise<AudioDeps>;
   /** overall audio deadline; default 20 s */
   audioTimeoutMs?: number;
+  /** make audio on save; defaults to the READ_ALOUD switch (src/lib/features.ts) */
+  readAloud?: boolean;
 }
 export interface SaveResult { id: string; audio: 'ok' | 'failed' }
 export const AUDIO_DEADLINE_MS = 20_000;
@@ -262,6 +265,7 @@ const versionSql = () => sql`to_char(updated_at at time zone 'UTC', 'YYYY-MM-DD"
  * position, computed while the lesson row is locked so concurrent adds get different positions.
  * Validates first (EditorError with readable problems), writes the question, and only then makes audio, best effort:
  * if the voice service is unavailable or slow the save still stands and `audio` is 'failed'.
+ * With read-aloud off no audio is made and the stored audio is left as it is; `audio` is 'ok'.
  */
 export async function saveQuestion(
   lessonId: string, target: { id?: string }, type: string, payload: unknown, deps: SaveDeps = {},
@@ -312,6 +316,7 @@ export async function saveQuestion(
       returning id, ${versionSql()} as v`;
     return { id: row.id, previous: {}, version: row.v };
   });
+  if (!(deps.readAloud ?? READ_ALOUD)) return { id, audio: 'ok' };
 
   let audio: Record<string, string>;
   let status: 'ok' | 'failed' = 'ok';

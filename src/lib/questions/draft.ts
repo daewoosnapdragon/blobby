@@ -1,6 +1,7 @@
 // What the editor forms hold while Kyla types: plain strings and indexes, no validation.
 // draftToPayload cleans a draft into the payload parseQuestion checks. Pure and client-safe.
-import type { Question, QuestionType } from './schema';
+import { QUESTION_TYPES, type Question, type QuestionType } from './schema';
+import { READ_ALOUD } from '../features';
 
 export type NonWatchDraft =
   | { type: 'pick_one'; prompt: string; choices: string[]; answer: number }
@@ -21,6 +22,10 @@ export const TYPE_NAMES: Record<QuestionType, string> = {
   listen_tap: 'Listen and tap',
   watch_answer: 'Watch and answer',
 };
+
+/** Types a teacher can add. Listen and tap needs read-aloud audio, so it is hidden while that is off. */
+export const addableTypes = (readAloud: boolean = READ_ALOUD): QuestionType[] =>
+  QUESTION_TYPES.filter((t) => readAloud || t !== 'listen_tap');
 
 export function emptyDraft(type: Exclude<QuestionType, 'watch_answer'>): NonWatchDraft;
 export function emptyDraft(type: QuestionType): Draft;

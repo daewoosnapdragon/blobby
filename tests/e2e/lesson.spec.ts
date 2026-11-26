@@ -63,9 +63,9 @@ test('pick a blob, finish a lesson (+10), finish the week (+30 this week), redo 
   await expect(page).toHaveURL(new RegExp(`/lesson/${L.one.id}$`));
   await expect(page.getByRole('progressbar', { name: 'Question 1 of 2' })).toBeVisible();
 
-  // Review Focus #5: the audio 404s -> "Try again", and the question still works
-  await page.getByRole('button', { name: 'Hear it' }).click();
-  await expect(page.getByRole('button', { name: 'Try again to hear it' })).toBeVisible();
+  // Read-aloud is switched off for now (src/lib/features.ts): no Hear it, even though this question has an audio URL.
+  // (With it on, the URL 404s and Hear it shows "Try again"; the unit tests cover that.)
+  await expect(page.getByRole('button', { name: /hear it/i })).toHaveCount(0);
 
   // wrong first, then right: only the first try is stored
   await page.getByRole('button', { name: 'I walk to school.', exact: true }).click();

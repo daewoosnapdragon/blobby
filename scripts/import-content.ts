@@ -2,16 +2,18 @@
 // By default the teacher's edits in the app win (week skill/date, lesson titles, questions, deleted questions);
 // --overwrite makes the file win.
 // Needs DATABASE_URL; audio also needs SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, OPENAI_API_KEY.
+// While read-aloud is switched off (src/lib/features.ts) no audio is made, as if --no-audio were given.
 import fs from 'node:fs';
 import postgres from 'postgres';
 import { scriptDbOptions } from '../src/lib/db/options';
 import { importContent, keptSummary, parseContent } from '../src/lib/content';
 import { defaultAudioDeps, ensureAudio } from '../src/lib/tts';
+import { READ_ALOUD } from '../src/lib/features';
 
 async function main() {
   const args = process.argv.slice(2);
   const dryRun = args.includes('--dry-run');
-  const noAudio = args.includes('--no-audio');
+  const noAudio = !READ_ALOUD || args.includes('--no-audio');
   const overwrite = args.includes('--overwrite');
   const file = args.find((a) => !a.startsWith('--'));
   if (!file) throw new Error('Usage: tsx scripts/import-content.ts <content.json> [--dry-run] [--no-audio] [--overwrite]');
@@ -41,7 +43,7 @@ async function main() {
         }
       }
       console.log(`audio: ${updated} question(s) updated`);
-    } else console.log('audio skipped (--no-audio)');
+    } else console.log(READ_ALOUD ? 'audio skipped (--no-audio)' : 'audio skipped (read-aloud is off)');
   } finally {
     await sql.end();
   }

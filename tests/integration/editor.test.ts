@@ -3,6 +3,9 @@ import { resetTestDb, TEST_DATABASE_URL } from './helpers/db';
 import { seed, seedPlan, CLASS, STUDENTS, PLAN } from '../e2e/fixtures/seed';
 import { audioKey } from '@/lib/tts';
 
+// These tests cover making audio, so read-aloud is switched on here (it is off in the app for now).
+vi.mock('@/lib/features', () => ({ READ_ALOUD: true }));
+
 process.env.DATABASE_URL = TEST_DATABASE_URL;
 process.env.SESSION_SECRET = 'int-secret';
 

@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { parseQuestion, type Question } from '@/lib/questions/schema';
-import { draftFromQuestion, draftToPayload, emptyDraft } from '@/lib/questions/draft';
+import { parseQuestion, QUESTION_TYPES, type Question } from '@/lib/questions/schema';
+import { addableTypes, draftFromQuestion, draftToPayload, emptyDraft } from '@/lib/questions/draft';
 import { questionProblems } from '@/lib/questions/problems';
 import { weekdayName } from '@/lib/dates';
 
@@ -59,5 +59,14 @@ describe('weekdayName', () => {
     expect(weekdayName('2026-12-21')).toBe('Monday');
     expect(weekdayName('')).toBe('');
     expect(weekdayName('2026-02-30')).toBe('');
+  });
+});
+
+describe('addableTypes', () => {
+  it('hides Listen and tap while read-aloud is off (the default for now)', () => {
+    expect(addableTypes()).toEqual(QUESTION_TYPES.filter((t) => t !== 'listen_tap'));
+  });
+  it('offers every type with read-aloud on', () => {
+    expect(addableTypes(true)).toEqual(QUESTION_TYPES);
   });
 });
