@@ -143,6 +143,8 @@ export function updateSqlDocument(looks: string[], applies: string[]): string {
     '-- (the second run changes nothing).',
     '-- BUT: a question the teacher edited in the app is replaced by the file\'s version.',
     '-- PART 1 lists those, so you can check first.',
+    '-- PART 1 compares the question text (payload) only; a change to only the type or',
+    '-- the skill tag is applied by PART 2 without being listed.',
     '--',
     '-- How to use: paste PART 1 into the Supabase SQL editor and run it. Read the',
     '-- rows. If they look right, paste PART 2 and run it.',

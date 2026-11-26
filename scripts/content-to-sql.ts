@@ -1,5 +1,5 @@
 // Usage: npx tsx scripts/content-to-sql.ts <out.sql> <content.json | review-bank-gN.json> [...]
-//        npx tsx scripts/content-to-sql.ts <out.sql> --update --base <dir | git:<ref>> <file...>
+//        npx tsx scripts/content-to-sql.ts <out.sql> --update --base <dir | git:<ref>> <file>
 // Turns content files into one SQL file for the Supabase SQL editor, doing what import-content.ts does
 // (without audio): plans upserted by title and assigned to their grade's class; weeks, lessons and questions
 // added only where missing, so teacher edits and deleted questions in the app are kept. Safe to run twice.
@@ -8,7 +8,8 @@
 // from the base file (the same file as it was before this edit), PART 2 updates questions in place by position,
 // adds missing positions and leaves teacher-deleted ones deleted. --base is a directory holding the base files
 // under the same names, or git:<ref> to read each file as it is at that commit (git show <ref>:<path>).
-// Without --base, PART 1 lists every existing question PART 2 touches.
+// Without --base, PART 1 lists every existing question PART 2 touches. --update takes one file per run, because
+// the Supabase SQL editor shows only the last query's result.
 import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
@@ -16,7 +17,7 @@ import { parseContent } from '../src/lib/content';
 import { parseBank } from '../src/lib/bank';
 import { bankApplySql, bankLookSql, bankToSql, contentApplySql, contentLookSql, contentToSql, updateSqlDocument } from '../src/lib/contentSql';
 
-const USAGE = 'Usage: tsx scripts/content-to-sql.ts <out.sql> [--update [--base <dir | git:<ref>>]] <content.json> [...]';
+const USAGE = 'Usage: tsx scripts/content-to-sql.ts <out.sql> <content.json> [...]\n   or: tsx scripts/content-to-sql.ts <out.sql> --update [--base <dir | git:<ref>>] <content.json>';
 
 function parseArgs(argv: string[]) {
   const [outFile, ...rest] = argv;
@@ -30,6 +31,15 @@ function parseArgs(argv: string[]) {
   }
   if (!outFile || outFile.startsWith('--') || files.length === 0) throw new Error(USAGE);
   if (base && !update) throw new Error(`--base only applies with --update\n${USAGE}`);
+  if (update && files.length > 1) throw new Error('--update takes one content file at a time (the SQL editor shows only the last query\'s result). Run it once per file.');
+  if (base?.startsWith('git:')) {
+    const ref = base.slice(4);
+    try {
+      execFileSync('git', ['rev-parse', '--verify', '--quiet', `${ref}^{commit}`], { stdio: 'ignore' });
+    } catch {
+      throw new Error(`--base ${base}: git cannot find ${JSON.stringify(ref)}`);
+    }
+  }
   return { outFile, update, base, files };
 }
 
@@ -94,4 +104,9 @@ function main() {
   console.log(summary.join('\n'));
 }
 
-main();
+try {
+  main();
+} catch (e) {
+  console.error(e instanceof Error ? e.message : String(e));
+  process.exit(1);
+}

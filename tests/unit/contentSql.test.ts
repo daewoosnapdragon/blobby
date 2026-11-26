@@ -31,6 +31,7 @@ describe.each([
     expect(text).toMatch(/What it keeps:/);
     expect(text).toMatch(/How to use:/);
     expect(text).toMatch(/twice/);
+    expect(text).toContain('-- PART 1 compares the question text (payload) only; a change to only the type or\n-- the skill tag is applied by PART 2 without being listed.');
     expect(text.indexOf('PART 1: LOOK FIRST')).toBeGreaterThan(0);
     expect(text.indexOf('PART 2: APPLY')).toBeGreaterThan(text.indexOf('PART 1: LOOK FIRST'));
     const { part1, part2 } = split(text);
