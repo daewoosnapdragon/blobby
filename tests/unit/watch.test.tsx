@@ -75,7 +75,7 @@ describe('watch and answer', () => {
     fireEvent.click(btn('Skip video'));
     fireEvent.click(btn('She doesn’t like carrots.'));
     expect(onAnswer).toHaveBeenLastCalledWith({ id: 'q1', question: pick }, true);
-    expect(screen.getByRole('status')).toHaveTextContent('That’s it!');
+    expect(screen.getByRole('status').querySelector('[data-result="right"]')).not.toBeNull();
   });
 
   it('a load event alone (could be a browser error page) does not stop the 8s check', () => {

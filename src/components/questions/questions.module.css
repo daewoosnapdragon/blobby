@@ -15,7 +15,7 @@
 .qCard { position: relative; background: var(--card); border-radius: var(--radius-card); min-height: 208px; padding: 16px 16px 18px 18px; overflow: hidden; display: flex; flex-direction: column; gap: 17px; }
 .tag { align-self: flex-start; border-radius: 999px; padding: 4px 12px; font-size: 13px; font-weight: 700; line-height: 1.45; }
 .qRow { display: flex; align-items: flex-start; gap: 10px; }
-.qBlob { width: var(--q-blob, 136px); flex-shrink: 0; margin-left: 2px; margin-top: 2px; line-height: 0; }
+.qBlob { position: relative; width: var(--q-blob, 136px); flex-shrink: 0; margin-left: 2px; margin-top: 2px; line-height: 0; }
 .bubble { flex: 1; min-width: 0; background: var(--bg); border-radius: 20px 20px 20px 6px; padding: 14px 14px 12px 16px; display: flex; flex-direction: column; gap: 10px; }
 .askStack { display: grid; }
 .askStack > * { grid-area: 1 / 1; }
@@ -169,3 +169,17 @@
 /* "Just for you": a review-track question */
 .tags { display: flex; flex-wrap: wrap; gap: 6px; align-self: flex-start; }
 .forYou { background: #FFF4CC; }
+
+/* The lesson's bonus question */
+.bonusTag { background: var(--yellow-soft); display: inline-flex; align-items: center; gap: 4px; }
+
+/* On a roll (3 and 5 in a row): three dots pop around the blob */
+.sparkles { position: absolute; inset: 0; pointer-events: none; }
+.sparkle { position: absolute; width: 10px; height: 10px; border-radius: 50%; background: var(--yellow); animation: var(--kf-pop) 400ms var(--ease-out) both; }
+.sparkle:nth-child(1) { top: 4%; left: 8%; }
+.sparkle:nth-child(2) { top: -2%; right: 12%; width: 8px; height: 8px; animation-delay: 80ms; }
+.sparkle:nth-child(3) { top: 42%; right: -4%; animation-delay: 160ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .sparkles, .sparkle { animation: none; display: none; }
+}

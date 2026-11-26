@@ -3,6 +3,9 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import type { NonWatchQuestion, Question } from '@/lib/questions/schema';
 import { spokenStrings } from '@/lib/spoken';
 import { playSound } from '@/lib/sound';
+import { dingRate, nextRoll, reactionFor, sparklesAt } from '@/lib/roll';
+import { ALMOST_LINES, RIGHT_LINES, answerLine, pickLine, titlePool } from '@/lib/feedbackLines';
+import { addToTally, type Tally } from '@/lib/tally';
 import { Blob, type BlobColor, type Hat, type Mood, type Reaction } from '@/components/blob/Blob';
 import { useNudge } from '@/components/blob/useNudge';
 import { HearIt } from '@/components/ui/HearIt';
@@ -28,6 +31,8 @@ export type PlayerQuestion = {
   audio?: Record<string, string>;
   /** a review-track question chosen for this kid */
   forYou?: boolean;
+  /** the lesson's bonus question: pays bonusStars on a first-try right */
+  bonus?: boolean;
 };
 
 /** One answerable step: watch_answer is expanded into its inner questions. */
@@ -38,7 +43,7 @@ export type QuestionPlayerProps = {
   /** the FIRST try at each step only; later tries are practice and not reported */
   onAnswer: (q: AnsweredQuestion, correct: boolean) => void;
   /** after Next on the last step */
-  onFinish: () => void;
+  onFinish: (tally: Tally) => void;
   blobColor: BlobColor;
   /** seasonal hat for the kid's own blob (Seoul date, from the server) */
   hat?: Hat | null;
@@ -48,6 +53,8 @@ export type QuestionPlayerProps = {
   autoRead?: boolean;
   /** stars per first-try right answer, shown on the right card ("+1 star"); 0 in lessons */
   answerStars?: number;
+  /** stars noted on a bonus question's right card, instead of answerStars */
+  bonusStars?: number;
   closeHref?: string;
   /** the close button's accessible name */
   closeLabel?: string;
@@ -56,7 +63,7 @@ export type QuestionPlayerProps = {
 };
 
 /** A video step (watch_answer's first step) or one answerable question. */
-type Step = { key: string; id: string; forYou?: boolean } & ({ video: string; question?: undefined; audio?: undefined } | { question: NonWatchQuestion; audio: Record<string, string>; video?: undefined });
+type Step = { key: string; id: string; forYou?: boolean; bonus?: boolean } & ({ video: string; question?: undefined; audio?: undefined } | { question: NonWatchQuestion; audio: Record<string, string>; video?: undefined });
 
 const TYPE_LABEL: Record<NonWatchQuestion['type'], string> = {
   listen_tap: 'Listen and tap',
@@ -126,7 +133,7 @@ function Body({ q, status, onAnswer, onFound }: { q: NonWatchQuestion; status: S
  * free practice (Task 12) and watch-and-answer (Task 14).
  */
 export function QuestionPlayer({
-  questions, onAnswer, onFinish, blobColor, hat = null, stars, autoRead = false, answerStars = 0, closeHref = '/', closeLabel = 'Close lesson', bare = false,
+  questions, onAnswer, onFinish, blobColor, hat = null, stars, autoRead = false, answerStars = 0, bonusStars = 0, closeHref = '/', closeLabel = 'Close lesson', bare = false,
 }: QuestionPlayerProps) {
   const nudge = useNudge();
   const steps = useMemo(
@@ -140,7 +147,7 @@ export function QuestionPlayer({
             ...wa.questions.map((inner, i) => ({ key: `${pq.id}:${i}`, id: pq.id, question: inner, audio })),
           ];
         }
-        return [{ key: pq.id, id: pq.id, question: wa, audio, forYou: pq.forYou }];
+        return [{ key: pq.id, id: pq.id, question: wa, audio, forYou: pq.forYou, bonus: pq.bonus }];
       }),
     [questions],
   );
@@ -150,6 +157,12 @@ export function QuestionPlayer({
   const [rightFirst, setRightFirst] = useState(false);
   const [reaction, setReaction] = useState<{ kind: Reaction; n: number } | null>(null);
   const [found, setFound] = useState(false);
+  // first-try rights in a row this session; the lines are picked once per answer, never on a re-render
+  const [roll, setRoll] = useState(0);
+  const [feedback, setFeedback] = useState<{ title: string; bubble: string } | null>(null);
+  const lastTitle = useRef<string | null>(null);
+  const lastBubble = useRef<string | null>(null);
+  const tally = useRef<Tally>({});
   const actionRef = useRef<HTMLButtonElement & HTMLAnchorElement>(null);
   const askRef = useRef<HTMLDivElement>(null);
   const pillRef = useRef<HTMLDivElement>(null);
@@ -159,6 +172,9 @@ export function QuestionPlayer({
   const focusAsk = useRef(false);
 
   const step = steps[Math.min(index, steps.length - 1)];
+  // the editor preview is just the question: no bonus, no tally
+  const bonus = !bare && !!step?.bonus;
+  const noteStars = bonus ? bonusStars : answerStars;
 
   useEffect(() => {
     if (status !== 'idle') actionRef.current?.focus({ preventScroll: true });
@@ -170,7 +186,7 @@ export function QuestionPlayer({
 
   // A first-try right answer with a star on it: the star flies from the card to the counter (transform only;
   // skipped under reduced motion, where the note and the counter say it).
-  const flies = status === 'right' && rightFirst && answerStars > 0;
+  const flies = status === 'right' && rightFirst && noteStars > 0;
   useEffect(() => {
     if (!flies) return;
     let reduce = false;
@@ -224,15 +240,23 @@ export function QuestionPlayer({
       setRightFirst(correct);
       setFirstTry(false);
     }
+    const now = nextRoll(roll, firstTry, correct);
+    setRoll(now);
+    const title = pickLine(titlePool(correct, now), lastTitle.current);
+    const said = (correct ? answerLine(q) : null) ?? pickLine(correct ? RIGHT_LINES : ALMOST_LINES, lastBubble.current);
+    lastTitle.current = title;
+    lastBubble.current = said;
+    setFeedback({ title, bubble: said });
     setStatus(correct ? 'right' : 'wrong');
     // The tap's pop (~80 ms) finishes first, then the result sound.
-    setTimeout(() => playSound(correct ? 'ding' : 'boop'), 90);
-    setReaction((r) => ({ kind: correct ? 'hop' : 'wobble', n: (r?.n ?? 0) + 1 }));
+    setTimeout(() => (correct ? playSound('ding', { rate: dingRate(now) }) : playSound('boop')), 90);
+    setReaction((r) => ({ kind: reactionFor(correct, now), n: (r?.n ?? 0) + 1 }));
   }
 
   function next() {
+    if (step.question && !bare) tally.current = addToTally(tally.current, step.question);
     if (index + 1 >= steps.length) {
-      onFinish();
+      onFinish(bare ? {} : tally.current);
       return;
     }
     focusAsk.current = true;
@@ -245,7 +269,9 @@ export function QuestionPlayer({
   }
 
   const mood: Mood = status === 'right' ? 'happy' : status === 'wrong' ? 'oops' : 'idle';
-  const bubble = status === 'right' ? 'Yes! You got it.' : status === 'wrong' ? 'Hmm, not that one.' : ask(q, found);
+  const idle = bonus && (q.type === 'fill_blank' || q.type === 'find_fix') ? `Bonus! ${ask(q, found)}` : ask(q, found);
+  const bubble = status !== 'idle' && feedback ? feedback.bubble : idle;
+  const sparkles = status === 'right' && sparklesAt(roll);
   const aloud = readAloud(q);
 
   return (
@@ -258,10 +284,16 @@ export function QuestionPlayer({
           <span className={s.tags}>
             <span className={s.tag} style={{ background: TYPE_TINT[q.type] }}>{TYPE_LABEL[q.type]}</span>
             {step.forYou ? <span className={`${s.tag} ${s.forYou}`}>Just for you</span> : null}
+            {bonus ? <span className={`${s.tag} ${s.bonusTag}`}><StarIcon size={12} />Bonus!</span> : null}
           </span>
           <div className={s.qRow}>
             <div className={s.qBlob}>
               <Blob key={reaction?.n ?? 0} color={blobColor} mood={mood} size="var(--q-blob, 136px)" reaction={reaction?.kind ?? null} hat={hat} accessory={nudge === 'bedtime' ? 'pajamas' : null} />
+              {sparkles ? (
+                <span key={`sparkles${reaction?.n}`} data-testid="sparkles" aria-hidden="true" className={s.sparkles}>
+                  <span className={s.sparkle} /><span className={s.sparkle} /><span className={s.sparkle} />
+                </span>
+              ) : null}
             </div>
             <div className={s.bubble}>
               <QuestionPicture key={step.key} name={q.picture} className={s.qPicture} />
@@ -287,22 +319,22 @@ export function QuestionPlayer({
 
         <div role="status" aria-live="polite" className={s.feedbackSlot}>
           {status === 'right' ? (
-            <div className={`${s.feedback} ${s.right}`}>
+            <div className={`${s.feedback} ${s.right}`} data-result="right">
               <div className={s.feedbackText}>
-                <div className={s.feedbackTitle}>That’s it!</div>
-                {answerStars > 0 && rightFirst ? (
+                <div className={s.feedbackTitle}>{feedback?.title}</div>
+                {noteStars > 0 && rightFirst ? (
                   <div className={s.feedbackNote}>
                     <span ref={noteStar} className={s.noteStar}><StarIcon size={16} /></span>
-                    +{answerStars} {answerStars === 1 ? 'star' : 'stars'}
+                    +{noteStars} {noteStars === 1 ? 'star' : 'stars'}
                   </div>
                 ) : null}
               </div>
               <PillButton size="sm" onClick={next} ref={actionRef}>Next</PillButton>
             </div>
           ) : status === 'wrong' ? (
-            <div className={`${s.feedback} ${s.wrong}`}>
+            <div className={`${s.feedback} ${s.wrong}`} data-result="wrong">
               <div className={s.feedbackText}>
-                <div className={s.feedbackTitle}>Almost!</div>
+                <div className={s.feedbackTitle}>{feedback?.title}</div>
                 <div className={s.feedbackNote} data-hint="">{HINT[q.type]}</div>
               </div>
               <button type="button" className={s.tryAgain} onClick={() => { focusAsk.current = true; setStatus('idle'); }} ref={actionRef}>Try again</button>
