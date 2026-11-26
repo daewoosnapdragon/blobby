@@ -99,11 +99,13 @@ off sets `active = false`, so its history stays.
 - Completion and stars are unchanged: a lesson is finished when the kid reaches the end; review questions count
   like any other question.
 
-### First try
+### First tries and lesson runs
 
-`wp_attempts` gets `first_try boolean not null default true`. The screen sends `first_try = false` for a second or
-later try at the same question in the same run. "Tricky" and the track's rules count first tries only, so trying
-again after a wrong answer is never held against the kid.
+The lesson and practice screens already save only a kid's first try at each question (later tries are practice
+and not reported), so every saved attempt is a first try and no new column is needed. `wp_attempts` gets a
+nullable `run_id` (uuid, made by the screen when a lesson or practice round starts) so the server can tell which
+answers belong to one lesson run. "Tricky" and the track's rules count saved attempts only, so trying again after a
+wrong answer is never held against the kid.
 
 ### The "Tricky today" card
 
@@ -122,10 +124,13 @@ Checked on the server when a lesson is completed and when a practice round ends:
 
 - **Add:** a skill with 2 or more first-try misses in that lesson run, not already active, becomes active with
   source `auto`. Missing questions in free practice never adds a skill.
-- **Remove:** a skill whose last 6 first-try answers (any context) were all right becomes inactive, unless Kyla
+- **Remove:** a skill whose last 6 saved answers (any context) were all right becomes inactive, unless Kyla
   added it herself (source `teacher`), which stays until she removes it.
-- A kid keeps at most 4 active skills. When an auto-add would make 5, the oldest `auto` or `pretest` skill without
-  a recent miss gives way (it is set inactive, not deleted).
+- **Kyla's word wins:** a skill Kyla removed is marked as removed by her and is never added back automatically;
+  only she can turn it on again.
+- **At most 4 active skills, for automatic adds only.** When an auto-add would make 5, the oldest `auto` or
+  `pretest` skill with no miss in its last 6 answers gives way (set inactive, not deleted). If none can give way,
+  the add is skipped. Skills Kyla adds are not limited.
 
 ### Kyla's view
 
@@ -135,9 +140,18 @@ Checked on the server when a lesson is completed and when a practice round ends:
 
 ### Loading the starting skills
 
-A SQL file, made from the four pretest workbooks matched to the roster by grade and name, inserts each kid's
-starting skills (`pretest`, or `next_step` for kids with no flagged errors). Kyla checks the name matches first and
-runs it in the Supabase SQL editor. Kids not in the pretest (Park Aurora, Grade 3) start with none.
+The four pretest workbooks are Claude Sheets: one tab per class, one row per student, with the 8 error columns
+holding "Y" when the error was seen at least twice, and a free-text "Next step". Claude reads them, matches each
+row to the roster by grade and name, maps each kid's "Next step" to a skill key by hand, and writes a SQL file
+(kept outside the repo, like the roster file) that inserts each kid's starting skills (`pretest`, or `next_step`
+for kids with no flagged errors). Kyla checks a match list (name, matched student, skills) before running it in the
+Supabase SQL editor. The most any kid has flagged is 4, so starting skills fit the limit. Kids not in the pretest
+(Park Aurora, Grade 3) start with none.
+
+### Stars from review questions
+
+Practice again stars (1 per right answer) on review-bank questions are recorded against the kid's current home
+plan, so they count in the plan's star totals like other free-practice stars.
 
 ### Content size
 
@@ -152,3 +166,4 @@ batches, test week and Week 1 first, and reviewed by Kyla before each import.
   within the anti-goals.
 - How "stable until finished" is achieved (for example seeding the choice by student, lesson and completion count).
 - Indexes, and the shape of the bank file, as long as the importer validates it.
+- Whether the editor gets a skill picker for class questions.
