@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { requireTeacher } from '@/lib/supabase/server';
+import { requireTeacherUser } from '@/lib/supabase/server';
 import { listPlans } from '@/lib/db/teacher';
 import { signOut } from '../actions';
 import { TeacherShell } from '../views';
@@ -9,7 +9,7 @@ export const dynamic = 'force-dynamic';
 export const metadata: Metadata = { title: 'Plans' };
 
 export default async function PlansPage() {
-  await requireTeacher();
+  const me = await requireTeacherUser();
   const classes = await listPlans();
-  return <TeacherShell signOut={signOut} current="plans"><PlansView classes={classes} /></TeacherShell>;
+  return <TeacherShell signOut={signOut} who={me.name ?? me.email} current="plans"><PlansView classes={classes} /></TeacherShell>;
 }

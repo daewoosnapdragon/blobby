@@ -9,7 +9,7 @@ import styles from './teacher.module.css';
 
 /** Presentational pieces for the teacher pages. Data in, markup out; the pages own auth and queries. */
 
-export function TeacherShell({ children, signOut, current }: { children: React.ReactNode; signOut?: () => Promise<void>; current?: 'classes' | 'plans' }) {
+export function TeacherShell({ children, signOut, current, who }: { children: React.ReactNode; signOut?: () => Promise<void>; current?: 'classes' | 'plans' | 'account'; who?: string }) {
   return (
     <div className={styles.shell}>
       <header className={styles.top}>
@@ -18,10 +18,14 @@ export function TeacherShell({ children, signOut, current }: { children: React.R
           <nav className={styles.nav} aria-label="Teacher">
             <Link href="/teacher" aria-current={current === 'classes' ? 'page' : undefined}>Classes</Link>
             <Link href="/teacher/plans" aria-current={current === 'plans' ? 'page' : undefined}>Plans</Link>
+            <Link href="/teacher/account" aria-current={current === 'account' ? 'page' : undefined}>Account</Link>
           </nav>
         ) : null}
         {signOut ? (
-          <form action={signOut}><button type="submit" className={styles.ghost}>Sign out</button></form>
+          <div className={styles.who}>
+            {who ? <span className={styles.hi}>Hi, {who}</span> : null}
+            <form action={signOut}><button type="submit" className={styles.ghost}>Sign out</button></form>
+          </div>
         ) : null}
       </header>
       <main className={styles.main}>{children}</main>

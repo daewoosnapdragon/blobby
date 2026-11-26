@@ -7,6 +7,7 @@ import { appOrigin } from '@/lib/teacherUrl';
 import { NotFoundError } from '@/lib/db/kid';
 import { studentDetail, setDisplayName, reissueLink, DISPLAY_NAME_MAX } from '@/lib/db/teacher';
 import { UUID_RE } from '@/lib/uuid';
+import { passwordError, validateName, validatePassword } from '@/lib/teacherAccount';
 
 /** Same neutral outcome whether or not the email is allowed: no allowlist leak. */
 export async function requestLink(formData: FormData): Promise<void> {
@@ -80,4 +81,29 @@ export async function reissueStudentLink(formData: FormData): Promise<void> {
   } catch (e) { if (e instanceof NotFoundError) notFound(); throw e; }
   revalidatePath(`/teacher/class/${classId}/cards`);
   redirect(`/teacher/student/${id}?reissued=1`);
+}
+
+/** The name shows only in the teacher top bar. Saved on the Supabase user, so no table is needed. */
+export async function saveTeacherName(formData: FormData): Promise<void> {
+  await requireTeacher();
+  const name = validateName(formData.get('name'));
+  if (!name) redirect('/teacher/account?error=name');
+  const supabase = await teacherSupabase();
+  const result = await supabase?.auth.updateUser({ data: { display_name: name } }).catch(() => null);
+  if (!result || result.error) redirect('/teacher/account?error=failed');
+  revalidatePath('/teacher', 'layout');
+  redirect('/teacher/account?saved=name');
+}
+
+/** Also how a first password is set: sign in once with an email link, then save one here. */
+export async function changePassword(formData: FormData): Promise<void> {
+  await requireTeacher();
+  const password = formData.get('password');
+  const problem = validatePassword(password, formData.get('confirm'));
+  if (problem) redirect(`/teacher/account?error=${problem}`);
+  const supabase = await teacherSupabase();
+  const result = await supabase?.auth.updateUser({ password: String(password) }).catch(() => null);
+  if (!result) redirect('/teacher/account?error=failed');
+  if (result.error) redirect(`/teacher/account?error=${passwordError(result.error)}`);
+  redirect('/teacher/account?saved=password');
 }
