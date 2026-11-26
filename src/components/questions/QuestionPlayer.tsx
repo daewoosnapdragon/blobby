@@ -263,7 +263,10 @@ export function QuestionPlayer({
                 <div id="q-ask" ref={askRef} tabIndex={-1} className={s.ask}>{bubble}</div>
                 <div className={s.ask} aria-hidden="true" style={{ visibility: 'hidden' }}>{ask(q, found)}</div>
               </div>
-              <HearIt key={step.key + index} texts={aloud.all} audio={step.audio ?? {}} autoPlay={autoRead} autoPlayTexts={aloud.auto} />
+              {/* No audio made for this question (read-aloud is off for now): no button, rather than one that only says "Try again". */}
+              {aloud.all.some((t) => step.audio?.[t]) ? (
+                <HearIt key={step.key + index} texts={aloud.all} audio={step.audio ?? {}} autoPlay={autoRead} autoPlayTexts={aloud.auto} />
+              ) : null}
             </div>
           </div>
         </section>

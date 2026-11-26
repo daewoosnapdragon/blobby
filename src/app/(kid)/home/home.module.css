@@ -37,9 +37,9 @@ a.weekTile:active { transform: scale(0.97); }
 .current { box-shadow: inset 0 0 0 2px var(--ink); }
 .locked { background: #EFEAE4; color: var(--muted); }
 .tile { height: 72px; border-radius: 14px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; }
-.tileHere { justify-content: flex-end; overflow: hidden; }
-.here { display: flex; align-items: flex-end; gap: 2px; }
-.hereBlob { display: block; margin-bottom: -8px; line-height: 0; }
+.tileHere { justify-content: center; overflow: hidden; }
+.here { display: flex; align-items: center; gap: 2px; }
+.hereBlob { display: block; line-height: 0; }
 .opens { font-size: 12px; font-weight: 700; color: var(--muted); }
 .weekLabel, .weekLabelStrong { padding: 0 2px; font-size: 12px; font-weight: 500; color: var(--muted); }
 .weekLabelStrong { font-weight: 700; color: var(--ink); }
