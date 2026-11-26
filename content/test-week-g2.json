@@ -220,11 +220,10 @@
             {
               "type": "picture_first",
               "skill": "articles",
-              "picture": "ear",
+              "picture": "octopus",
               "choices": [
-                "This is a ear.",
-                "This is an ear.",
-                "This is ear."
+                "This is a octopus.",
+                "This is an octopus."
               ],
               "answer": 1
             },
@@ -693,7 +692,7 @@
             {
               "type": "right_wrong",
               "skill": "there-is-are",
-              "sentence": "There is a frog in my shoe.",
+              "sentence": "There is a frog in the pond.",
               "right": true,
               "picture": "frog"
             },
@@ -948,12 +947,12 @@
               "skill": "was-were",
               "prompt": "Three of these go with \"were\". Which one does not?",
               "words": [
-                "the kids",
-                "Mom and Dad",
-                "the cookies",
-                "my cat"
+                "my friends",
+                "the balloons",
+                "the teacher",
+                "Ruby and Zara"
               ],
-              "answer": 3
+              "answer": 2
             },
             {
               "type": "match_pairs",
@@ -1208,10 +1207,10 @@
               "skill": "ing",
               "prompt": "Three of these go with \"are playing\". Which one does not?",
               "words": [
-                "the kids",
-                "my brother",
-                "Milo and Theo",
-                "we"
+                "Grandma and Grandpa",
+                "Pip",
+                "the puppies",
+                "you"
               ],
               "answer": 1
             }
