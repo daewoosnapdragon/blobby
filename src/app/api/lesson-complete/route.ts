@@ -5,7 +5,7 @@ import { NotFoundError, completeLesson, studentFromRequest, totalStarsFor } from
 
 export const dynamic = 'force-dynamic';
 
-const Body = z.object({ lessonId: z.string().regex(UUID_RE) });
+const Body = z.object({ lessonId: z.string().regex(UUID_RE), runId: z.string().regex(UUID_RE).optional() });
 
 export async function POST(req: Request) {
   const student = await studentFromRequest();
@@ -13,7 +13,7 @@ export async function POST(req: Request) {
   const parsed = Body.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: 'bad_request' }, { status: 400 });
   try {
-    const result = await completeLesson(student.id, parsed.data.lessonId);
+    const result = await completeLesson(student.id, parsed.data.lessonId, new Date(), parsed.data.runId);
     // totalStars and studentId are server truth for the lesson-done moment (R24, Review Focus #2).
     return NextResponse.json({ ...result, totalStars: await totalStarsFor(student.id), studentId: student.id });
   } catch (e) {

@@ -5,6 +5,8 @@ import { PillButton } from '@/components/ui/PillButton';
 import { StarIcon, STAR_PATH } from '@/components/ui/icons';
 import { TopBar } from '@/components/questions/TopBar';
 import { STAR_VALUES } from '@/lib/stars';
+import { TrickyToday } from './TrickyToday';
+import type { SkillKey } from '@/lib/skills';
 import styles from './lessonDone.module.css';
 
 export type DoneState =
@@ -18,8 +20,10 @@ const FLY = 5;
  * The short lesson-done moment. First time: "+10 stars", and the stars fly to the counter (transform only,
  * skipped under reduced motion). A redo: "Nice practice!" and no stars.
  */
-export function LessonDone({ state, name, color, stars, onRetry }: {
+export function LessonDone({ state, name, color, stars, onRetry, tricky = [] }: {
   state: DoneState; name: string; color: BlobColor; stars: number; onRetry: () => void;
+  /** skills to practice again ("Tricky today"), shown once the lesson is saved */
+  tricky?: SkillKey[];
 }) {
   const pill = useRef<HTMLDivElement>(null);
   const source = useRef<HTMLSpanElement>(null);
@@ -93,6 +97,7 @@ export function LessonDone({ state, name, color, stars, onRetry }: {
           )}
           {saved && !saved.firstTime ? <p className={styles.result}>You already got the stars for this one.</p> : null}
           {saved && saved.nextHref !== '/' ? <p className={styles.result}>And that finishes the week!</p> : null}
+          {saved ? <TrickyToday skills={tricky} /> : null}
         </div>
 
         <div className={styles.spacer} />

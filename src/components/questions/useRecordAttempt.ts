@@ -9,7 +9,7 @@ export type AttemptRes = { starsAwarded: number; studentId: string };
 /** A save that still failed after every automatic retry. `retry` resends the SAME body; it resolves true once saved. */
 export type FailedSave = { correct: boolean; retry: () => Promise<boolean> };
 
-type Body = { clientAttemptId: string; questionId: string; correct: boolean; context: 'lesson' | 'free' };
+type Body = { clientAttemptId: string; questionId: string; correct: boolean; context: 'lesson' | 'free'; runId?: string };
 
 /**
  * Saves a first-try answer for lessons and free practice (one copy of the retry, 401 and kid-switch rules).
@@ -20,9 +20,11 @@ type Body = { clientAttemptId: string; questionId: string; correct: boolean; con
  * (no network, or 5xx), `onFailed` gets a retry that resends that same clientAttemptId (idempotent).
  */
 export function useRecordAttempt({
-  context, studentId, onSignedOut, onSaved, onFailed,
+  context, studentId, onSignedOut, onSaved, onFailed, runId,
 }: {
   context: 'lesson' | 'free';
+  /** this lesson or practice run, so the review track can tell which answers belong together */
+  runId?: string;
   /** the kid this page was rendered for */
   studentId: string;
   onSignedOut: () => void;
@@ -50,9 +52,9 @@ export function useRecordAttempt({
   }, [router]);
 
   return useCallback(async (q, correct) => {
-    const body: Body = { clientAttemptId: newId(), questionId: q.id, correct, context };
+    const body: Body = { clientAttemptId: newId(), questionId: q.id, correct, context, ...(runId ? { runId } : {}) };
     if ((await send(body)) === 'failed') {
       current.current.onFailed?.({ correct, retry: async () => (await send(body)) === 'ok' });
     }
-  }, [context, send]);
+  }, [context, send, runId]);
 }

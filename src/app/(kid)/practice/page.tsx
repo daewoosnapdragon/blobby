@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
-import { getPracticeSet, getPracticeStudent, studentFromRequest } from '@/lib/db/kid';
+import { getPracticeSet, getPracticeStudent, getSkillPractice, studentFromRequest } from '@/lib/db/kid';
+import { isSkillKey } from '@/lib/skills';
 import { toBlobColor } from '@/lib/blobColors';
 import { ProblemScreen } from '@/components/ui/ProblemScreen';
 import { PillButton } from '@/components/ui/PillButton';
@@ -10,12 +11,17 @@ export const dynamic = 'force-dynamic';
 
 export const metadata = { title: 'Free practice · Blobby' };
 
-export default async function PracticePage() {
+export default async function PracticePage({ searchParams }: { searchParams: Promise<{ skill?: string }> }) {
   // Read on every request so "Not you?" followed by a refresh shows the new kid (Review Focus #2).
   const student = await studentFromRequest();
   if (!student) redirect('/join');
   if (!student.blob_color) redirect('/pick');
-  const [kid, questions] = await Promise.all([getPracticeStudent(student.id), getPracticeSet(student.id)]);
+  // ?skill=<key>: "Practice again" from Tricky today, 5 questions on that one skill.
+  const skill = (await searchParams).skill;
+  const [kid, questions] = await Promise.all([
+    getPracticeStudent(student.id),
+    isSkillKey(skill) ? getSkillPractice(student.id, skill) : getPracticeSet(student.id),
+  ]);
 
   if (questions.length === 0) {
     return (

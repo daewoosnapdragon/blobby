@@ -4,7 +4,8 @@ import { useRouter } from 'next/navigation';
 import type { LessonData } from '@/lib/db/kid';
 import type { Hat } from '@/components/blob/Blob';
 import { toBlobColor } from '@/lib/blobColors';
-import { postWithRetry } from '@/lib/kidApi';
+import { newId, postWithRetry } from '@/lib/kidApi';
+import { trickyToday } from '@/lib/tricky';
 import { lessonOutcome } from '@/lib/lessonOutcome';
 import { QuestionPlayer } from '@/components/questions/QuestionPlayer';
 import { useRecordAttempt } from '@/components/questions/useRecordAttempt';
@@ -25,19 +26,28 @@ export function LessonScreen({ data, hat = null }: { data: LessonData; hat?: Hat
   latest.current = data;
   const [phase, setPhase] = useState<'play' | 'done' | 'signedOut'>('play');
   const [done, setDone] = useState<DoneState>({ kind: 'saving' });
+  // One id per play-through of this lesson: its answers update the kid's review track once.
+  const [runId] = useState(() => newId());
+  const answers = useRef<{ skill: string | null | undefined; right: boolean }[]>([]);
+  const skillOf = useRef(new Map(data.questions.map((q) => [q.id, q.skill])));
 
   usePracticePing();
-  const onAnswer = useRecordAttempt({
+  const record = useRecordAttempt({
     context: 'lesson',
     studentId: data.student.id,
     onSignedOut: () => setPhase('signedOut'),
+    runId,
   });
+  const onAnswer: typeof record = (q, correct) => {
+    answers.current.push({ skill: skillOf.current.get(q.id), right: correct });
+    return record(q, correct);
+  };
 
   async function finish() {
     setPhase('done');
     setDone({ kind: 'saving' });
     const page = latest.current;
-    const r = await postWithRetry<CompleteRes>('/api/lesson-complete', { lessonId: page.lesson.id });
+    const r = await postWithRetry<CompleteRes>('/api/lesson-complete', { lessonId: page.lesson.id, runId });
     if (r.status === 401) return setPhase('signedOut');
     if (r.status === 404) router.refresh(); // the page re-renders as "not open"
     if (r.status !== 200 || !r.data) return setDone({ kind: 'error' });
@@ -65,6 +75,7 @@ export function LessonScreen({ data, hat = null }: { data: LessonData; hat?: Hat
         color={toBlobColor(data.student.blobColor)}
         stars={data.totalStars}
         onRetry={finish}
+        tricky={trickyToday(answers.current)}
       />
     );
   }

@@ -165,3 +165,7 @@
 /* The question's key-noun picture, at the top of the bubble */
 .qPicture { display: block; width: 88px; height: 88px; align-self: center; }
 @media (min-width: 640px) { .qPicture { width: 112px; height: 112px; } }
+
+/* "Just for you": a review-track question */
+.tags { display: flex; flex-wrap: wrap; gap: 6px; align-self: flex-start; }
+.forYou { background: #FFF4CC; }

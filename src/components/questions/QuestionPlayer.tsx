@@ -26,6 +26,8 @@ export type PlayerQuestion = {
   question: Question;
   /** spoken text -> audio URL (wp_questions.audio) */
   audio?: Record<string, string>;
+  /** a review-track question chosen for this kid */
+  forYou?: boolean;
 };
 
 /** One answerable step: watch_answer is expanded into its inner questions. */
@@ -54,7 +56,7 @@ export type QuestionPlayerProps = {
 };
 
 /** A video step (watch_answer's first step) or one answerable question. */
-type Step = { key: string; id: string } & ({ video: string; question?: undefined; audio?: undefined } | { question: NonWatchQuestion; audio: Record<string, string>; video?: undefined });
+type Step = { key: string; id: string; forYou?: boolean } & ({ video: string; question?: undefined; audio?: undefined } | { question: NonWatchQuestion; audio: Record<string, string>; video?: undefined });
 
 const TYPE_LABEL: Record<NonWatchQuestion['type'], string> = {
   listen_tap: 'Listen and tap',
@@ -138,7 +140,7 @@ export function QuestionPlayer({
             ...wa.questions.map((inner, i) => ({ key: `${pq.id}:${i}`, id: pq.id, question: inner, audio })),
           ];
         }
-        return [{ key: pq.id, id: pq.id, question: wa, audio }];
+        return [{ key: pq.id, id: pq.id, question: wa, audio, forYou: pq.forYou }];
       }),
     [questions],
   );
@@ -253,7 +255,10 @@ export function QuestionPlayer({
       {/* phone: fills the screen, feedback at the bottom (D-Question). Wider: a centered column, feedback right under the answers. */}
       <div className={s.main}>
         <section className={s.qCard} aria-labelledby="q-ask">
-          <span className={s.tag} style={{ background: TYPE_TINT[q.type] }}>{TYPE_LABEL[q.type]}</span>
+          <span className={s.tags}>
+            <span className={s.tag} style={{ background: TYPE_TINT[q.type] }}>{TYPE_LABEL[q.type]}</span>
+            {step.forYou ? <span className={`${s.tag} ${s.forYou}`}>Just for you</span> : null}
+          </span>
           <div className={s.qRow}>
             <div className={s.qBlob}>
               <Blob key={reaction?.n ?? 0} color={blobColor} mood={mood} size="var(--q-blob, 136px)" reaction={reaction?.kind ?? null} hat={hat} accessory={nudge === 'bedtime' ? 'pajamas' : null} />

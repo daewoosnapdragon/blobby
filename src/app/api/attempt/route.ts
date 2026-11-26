@@ -10,6 +10,7 @@ const Body = z.object({
   questionId: z.string().regex(UUID_RE),
   correct: z.boolean(),
   context: z.enum(['lesson', 'free']),
+  runId: z.string().regex(UUID_RE).optional(),
 });
 
 export async function POST(req: Request) {
