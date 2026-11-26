@@ -1,6 +1,6 @@
 import 'server-only';
 import postgres from 'postgres';
-import { appDbOptions } from './options';
+import { appDbOptions, databaseUrlProblem } from './options';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
 type Sql = ReturnType<typeof postgres>;
@@ -11,6 +11,8 @@ function getSql(): Sql {
     const url = process.env.DATABASE_URL;
     if (!url) throw new Error('DATABASE_URL is not set');
     // prepare: false (in the shared options) is required for the Supabase transaction pooler; SSL in production.
+    const problem = databaseUrlProblem(url);
+    if (problem) console.error(`[blobby] ${problem}`);
     _sql = postgres(url, appDbOptions(url));
   }
   return _sql;

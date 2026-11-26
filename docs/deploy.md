@@ -8,7 +8,7 @@ it needs and the order to load content in. See also `docs/teacher-login.md`, `do
 
 | Name | What to put there |
 | --- | --- |
-| `DATABASE_URL` | The Supabase **shared transaction pooler** string (Supabase → Connect → Transaction pooler), port **6543**: `postgres://postgres.<project-ref>:<password>@<…>.pooler.supabase.com:6543/postgres`. The user is `postgres.<project-ref>`, not plain `postgres`. SSL is turned on by the app itself (`ssl: 'require'` in production), so the string needs no `sslmode`. |
+| `DATABASE_URL` | The Supabase **shared transaction pooler** string (Supabase → Connect → Transaction pooler, with **Use IPv4 connection** switched on), port **6543**. Not the session pooler (port 5432: only 15 clients, pages fail with "max clients reached") and not `db.<project-ref>.supabase.co` (IPv6-only, Vercel can't reach it); the app logs a warning if it sees either: `postgres://postgres.<project-ref>:<password>@<…>.pooler.supabase.com:6543/postgres`. The user is `postgres.<project-ref>`, not plain `postgres`. SSL is turned on by the app itself (`ssl: 'require'` in production), so the string needs no `sslmode`. |
 | `SESSION_SECRET` | 32 or more random characters (for example the output of `openssl rand -base64 32`). It signs the kids' sign-in cookies; changing it signs every kid out. |
 | `APP_URL` | The app's public address, no trailing slash, e.g. `https://blobby.example.com`. Used for QR cards and the teacher sign-in link. Required in production. |
 | `SUPABASE_URL` | The project URL, `https://<project-ref>.supabase.co`. |
