@@ -1,0 +1,3 @@
+Pictures from Noto Emoji by Google (https://github.com/googlefonts/noto-emoji), via @iconify-json/noto.
+Licensed under the Apache License, Version 2.0: https://www.apache.org/licenses/LICENSE-2.0
+Keywords from emojibase-data (MIT), based on Unicode CLDR annotations.

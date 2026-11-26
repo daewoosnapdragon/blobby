@@ -35,31 +35,61 @@ some any many much more most one two three four five six seven eight nine ten fi
 red orange yellow green blue purple pink brown black white gray grey big small little new old good bad happy sad
 today yesterday tomorrow now later always never again what who where why how which right wrong`.split(/\s+/));
 
+/** Past and other verb forms that would match a picture by accident ("ate" -> pizza). Not nouns, so never suggested. */
+const VERBS = new Set(`ate ran went saw drew came took sat made found gave got had said told thought knew began became caught
+brought chose held built felt kept left meant drank threw fell wrote rode flew swam sang sold bought taught heard read
+lost won met paid put let set cut hit hurt shut sent spent stood understood woke wore broke spoke stole drove`.split(/\s+/));
+
 function words(text: string): string[] {
-  return (text.toLowerCase().match(/[a-z]+/g) ?? []).filter((w) => w.length > 1 && !STOP.has(w));
+  return (text.toLowerCase().match(/[a-z]+/g) ?? [])
+    .filter((w) => w.length > 1 && !STOP.has(w) && !VERBS.has(w) && !/(ed|ing)$/.test(w));
 }
 
-/** How well a picture fits one word: 3 = its name, 2 = a word of its name, 1 = a keyword; 0 = no match. */
+/** Everyday words whose obvious picture isn't the one with that exact name (kids' vocabulary). */
+const EVERYDAY: Record<string, string> = {
+  car: 'automobile', book: 'closed-book', apple: 'red-apple', bike: 'bicycle', kid: 'child', ball: 'soccer-ball',
+  phone: 'mobile-phone', computer: 'laptop', tv: 'television', house: 'house', home: 'house', mom: 'woman', dad: 'man',
+  teacher: 'teacher', plane: 'airplane', hat: 'billed-cap', shoe: 'running-shoe', present: 'wrapped-gift', gift: 'wrapped-gift',
+  sun: 'sun', moon: 'crescent-moon', flower: 'tulip', tree: 'deciduous-tree', cake: 'birthday-cake', water: 'droplet',
+};
+
+/** How well a picture fits one word: 5 everyday picture, 4 its name, 3 in its name and keywords, 2 a keyword, 1 in its name. */
 function fit(p: PictureEntry, word: string): number {
-  if (p.n === word) return 3;
-  if (p.n.split('-').includes(word)) return 2;
-  if (p.k.includes(word)) return 1;
-  return 0;
+  if (EVERYDAY[word] === p.n) return 5;
+  if (p.n === word) return 4;
+  const inName = p.n.split('-').includes(word);
+  const inKeywords = p.k.includes(word);
+  if (inName && inKeywords) return 3;
+  if (inKeywords) return 2;
+  return inName ? 1 : 0;
 }
 
+/** One word's matches, best first; among equals the plainest picture (fewest name parts, then shortest). */
+function forWord(catalog: PictureEntry[], word: string): PictureEntry[] {
+  return catalog
+    .map((p) => ({ p, f: fit(p, word) }))
+    .filter((x) => x.f > 0)
+    .sort((a, b) => b.f - a.f || a.p.n.split('-').length - b.p.n.split('-').length || a.p.n.length - b.p.n.length)
+    .map((x) => x.p);
+}
+
+/**
+ * The strongest matches first, across all the words (everyday and exact names before keyword matches); within a
+ * strength, each word's best before anyone's second; then word order. So every noun gets its best picture early.
+ */
 function ranked(catalog: PictureEntry[], terms: string[], n: number): PictureEntry[] {
-  const scores = new Map<string, { p: PictureEntry; score: number; order: number }>();
-  terms.forEach((t, ti) => {
-    for (const p of catalog) {
-      const f = fit(p, t);
-      if (!f) continue;
-      // Earlier words in the text win ties; shorter names (the plain thing, not a variant) next.
-      const score = f * 100 - ti;
-      const prev = scores.get(p.n);
-      if (!prev || score > prev.score) scores.set(p.n, { p, score, order: p.n.length });
-    }
-  });
-  return [...scores.values()].sort((a, b) => b.score - a.score || a.order - b.order).slice(0, n).map((x) => x.p);
+  const cands: { p: PictureEntry; f: number; rank: number; term: number }[] = [];
+  terms.forEach((t, term) => forWord(catalog, t).forEach((p, rank) => cands.push({ p, f: fit(p, t), rank, term })));
+  cands.sort((a, b) => b.f - a.f || a.rank - b.rank || a.term - b.term);
+  const out: PictureEntry[] = [];
+  const seen = new Set<string>();
+  for (const c of cands) {
+    if (seen.has(c.p.n)) continue;
+    seen.add(c.p.n);
+    out.push(c.p);
+    if (out.length >= n) break;
+  }
+  return out;
 }
 
 /** Pictures for the nouns in a question's text, best first. */
