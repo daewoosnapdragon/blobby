@@ -2,6 +2,8 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { randomUUID } from 'node:crypto';
 import { resetTestDb, TEST_DATABASE_URL } from './helpers/db';
 import { seed, seedPlan, CLASS, STUDENTS, PLAN } from '../e2e/fixtures/seed';
+import { isPracticeBonus } from '@/lib/bonus';
+import { seoulDate } from '@/lib/dates';
 
 process.env.DATABASE_URL = TEST_DATABASE_URL;
 process.env.SESSION_SECRET = 'int-secret';
@@ -157,8 +159,10 @@ describe('review tracks and the rest of the app', () => {
     const [p] = await sql`insert into wp_plans (title, kind) values ('Later plan', 'winter') returning id`;
     await sql`insert into wp_plan_assignments (plan_id, class_id) values (${p.id}, ${CLASS.id})`;
     await sql`insert into wp_weeks (plan_id, position, skill, opens_on) values (${p.id}, 1, 'Later', '2099-02-01')`;
-    const r = await kid.recordAttempt(MINA, { clientAttemptId: randomUUID(), questionId: bankIds.articles[1], correct: true, context: 'free' });
-    expect(r.starsAwarded).toBe(1);
+    const now = new Date();
+    const r = await kid.recordAttempt(MINA, { clientAttemptId: randomUUID(), questionId: bankIds.articles[1], correct: true, context: 'free' }, now);
+    // bank ids are random and the day is today's: a practice bonus pays 2
+    expect(r.starsAwarded).toBe(isPracticeBonus(MINA, seoulDate(now), bankIds.articles[1]) ? 2 : 1);
     const [ev] = await sql`select plan_id from wp_star_events where student_id = ${MINA} and reason = 'free_correct' order by created_at desc limit 1`;
     expect(ev.plan_id).toBe(PLAN.id);
   });

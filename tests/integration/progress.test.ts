@@ -47,18 +47,18 @@ const stars = async (student: string) =>
 describe('completeLesson', () => {
   it('awards 10 then 0 on a repeat', async () => {
     const { completeLesson } = await import('@/lib/db/kid');
-    expect(await completeLesson(JUN, L.solo, NOW)).toEqual({ starsAwarded: 20, weekDone: true }); // lesson + week bonus (single-lesson week)
-    expect(await completeLesson(JUN, L.solo, NOW)).toEqual({ starsAwarded: 0, weekDone: false });
+    expect(await completeLesson(JUN, L.solo, NOW)).toEqual({ starsAwarded: 20, weekDone: true, lessonStars: 10, bonusStars: 0 }); // lesson + week bonus (single-lesson week)
+    expect(await completeLesson(JUN, L.solo, NOW)).toEqual({ starsAwarded: 0, weekDone: false, lessonStars: 10, bonusStars: 0 });
     expect(await count('wp_lesson_completions', JUN)).toBe(1);
     expect(await stars(JUN)).toBe(20);
   });
 
   it('awards the week bonus once when the last lesson is completed twice', async () => {
     const { completeLesson } = await import('@/lib/db/kid');
-    expect(await completeLesson(LEO, L.a, NOW)).toEqual({ starsAwarded: 10, weekDone: false });
-    expect(await completeLesson(LEO, L.b, NOW)).toEqual({ starsAwarded: 10, weekDone: false });
-    expect(await completeLesson(LEO, L.c, NOW)).toEqual({ starsAwarded: 20, weekDone: true });
-    expect(await completeLesson(LEO, L.c, NOW)).toEqual({ starsAwarded: 0, weekDone: false });
+    expect(await completeLesson(LEO, L.a, NOW)).toEqual({ starsAwarded: 10, weekDone: false, lessonStars: 10, bonusStars: 0 });
+    expect(await completeLesson(LEO, L.b, NOW)).toEqual({ starsAwarded: 10, weekDone: false, lessonStars: 10, bonusStars: 0 });
+    expect(await completeLesson(LEO, L.c, NOW)).toEqual({ starsAwarded: 20, weekDone: true, lessonStars: 10, bonusStars: 0 });
+    expect(await completeLesson(LEO, L.c, NOW)).toEqual({ starsAwarded: 0, weekDone: false, lessonStars: 10, bonusStars: 0 });
     const bonus = await sql`select 1 from wp_star_events where student_id = ${LEO} and reason = 'week_bonus'`;
     expect(bonus).toHaveLength(1);
     expect(await stars(LEO)).toBe(40);
@@ -127,11 +127,12 @@ describe('recordAttempt', () => {
     expect(ev[0].amount).toBe(1);
   });
 
-  it('concurrent double-tap awards once and both calls report 1', async () => {
+  it('concurrent double-tap awards once and every call reports the same award', async () => {
     const { recordAttempt } = await import('@/lib/db/kid');
     const body = { clientAttemptId: id(501), questionId: Q.a2, correct: true, context: 'free' as const };
     const rs = await Promise.all([recordAttempt(LEO, body, NOW), recordAttempt(LEO, body, NOW), recordAttempt(LEO, body, NOW)]);
-    expect(rs).toEqual([{ starsAwarded: 1 }, { starsAwarded: 1 }, { starsAwarded: 1 }]);
+    // Q.a2 is one of Leo's practice bonus questions on this Seoul day: 2 stars
+    expect(rs).toEqual([{ starsAwarded: 2 }, { starsAwarded: 2 }, { starsAwarded: 2 }]);
     expect(await sql`select 1 from wp_star_events e join wp_attempts a on a.id = e.ref_id where a.client_attempt_id = ${id(501)}`).toHaveLength(1);
   });
 
@@ -166,7 +167,7 @@ describe('recordAttempt', () => {
     const { recordAttempt } = await import('@/lib/db/kid');
     await sql`update wp_questions set deleted_at = now() where id = ${Q.b1}`;
     expect(await recordAttempt(MINA, { clientAttemptId: id(513), questionId: Q.b1, correct: true, context: 'free' }, NOW))
-      .toEqual({ starsAwarded: 1 });
+      .toEqual({ starsAwarded: 2 }); // Q.b1 is one of Mina's practice bonus questions on this Seoul day
   });
 });
 
@@ -197,7 +198,7 @@ describe('getHome and setBlobColor', () => {
     const home = await getHome(MINA, NOW);
     expect(home.student).toEqual({ id: MINA, displayName: 'Mina', blobColor: null });
     expect(home.plan).toEqual({ id: P.plan, title: 'Winter' });
-    expect(home.totalStars).toBe(10 + 10 + 10 + 10 /* 3 lessons + bonus */ + 1 /* soft-deleted free */);
+    expect(home.totalStars).toBe(10 + 10 + 10 + 10 /* 3 lessons + bonus */ + 2 /* soft-deleted free, a bonus that day */);
     expect(home.weeks.map((w) => [w.skill, w.open, w.done])).toEqual([
       ['nouns', true, true],
       ['verbs', true, false],

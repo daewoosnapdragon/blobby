@@ -56,13 +56,16 @@ function audioFor(name: SoundName): HTMLAudioElement | null {
 }
 
 /** Plays an effect sound. Silent when muted, on the server, or when the browser says no. One element per sound: replaying restarts it. */
-export function playSound(name: SoundName): void {
+export function playSound(name: SoundName, opts?: { rate?: number }): void {
   if (typeof window === 'undefined' || typeof Audio === 'undefined') return;
   if (isMuted()) return;
   try {
     const a = audioFor(name);
     if (!a) return;
     a.currentTime = 0;
+    a.playbackRate = opts?.rate ?? 1; // always set, so a plain call after a rated one is back at normal speed
+    a.preservesPitch = false; // a faster rate also raises the pitch
+    if ('webkitPreservesPitch' in a) (a as HTMLAudioElement & { webkitPreservesPitch: boolean }).webkitPreservesPitch = false;
     const p = a.play();
     if (p && typeof p.catch === 'function') p.catch(() => {});
   } catch {

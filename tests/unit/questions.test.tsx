@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen, within } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { NonWatchQuestion, Question } from '@/lib/questions/schema';
 import { checkAnswer } from '@/lib/questions/check';
@@ -11,6 +11,7 @@ import { SortIt } from '@/components/questions/SortIt';
 import { spokenStrings } from '@/lib/spoken';
 import { QuestionPlayer } from '@/components/questions/QuestionPlayer';
 import { HearIt } from '@/components/ui/HearIt';
+import { ALMOST_LINES, RIGHT_LINES, ROLL3_LINES } from '@/lib/feedbackLines';
 
 vi.mock('@/lib/sound', async (orig) => ({ ...(await orig<typeof import('@/lib/sound')>()), playSound: vi.fn() }));
 import { playSound } from '@/lib/sound';
@@ -285,7 +286,7 @@ describe('QuestionPlayer sounds', () => {
     fireEvent.click(btn('Try again'));
     fireEvent.click(btn('She doesn’t like carrots.'));
     act(() => { vi.advanceTimersByTime(100); });
-    expect(playSound).toHaveBeenLastCalledWith('ding');
+    expect(playSound).toHaveBeenLastCalledWith('ding', { rate: 1 });
   });
 
   it('does not pop for Hear it, so read-aloud is not covered', () => {
@@ -308,14 +309,14 @@ describe('QuestionPlayer', () => {
     expect(onAnswer).toHaveBeenCalledTimes(1);
     expect(onAnswer).toHaveBeenLastCalledWith({ id: QID, question: pick }, false);
     const status = screen.getByRole('status');
-    expect(status).toHaveTextContent('Almost!');
+    expect(status.querySelector('[data-result="wrong"]')).not.toBeNull();
     expect(within(status).getByText(/./, { selector: '[data-hint]' })).toBeInTheDocument();
 
     fireEvent.click(btn('Try again'));
-    expect(screen.getByRole('status')).not.toHaveTextContent('Almost!');
+    expect(screen.getByRole('status').querySelector('[data-result="wrong"]')).toBeNull();
     fireEvent.click(btn('She doesn’t like carrots.'));
     expect(onAnswer).toHaveBeenCalledTimes(1); // the retry is not recorded
-    expect(screen.getByRole('status')).toHaveTextContent('That’s it!');
+    expect(screen.getByRole('status').querySelector('[data-result="right"]')).not.toBeNull();
     expect(screen.queryByText(/\+1 star/)).toBeNull(); // lessons show no per-answer star
 
     fireEvent.click(btn('Next'));
@@ -357,7 +358,7 @@ describe('QuestionPlayer', () => {
     expect(btn('Try again to hear it')).toBeInTheDocument();
     fireEvent.click(btn('She doesn’t like carrots.'));
     expect(onAnswer).toHaveBeenLastCalledWith({ id: QID, question: pick }, true);
-    expect(screen.getByRole('status')).toHaveTextContent('That’s it!');
+    expect(screen.getByRole('status').querySelector('[data-result="right"]')).not.toBeNull();
   });
 
   it('autoRead (Grades 1–2) plays the prompt when a question appears; otherwise it waits for a tap', async () => {
@@ -399,5 +400,119 @@ describe('focus and announcements (Task 8b review minors)', () => {
     fireEvent.click(btn('Hear it'));
     await flush();
     expect(live).toHaveTextContent(/couldn.t play/i);
+  });
+});
+
+// ---- player feel: bonus, roll, lines, tally ------------------------------------------------
+
+describe('QuestionPlayer feel', () => {
+  const ids = (n: number) => Array.from({ length: n }, (_, i) => `00000000-0000-4000-8000-0000000000b${i}`);
+  const reactionNow = () => document.querySelector('[data-reaction]')?.getAttribute('data-reaction') ?? null;
+  const title = () => screen.getByRole('status').querySelector('[data-result]')!.firstElementChild!.firstElementChild!.textContent;
+  const askText = () => document.getElementById('q-ask')!.textContent;
+
+  it('bonus: tag, bubble prefix on fill_blank, +2 note on a first-try right, and no tag in bare mode', () => {
+    renderPlayer({ questions: [{ ...pq(QID, blank), bonus: true }], answerStars: 1, bonusStars: 2 });
+    expect(screen.getByText('Bonus!')).toBeInTheDocument();
+    expect(askText()).toBe('Bonus! Which word fits?');
+    fireEvent.click(btn('ate'));
+    expect(screen.getByRole('status')).toHaveTextContent('+2 stars');
+    cleanup();
+
+    const { onFinish } = renderPlayer({ questions: [{ ...pq(QID, blank), bonus: true }], bonusStars: 2, bare: true });
+    expect(screen.queryByText('Bonus!')).toBeNull();
+    fireEvent.click(btn('ate'));
+    fireEvent.click(btn('Next'));
+    expect(onFinish).toHaveBeenCalledWith({});
+  });
+
+  it('a bonus pick_one keeps its prompt as the bubble', () => {
+    renderPlayer({ questions: [{ ...pq(QID, pick), bonus: true }], bonusStars: 2 });
+    expect(askText()).toBe(pick.prompt);
+  });
+
+  describe('with fake timers', () => {
+    beforeEach(() => { vi.useFakeTimers(); vi.mocked(playSound).mockClear(); });
+    afterEach(() => vi.useRealTimers());
+
+    it('roll: hop, hop, cheer with sparkles at 3, spin at 5; a wrong first try resets to hop and rate 1', () => {
+      renderPlayer({ questions: ids(6).map((id) => pq(id, pick)), answerStars: 1 });
+      const want: [number, string, boolean][] = [[1, 'hop', false], [1.06, 'hop', false], [1.12, 'cheer', true], [1.19, 'hop', false], [1.26, 'spin', true]];
+      for (const [rate, kind, sparkles] of want) {
+        fireEvent.click(btn('She doesn’t like carrots.'));
+        act(() => { vi.advanceTimersByTime(100); });
+        expect(playSound).toHaveBeenLastCalledWith('ding', { rate });
+        expect(reactionNow()).toBe(kind);
+        expect(screen.queryByTestId('sparkles') !== null).toBe(sparkles);
+        fireEvent.click(btn('Next'));
+      }
+      fireEvent.click(btn('She don’t like carrots.'));
+      act(() => { vi.advanceTimersByTime(100); });
+      expect(playSound).toHaveBeenLastCalledWith('boop');
+      expect(reactionNow()).toBe('wobble');
+      expect(screen.queryByTestId('sparkles')).toBeNull();
+      expect(screen.getByRole('status')).not.toHaveTextContent(/streak/i);
+      fireEvent.click(btn('Try again'));
+      fireEvent.click(btn('She doesn’t like carrots.'));
+      act(() => { vi.advanceTimersByTime(100); });
+      expect(playSound).toHaveBeenLastCalledWith('ding', { rate: 1 });
+      expect(reactionNow()).toBe('hop');
+      expect(screen.queryByText(/\+1 star/)).toBeNull();
+    });
+  });
+
+  it('titles come from the pools and never repeat back to back', () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0); // every pick lands on the pool's first line unless it repeats
+    renderPlayer({ questions: ids(5).map((id) => pq(id, pick)) });
+    const seen: [string | null, readonly string[]][] = [];
+    for (let i = 0; i < 3; i++) {
+      fireEvent.click(btn('She don’t like carrots.'));
+      seen.push([title(), ALMOST_LINES]);
+      fireEvent.click(btn('Try again'));
+    }
+    fireEvent.click(btn('She doesn’t like carrots.'));
+    seen.push([title(), RIGHT_LINES]); // roll 0: the first try missed
+    fireEvent.click(btn('Next'));
+    for (const pool of [RIGHT_LINES, RIGHT_LINES, ROLL3_LINES, RIGHT_LINES]) {
+      fireEvent.click(btn('She doesn’t like carrots.'));
+      seen.push([title(), pool]);
+      fireEvent.click(btn('Next'));
+    }
+    seen.forEach(([t, pool], i) => {
+      expect(pool).toContain(t);
+      if (i > 0) expect(t).not.toBe(seen[i - 1][0]);
+    });
+  });
+
+  it('the bubble names the answer for fill_blank and find_fix; others get a right line, a miss an almost line', () => {
+    renderPlayer({ questions: [pq(QID, blank), pq(QID2, fix), pq(ids(1)[0], pick)] });
+    fireEvent.click(btn('ate'));
+    expect(askText()).toBe('“ate” fits!');
+    fireEvent.click(btn('Next'));
+    fireEvent.click(btn('goed'));
+    fireEvent.click(btn('went'));
+    expect(askText()).toBe('went, not goed!');
+    fireEvent.click(btn('Next'));
+    fireEvent.click(btn('She don’t like carrots.'));
+    expect(ALMOST_LINES).toContain(askText());
+    fireEvent.click(btn('Try again'));
+    fireEvent.click(btn('She doesn’t like carrots.'));
+    expect(RIGHT_LINES).toContain(askText());
+  });
+
+  it('onFinish receives the tally', () => {
+    const sort3: Q<'sort_it'> = { ...sort, items: [...sort.items, { text: 'dog', group: 0 }] };
+    const { onFinish } = renderPlayer({ questions: [pq(QID, pick), pq(QID2, pick), pq(ids(1)[0], sort3)] });
+    fireEvent.click(btn('She doesn’t like carrots.'));
+    fireEvent.click(btn('Next'));
+    fireEvent.click(btn('She doesn’t like carrots.'));
+    fireEvent.click(btn('Next'));
+    for (const [w, g] of [['cat', 'Noun'], ['run', 'Verb'], ['dog', 'Noun']]) {
+      fireEvent.click(btn(w));
+      fireEvent.click(btn(g));
+    }
+    fireEvent.click(btn('Check'));
+    fireEvent.click(btn('Next'));
+    expect(onFinish).toHaveBeenCalledWith({ pick_one: 2, sort_it: 3 });
   });
 });

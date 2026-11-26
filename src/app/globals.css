@@ -30,6 +30,7 @@
   --kf-wobble: wobble;
   --kf-squish: squish;
   --kf-cheer: cheer;
+  --kf-spin: spin;
   --kf-pop: pop;
   --kf-snowfall: snowfall;
 }
@@ -60,6 +61,11 @@ button:active { transform: scale(0.97); }
   60% { transform: translateY(-14px) scale(0.97, 1.03); }
   80% { transform: translateY(0) scale(1.04, 0.96); }
   100% { transform: translateY(0) scale(1, 1); }
+}
+@keyframes spin {
+  0% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-14px) rotate(180deg); }
+  100% { transform: translateY(0) rotate(360deg); }
 }
 @keyframes snowfall {
   0% { transform: translate(0, 0); }

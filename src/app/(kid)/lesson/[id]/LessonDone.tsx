@@ -4,7 +4,8 @@ import { Blob, type BlobColor } from '@/components/blob/Blob';
 import { PillButton } from '@/components/ui/PillButton';
 import { StarIcon, STAR_PATH } from '@/components/ui/icons';
 import { TopBar } from '@/components/questions/TopBar';
-import { STAR_VALUES } from '@/lib/stars';
+import { Recap } from '@/components/ui/Recap';
+import type { Tally } from '@/lib/tally';
 import { TrickyToday } from './TrickyToday';
 import type { SkillKey } from '@/lib/skills';
 import styles from './lessonDone.module.css';
@@ -12,18 +13,25 @@ import styles from './lessonDone.module.css';
 export type DoneState =
   | { kind: 'saving' }
   | { kind: 'error' }
-  | { kind: 'saved'; firstTime: boolean; nextHref: string; starsBefore: number; starsAfter: number };
+  | {
+      kind: 'saved'; firstTime: boolean; nextHref: string; starsBefore: number; starsAfter: number;
+      /** what the server paid for the lesson (10, or 0 for a redo) and its bonus question (2 or 0) */
+      lessonStars: number; bonusStars: number;
+    };
 
 const FLY = 5;
 
 /**
- * The short lesson-done moment. First time: "+10 stars", and the stars fly to the counter (transform only,
- * skipped under reduced motion). A redo: "Nice practice!" and no stars.
+ * The short lesson-done moment. First time: "+10 stars" (plus "+2 bonus stars" when the bonus question paid), and
+ * the stars fly to the counter (transform only, skipped under reduced motion). A redo: "Nice practice!" and no
+ * stars. Then the recap of what the kid did.
  */
-export function LessonDone({ state, name, color, stars, onRetry, tricky = [] }: {
+export function LessonDone({ state, name, color, stars, onRetry, tricky = [], tally }: {
   state: DoneState; name: string; color: BlobColor; stars: number; onRetry: () => void;
   /** skills to practice again ("Tricky today"), shown once the lesson is saved */
   tricky?: SkillKey[];
+  /** what the kid did this lesson (the recap tags) */
+  tally?: Tally | null;
 }) {
   const pill = useRef<HTMLDivElement>(null);
   const source = useRef<HTMLSpanElement>(null);
@@ -90,13 +98,15 @@ export function LessonDone({ state, name, color, stars, onRetry, tricky = [] }: 
           ) : state.firstTime ? (
             <p className={styles.stars}>
               <span ref={source} className={styles.starIcon}><StarIcon size={34} /></span>
-              +{STAR_VALUES.lesson} stars
+              +{state.lessonStars} stars
             </p>
           ) : (
             <p className={styles.stars}>Nice practice!</p>
           )}
           {saved && !saved.firstTime ? <p className={styles.result}>You already got the stars for this one.</p> : null}
+          {saved?.firstTime && saved.bonusStars > 0 ? <p className={styles.bonus}>+{saved.bonusStars} bonus stars</p> : null}
           {saved && saved.nextHref !== '/' ? <p className={styles.result}>And that finishes the week!</p> : null}
+          {saved ? <Recap tally={tally} /> : null}
           {saved ? <TrickyToday skills={tricky} /> : null}
         </div>
 

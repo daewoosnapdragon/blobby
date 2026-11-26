@@ -41,3 +41,10 @@
 .mute:active { transform: scale(0.97); }
 .mute[aria-pressed='true'] { background: #E9E2D9; }
 @media (min-width: 640px) { .mute { width: 52px; height: 52px; } }
+
+/* Recap tags on the done screens: the question .tag look, pastel, cycling. */
+.recap { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.recapTag { border-radius: 999px; padding: 4px 12px; font-size: 13px; font-weight: 700; line-height: 1.45; color: var(--ink); }
+.recapYellow { background: var(--yellow-soft); }
+.recapMint { background: var(--mint); }
+.recapBlue { background: var(--blue); }

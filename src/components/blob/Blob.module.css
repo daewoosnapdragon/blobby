@@ -7,10 +7,11 @@
 .wobble { animation: var(--kf-wobble) 400ms var(--ease-out); }
 .squish { animation: var(--kf-squish) 500ms var(--ease-out); }
 .cheer { animation: var(--kf-cheer) 1000ms var(--ease-out) 150ms both; } /* D-Done */
+.spin { animation: var(--kf-spin) 720ms var(--ease-out); }
 .late { animation-delay: 1.7s; }
 
 /* Movement stops; faces and colors still change. */
 @media (prefers-reduced-motion: reduce) {
-  .root, .breathe, .blink, .glance, .hop, .wobble, .squish, .cheer { animation: none; }
+  .root, .breathe, .blink, .glance, .hop, .wobble, .squish, .cheer, .spin { animation: none; }
   .pop { animation: none; opacity: 1; }
 }

@@ -2,7 +2,8 @@ import 'server-only';
 import type postgres from 'postgres';
 import { cookies } from 'next/headers';
 import { sql } from './admin';
-import { countRun, forgetPicks, mixIn, reviewQuestions, skillPractice } from './track';
+import { bonusPick, countRun, forgetPicks, mixIn, reviewQuestions, skillPractice, storedBonus } from './track';
+import { isPracticeBonus, lessonBonusSeed } from '../bonus';
 import type { SkillKey } from '../skills';
 import { SESSION_COOKIE, verifyStudent } from '../session';
 import { UUID_RE } from '../uuid';
@@ -114,11 +115,13 @@ export async function completeLesson(
   now: Date = new Date(),
   /** the lesson run's id: its answers update the kid's review track (once per run) */
   runId?: string,
-): Promise<{ starsAwarded: number; weekDone: boolean }> {
+): Promise<{ starsAwarded: number; weekDone: boolean; lessonStars: number; bonusStars: number }> {
   return sql.begin(async (tx) => {
     await lockStudent(tx, studentId);
     const lesson = await authorizedLesson(tx, studentId, lessonId, now);
     let starsAwarded = 0;
+    let lessonStars = 0;
+    let bonusStars = 0;
 
     const [completion] = await tx`
       insert into wp_lesson_completions (student_id, lesson_id) values (${studentId}, ${lessonId})
@@ -128,7 +131,40 @@ export async function completeLesson(
         insert into wp_star_events (student_id, plan_id, amount, reason, ref_id)
         values (${studentId}, ${lesson.plan_id}, ${STAR_VALUES.lesson}, 'lesson', ${lessonId})
         on conflict (student_id, reason, ref_id) do nothing returning id`;
-      if (ev) starsAwarded += STAR_VALUES.lesson;
+      if (ev) {
+        starsAwarded += STAR_VALUES.lesson;
+        lessonStars = STAR_VALUES.lesson;
+      }
+
+      // The bonus question stored for this play-through (read before forgetPicks drops it) pays only when
+      // this run's first attempt at it was right. Deleted or since-reordered questions still count: it's the stored id.
+      const bonusId = await storedBonus(tx, studentId, lessonId);
+      if (bonusId && runId && UUID_RE.test(runId)) {
+        const [first] = await tx<{ correct: boolean }[]>`
+          select correct from wp_attempts
+          where student_id = ${studentId} and run_id = ${runId} and question_id = ${bonusId}
+          order by created_at asc, id asc limit 1`;
+        if (first?.correct) {
+          const [bonusEv] = await tx`
+            insert into wp_star_events (student_id, plan_id, amount, reason, ref_id)
+            values (${studentId}, ${lesson.plan_id}, ${STAR_VALUES.lessonBonus}, 'lesson_bonus', ${lessonId})
+            on conflict (student_id, reason, ref_id) do nothing returning id`;
+          if (bonusEv) {
+            starsAwarded += STAR_VALUES.lessonBonus;
+            bonusStars = STAR_VALUES.lessonBonus;
+          }
+        }
+      }
+    } else {
+      // Already complete (a retried POST, a second tab, or a redo): nothing is paid now, but report what this
+      // lesson already paid so the done screen still shows "+10 stars" and any bonus line.
+      const paid = await tx<{ reason: string; amount: number }[]>`
+        select reason, amount from wp_star_events
+        where student_id = ${studentId} and ref_id = ${lessonId} and reason in ('lesson', 'lesson_bonus')`;
+      for (const p of paid) {
+        if (p.reason === 'lesson') lessonStars = p.amount;
+        else bonusStars = p.amount;
+      }
     }
 
     // Checked even on a repeat call: harmless, because the bonus insert is itself idempotent.
@@ -151,7 +187,7 @@ export async function completeLesson(
     }
     if (runId && UUID_RE.test(runId)) await countRun(tx, studentId, runId, now);
     await forgetPicks(tx, studentId, lessonId);
-    return { starsAwarded, weekDone };
+    return { starsAwarded, weekDone, lessonStars, bonusStars };
   });
 }
 
@@ -208,11 +244,13 @@ export async function recordAttempt(
       // A bank question belongs to no plan: its star counts toward the plan on the kid's home screen. No plan, no star.
       const planId = q.plan_id ?? (await getHome(studentId, now)).plan?.id ?? null;
       if (!planId) return { starsAwarded: 0 };
+      // The day of this answer decides, not the day the set was loaded.
+      const amount = isPracticeBonus(studentId, seoulDate(now), input.questionId) ? STAR_VALUES.freeBonus : STAR_VALUES.freeCorrect;
       const [ev] = await tx`
         insert into wp_star_events (student_id, plan_id, amount, reason, ref_id)
-        values (${studentId}, ${planId}, ${STAR_VALUES.freeCorrect}, 'free_correct', ${inserted.id})
+        values (${studentId}, ${planId}, ${amount}, 'free_correct', ${inserted.id})
         on conflict (student_id, reason, ref_id) do nothing returning id`;
-      if (ev) return { starsAwarded: STAR_VALUES.freeCorrect };
+      if (ev) return { starsAwarded: amount };
     }
     return { starsAwarded: 0 };
   });
@@ -382,6 +420,8 @@ export interface LessonQuestion {
   skill?: string | null;
   /** a review-track question chosen for this kid ("Just for you") */
   forYou?: boolean;
+  /** marks the lesson's stored bonus question for this kid (a class question, never a "just for you" one), or a free-practice day bonus */
+  bonus?: boolean;
 }
 
 export interface LessonData {
@@ -433,6 +473,9 @@ export async function getLesson(studentId: string, lessonId: string, now: Date =
   const done = new Set(lessons.filter((l) => l.done).map((l) => l.id));
   // "Just for you": saved for this kid and lesson until it is finished (a redo after that may differ).
   const review = await reviewQuestions(studentId, student.grade, lessonId, `${studentId}:${lessonId}:${done.has(lessonId) ? 1 : 0}`);
+  // The bonus is a class question (never a watch_answer), saved in the same row as the review picks (so after reviewQuestions).
+  const bonusable = questions.filter((q) => q.question.type !== 'watch_answer').map((q) => q.id);
+  const bonus = await bonusPick(studentId, lessonId, bonusable, lessonBonusSeed(studentId, lessonId, done.has(lessonId)));
   return {
     student: { id: student.id, displayName: student.display_name, blobColor: student.blob_color, grade: student.grade },
     totalStars,
@@ -443,14 +486,14 @@ export async function getLesson(studentId: string, lessonId: string, now: Date =
     },
     lessonDone: done.has(lessonId),
     otherLessonsDone: lessons.every((l) => l.id === lessonId || l.done),
-    questions: mixIn(questions, review),
+    questions: mixIn(questions.map((q) => ({ ...q, bonus: q.id === bonus })), review),
   };
 }
 
 export interface WeekDoneData {
   student: { id: string; displayName: string; blobColor: string | null };
   week: { id: string; number: number; skill: string; done: boolean };
-  /** this week's lesson stars + its week bonus (R24) */
+  /** this week's lesson stars, their lesson bonuses, and its week bonus (R24) */
   weekStars: number;
   totalStars: number;
 }
@@ -472,7 +515,7 @@ export async function getWeekDone(studentId: string, weekId: string, now: Date =
     sql<{ weekStars: number }[]>`
       select coalesce(sum(amount), 0)::int as "weekStars" from wp_star_events
       where student_id = ${studentId}
-        and ((reason = 'lesson' and ref_id in (select id from wp_lessons where week_id = ${weekId}))
+        and ((reason in ('lesson', 'lesson_bonus') and ref_id in (select id from wp_lessons where week_id = ${weekId}))
           or (reason = 'week_bonus' and ref_id = ${weekId}))`,
     totalStarsFor(studentId),
   ]);
@@ -536,7 +579,9 @@ export async function getPracticeSet(
 ): Promise<LessonQuestion[]> {
   const [pool, missed] = await Promise.all([practicePool(studentId, now), getMissedIds(studentId)]);
   const byId = new Map(pool.map((q) => [q.id, q]));
-  return pickFreePractice(pool.map((q) => ({ id: q.id, deleted: false })), missed, n, rand).map((qid) => byId.get(qid)!);
+  const day = seoulDate(now);
+  return pickFreePractice(pool.map((q) => ({ id: q.id, deleted: false })), missed, n, rand)
+    .map((qid) => ({ ...byId.get(qid)!, bonus: isPracticeBonus(studentId, day, qid) }));
 }
 
 /** Is there anything to practice yet? (Home shows the free-practice card as opening later when not.) */
@@ -561,5 +606,7 @@ export async function getPracticeStudent(studentId: string) {
 export async function getSkillPractice(studentId: string, skill: SkillKey, now: Date = new Date()): Promise<LessonQuestion[]> {
   const student = await studentWithGrade(studentId);
   const [pool, missed] = await Promise.all([practicePool(studentId, now), getMissedIds(studentId)]);
-  return skillPractice(student.id, student.grade, skill, new Set(pool.map((q) => q.id)), missed);
+  const day = seoulDate(now);
+  const set = await skillPractice(student.id, student.grade, skill, new Set(pool.map((q) => q.id)), missed);
+  return set.map((q) => ({ ...q, bonus: isPracticeBonus(studentId, day, q.id) }));
 }

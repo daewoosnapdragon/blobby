@@ -6,6 +6,8 @@ import type { Hat } from '@/components/blob/Blob';
 import { toBlobColor } from '@/lib/blobColors';
 import { newId, postWithRetry } from '@/lib/kidApi';
 import { trickyToday } from '@/lib/tricky';
+import { STAR_VALUES } from '@/lib/stars';
+import type { Tally } from '@/lib/tally';
 import { lessonOutcome } from '@/lib/lessonOutcome';
 import { QuestionPlayer } from '@/components/questions/QuestionPlayer';
 import { useRecordAttempt } from '@/components/questions/useRecordAttempt';
@@ -13,7 +15,9 @@ import { usePracticePing } from '@/components/usePracticePing';
 import { WhoAreYouScreen } from '@/components/ui/KidProblems';
 import { LessonDone, type DoneState } from './LessonDone';
 
-type CompleteRes = { starsAwarded: number; weekDone: boolean; totalStars: number; studentId: string };
+type CompleteRes = {
+  starsAwarded: number; weekDone: boolean; lessonStars: number; bonusStars: number; totalStars: number; studentId: string;
+};
 
 /**
  * Plays a lesson and saves it. Every write goes to whoever the cookie says NOW (the API reads it per request);
@@ -26,10 +30,13 @@ export function LessonScreen({ data, hat = null }: { data: LessonData; hat?: Hat
   latest.current = data;
   const [phase, setPhase] = useState<'play' | 'done' | 'signedOut'>('play');
   const [done, setDone] = useState<DoneState>({ kind: 'saving' });
+  const [tally, setTally] = useState<Tally | null>(null);
   // One id per play-through of this lesson: its answers update the kid's review track once.
   const [runId] = useState(() => newId());
   const answers = useRef<{ skill: string | null | undefined; right: boolean }[]>([]);
   const skillOf = useRef(new Map(data.questions.map((q) => [q.id, q.skill])));
+  // Every answer's save; lesson-complete waits for them so the bonus question is on the server first.
+  const pending = useRef<Promise<void>[]>([]);
 
   usePracticePing();
   const record = useRecordAttempt({
@@ -40,12 +47,16 @@ export function LessonScreen({ data, hat = null }: { data: LessonData; hat?: Hat
   });
   const onAnswer: typeof record = (q, correct) => {
     answers.current.push({ skill: skillOf.current.get(q.id), right: correct });
-    return record(q, correct);
+    const p = record(q, correct);
+    pending.current.push(p);
+    return p;
   };
 
-  async function finish() {
+  async function finish(t?: Tally) {
+    if (t) setTally(t);
     setPhase('done');
     setDone({ kind: 'saving' });
+    await Promise.allSettled(pending.current);
     const page = latest.current;
     const r = await postWithRetry<CompleteRes>('/api/lesson-complete', { lessonId: page.lesson.id, runId });
     if (r.status === 401) return setPhase('signedOut');
@@ -62,6 +73,8 @@ export function LessonScreen({ data, hat = null }: { data: LessonData; hat?: Hat
       nextHref: out.toWeekDone ? `/week-done/${page.week.id}` : '/',
       starsBefore: res.totalStars - res.starsAwarded,
       starsAfter: res.totalStars,
+      lessonStars: res.lessonStars,
+      bonusStars: res.bonusStars,
     });
     if (res.studentId !== page.student.id) router.refresh();
   }
@@ -74,8 +87,9 @@ export function LessonScreen({ data, hat = null }: { data: LessonData; hat?: Hat
         name={data.student.displayName}
         color={toBlobColor(data.student.blobColor)}
         stars={data.totalStars}
-        onRetry={finish}
+        onRetry={() => void finish()}
         tricky={trickyToday(answers.current)}
+        tally={tally}
       />
     );
   }
@@ -83,10 +97,11 @@ export function LessonScreen({ data, hat = null }: { data: LessonData; hat?: Hat
     <QuestionPlayer
       questions={data.questions}
       onAnswer={onAnswer}
-      onFinish={finish}
+      onFinish={(t) => void finish(t)}
       blobColor={toBlobColor(data.student.blobColor)}
       hat={hat}
       stars={data.totalStars}
+      bonusStars={data.lessonDone ? 0 : STAR_VALUES.lessonBonus}
       autoRead={data.student.grade <= 2}
     />
   );

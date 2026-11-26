@@ -1,6 +1,8 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { resetTestDb, TEST_DATABASE_URL } from './helpers/db';
 import { seed, CLASS, STUDENTS } from '../e2e/fixtures/seed';
+import { isPracticeBonus } from '@/lib/bonus';
+import { seoulDate } from '@/lib/dates';
 
 process.env.DATABASE_URL = TEST_DATABASE_URL;
 process.env.SESSION_SECRET = 'int-secret';
@@ -143,5 +145,56 @@ describe('free practice stars', () => {
     expect(await recordAttempt(LEO, { clientAttemptId: id(7002), questionId: Q.b, correct: false, context: 'free' }, NOW)).toEqual({ starsAwarded: 0 });
     const [{ m }] = await sql`select coalesce(sum(amount),0)::int as m from wp_star_events where student_id = ${LEO}`;
     expect(m).toBe(1);
+  });
+});
+
+describe('practice bonus', () => {
+  const extra = Array.from({ length: 20 }, (_, i) => id(450 + i));
+  const today = seoulDate(NOW);
+  const bonusId = () => extra.find((qid) => isPracticeBonus(LEO, today, qid))!;
+  const plainId = () => extra.find((qid) => !isPracticeBonus(LEO, today, qid))!;
+  const starsOf = async (clientAttemptId: string) =>
+    (await sql`select e.amount from wp_star_events e join wp_attempts a on a.id = e.ref_id
+      where e.reason = 'free_correct' and a.client_attempt_id = ${clientAttemptId}`).map((r) => r.amount);
+
+  beforeAll(async () => {
+    for (const [i, qid] of extra.entries()) {
+      await sql`insert into wp_questions (id, lesson_id, position, type, payload, skill)
+        values (${qid}, ${L.open}, ${20 + i}, 'pick_one', ${sql.json(pick(`bonus${i}`) as never)}, 'adverbs')`;
+    }
+  });
+
+  it('flags practice bonuses by the day hash, the same way for the set and for skill practice', async () => {
+    const { getPracticeSet, getSkillPractice } = await import('@/lib/db/kid');
+    const set = await getPracticeSet(LEO, NOW, 8, () => 0.5);
+    const skill = await getSkillPractice(LEO, 'adverbs', NOW);
+    expect(set.length).toBeGreaterThan(0);
+    expect(skill.length).toBeGreaterThan(0);
+    for (const q of [...set, ...skill]) expect(!!q.bonus).toBe(isPracticeBonus(LEO, today, q.id));
+    expect([...set, ...skill].some((q) => q.bonus)).toBe(true);
+  });
+
+  it('a first correct free answer on a bonus question earns 2, once; a non-bonus earns 1', async () => {
+    const { recordAttempt } = await import('@/lib/db/kid');
+    expect(bonusId()).toBeDefined();
+    expect(plainId()).toBeDefined();
+    const bonus = { clientAttemptId: id(7101), questionId: bonusId(), correct: true, context: 'free' as const };
+    expect(await recordAttempt(LEO, bonus, NOW)).toEqual({ starsAwarded: 2 });
+    expect(await recordAttempt(LEO, bonus, NOW)).toEqual({ starsAwarded: 2 }); // retry reports the original award
+    expect(await starsOf(id(7101))).toEqual([2]);
+    const plain = { clientAttemptId: id(7102), questionId: plainId(), correct: true, context: 'free' as const };
+    expect(await recordAttempt(LEO, plain, NOW)).toEqual({ starsAwarded: 1 });
+    expect(await starsOf(id(7102))).toEqual([1]);
+  });
+
+  it('the day in `now` decides: the same question on another Seoul day may pay 1', async () => {
+    const { recordAttempt } = await import('@/lib/db/kid');
+    // Review Focus 5: the Seoul day can roll over between loading a set and answering; the server's amount for the attempt's `now` counts.
+    const days = Array.from({ length: 20 }, (_, i) => `2026-01-${String(11 + i).padStart(2, '0')}`);
+    const day = days.find((d) => !isPracticeBonus(LEO, d, bonusId()))!;
+    expect(day).toBeDefined();
+    const later = new Date(`${day}T03:00:00Z`);
+    const body = { clientAttemptId: id(7103), questionId: bonusId(), correct: true, context: 'free' as const };
+    expect(await recordAttempt(LEO, body, later)).toEqual({ starsAwarded: 1 });
   });
 });

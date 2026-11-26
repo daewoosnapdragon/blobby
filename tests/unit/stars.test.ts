@@ -3,7 +3,7 @@ import { STAR_VALUES, weekBonusDue } from '@/lib/stars';
 
 describe('stars', () => {
   it('has the agreed values', () => {
-    expect(STAR_VALUES).toEqual({ lesson: 10, weekBonus: 10, freeCorrect: 1 });
+    expect(STAR_VALUES).toEqual({ lesson: 10, weekBonus: 10, freeCorrect: 1, lessonBonus: 2, freeBonus: 2 });
   });
   it('weekBonusDue is true only when every lesson is complete', () => {
     expect(weekBonusDue(['a', 'b'], new Set(['a', 'b']))).toBe(true);
