@@ -98,3 +98,21 @@ export async function seedPlan(sql: ReturnType<typeof postgres>): Promise<void> 
       values (${question.id}, ${lessonId}, ${position}, ${question.type}, ${sql.json(question.payload as never)}, ${sql.json(question.audio as never)})`;
   }
 }
+
+// ---- One lesson with a question of each newer type, for tests/e2e/newTypes.spec.ts. Not inserted by seedPlan():
+// that spec adds it to the open week in beforeAll and removes it (and what Mina did in it) in afterAll.
+export const NEW_TYPES_LESSON = {
+  id: pid(0xe500),
+  title: 'New ways to answer',
+  position: 3,
+  questions: [
+    { id: pid(0xe501), type: 'right_wrong', payload: { sentence: 'She goed to the park.', right: false } },
+    { id: pid(0xe502), type: 'odd_one_out', payload: { prompt: 'Which one is not a noun?', words: ['cat', 'dog', 'run', 'fish'], answer: 2 } },
+    { id: pid(0xe503), type: 'picture_first', payload: { picture: 'frog', choices: ['a frog', 'two frogs'], answer: 0 } },
+    { id: pid(0xe504), type: 'tap_all', payload: { prompt: 'Tap the nouns.', words: ['A', 'dog', 'ate', 'my', 'cake'], answers: [1, 4] } },
+    {
+      id: pid(0xe505), type: 'match_pairs',
+      payload: { prompt: 'Match today with yesterday.', pairs: [{ left: 'run', right: 'ran' }, { left: 'go', right: 'went' }, { left: 'eat', right: 'ate' }] },
+    },
+  ],
+} as const;
