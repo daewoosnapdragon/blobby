@@ -91,6 +91,29 @@ export function missingPictures(
   return missing;
 }
 
+/**
+ * Content rules the checker enforces: a lesson or bank skill is never all right_wrong, and the
+ * kid-facing prompt and sort-group text never uses the whole word "wrong". Choices, sentences,
+ * words, fixes and tiles are not checked (the grammar being taught may contain it). `where`
+ * names the lesson or skill in each message.
+ */
+export function contentRuleProblems(questions: readonly Question[], where: string): string[] {
+  const out: string[] = [];
+  if (questions.length > 0 && questions.every((q) => q.type === 'right_wrong')) out.push(`${where}: every question is right_wrong`);
+  const wrong = /\bwrong\b/i;
+  const walk = (qs: readonly Question[], prefix: string) => {
+    qs.forEach((q, i) => {
+      const n = `${prefix}${i + 1}`;
+      const prompt = (q as { prompt?: unknown }).prompt;
+      if (typeof prompt === 'string' && wrong.test(prompt)) out.push(`${where}, question ${n}: "wrong" in prompt: ${prompt}`);
+      if (q.type === 'sort_it') for (const g of q.groups) if (wrong.test(g)) out.push(`${where}, question ${n}: "wrong" in a sort group: ${g}`);
+      if (q.type === 'watch_answer') walk(q.questions as readonly Question[], `${n}.`);
+    });
+  };
+  walk(questions, '');
+  return out;
+}
+
 export interface ImportedQuestion { id: string; question: Question; audio: Record<string, unknown> }
 export interface ImportResult {
   weeks: number; lessons: number; questions: number; items: ImportedQuestion[];

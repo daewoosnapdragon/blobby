@@ -264,6 +264,7 @@ These timings are already in the mockup code:
 - **About 8 questions per lesson** (Claude's proposal). Free practice needs enough variety that kids aren't just memorizing answers.
 - **Never a lesson of only yes or no.** A right-or-wrong question is a coin flip, so it mixes with other types; a lesson made of only those would reward guessing.
 - **Picture first only for what an emoji can show:** a thing or an animal (a frog, two frogs), never tense: a picture can't say yesterday. Every picture first picture must be a file in `public/pictures`; `npx tsx scripts/check-content.ts <file>` fails, naming the lesson (or review skill) and the picture, when one is missing.
+- **The cast and the prompts:** the questions share nine names: Nova, Ruby, Zara, Milo, Otto, Finn, Theo, Pip the dog, and Blobby (Mom, Dad, Grandpa, Grandma and the teacher stay as they are). Stock prompts come from small pools ("Which one is right?", "Put the words in order." and so on) and take turns through a lesson or a review skill, so no two neighbors share a prompt. SQL loads no audio, so for content loaded that way Kyla makes it from the Plans page with **Make missing audio**.
 
 ## 9. Built for homework later
 

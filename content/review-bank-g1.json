@@ -2,194 +2,1601 @@
   "grade": 1,
   "skills": {
     "be": [
-      { "type": "pick_one", "prompt": "Pick the right sentence.", "choices": ["The boy are happy.", "The boy is happy.", "The boy am happy."], "answer": 1 },
-      { "type": "pick_one", "prompt": "Pick the right sentence.", "choices": ["Two children is at the door.", "Two children am at the door.", "Two children are at the door."], "answer": 2 },
-      { "type": "pick_one", "prompt": "Pick the right sentence.", "choices": ["He are my brother.", "He is my brother.", "He am my brother."], "answer": 1 },
-      { "type": "fill_blank", "before": "I", "after": "seven years old.", "choices": ["is", "are", "am"], "answer": 2 },
-      { "type": "fill_blank", "before": "They", "after": "in the car.", "choices": ["is", "are", "am"], "answer": 1 },
-      { "type": "fill_blank", "before": "Mina and Leo", "after": "hungry.", "choices": ["is", "am", "are"], "answer": 2 },
-      { "type": "find_fix", "words": ["Three", "dogs", "is", "in", "the", "yard."], "wrongIndex": 2, "fixes": ["are", "am", "be"], "answer": 0 },
-      { "type": "find_fix", "words": ["Ben", "are", "in", "my", "class."], "wrongIndex": 1, "fixes": ["is", "am", "be"], "answer": 0 },
-      { "type": "build_it", "prompt": "Build the sentence.", "tiles": ["It", "is", "a", "big", "box."], "distractors": ["are", "am"] },
-      { "type": "sort_it", "prompt": "Sort the words.", "groups": ["am", "is", "are"], "items": [
-        { "text": "I", "group": 0 },
-        { "text": "he", "group": 1 },
-        { "text": "the bird", "group": 1 },
-        { "text": "you", "group": 2 },
-        { "text": "three boys", "group": 2 },
-        { "text": "we", "group": 2 }
-      ] }
+      {
+        "type": "pick_one",
+        "prompt": "Which one is right?",
+        "choices": [
+          "The boy are happy.",
+          "The boy is happy.",
+          "The boy am happy."
+        ],
+        "answer": 1
+      },
+      {
+        "type": "pick_one",
+        "prompt": "Pick the sentence that sounds right.",
+        "choices": [
+          "Two children is at the door.",
+          "Two children am at the door.",
+          "Two children are at the door."
+        ],
+        "answer": 2
+      },
+      {
+        "type": "pick_one",
+        "prompt": "A robot wrote these. Which one is right?",
+        "choices": [
+          "He are my brother.",
+          "He is my brother.",
+          "He am my brother."
+        ],
+        "answer": 1
+      },
+      {
+        "type": "fill_blank",
+        "before": "I",
+        "after": "seven years old.",
+        "choices": [
+          "is",
+          "are",
+          "am"
+        ],
+        "answer": 2
+      },
+      {
+        "type": "fill_blank",
+        "before": "They",
+        "after": "in the car.",
+        "choices": [
+          "is",
+          "are",
+          "am"
+        ],
+        "answer": 1
+      },
+      {
+        "type": "fill_blank",
+        "before": "Ruby and Milo",
+        "after": "hungry.",
+        "choices": [
+          "is",
+          "am",
+          "are"
+        ],
+        "answer": 2
+      },
+      {
+        "type": "find_fix",
+        "words": [
+          "Three",
+          "bears",
+          "is",
+          "in",
+          "the",
+          "bath."
+        ],
+        "wrongIndex": 2,
+        "fixes": [
+          "are",
+          "am",
+          "be"
+        ],
+        "answer": 0
+      },
+      {
+        "type": "find_fix",
+        "words": [
+          "Otto",
+          "are",
+          "in",
+          "my",
+          "class."
+        ],
+        "wrongIndex": 1,
+        "fixes": [
+          "is",
+          "am",
+          "be"
+        ],
+        "answer": 0
+      },
+      {
+        "type": "build_it",
+        "prompt": "Build the sentence.",
+        "tiles": [
+          "It",
+          "is",
+          "a",
+          "big",
+          "box."
+        ],
+        "distractors": [
+          "are",
+          "am"
+        ]
+      },
+      {
+        "type": "sort_it",
+        "prompt": "Sort the words.",
+        "groups": [
+          "am",
+          "is",
+          "are"
+        ],
+        "items": [
+          {
+            "text": "I",
+            "group": 0
+          },
+          {
+            "text": "he",
+            "group": 1
+          },
+          {
+            "text": "the bird",
+            "group": 1
+          },
+          {
+            "text": "you",
+            "group": 2
+          },
+          {
+            "text": "three boys",
+            "group": 2
+          },
+          {
+            "text": "we",
+            "group": 2
+          }
+        ]
+      },
+      {
+        "type": "match_pairs",
+        "prompt": "Match each one to am, is or are.",
+        "pairs": [
+          {
+            "left": "I",
+            "right": "am"
+          },
+          {
+            "left": "Blobby",
+            "right": "is"
+          },
+          {
+            "left": "the cats",
+            "right": "are"
+          }
+        ]
+      }
     ],
     "ing": [
-      { "type": "pick_one", "prompt": "Pick the right sentence.", "choices": ["Two girls jumping.", "Two girls is jumping.", "Two girls are jumping."], "answer": 2 },
-      { "type": "pick_one", "prompt": "Pick the right sentence.", "choices": ["She is watch TV.", "She is watching TV.", "She watching TV."], "answer": 1 },
-      { "type": "pick_one", "prompt": "Pick the right sentence.", "choices": ["Three kids are siting on the rug.", "Three kids are sitting on the rug.", "Three kids is sitting on the rug."], "answer": 1 },
-      { "type": "fill_blank", "before": "Mina is", "after": "a picture.", "choices": ["draw", "drawing", "draws"], "answer": 1 },
-      { "type": "fill_blank", "before": "The birds", "after": "singing.", "choices": ["is", "are", "am"], "answer": 1 },
-      { "type": "fill_blank", "before": "I", "after": "eating an apple.", "choices": ["am", "is", "are"], "answer": 0 },
-      { "type": "find_fix", "words": ["Mom", "is", "cook", "dinner."], "wrongIndex": 2, "fixes": ["cooking", "cooks", "cooked"], "answer": 0 },
-      { "type": "find_fix", "words": ["Sam", "and", "Ben", "is", "playing", "tag."], "wrongIndex": 3, "fixes": ["are", "am", "be"], "answer": 0 },
-      { "type": "build_it", "prompt": "Build the sentence.", "tiles": ["The", "boys", "are", "playing", "soccer."], "distractors": ["is"] },
-      { "type": "sort_it", "prompt": "Is the sentence right or wrong?", "groups": ["Right", "Wrong"], "items": [
-        { "text": "She is singing.", "group": 0 },
-        { "text": "They are clapping.", "group": 0 },
-        { "text": "The dog is barking.", "group": 0 },
-        { "text": "He is swim.", "group": 1 },
-        { "text": "We sleeping.", "group": 1 },
-        { "text": "Two boys is running.", "group": 1 }
-      ] }
+      {
+        "type": "pick_one",
+        "prompt": "Which one is right?",
+        "choices": [
+          "Two girls jumping.",
+          "Two girls is jumping.",
+          "Two girls are jumping."
+        ],
+        "answer": 2
+      },
+      {
+        "type": "pick_one",
+        "prompt": "Pick the sentence that sounds right.",
+        "choices": [
+          "She is watch TV.",
+          "She is watching TV.",
+          "She watching TV."
+        ],
+        "answer": 1
+      },
+      {
+        "type": "pick_one",
+        "prompt": "A robot wrote these. Which one is right?",
+        "choices": [
+          "Three kids are siting on the rug.",
+          "Three kids are sitting on the rug.",
+          "Three kids is sitting on the rug."
+        ],
+        "answer": 1
+      },
+      {
+        "type": "fill_blank",
+        "before": "The cat is",
+        "after": "a picture.",
+        "choices": [
+          "draw",
+          "drawing",
+          "draws"
+        ],
+        "answer": 1
+      },
+      {
+        "type": "fill_blank",
+        "before": "The birds",
+        "after": "singing.",
+        "choices": [
+          "is",
+          "are",
+          "am"
+        ],
+        "answer": 1
+      },
+      {
+        "type": "fill_blank",
+        "before": "I",
+        "after": "eating an apple.",
+        "choices": [
+          "am",
+          "is",
+          "are"
+        ],
+        "answer": 0
+      },
+      {
+        "type": "find_fix",
+        "words": [
+          "Mom",
+          "is",
+          "cook",
+          "dinner."
+        ],
+        "wrongIndex": 2,
+        "fixes": [
+          "cooking",
+          "cooks",
+          "cooked"
+        ],
+        "answer": 0
+      },
+      {
+        "type": "find_fix",
+        "words": [
+          "Finn",
+          "and",
+          "Otto",
+          "is",
+          "playing",
+          "tag."
+        ],
+        "wrongIndex": 3,
+        "fixes": [
+          "are",
+          "am",
+          "be"
+        ],
+        "answer": 0
+      },
+      {
+        "type": "build_it",
+        "prompt": "Build it!",
+        "tiles": [
+          "The",
+          "boys",
+          "are",
+          "playing",
+          "soccer."
+        ],
+        "distractors": [
+          "is"
+        ]
+      },
+      {
+        "type": "sort_it",
+        "prompt": "Which ones are right? Sort them.",
+        "groups": [
+          "Right",
+          "Not right"
+        ],
+        "items": [
+          {
+            "text": "She is singing.",
+            "group": 0
+          },
+          {
+            "text": "They are clapping.",
+            "group": 0
+          },
+          {
+            "text": "The dog is barking.",
+            "group": 0
+          },
+          {
+            "text": "He is swim.",
+            "group": 1
+          },
+          {
+            "text": "We sleeping.",
+            "group": 1
+          },
+          {
+            "text": "Two boys is running.",
+            "group": 1
+          }
+        ]
+      },
+      {
+        "type": "right_wrong",
+        "sentence": "The pig is ride a bike.",
+        "right": false
+      }
     ],
     "sentence-ends": [
-      { "type": "pick_one", "prompt": "Pick the right sentences.", "choices": ["I have a ball. It is red.", "I have a ball. it is red.", "I have a ball it is red."], "answer": 0 },
-      { "type": "pick_one", "prompt": "Pick the right sentences.", "choices": ["Sam has a cat the cat is gray.", "Sam has a cat. the cat is gray.", "Sam has a cat. The cat is gray."], "answer": 2 },
-      { "type": "pick_one", "prompt": "Pick the right sentence.", "choices": ["the bus is yellow.", "The bus is yellow.", "The bus is yellow"], "answer": 1 },
-      { "type": "fill_blank", "before": "", "after": "frog can jump.", "choices": ["the", "The"], "answer": 1 },
-      { "type": "fill_blank", "before": "I like to swim.", "after": "is fun.", "choices": ["it", "It", "it."], "answer": 1 },
-      { "type": "fill_blank", "before": "Leo is my", "after": "", "choices": ["friend", "friend.", "Friend."], "answer": 1 },
-      { "type": "find_fix", "words": ["The", "cake", "is", "sweet"], "wrongIndex": 3, "fixes": ["sweet.", "Sweet.", "sweet,"], "answer": 0 },
-      { "type": "find_fix", "words": ["Tom", "has", "a", "hat.", "his", "hat", "is", "blue."], "wrongIndex": 4, "fixes": ["His", "His.", "his,"], "answer": 0 },
-      { "type": "build_it", "prompt": "Build the sentence.", "tiles": ["The", "little", "fish", "can", "swim."], "distractors": ["the", "swim"] },
-      { "type": "sort_it", "prompt": "Is the sentence right or wrong?", "groups": ["Right", "Wrong"], "items": [
-        { "text": "We like pizza.", "group": 0 },
-        { "text": "I can run.", "group": 0 },
-        { "text": "The bus is big.", "group": 0 },
-        { "text": "we like cake.", "group": 1 },
-        { "text": "My hat is red", "group": 1 },
-        { "text": "it is cold.", "group": 1 }
-      ] }
+      {
+        "type": "pick_one",
+        "prompt": "Which one has the capital letters and periods right?",
+        "choices": [
+          "I have a ball. It is red.",
+          "I have a ball. it is red.",
+          "I have a ball it is red."
+        ],
+        "answer": 0
+      },
+      {
+        "type": "pick_one",
+        "prompt": "Tap the one with capitals and periods in the right places.",
+        "choices": [
+          "Finn has a cat the cat is gray.",
+          "Finn has a cat. the cat is gray.",
+          "Finn has a cat. The cat is gray."
+        ],
+        "answer": 2
+      },
+      {
+        "type": "pick_one",
+        "prompt": "Which sentence starts and ends the right way?",
+        "choices": [
+          "the bus is yellow.",
+          "The bus is yellow.",
+          "The bus is yellow"
+        ],
+        "answer": 1
+      },
+      {
+        "type": "fill_blank",
+        "before": "",
+        "after": "frog can jump.",
+        "choices": [
+          "the",
+          "The"
+        ],
+        "answer": 1
+      },
+      {
+        "type": "fill_blank",
+        "before": "I like to swim.",
+        "after": "is fun.",
+        "choices": [
+          "it",
+          "It",
+          "it."
+        ],
+        "answer": 1
+      },
+      {
+        "type": "fill_blank",
+        "before": "Milo is my",
+        "after": "",
+        "choices": [
+          "friend",
+          "friend.",
+          "Friend."
+        ],
+        "answer": 1
+      },
+      {
+        "type": "find_fix",
+        "words": [
+          "The",
+          "cake",
+          "is",
+          "sweet"
+        ],
+        "wrongIndex": 3,
+        "fixes": [
+          "sweet.",
+          "Sweet.",
+          "sweet,"
+        ],
+        "answer": 0
+      },
+      {
+        "type": "find_fix",
+        "words": [
+          "Theo",
+          "has",
+          "a",
+          "hat.",
+          "his",
+          "hat",
+          "is",
+          "blue."
+        ],
+        "wrongIndex": 4,
+        "fixes": [
+          "His",
+          "His.",
+          "his,"
+        ],
+        "answer": 0
+      },
+      {
+        "type": "build_it",
+        "prompt": "Tap the tiles in order.",
+        "tiles": [
+          "The",
+          "little",
+          "fish",
+          "can",
+          "swim."
+        ],
+        "distractors": [
+          "the",
+          "swim"
+        ]
+      },
+      {
+        "type": "sort_it",
+        "prompt": "Which ones are right? Sort them.",
+        "groups": [
+          "Right",
+          "Not right"
+        ],
+        "items": [
+          {
+            "text": "We like pizza.",
+            "group": 0
+          },
+          {
+            "text": "I can run.",
+            "group": 0
+          },
+          {
+            "text": "The bus is big.",
+            "group": 0
+          },
+          {
+            "text": "we like cake.",
+            "group": 1
+          },
+          {
+            "text": "My hat is red",
+            "group": 1
+          },
+          {
+            "text": "it is cold.",
+            "group": 1
+          }
+        ]
+      },
+      {
+        "type": "tap_all",
+        "prompt": "Tap every word that needs a capital letter.",
+        "words": [
+          "we",
+          "see",
+          "the",
+          "moon.",
+          "it",
+          "is",
+          "so",
+          "big."
+        ],
+        "answers": [
+          0,
+          4
+        ]
+      }
     ],
     "articles": [
-      { "type": "pick_one", "prompt": "Pick the right sentence.", "choices": ["I see teacher.", "I see a teacher.", "I see an teacher."], "answer": 1 },
-      { "type": "pick_one", "prompt": "Pick the right sentence.", "choices": ["Mia has an egg.", "Mia has a egg.", "Mia has egg."], "answer": 0 },
-      { "type": "pick_one", "prompt": "Pick the right sentence.", "choices": ["Ben is eating a apple.", "Ben is eating apple.", "Ben is eating an apple."], "answer": 2 },
-      { "type": "fill_blank", "before": "I have", "after": "pencil.", "choices": ["a", "an", "two"], "answer": 0 },
-      { "type": "fill_blank", "before": "There is", "after": "ant on my leg.", "choices": ["a", "an", "two"], "answer": 1 },
-      { "type": "fill_blank", "before": "My mom is", "after": "doctor.", "choices": ["a", "an", "two"], "answer": 0 },
-      { "type": "find_fix", "words": ["I", "see", "a", "elephant."], "wrongIndex": 2, "fixes": ["an", "two", "many"], "answer": 0 },
-      { "type": "find_fix", "words": ["Leo", "has", "dog."], "wrongIndex": 2, "fixes": ["a dog.", "an dog.", "two dog."], "answer": 0 },
-      { "type": "build_it", "prompt": "Build the sentence.", "tiles": ["I", "see", "an", "owl", "in", "the", "tree."], "distractors": ["a"] },
-      { "type": "sort_it", "prompt": "Sort the words: a or an?", "groups": ["a", "an"], "items": [
-        { "text": "ball", "group": 0 },
-        { "text": "ant", "group": 1 },
-        { "text": "hat", "group": 0 },
-        { "text": "owl", "group": 1 },
-        { "text": "cup", "group": 0 },
-        { "text": "egg", "group": 1 }
-      ] }
+      {
+        "type": "pick_one",
+        "prompt": "Pick the sentence that sounds right.",
+        "choices": [
+          "I see teacher.",
+          "I see a teacher.",
+          "I see an teacher."
+        ],
+        "answer": 1
+      },
+      {
+        "type": "pick_one",
+        "prompt": "A robot wrote these. Which one is right?",
+        "choices": [
+          "Nova has an egg.",
+          "Nova has a egg.",
+          "Nova has egg."
+        ],
+        "answer": 0
+      },
+      {
+        "type": "pick_one",
+        "prompt": "Which one would your teacher write?",
+        "choices": [
+          "Otto is eating a apple.",
+          "Otto is eating apple.",
+          "Otto is eating an apple."
+        ],
+        "answer": 2
+      },
+      {
+        "type": "fill_blank",
+        "before": "I have",
+        "after": "pencil.",
+        "choices": [
+          "a",
+          "an",
+          "two"
+        ],
+        "answer": 0
+      },
+      {
+        "type": "fill_blank",
+        "before": "There is",
+        "after": "ant on my leg.",
+        "choices": [
+          "a",
+          "an",
+          "two"
+        ],
+        "answer": 1
+      },
+      {
+        "type": "fill_blank",
+        "before": "My dog is",
+        "after": "doctor.",
+        "choices": [
+          "a",
+          "an",
+          "two"
+        ],
+        "answer": 0
+      },
+      {
+        "type": "find_fix",
+        "words": [
+          "I",
+          "see",
+          "a",
+          "elephant."
+        ],
+        "wrongIndex": 2,
+        "fixes": [
+          "an",
+          "two",
+          "many"
+        ],
+        "answer": 0
+      },
+      {
+        "type": "find_fix",
+        "words": [
+          "Milo",
+          "has",
+          "dog."
+        ],
+        "wrongIndex": 2,
+        "fixes": [
+          "a dog.",
+          "an dog.",
+          "two dog."
+        ],
+        "answer": 0
+      },
+      {
+        "type": "build_it",
+        "prompt": "Build the sentence.",
+        "tiles": [
+          "I",
+          "see",
+          "an",
+          "owl",
+          "in",
+          "the",
+          "tree."
+        ],
+        "distractors": [
+          "a"
+        ]
+      },
+      {
+        "type": "sort_it",
+        "prompt": "Sort the words: a or an?",
+        "groups": [
+          "a",
+          "an"
+        ],
+        "items": [
+          {
+            "text": "ball",
+            "group": 0
+          },
+          {
+            "text": "ant",
+            "group": 1
+          },
+          {
+            "text": "hat",
+            "group": 0
+          },
+          {
+            "text": "owl",
+            "group": 1
+          },
+          {
+            "text": "cup",
+            "group": 0
+          },
+          {
+            "text": "egg",
+            "group": 1
+          }
+        ]
+      },
+      {
+        "type": "odd_one_out",
+        "prompt": "Three of these go with \"an\". Which one does not?",
+        "words": [
+          "arm",
+          "ear",
+          "toe",
+          "eye"
+        ],
+        "answer": 2
+      }
     ],
     "plurals": [
-      { "type": "pick_one", "prompt": "Pick the right sentence.", "choices": ["I have a ten chairs.", "I have ten chairs.", "I have ten chair."], "answer": 1 },
-      { "type": "pick_one", "prompt": "Pick the right sentence.", "choices": ["I see one children.", "I see one child.", "I see one childs."], "answer": 1 },
-      { "type": "pick_one", "prompt": "Pick the right sentence.", "choices": ["Tom has 4 pencil.", "Tom has 4 pencils.", "Tom has a 4 pencils."], "answer": 1 },
-      { "type": "fill_blank", "before": "Mia has three", "after": "at home.", "choices": ["dog", "dogs", "a dog"], "answer": 1 },
-      { "type": "fill_blank", "before": "There is one", "after": "in the box.", "choices": ["toy", "toys"], "answer": 0 },
-      { "type": "fill_blank", "before": "Many", "after": "are at the park.", "choices": ["people", "peoples", "person"], "answer": 0 },
-      { "type": "find_fix", "words": ["Three", "bird", "are", "in", "the", "tree."], "wrongIndex": 1, "fixes": ["birds", "birdes", "a bird"], "answer": 0 },
-      { "type": "find_fix", "words": ["Two", "child", "are", "in", "the", "pool."], "wrongIndex": 1, "fixes": ["children", "childs", "childrens"], "answer": 0 },
-      { "type": "build_it", "prompt": "Build the sentence.", "tiles": ["I", "have", "two", "red", "balls."], "distractors": ["ball.", "a"] },
-      { "type": "sort_it", "prompt": "Sort the words.", "groups": ["one", "more than one"], "items": [
-        { "text": "dog", "group": 0 },
-        { "text": "dogs", "group": 1 },
-        { "text": "child", "group": 0 },
-        { "text": "children", "group": 1 },
-        { "text": "box", "group": 0 },
-        { "text": "boxes", "group": 1 }
-      ] }
+      {
+        "type": "pick_one",
+        "prompt": "Pick the sentence that sounds right.",
+        "choices": [
+          "I have a ten chairs.",
+          "I have ten chairs.",
+          "I have ten chair."
+        ],
+        "answer": 1
+      },
+      {
+        "type": "pick_one",
+        "prompt": "A robot wrote these. Which one is right?",
+        "choices": [
+          "I see one children.",
+          "I see one child.",
+          "I see one childs."
+        ],
+        "answer": 1
+      },
+      {
+        "type": "pick_one",
+        "prompt": "Which one would your teacher write?",
+        "choices": [
+          "Theo has 4 pencil.",
+          "Theo has 4 pencils.",
+          "Theo has a 4 pencils."
+        ],
+        "answer": 1
+      },
+      {
+        "type": "fill_blank",
+        "before": "Nova has three",
+        "after": "at home.",
+        "choices": [
+          "dog",
+          "dogs",
+          "a dog"
+        ],
+        "answer": 1
+      },
+      {
+        "type": "fill_blank",
+        "before": "There is one",
+        "after": "in the box.",
+        "choices": [
+          "toy",
+          "toys"
+        ],
+        "answer": 0
+      },
+      {
+        "type": "fill_blank",
+        "before": "Many",
+        "after": "are at the park.",
+        "choices": [
+          "people",
+          "peoples",
+          "person"
+        ],
+        "answer": 0
+      },
+      {
+        "type": "find_fix",
+        "words": [
+          "Three",
+          "bird",
+          "are",
+          "in",
+          "the",
+          "tree."
+        ],
+        "wrongIndex": 1,
+        "fixes": [
+          "birds",
+          "birdes",
+          "a bird"
+        ],
+        "answer": 0
+      },
+      {
+        "type": "find_fix",
+        "words": [
+          "Two",
+          "child",
+          "are",
+          "in",
+          "the",
+          "pool."
+        ],
+        "wrongIndex": 1,
+        "fixes": [
+          "children",
+          "childs",
+          "childrens"
+        ],
+        "answer": 0
+      },
+      {
+        "type": "build_it",
+        "prompt": "Make a sentence from the tiles.",
+        "tiles": [
+          "I",
+          "have",
+          "two",
+          "red",
+          "balls."
+        ],
+        "distractors": [
+          "ball.",
+          "a"
+        ]
+      },
+      {
+        "type": "sort_it",
+        "prompt": "Sort the words.",
+        "groups": [
+          "one",
+          "more than one"
+        ],
+        "items": [
+          {
+            "text": "dog",
+            "group": 0
+          },
+          {
+            "text": "dogs",
+            "group": 1
+          },
+          {
+            "text": "child",
+            "group": 0
+          },
+          {
+            "text": "children",
+            "group": 1
+          },
+          {
+            "text": "box",
+            "group": 0
+          },
+          {
+            "text": "boxes",
+            "group": 1
+          }
+        ]
+      },
+      {
+        "type": "tap_all",
+        "prompt": "Tap every word that means more than one.",
+        "words": [
+          "cat",
+          "ducks",
+          "bus",
+          "feet",
+          "cup",
+          "socks"
+        ],
+        "answers": [
+          1,
+          3,
+          5
+        ]
+      }
     ],
     "third-person-s": [
-      { "type": "pick_one", "prompt": "Pick the right sentence.", "choices": ["She like cats.", "She likes cats.", "She liking cats."], "answer": 1 },
-      { "type": "pick_one", "prompt": "Pick the right sentence.", "choices": ["The dog run fast.", "The dog runs fast.", "The dog running fast."], "answer": 1 },
-      { "type": "pick_one", "prompt": "Pick the right sentence.", "choices": ["Leo plays with his toys.", "Leo play with his toys.", "Leo playing with his toys."], "answer": 0 },
-      { "type": "fill_blank", "before": "He", "after": "milk.", "choices": ["drink", "drinks", "drinking"], "answer": 1 },
-      { "type": "fill_blank", "before": "Mina", "after": "to school.", "choices": ["walk", "walks", "walking"], "answer": 1 },
-      { "type": "fill_blank", "before": "I", "after": "my dog.", "choices": ["love", "loves", "loving"], "answer": 0 },
-      { "type": "find_fix", "words": ["Sam", "eat", "rice", "every", "day."], "wrongIndex": 1, "fixes": ["eats", "eating", "to eat"], "answer": 0 },
-      { "type": "find_fix", "words": ["Mia", "sing", "every", "morning."], "wrongIndex": 1, "fixes": ["sings", "singing", "to sing"], "answer": 0 },
-      { "type": "build_it", "prompt": "Build the sentence.", "tiles": ["My", "dad", "drives", "a", "car."], "distractors": ["drive"] },
-      { "type": "sort_it", "prompt": "Sort the words: she or they?", "groups": ["she", "they"], "items": [
-        { "text": "runs", "group": 0 },
-        { "text": "run", "group": 1 },
-        { "text": "plays", "group": 0 },
-        { "text": "play", "group": 1 },
-        { "text": "eats", "group": 0 },
-        { "text": "eat", "group": 1 }
-      ] }
+      {
+        "type": "pick_one",
+        "prompt": "A robot wrote these. Which one is right?",
+        "choices": [
+          "She like cats.",
+          "She likes cats.",
+          "She liking cats."
+        ],
+        "answer": 1
+      },
+      {
+        "type": "pick_one",
+        "prompt": "Which one would your teacher write?",
+        "choices": [
+          "The dog run fast.",
+          "The dog runs fast.",
+          "The dog running fast."
+        ],
+        "answer": 1
+      },
+      {
+        "type": "pick_one",
+        "prompt": "Tap the sentence with no mistakes.",
+        "choices": [
+          "Milo plays with his toys.",
+          "Milo play with his toys.",
+          "Milo playing with his toys."
+        ],
+        "answer": 0
+      },
+      {
+        "type": "fill_blank",
+        "before": "He",
+        "after": "milk.",
+        "choices": [
+          "drink",
+          "drinks",
+          "drinking"
+        ],
+        "answer": 1
+      },
+      {
+        "type": "fill_blank",
+        "before": "The cow",
+        "after": "to school.",
+        "choices": [
+          "walk",
+          "walks",
+          "walking"
+        ],
+        "answer": 1
+      },
+      {
+        "type": "fill_blank",
+        "before": "I",
+        "after": "my dog.",
+        "choices": [
+          "love",
+          "loves",
+          "loving"
+        ],
+        "answer": 0
+      },
+      {
+        "type": "find_fix",
+        "words": [
+          "Finn",
+          "eat",
+          "rice",
+          "every",
+          "day."
+        ],
+        "wrongIndex": 1,
+        "fixes": [
+          "eats",
+          "eating",
+          "to eat"
+        ],
+        "answer": 0
+      },
+      {
+        "type": "find_fix",
+        "words": [
+          "Nova",
+          "sing",
+          "every",
+          "morning."
+        ],
+        "wrongIndex": 1,
+        "fixes": [
+          "sings",
+          "singing",
+          "to sing"
+        ],
+        "answer": 0
+      },
+      {
+        "type": "build_it",
+        "prompt": "Build the sentence.",
+        "tiles": [
+          "My",
+          "dad",
+          "drives",
+          "a",
+          "car."
+        ],
+        "distractors": [
+          "drive"
+        ]
+      },
+      {
+        "type": "sort_it",
+        "prompt": "Sort the words: she or they?",
+        "groups": [
+          "she",
+          "they"
+        ],
+        "items": [
+          {
+            "text": "runs",
+            "group": 0
+          },
+          {
+            "text": "run",
+            "group": 1
+          },
+          {
+            "text": "plays",
+            "group": 0
+          },
+          {
+            "text": "play",
+            "group": 1
+          },
+          {
+            "text": "eats",
+            "group": 0
+          },
+          {
+            "text": "eat",
+            "group": 1
+          }
+        ]
+      },
+      {
+        "type": "right_wrong",
+        "sentence": "Pip sleeps on my bed.",
+        "right": true
+      }
     ],
     "prepositions": [
-      { "type": "pick_one", "prompt": "Pick the right sentence.", "choices": ["Mina is looking a book.", "Mina is looking at a book.", "Mina is looking to a book."], "answer": 1 },
-      { "type": "pick_one", "prompt": "Pick the right sentence.", "choices": ["Leo is in front of the door.", "Leo is front of the door.", "Leo is in front the door."], "answer": 0 },
-      { "type": "pick_one", "prompt": "Pick the right sentence.", "choices": ["We go to school.", "We go at school.", "We go school."], "answer": 0 },
-      { "type": "fill_blank", "before": "Sam is listening", "after": "music.", "choices": ["to", "at", "on"], "answer": 0 },
-      { "type": "fill_blank", "before": "Look", "after": "the bird!", "choices": ["at", "on", "of"], "answer": 0 },
-      { "type": "fill_blank", "before": "Tom sits next", "after": "Mia.", "choices": ["to", "at", "of"], "answer": 0 },
-      { "type": "find_fix", "words": ["The", "ball", "is", "front", "of", "the", "box."], "wrongIndex": 3, "fixes": ["in front", "on front", "at front"], "answer": 0 },
-      { "type": "find_fix", "words": ["We", "are", "going", "the", "park."], "wrongIndex": 2, "fixes": ["going to", "going at", "going on"], "answer": 0 },
-      { "type": "build_it", "prompt": "Build the sentence.", "tiles": ["Mina", "is", "looking", "at", "the", "moon."], "distractors": ["to"] },
-      { "type": "sort_it", "prompt": "Right or wrong?", "groups": ["Right", "Wrong"], "items": [
-        { "text": "look at the cat", "group": 0 },
-        { "text": "go to bed", "group": 0 },
-        { "text": "in front of me", "group": 0 },
-        { "text": "look the cat", "group": 1 },
-        { "text": "go at bed", "group": 1 },
-        { "text": "front of me", "group": 1 }
-      ] }
+      {
+        "type": "pick_one",
+        "prompt": "A robot wrote these. Which one is right?",
+        "choices": [
+          "Ruby is looking a book.",
+          "Ruby is looking at a book.",
+          "Ruby is looking to a book."
+        ],
+        "answer": 1
+      },
+      {
+        "type": "pick_one",
+        "prompt": "Which one would your teacher write?",
+        "choices": [
+          "Milo is in front of the door.",
+          "Milo is front of the door.",
+          "Milo is in front the door."
+        ],
+        "answer": 0
+      },
+      {
+        "type": "pick_one",
+        "prompt": "Tap the sentence with no mistakes.",
+        "choices": [
+          "We go to school.",
+          "We go at school.",
+          "We go school."
+        ],
+        "answer": 0
+      },
+      {
+        "type": "fill_blank",
+        "before": "Finn is listening",
+        "after": "music.",
+        "choices": [
+          "to",
+          "at",
+          "on"
+        ],
+        "answer": 0
+      },
+      {
+        "type": "fill_blank",
+        "before": "Look",
+        "after": "the bird!",
+        "choices": [
+          "at",
+          "on",
+          "of"
+        ],
+        "answer": 0
+      },
+      {
+        "type": "fill_blank",
+        "before": "Theo sits next",
+        "after": "Nova.",
+        "choices": [
+          "to",
+          "at",
+          "of"
+        ],
+        "answer": 0
+      },
+      {
+        "type": "find_fix",
+        "words": [
+          "The",
+          "ball",
+          "is",
+          "front",
+          "of",
+          "the",
+          "box."
+        ],
+        "wrongIndex": 3,
+        "fixes": [
+          "in front",
+          "on front",
+          "at front"
+        ],
+        "answer": 0
+      },
+      {
+        "type": "find_fix",
+        "words": [
+          "We",
+          "are",
+          "going",
+          "the",
+          "park."
+        ],
+        "wrongIndex": 2,
+        "fixes": [
+          "going to",
+          "going at",
+          "going on"
+        ],
+        "answer": 0
+      },
+      {
+        "type": "build_it",
+        "prompt": "What does this say? Put it in order.",
+        "tiles": [
+          "Ruby",
+          "is",
+          "looking",
+          "at",
+          "the",
+          "moon."
+        ],
+        "distractors": [
+          "to"
+        ]
+      },
+      {
+        "type": "sort_it",
+        "prompt": "Which ones are right? Sort them.",
+        "groups": [
+          "Right",
+          "Not right"
+        ],
+        "items": [
+          {
+            "text": "look at the cat",
+            "group": 0
+          },
+          {
+            "text": "go to bed",
+            "group": 0
+          },
+          {
+            "text": "in front of me",
+            "group": 0
+          },
+          {
+            "text": "look the cat",
+            "group": 1
+          },
+          {
+            "text": "go at bed",
+            "group": 1
+          },
+          {
+            "text": "front of me",
+            "group": 1
+          }
+        ]
+      },
+      {
+        "type": "odd_one_out",
+        "prompt": "Three of these are right. Which one is not?",
+        "words": [
+          "talk to Dad",
+          "look the sky",
+          "go to the zoo",
+          "look at Pip"
+        ],
+        "answer": 1
+      }
     ],
     "past-tense": [
-      { "type": "pick_one", "prompt": "Pick the right sentence.", "choices": ["Yesterday, I go to the zoo.", "Yesterday, I went to the zoo.", "Yesterday, I goed to the zoo."], "answer": 1 },
-      { "type": "pick_one", "prompt": "Pick the right sentence.", "choices": ["Yesterday, Leo play soccer.", "Yesterday, Leo played soccer.", "Yesterday, Leo playing soccer."], "answer": 1 },
-      { "type": "pick_one", "prompt": "Pick the right sentence.", "choices": ["Yesterday, I see a big dog.", "Yesterday, I saw a big dog.", "Yesterday, I seed a big dog."], "answer": 1 },
-      { "type": "fill_blank", "before": "Yesterday, we", "after": "in the park.", "choices": ["play", "played", "playing"], "answer": 1 },
-      { "type": "fill_blank", "before": "Yesterday, Sam", "after": "to the store.", "choices": ["went", "goes", "go"], "answer": 0 },
-      { "type": "fill_blank", "before": "Yesterday, Ben", "after": "yes.", "choices": ["said", "says", "say"], "answer": 0 },
-      { "type": "find_fix", "words": ["Yesterday,", "I", "walk", "to", "school."], "wrongIndex": 2, "fixes": ["walked", "walking", "walks"], "answer": 0 },
-      { "type": "find_fix", "words": ["Yesterday,", "Tom", "see", "a", "rainbow."], "wrongIndex": 2, "fixes": ["saw", "seed", "sees"], "answer": 0 },
-      { "type": "build_it", "prompt": "Build the sentence.", "tiles": ["Yesterday,", "we", "played", "in", "the", "snow."], "distractors": ["play"] },
-      { "type": "sort_it", "prompt": "Sort the words.", "groups": ["now", "in the past"], "items": [
-        { "text": "play", "group": 0 },
-        { "text": "played", "group": 1 },
-        { "text": "go", "group": 0 },
-        { "text": "went", "group": 1 },
-        { "text": "see", "group": 0 },
-        { "text": "saw", "group": 1 }
-      ] }
+      {
+        "type": "pick_one",
+        "prompt": "Which sentence is right?",
+        "choices": [
+          "Yesterday, I go to the zoo.",
+          "Yesterday, I went to the zoo.",
+          "Yesterday, I goed to the zoo."
+        ],
+        "answer": 1
+      },
+      {
+        "type": "pick_one",
+        "prompt": "Which one is right?",
+        "choices": [
+          "Yesterday, Milo play soccer.",
+          "Yesterday, Milo played soccer.",
+          "Yesterday, Milo playing soccer."
+        ],
+        "answer": 1
+      },
+      {
+        "type": "pick_one",
+        "prompt": "Pick the sentence that sounds right.",
+        "choices": [
+          "Yesterday, I see a big dog.",
+          "Yesterday, I saw a big dog.",
+          "Yesterday, I seed a big dog."
+        ],
+        "answer": 1
+      },
+      {
+        "type": "fill_blank",
+        "before": "Yesterday, we",
+        "after": "in the park.",
+        "choices": [
+          "play",
+          "played",
+          "playing"
+        ],
+        "answer": 1
+      },
+      {
+        "type": "fill_blank",
+        "before": "Yesterday, Pip",
+        "after": "to the store.",
+        "choices": [
+          "went",
+          "goes",
+          "go"
+        ],
+        "answer": 0
+      },
+      {
+        "type": "fill_blank",
+        "before": "Yesterday, Otto",
+        "after": "yes.",
+        "choices": [
+          "said",
+          "says",
+          "say"
+        ],
+        "answer": 0
+      },
+      {
+        "type": "find_fix",
+        "words": [
+          "Yesterday,",
+          "I",
+          "walk",
+          "to",
+          "school."
+        ],
+        "wrongIndex": 2,
+        "fixes": [
+          "walked",
+          "walking",
+          "walks"
+        ],
+        "answer": 0
+      },
+      {
+        "type": "find_fix",
+        "words": [
+          "Yesterday,",
+          "Theo",
+          "see",
+          "a",
+          "rainbow."
+        ],
+        "wrongIndex": 2,
+        "fixes": [
+          "saw",
+          "seed",
+          "sees"
+        ],
+        "answer": 0
+      },
+      {
+        "type": "build_it",
+        "prompt": "Tap the tiles in order.",
+        "tiles": [
+          "Yesterday,",
+          "we",
+          "played",
+          "in",
+          "the",
+          "snow."
+        ],
+        "distractors": [
+          "play"
+        ]
+      },
+      {
+        "type": "sort_it",
+        "prompt": "Sort them out.",
+        "groups": [
+          "now",
+          "in the past"
+        ],
+        "items": [
+          {
+            "text": "play",
+            "group": 0
+          },
+          {
+            "text": "played",
+            "group": 1
+          },
+          {
+            "text": "go",
+            "group": 0
+          },
+          {
+            "text": "went",
+            "group": 1
+          },
+          {
+            "text": "see",
+            "group": 0
+          },
+          {
+            "text": "saw",
+            "group": 1
+          }
+        ]
+      },
+      {
+        "type": "match_pairs",
+        "prompt": "Match each word to its past tense.",
+        "pairs": [
+          {
+            "left": "sit",
+            "right": "sat"
+          },
+          {
+            "left": "sing",
+            "right": "sang"
+          },
+          {
+            "left": "swim",
+            "right": "swam"
+          },
+          {
+            "left": "eat",
+            "right": "ate"
+          }
+        ]
+      }
     ],
     "capitals-names": [
-      { "type": "pick_one", "prompt": "Pick the right sentence.", "choices": ["I like leo.", "i like Leo.", "I like Leo."], "answer": 2 },
-      { "type": "pick_one", "prompt": "Pick the right sentence.", "choices": ["ben and i are friends.", "Ben and I are friends.", "Ben and i are friends."], "answer": 1 },
-      { "type": "pick_one", "prompt": "Pick the right sentence.", "choices": ["My name is Tom.", "My name is tom.", "my name is Tom."], "answer": 0 },
-      { "type": "fill_blank", "before": "I play with", "after": "every day.", "choices": ["mina", "Mina"], "answer": 1 },
-      { "type": "fill_blank", "before": "Sam and", "after": "like to draw.", "choices": ["i", "I"], "answer": 1 },
-      { "type": "fill_blank", "before": "", "after": "has a green hat.", "choices": ["tom", "Tom"], "answer": 1 },
-      { "type": "find_fix", "words": ["Mina", "and", "i", "are", "seven."], "wrongIndex": 2, "fixes": ["I", "I.", "i,"], "answer": 0 },
-      { "type": "find_fix", "words": ["I", "sit", "next", "to", "sam."], "wrongIndex": 4, "fixes": ["Sam.", "Sam", "sam,"], "answer": 0 },
-      { "type": "build_it", "prompt": "Build the sentence.", "tiles": ["I", "see", "Ben", "at", "school."], "distractors": ["ben", "i"] },
-      { "type": "sort_it", "prompt": "Is it written the right way?", "groups": ["Right", "Wrong"], "items": [
-        { "text": "Ben", "group": 0 },
-        { "text": "Mia", "group": 0 },
-        { "text": "I can", "group": 0 },
-        { "text": "mina", "group": 1 },
-        { "text": "sam", "group": 1 },
-        { "text": "i see", "group": 1 }
-      ] }
+      {
+        "type": "pick_one",
+        "prompt": "Which one has the capital letters and periods right?",
+        "choices": [
+          "I like milo.",
+          "i like Milo.",
+          "I like Milo."
+        ],
+        "answer": 2
+      },
+      {
+        "type": "pick_one",
+        "prompt": "Tap the one with capitals and periods in the right places.",
+        "choices": [
+          "otto and i are friends.",
+          "Otto and I are friends.",
+          "Otto and i are friends."
+        ],
+        "answer": 1
+      },
+      {
+        "type": "pick_one",
+        "prompt": "Which sentence starts and ends the right way?",
+        "choices": [
+          "My name is Theo.",
+          "My name is theo.",
+          "my name is Theo."
+        ],
+        "answer": 0
+      },
+      {
+        "type": "fill_blank",
+        "before": "I play with",
+        "after": "every day.",
+        "choices": [
+          "ruby",
+          "Ruby"
+        ],
+        "answer": 1
+      },
+      {
+        "type": "fill_blank",
+        "before": "Finn and",
+        "after": "like to draw.",
+        "choices": [
+          "i",
+          "I"
+        ],
+        "answer": 1
+      },
+      {
+        "type": "fill_blank",
+        "before": "",
+        "after": "has a green hat.",
+        "choices": [
+          "theo",
+          "Theo"
+        ],
+        "answer": 1
+      },
+      {
+        "type": "find_fix",
+        "words": [
+          "Ruby",
+          "and",
+          "i",
+          "are",
+          "seven."
+        ],
+        "wrongIndex": 2,
+        "fixes": [
+          "I",
+          "I.",
+          "i,"
+        ],
+        "answer": 0
+      },
+      {
+        "type": "find_fix",
+        "words": [
+          "I",
+          "sit",
+          "next",
+          "to",
+          "finn."
+        ],
+        "wrongIndex": 4,
+        "fixes": [
+          "Finn.",
+          "Finn",
+          "finn,"
+        ],
+        "answer": 0
+      },
+      {
+        "type": "build_it",
+        "prompt": "Build it!",
+        "tiles": [
+          "I",
+          "see",
+          "Otto",
+          "at",
+          "school."
+        ],
+        "distractors": [
+          "otto",
+          "i"
+        ]
+      },
+      {
+        "type": "sort_it",
+        "prompt": "Which ones are right? Sort them.",
+        "groups": [
+          "Right",
+          "Not right"
+        ],
+        "items": [
+          {
+            "text": "Otto",
+            "group": 0
+          },
+          {
+            "text": "Nova",
+            "group": 0
+          },
+          {
+            "text": "I can",
+            "group": 0
+          },
+          {
+            "text": "ruby",
+            "group": 1
+          },
+          {
+            "text": "finn",
+            "group": 1
+          },
+          {
+            "text": "i see",
+            "group": 1
+          }
+        ]
+      },
+      {
+        "type": "right_wrong",
+        "sentence": "Dad and zara like soup.",
+        "right": false
+      }
     ],
     "place-words": [
-      { "type": "pick_one", "prompt": "Pick the right sentence.", "choices": ["The cat is under of the table.", "The cat is under the table.", "The cat is under table."], "answer": 1 },
-      { "type": "pick_one", "prompt": "Pick the right sentence.", "choices": ["The ball is next the bed.", "The ball is next to the bed.", "The ball is next of the bed."], "answer": 1 },
-      { "type": "pick_one", "prompt": "Pick the right sentence.", "choices": ["My pencil is in the box.", "My pencil is in of the box.", "My pencil is of the box."], "answer": 0 },
-      { "type": "fill_blank", "before": "I wear a hat", "after": "my head.", "choices": ["on", "in", "under"], "answer": 0 },
-      { "type": "fill_blank", "before": "The floor is", "after": "my feet.", "choices": ["on", "in", "under"], "answer": 2 },
-      { "type": "fill_blank", "before": "The milk is", "after": "the cup.", "choices": ["on", "in", "under"], "answer": 1 },
-      { "type": "find_fix", "words": ["The", "dog", "is", "next", "the", "door."], "wrongIndex": 3, "fixes": ["next to", "next of", "next at"], "answer": 0 },
-      { "type": "find_fix", "words": ["The", "plane", "is", "on", "the", "sky."], "wrongIndex": 3, "fixes": ["in", "at", "of"], "answer": 0 },
-      { "type": "build_it", "prompt": "Build the sentence.", "tiles": ["The", "shoes", "are", "under", "the", "bed."], "distractors": ["of"] },
-      { "type": "sort_it", "prompt": "Right or wrong?", "groups": ["Right", "Wrong"], "items": [
-        { "text": "in the box", "group": 0 },
-        { "text": "on the desk", "group": 0 },
-        { "text": "next to the bed", "group": 0 },
-        { "text": "next the bed", "group": 1 },
-        { "text": "under of the chair", "group": 1 },
-        { "text": "in front the door", "group": 1 }
-      ] }
+      {
+        "type": "pick_one",
+        "prompt": "Pick the sentence that sounds right.",
+        "choices": [
+          "The cat is under of the table.",
+          "The cat is under the table.",
+          "The cat is under table."
+        ],
+        "answer": 1
+      },
+      {
+        "type": "pick_one",
+        "prompt": "A robot wrote these. Which one is right?",
+        "choices": [
+          "The ball is next the bed.",
+          "The ball is next to the bed.",
+          "The ball is next of the bed."
+        ],
+        "answer": 1
+      },
+      {
+        "type": "pick_one",
+        "prompt": "Which one would your teacher write?",
+        "choices": [
+          "My pencil is in the box.",
+          "My pencil is in of the box.",
+          "My pencil is of the box."
+        ],
+        "answer": 0
+      },
+      {
+        "type": "fill_blank",
+        "before": "I wear a hat",
+        "after": "my head.",
+        "choices": [
+          "on",
+          "in",
+          "under"
+        ],
+        "answer": 0
+      },
+      {
+        "type": "fill_blank",
+        "before": "The floor is",
+        "after": "my feet.",
+        "choices": [
+          "on",
+          "in",
+          "under"
+        ],
+        "answer": 2
+      },
+      {
+        "type": "fill_blank",
+        "before": "The milk is",
+        "after": "the cup.",
+        "choices": [
+          "on",
+          "in",
+          "under"
+        ],
+        "answer": 1
+      },
+      {
+        "type": "find_fix",
+        "words": [
+          "The",
+          "dog",
+          "is",
+          "next",
+          "the",
+          "door."
+        ],
+        "wrongIndex": 3,
+        "fixes": [
+          "next to",
+          "next of",
+          "next at"
+        ],
+        "answer": 0
+      },
+      {
+        "type": "find_fix",
+        "words": [
+          "The",
+          "plane",
+          "is",
+          "on",
+          "the",
+          "sky."
+        ],
+        "wrongIndex": 3,
+        "fixes": [
+          "in",
+          "at",
+          "of"
+        ],
+        "answer": 0
+      },
+      {
+        "type": "build_it",
+        "prompt": "Build the sentence.",
+        "tiles": [
+          "The",
+          "shoes",
+          "are",
+          "under",
+          "the",
+          "bed."
+        ],
+        "distractors": [
+          "of"
+        ]
+      },
+      {
+        "type": "sort_it",
+        "prompt": "Which ones are right? Sort them.",
+        "groups": [
+          "Right",
+          "Not right"
+        ],
+        "items": [
+          {
+            "text": "in the box",
+            "group": 0
+          },
+          {
+            "text": "on the desk",
+            "group": 0
+          },
+          {
+            "text": "next to the bed",
+            "group": 0
+          },
+          {
+            "text": "next the bed",
+            "group": 1
+          },
+          {
+            "text": "under of the chair",
+            "group": 1
+          },
+          {
+            "text": "in front the door",
+            "group": 1
+          }
+        ]
+      },
+      {
+        "type": "right_wrong",
+        "sentence": "The bird is on the roof.",
+        "right": true
+      }
     ]
   }
 }
