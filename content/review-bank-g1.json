@@ -639,7 +639,7 @@
         "words": [
           "arm",
           "ear",
-          "pig",
+          "toe",
           "eye"
         ],
         "answer": 2
@@ -797,7 +797,7 @@
         "type": "tap_all",
         "prompt": "Tap every word that means more than one.",
         "words": [
-          "hen",
+          "cat",
           "ducks",
           "bus",
           "feet",
@@ -1439,7 +1439,7 @@
       },
       {
         "type": "right_wrong",
-        "sentence": "I play with zara at school.",
+        "sentence": "Dad and zara like soup.",
         "right": false
       }
     ],

@@ -1018,7 +1018,7 @@
       },
       {
         "type": "fill_blank",
-        "before": "Pip closed the window",
+        "before": "Pip wore mittens",
         "after": "it was cold.",
         "choices": [
           "because",

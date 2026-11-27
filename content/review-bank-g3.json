@@ -158,6 +158,7 @@
       },
       {
         "type": "right_wrong",
+        "prompt": "Is this a complete sentence?",
         "sentence": "After the long soccer game on Friday night.",
         "right": false
       }
@@ -326,7 +327,7 @@
         "type": "odd_one_out",
         "prompt": "Three of these go with \"was late\". Which one does not?",
         "words": [
-          "the bus",
+          "the coach",
           "the man with three cats",
           "Grandma",
           "Milo and Zara"
@@ -544,7 +545,7 @@
       {
         "type": "fill_blank",
         "before": "Ruby saw",
-        "after": "huge pizza in the tree outside her window.",
+        "after": "huge octopus in the tree outside her window.",
         "choices": [
           "a",
           "an"
@@ -846,8 +847,8 @@
             "right": "brushes"
           },
           {
-            "left": "bush",
-            "right": "bushes"
+            "left": "goose",
+            "right": "geese"
           },
           {
             "left": "berry",

@@ -159,6 +159,7 @@
       },
       {
         "type": "right_wrong",
+        "prompt": "Is this a complete sentence?",
         "sentence": "Because the train was two hours late.",
         "right": false
       }
@@ -1179,16 +1180,16 @@
             "right": "wolves"
           },
           {
-            "left": "elf",
-            "right": "elves"
+            "left": "wife",
+            "right": "wives"
           },
           {
-            "left": "knife",
-            "right": "knives"
+            "left": "leaf",
+            "right": "leaves"
           },
           {
-            "left": "man",
-            "right": "men"
+            "left": "loaf",
+            "right": "loaves"
           }
         ]
       }
@@ -1587,7 +1588,7 @@
       },
       {
         "type": "fill_blank",
-        "before": "Look! Two crabs",
+        "before": "Look! Pip and a crab",
         "after": "a sandcastle on the beach.",
         "choices": [
           "are building",
