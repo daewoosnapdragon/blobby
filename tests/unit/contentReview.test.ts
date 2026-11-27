@@ -40,7 +40,7 @@ describe('classifyChanges', () => {
   it('the Wrong → Not right relabel counts as reprompted and says so', () => {
     const base: Question[] = [{ type: 'sort_it', prompt: 'Sort the sentences.', groups: ['Right', 'Wrong'], items: [{ text: 'I am.', group: 0 }, { text: 'I is.', group: 1 }] }];
     const r = classify(base, applyPass(base, SEED));
-    expect(r.reprompted).toEqual([expect.objectContaining({ index: 0, from: 'Sort the sentences.', to: 'Which ones are right? Sort them.', relabeled: true })]);
+    expect(r.reprompted).toEqual([expect.objectContaining({ index: 0, from: 'Sort the sentences.', to: 'Which ones are right? Sort them.', relabel: { from: 'Wrong', to: 'Not right' } })]);
   });
 
   it('a hand-reprompted question: differs from the passed one only in its prompt', () => {
@@ -48,7 +48,7 @@ describe('classifyChanges', () => {
     const passed = applyPass(base, SEED);
     const current = [{ ...passed[0], prompt: 'Which one has the capital letters and periods right?' } as Question];
     const r = classify(base, current);
-    expect(r.reprompted).toEqual([{ index: 0, from: 'Pick the right sentence.', to: 'Which one has the capital letters and periods right?', hand: true, relabeled: false, question: current[0] }]);
+    expect(r.reprompted).toEqual([{ index: 0, from: 'Pick the right sentence.', to: 'Which one has the capital letters and periods right?', hand: true, question: current[0] }]);
     expect(r.renamed).toEqual([{ index: 0, names: [{ from: 'Mia', to: 'Nova' }], question: current[0] }]);
     expect(r.rewritten).toEqual([]);
   });
@@ -76,12 +76,11 @@ describe('classifyChanges', () => {
     expect(r.added).toEqual([{ index: 1, question: extra }]);
   });
 
-  it('a rewritten question: other fields changed, with what it was after the pass; picture re-chosen → no check', () => {
+  it('a rewritten question: changed beyond the pass, with the base as what it was and the pass\'s renames; picture re-chosen → no check', () => {
     const base = [blank('Leo has a red', '.', ['hat', 'hats'], 0, 'billed-cap')];
-    const passed = applyPass(base, SEED);
     const current = [blank('Milo has a red', 'on his elephant.', ['hat', 'hats'], 0, 'elephant')];
     const r = classify(base, current);
-    expect(r.rewritten).toEqual([{ index: 0, was: passed[0], question: current[0], namesOnly: false, checkPicture: false }]);
+    expect(r.rewritten).toEqual([{ index: 0, was: base[0], question: current[0], names: [{ from: 'Leo', to: 'Milo' }], namesOnly: false, checkPicture: false }]);
     expect(r.renamed).toEqual([]);
     expect(r.reprompted).toEqual([]);
   });
@@ -89,13 +88,39 @@ describe('classifyChanges', () => {
   it('a rewritten question whose nouns changed but picture did not gets a picture check', () => {
     const base = [blank('The dog', 'in the yard.', ['runs', 'run'], 0, 'dog')];
     const current = [blank('The bear', 'in the bath.', ['runs', 'run'], 0, 'dog')];
-    expect(classify(base, current).rewritten).toEqual([{ index: 0, was: base[0], question: current[0], namesOnly: false, checkPicture: true }]);
+    expect(classify(base, current).rewritten).toEqual([{ index: 0, was: base[0], question: current[0], names: [], namesOnly: false, checkPicture: true }]);
+  });
+
+  it('a rewritten question whose prompt was rotated too carries the prompt change', () => {
+    const base: Question[] = [{ type: 'build_it', prompt: 'Build the sentence.', tiles: ['The', 'milk', 'is', 'cold.'] }];
+    const passed = applyPass(base, SEED);
+    const current = [{ ...passed[0], tiles: ['The', 'cake', 'is', 'in', 'my', 'hat.'] } as Question];
+    const to = (passed[0] as { prompt: string }).prompt;
+    expect(to).not.toBe('Build the sentence.');
+    const r = classify(base, current);
+    expect(r.rewritten).toEqual([expect.objectContaining({ index: 0, was: base[0], prompt: { from: 'Build the sentence.', to, hand: false } })]);
+    expect(r.reprompted).toEqual([]);
   });
 
   it('a hand rename (Mr. Park → Mr. Bell) is a rewrite of names only, with no picture check', () => {
     const base = [blank('Mr. Park', 'our teacher.', ['is', 'are'], 0, 'school')];
     const current = [blank('Mr. Bell', 'our teacher.', ['is', 'are'], 0, 'school')];
-    expect(classify(base, current).rewritten).toEqual([{ index: 0, was: base[0], question: current[0], namesOnly: true, checkPicture: false }]);
+    expect(classify(base, current).rewritten).toEqual([{ index: 0, was: base[0], question: current[0], names: [], namesOnly: true, checkPicture: false }]);
+  });
+
+  it('a pass rename the rewrite wrote out is not listed as a name change', () => {
+    const base = [blank('Mina is', 'a picture.', ['drawing', 'draw'])];
+    const current = [blank('The cat is', 'a picture.', ['drawing', 'draw'])];
+    expect(classify(base, current).rewritten).toEqual([expect.objectContaining({ was: base[0], names: [] })]);
+  });
+
+  it('only cast and the two teacher renames count as names only; another capitalized word is a rewrite', () => {
+    const cast = classify([blank('Nova and Milo', 'at home.', ['are', 'is'])], [blank('Nova and Otto', 'at home.', ['are', 'is'])]);
+    expect(cast.rewritten).toEqual([expect.objectContaining({ namesOnly: true })]);
+    const other = classify([blank('We went to Ohio', 'week.', ['last', 'next'])], [blank('We went to Mars', 'week.', ['last', 'next'])]);
+    expect(other.rewritten).toEqual([expect.objectContaining({ namesOnly: false })]);
+    const title = classify([blank('Ms. Lee', 'nice.', ['is', 'are'])], [blank('Ms. Gray', 'nice.', ['is', 'are'])]);
+    expect(title.rewritten).toEqual([expect.objectContaining({ namesOnly: true })]);
   });
 
   it('a name swapped for Pip the dog is a silly rewrite, not a rename', () => {
@@ -152,6 +177,10 @@ describe('renderQuestion', () => {
     const q: Question = { type: 'tap_all', prompt: 'Tap every word that needs a capital letter.', words: ['we', 'see', 'the', 'moon.'], answers: [0] };
     expect(renderQuestion(q)).toBe(['Tap every word that needs a capital letter.', '- [✔ we] see the moon.'].join('\n'));
   });
+  it('tap_all: more than one answer marked', () => {
+    const q: Question = { type: 'tap_all', prompt: 'Tap every word that needs an s.', words: ['Pip', 'sleep', 'and', 'dream.'], answers: [1, 3] };
+    expect(renderQuestion(q)).toBe(['Tap every word that needs an s.', '- Pip [✔ sleep] and [✔ dream.]'].join('\n'));
+  });
   it('match_pairs: one line per pair', () => {
     const q: Question = { type: 'match_pairs', prompt: 'Match them.', pairs: [{ left: 'I', right: 'am' }, { left: 'he', right: 'is' }] };
     expect(renderQuestion(q)).toBe(['Match them.', '- I → am', '- he → is'].join('\n'));
@@ -179,5 +208,23 @@ describe('renderFileReview', () => {
     expect(md.indexOf('### Skim: names')).toBeLessThan(md.indexOf('### Skim: prompts'));
     expect(md.indexOf('### Skim: prompts')).toBeLessThan(md.indexOf('### Read: new and silly'));
     expect(countChanges(groups)).toEqual({ renamed: 1, reprompted: 1, added: 1, rewritten: 1, pictureChecks: 1 });
+  });
+
+  it('states every change on a rewritten question, counts its prompt, and says "same" only for unchanged prompts', () => {
+    const base: Question[] = [
+      pick('Which one is right?', ['I am.', 'I is.']),
+      { type: 'build_it', prompt: 'Build the sentence.', tiles: ['Leo', 'is', 'cold.'] },
+      { type: 'sort_it', prompt: 'Sort the words.', groups: ['right', 'wrong'], items: [{ text: 'I am', group: 0 }, { text: 'I is', group: 1 }] },
+    ];
+    const passed = applyPass(base, SEED);
+    const current = [passed[0], { ...passed[1], tiles: ['Milo', 'is', 'in', 'the', 'fridge.'] } as Question, passed[2]];
+    const changes = classify(base, current);
+    const md = renderFileReview('f.json', [{ label: 'L', changes, questions: current, base }]);
+    const p0 = (passed[0] as { prompt: string }).prompt, p1 = (passed[1] as { prompt: string }).prompt;
+    expect(md).toContain(`  - was: Build the sentence. · ✔ Leo is cold.\n  - names: Leo → Milo · prompt: Build the sentence. → ${p1}`);
+    expect(md).toContain(`| Build the sentence. | ${p1} | 1 |`);
+    expect(md).toContain('| Sort the words. | Which ones are right? Sort them. (and the box wrong → not right) | 1 |');
+    const q1 = p0 === 'Which one is right?' ? 'Q1 Which one is right? (same)' : `Q1 ${p0}`;
+    expect(md).toContain(`- **L:** ${q1} · Q2 ${p1} · Q3 Which ones are right? Sort them.`);
   });
 });

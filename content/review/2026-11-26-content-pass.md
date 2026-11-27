@@ -3,15 +3,18 @@
 Kyla, this is everything that changed in the eight content files (test weeks and review banks, Grades 1 to 4)
 before you load them. Each file has three parts:
 
-- **Skim: names.** Questions where only the names changed (Mia → Nova and so on). One line each, showing
-  the right answer. A quick look is enough: about 5 minutes for all eight files.
+- **Skim: names.** Questions whose names changed (Mia → Nova and so on). One line each, showing the
+  right answer. Some of them also got a new prompt and are in both skim sections. A quick look is enough:
+  about 5 minutes for all eight files.
 - **Skim: prompts.** The instructions at the top of a question ("Which one is right?"). A table of old → new
-  with how many times, then the new prompts in order for each lesson, so you can see they take turns. Most
+  with how many times, then each lesson's prompts in order, so you can see they take turns. Most
   are the fixed rotation; ones marked "(by hand)" were written for that question. About 5 minutes.
 - **Read: new and silly.** The questions to read properly: each **new** question (Q13 to Q15 in every
-  test-week lesson, Q11 in every review-bank skill) and each **silly** rewrite (same grammar, sillier scene),
-  with what it was before. The right answer is marked ✔ and the picture is named. "picture unchanged, check
-  it" means the words changed but the picture did not. This is the longer part: about 30 to 40 minutes.
+  test-week lesson, Q11 in every review-bank skill) and each **silly** rewrite (same grammar, sillier scene).
+  Under a rewrite, "was:" is the question as it is in the app today, before this pass, and a "names:" or
+  "prompt:" line lists the name or prompt changes it also got. Two are marked "name changed": a teacher's
+  name changed, not the scene. The right answer is marked ✔ and the picture is named. "picture unchanged,
+  check it" means the words changed but the picture did not. This is the longer part: about 30 to 40 minutes.
 
 Q numbers are positions in the lesson or skill. If anything is off, fix it in the app's editor after
 loading, or tell Claude what to change.
@@ -61,18 +64,18 @@ loading, or tell Claude what to change.
 | Old prompt | New prompt | How many |
 |---|---|---|
 | Pick the right sentence. | Which one is right? | 3 |
+| Build the sentence. | Build it! | 2 |
+| Build the sentence. | Make a sentence from the tiles. | 2 |
 | Build the sentence. | Tap the tiles in order. | 2 |
 | Build the sentence. | What does this say? Put it in order. | 2 |
+| Pick the right sentence. | Pick the sentence that sounds right. | 2 |
 | Pick the right sentence. | Which sentence is right? | 2 |
 | Sort the words. | Sort them out. | 2 |
 | Sort the words. | Where does each one go? | 2 |
-| Build the sentence. | Build it! | 1 |
-| Build the sentence. | Make a sentence from the tiles. | 1 |
 | Build the sentence. | Put the words in order. | 1 |
 | Is the name written the right way? | Which ones are right? Sort them. (and the box Wrong → Not right) | 1 |
 | Pick the right sentence. | A robot wrote these. Which one is right? | 1 |
 | Pick the right sentence. | One of these is right. Tap it. | 1 |
-| Pick the right sentence. | Pick the sentence that sounds right. | 1 |
 | Pick the right sentence. | Tap the one with capitals and periods in the right places. (by hand) | 1 |
 | Pick the right sentence. | Which one has the capital letters and periods right? (by hand) | 1 |
 | Pick the right sentence. | Which one would your teacher write? | 1 |
@@ -83,9 +86,9 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
 
 - **Week 1 · Am, Is, Are:** Q1 One of these is right. Tap it. · Q2 Which sentence is right? · Q3 Which one is right? · Q10 Build it! · Q11 Build the sentence. (same) · Q12 Sort them out.
 - **Week 1 · He, She, We, They:** Q2 A robot wrote these. Which one is right? · Q3 Which one would your teacher write? · Q10 Make a sentence from the tiles. · Q11 Tap the tiles in order. · Q12 Where does each one go?
-- **Week 1 · Capitals and Periods:** Q1 Which one has the capital letters and periods right? · Q2 Tap the one with capitals and periods in the right places. · Q3 Which sentence starts and ends the right way? · Q10 Put the words in order. · Q11 Make a sentence from the tiles. (same) · Q12 Which ones are right? Sort them.
-- **Week 1 · What Is Happening Now?:** Q1 Which sentence is right? · Q2 Which one is right? · Q3 Pick the sentence that sounds right. · Q10 What does this say? Put it in order. · Q11 Build it! (same) · Q12 Where does each one go?
-- **Week 1 · Big Review:** Q1 Which one is right? · Q2 Which one has the capital letters and periods right? · Q3 Pick the sentence that sounds right. (same) · Q10 Tap the tiles in order. · Q11 What does this say? Put it in order. · Q12 Sort them out.
+- **Week 1 · Capitals and Periods:** Q1 Which one has the capital letters and periods right? · Q2 Tap the one with capitals and periods in the right places. · Q3 Which sentence starts and ends the right way? · Q10 Put the words in order. · Q11 Make a sentence from the tiles. · Q12 Which ones are right? Sort them.
+- **Week 1 · What Is Happening Now?:** Q1 Which sentence is right? · Q2 Which one is right? · Q3 Pick the sentence that sounds right. · Q10 What does this say? Put it in order. · Q11 Build it! · Q12 Where does each one go?
+- **Week 1 · Big Review:** Q1 Which one is right? · Q2 Which one has the capital letters and periods right? · Q3 Pick the sentence that sounds right. · Q10 Tap the tiles in order. · Q11 What does this say? Put it in order. · Q12 Sort them out.
 
 ### Read: new and silly
 
@@ -136,7 +139,8 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
   - ✔ The cake is in my hat.
   - extra tiles: the
   - picture: birthday-cake
-  - was: ✔ The milk is cold. · extra tiles: the · picture: glass-of-milk
+  - was: Build the sentence. · ✔ The milk is cold. · extra tiles: the · picture: glass-of-milk
+  - prompt: Build the sentence. → Make a sentence from the tiles.
 - **Q13 new** (tap them all): Tap every word that needs a capital letter.
   - [✔ my] dog [✔ pip] is big.
   - picture: dog
@@ -156,7 +160,8 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
   - ✔ Two bears are riding bikes.
   - extra tiles: is, ride
   - picture: bear
-  - was: ✔ Two boys are riding bikes. · extra tiles: is, ride · picture: bicycle
+  - was: Build the sentence. · ✔ Two boys are riding bikes. · extra tiles: is, ride · picture: bicycle
+  - prompt: Build the sentence. → Build it!
 - **Q13 new** (right or wrong): Is this sentence right?
   - "The rabbit is jump."
   - ✔ Not right
@@ -178,7 +183,8 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
   - The cows dancing.
   - The cows is dancing.
   - picture: cow
-  - was: A robot wrote these. Which one is right? · ✔ The girls are dancing. · The girls dancing. · The girls is dancing. · picture: woman-dancing
+  - was: Pick the right sentence. · ✔ The girls are dancing. · The girls dancing. · The girls is dancing. · picture: woman-dancing
+  - prompt: Pick the right sentence. → Pick the sentence that sounds right.
 - **Q13 new** (tap them all): Tap every word that needs a capital letter.
   - [✔ nova] and [✔ theo] like pizza.
   - picture: pizza
@@ -228,8 +234,8 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
 
 | Old prompt | New prompt | How many |
 |---|---|---|
+| Build the sentence. | Make a sentence from the tiles. | 3 |
 | Build the sentence. | Put the words in order. | 3 |
-| Build the sentence. | Make a sentence from the tiles. | 2 |
 | Build the sentence. | Tap the tiles in order. | 2 |
 | Pick the right sentence. | A robot wrote these. Which one is right? | 2 |
 | Pick the right sentence. | Tap the sentence with no mistakes. | 2 |
@@ -242,13 +248,14 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
 | Right or wrong? | Which ones are right? Sort them. (and the box Wrong → Not right) | 1 |
 | Sort the words. | Put each word in its box. | 1 |
 | Which sentence is right? | One of these is right. Tap it. | 1 |
+| Which sentence is right? | Which one is right? | 1 |
 
 The prompts in order, so you can see they take turns ("same" means it did not change):
 
 - **Week 1 · A or an?:** Q1 Tap the sentence with no mistakes. · Q2 One of these is right. Tap it. · Q3 Which sentence is right? (same) · Q10 Tap the tiles in order. · Q11 What does this say? Put it in order. · Q12 Put each word in its box.
 - **Week 1 · A, an, or the?:** Q1 Tap the sentence with no mistakes. · Q2 One of these is right. Tap it. · Q3 Which sentence is right? · Q10 Build the sentence. (same) · Q11 Put the words in order. · Q12 Which ones are right? Sort them.
-- **Week 1 · There is, there are:** Q1 Which one is right? · Q2 Pick the sentence that sounds right. · Q3 A robot wrote these. Which one is right? · Q10 Put the words in order. · Q11 Make a sentence from the tiles. (same)
-- **Week 1 · Is, are, was, were:** Q1 Which sentence is right? · Q2 Which one is right? (same) · Q3 Pick the sentence that sounds right. · Q10 Put the words in order. · Q11 Make a sentence from the tiles.
+- **Week 1 · There is, there are:** Q1 Which one is right? · Q2 Pick the sentence that sounds right. · Q3 A robot wrote these. Which one is right? · Q10 Put the words in order. · Q11 Make a sentence from the tiles.
+- **Week 1 · Is, are, was, were:** Q1 Which sentence is right? · Q2 Which one is right? · Q3 Pick the sentence that sounds right. · Q10 Put the words in order. · Q11 Make a sentence from the tiles.
 - **Week 1 · Mixed review:** Q1 Which one is right? · Q2 Pick the sentence that sounds right. · Q3 A robot wrote these. Which one is right? · Q10 Make a sentence from the tiles. · Q11 Tap the tiles in order.
 
 ### Read: new and silly
@@ -278,7 +285,7 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
 - **Q9 silly** (find and fix): Pip is eating a banana in ~~bathtub.~~ [✔ the bathtub.]
   - other fixes: two bathtub., an bathtub.
   - picture: bathtub
-  - was: Theo is eating a banana in ~~kitchen.~~ [✔ the kitchen.] · other fixes: two kitchen., an kitchen. · picture: banana
+  - was: Tom is eating a banana in ~~kitchen.~~ [✔ the kitchen.] · other fixes: two kitchen., an kitchen. · picture: banana
 - **Q13 new** (right or wrong): Is this sentence right?
   - "Blobby has an big hat."
   - ✔ Not right
@@ -300,7 +307,8 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
   - ✔ There is an elephant in my lunchbox.
   - extra tiles: are
   - picture: elephant
-  - was: ✔ There is an egg in my lunchbox. · extra tiles: are · picture: egg
+  - was: Build the sentence. · ✔ There is an egg in my lunchbox. · extra tiles: are · picture: egg
+  - prompt: Build the sentence. → Make a sentence from the tiles.
 - **Q13 new** (right or wrong): Is this sentence right?
   - "There is a frog in the pond."
   - ✔ Right
@@ -322,7 +330,8 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
   - ✔ The ducks are playing tag.
   - The ducks playing tag.
   - picture: duck
-  - was: The kids is playing tag. · ✔ The kids are playing tag. · The kids playing tag. · picture: child
+  - was: Which sentence is right? · The kids is playing tag. · ✔ The kids are playing tag. · The kids playing tag. · picture: child
+  - prompt: Which sentence is right? → Which one is right?
 - **Q13 new** (right or wrong): Is this sentence right?
   - "Last night, the moon were very big."
   - ✔ Not right
@@ -405,9 +414,9 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
 
 | Old prompt | New prompt | How many |
 |---|---|---|
+| Build the sentence. | What does this say? Put it in order. | 4 |
 | Which sentence is right? | Which one would your teacher write? | 4 |
 | Build the sentence. | Build it! | 3 |
-| Build the sentence. | What does this say? Put it in order. | 3 |
 | Which sentence is right? | One of these is right. Tap it. | 3 |
 | Which sentence is right? | A robot wrote these. Which one is right? | 2 |
 | Which sentence is right? | Tap the sentence with no mistakes. | 2 |
@@ -423,7 +432,7 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
 - **Week 1 · Tricky past verbs:** Q1 Pick the sentence that sounds right. · Q2 A robot wrote these. Which one is right? · Q3 Which one would your teacher write? · Q10 Tap the tiles in order. · Q11 What does this say? Put it in order.
 - **Week 1 · Keep the story in the past:** Q2 A robot wrote these. Which one is right? · Q3 Which one would your teacher write? · Q10 What does this say? Put it in order. · Q11 Build it!
 - **Week 1 · A, the, and he/she + -s:** Q1 Which one would your teacher write? · Q2 Tap the sentence with no mistakes. · Q3 One of these is right. Tap it. · Q10 Put the words in order. · Q11 Make a sentence from the tiles.
-- **Week 1 · Mix it up!:** Q1 One of these is right. Tap it. · Q2 Which sentence is right? (same) · Q3 Which one is right? · Q10 What does this say? Put it in order. (same) · Q11 Build it!
+- **Week 1 · Mix it up!:** Q1 One of these is right. Tap it. · Q2 Which sentence is right? (same) · Q3 Which one is right? · Q10 What does this say? Put it in order. · Q11 Build it!
 
 ### Read: new and silly
 
@@ -454,7 +463,7 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
 - **Q6 silly** (fill the blank): Grandma threw a pancake, and Grandpa [✔ caught] it with his hat.
   - other choices: catched, catch
   - picture: pancakes
-  - was: Finn threw the ball, and Milo [✔ caught] it with one hand. · other choices: catched, catch · picture: baseball
+  - was: Sam threw the ball, and Leo [✔ caught] it with one hand. · other choices: catched, catch · picture: baseball
 - **Q13 new** (match pairs): Match each verb to its past tense.
   - fly → flew
   - sing → sang
@@ -476,7 +485,7 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
 - **Q5 silly** (fill the blank): The cow looked for her phone, but she didn't [✔ find] it anywhere.
   - other choices: found, finds
   - picture: cow
-  - was: Finn looked for his pencil, but he didn't [✔ find] it anywhere. · other choices: found, finds · picture: pencil
+  - was: Jun looked for his pencil, but he didn't [✔ find] it anywhere. · other choices: found, finds · picture: pencil
 - **Q13 new** (odd one out): Three of these are right. Which one is not?
   - didn't climb
   - ✔ didn't drew
@@ -497,7 +506,7 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
 - **Q6 silly** (fill the blank): The penguin always [✔ takes] the bus because he lives far away.
   - other choices: take, taked
   - picture: penguin
-  - was: Milo always [✔ takes] the bus because he lives far away. · other choices: take, taked · picture: bus
+  - was: Leo always [✔ takes] the bus because he lives far away. · other choices: take, taked · picture: bus
 - **Q8 name changed** (find and fix): Every morning, Mr. Bell ~~open~~ [✔ opens] the library and waters the plants.
   - other fixes: opened, opening
   - picture: potted-plant
@@ -525,7 +534,8 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
   - ✔ The dinosaur didn't eat his carrots at dinner.
   - extra tiles: ate
   - picture: sauropod
-  - was: ✔ Finn didn't eat his carrots at dinner. · extra tiles: ate · picture: carrot
+  - was: Build the sentence. · ✔ Sam didn't eat his carrots at dinner. · extra tiles: ate · picture: carrot
+  - prompt: Build the sentence. → What does this say? Put it in order.
 - **Q13 new** (right or wrong): Is this sentence right?
   - "Yesterday, Otto didn't go to school because he was sick."
   - ✔ Right
@@ -591,9 +601,9 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
 | Build the sentence. | What does this say? Put it in order. | 4 |
 | Build the sentence. | Tap the tiles in order. | 3 |
 | Which sentence is right? | One of these is right. Tap it. | 3 |
+| Build the sentence. | Build it! | 2 |
 | Which sentence is right? | A robot wrote these. Which one is right? | 2 |
 | Which sentence is right? | Which one would your teacher write? | 2 |
-| Build the sentence. | Build it! | 1 |
 | Is it right or wrong? Sort the words. | Which ones are right? Sort them. (and the box Wrong → Not right) | 1 |
 | Sort the words. | Put each word in its box. | 1 |
 | Which sentence is right? | Pick the sentence that sounds right. | 1 |
@@ -604,7 +614,7 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
 
 - **Week 1 · Yesterday with -ed:** Q1 One of these is right. Tap it. · Q2 Which sentence is right? (same) · Q3 Which one is right? · Q10 Build it! · Q11 Build the sentence. (same)
 - **Week 1 · Tricky past verbs:** Q1 Pick the sentence that sounds right. · Q2 A robot wrote these. Which one is right? · Q3 Which one would your teacher write? · Q10 Tap the tiles in order. · Q11 What does this say? Put it in order.
-- **Week 1 · Keep the story in the past:** Q2 A robot wrote these. Which one is right? · Q10 What does this say? Put it in order. · Q11 Build it! (same)
+- **Week 1 · Keep the story in the past:** Q2 A robot wrote these. Which one is right? · Q10 What does this say? Put it in order. · Q11 Build it!
 - **Week 1 · More than one, bigger, best:** Q1 Which one would your teacher write? · Q2 Tap the sentence with no mistakes. · Q3 One of these is right. Tap it. · Q10 Tap the tiles in order. · Q11 What does this say? Put it in order. · Q12 Put each word in its box.
 - **Week 1 · Big review:** Q1 One of these is right. Tap it. · Q3 Which sentence is right? (same) · Q10 Tap the tiles in order. · Q11 What does this say? Put it in order. · Q12 Which ones are right? Sort them.
 
@@ -660,7 +670,8 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
   - ✔ The bell rang, and the penguins ran outside.
   - extra tiles: run
   - picture: penguin
-  - was: ✔ The bell rang, and the children ran outside. · extra tiles: run · picture: bell
+  - was: Build the sentence. · ✔ The bell rang, and the children ran outside. · extra tiles: run · picture: bell
+  - prompt: Build the sentence. → Build it!
 - **Q13 new** (match pairs): Match each one to its past tense.
   - stand up → stood up
   - get up → got up
@@ -700,7 +711,8 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
 - **Q4 silly** (fill the blank): Zara [✔ threw] the pizza high, and it landed on the roof.
   - other choices: throw, throwed, thrown
   - picture: pizza
-  - was: Zara [✔ threw] the ball high, and it landed on the roof. · other choices: throw, throwed, thrown · picture: soccer-ball
+  - was: Stella [✔ threw] the ball high, and it landed on the roof. · other choices: throw, throwed, thrown · picture: soccer-ball
+  - names: Stella → Zara
 - **Q13 new** (odd one out): Three of these are right. Which one is not?
   - louder
   - more careful
@@ -832,7 +844,7 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
 
 - **Q4 silly** (fill the blank): The cat is [✔ drawing] a picture.
   - other choices: draw, draws
-  - was: Ruby is [✔ drawing] a picture. · other choices: draw, draws
+  - was: Mina is [✔ drawing] a picture. · other choices: draw, draws
 - **Q11 new** (right or wrong): Is this sentence right?
   - "The pig is ride a bike."
   - ✔ Not right
@@ -862,7 +874,7 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
 
 - **Q5 silly** (fill the blank): The cow [✔ walks] to school.
   - other choices: walk, walking
-  - was: Ruby [✔ walks] to school. · other choices: walk, walking
+  - was: Mina [✔ walks] to school. · other choices: walk, walking
 - **Q11 new** (right or wrong): Is this sentence right?
   - "Pip sleeps on my bed."
   - ✔ Right
@@ -879,7 +891,7 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
 
 - **Q5 silly** (fill the blank): Yesterday, Pip [✔ went] to the store.
   - other choices: goes, go
-  - was: Yesterday, Finn [✔ went] to the store. · other choices: goes, go
+  - was: Yesterday, Sam [✔ went] to the store. · other choices: goes, go
 - **Q11 new** (match pairs): Match each word to its past tense.
   - sit → sat
   - sing → sang
@@ -993,7 +1005,7 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
 | Which sentence is right? | Tap the sentence with no mistakes. | 2 |
 | Which sentence is right? | Which one would your teacher write? | 2 |
 | Build the sentence. | Build it! | 1 |
-| Is the sentence right? | Which ones are right? Sort them. (and the box Wrong → Not right) | 1 |
+| Is the sentence right? | Which ones are right? Sort them. (and the box wrong → not right) | 1 |
 | Pick the right sentence. | One of these is right. Tap it. | 1 |
 | Pick the right sentence. | Tap the one with capitals and periods in the right places. (by hand) | 1 |
 | Pick the right sentence. | Tap the sentence with no mistakes. | 1 |
@@ -1030,7 +1042,7 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
 
 - **Q5 silly** (fill the blank): The hippo [✔ brushes] his teeth every night.
   - other choices: brush, brushing
-  - was: Otto [✔ brushes] his teeth every night. · other choices: brush, brushing
+  - was: Ben [✔ brushes] his teeth every night. · other choices: brush, brushing
 - **Q11 new** (tap them all): Tap every word that needs an s.
   - Zara [✔ sing] and Milo [✔ dance] every day.
 
@@ -1038,7 +1050,8 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
 
 - **Q7 silly** (find and fix): Nova saw 4 ~~cow~~ [✔ cows] in the pool.
   - other fixes: cowes, cow's
-  - was: Nova saw 4 ~~girl~~ [✔ girls] at the pool. · other fixes: girles, girl's
+  - was: Mia saw 4 ~~girl~~ [✔ girls] at the pool. · other fixes: girles, girl's
+  - names: Mia → Nova
 - **Q11 new** (match pairs): Match each word to the word for more than one.
   - mouse → mice
   - man → men
@@ -1055,7 +1068,7 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
 
 - **Q4 silly** (fill the blank): Last week, the frog [✔ fixed] his toy car.
   - other choices: fix, fixing
-  - was: Last week, Finn [✔ fixed] his toy car. · other choices: fix, fixing
+  - was: Last week, Sam [✔ fixed] his toy car. · other choices: fix, fixing
 - **Q11 new** (odd one out): Three of these can finish "Yesterday, I ...". Which one cannot?
   - jumped high
   - sang a song
@@ -1077,7 +1090,7 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
 
 - **Q4 silly** (fill the blank): Pip wore mittens [✔ because] it was cold.
   - other choices: because of, or
-  - was: Finn closed the window [✔ because] it was cold. · other choices: because of, or
+  - was: Sam closed the window [✔ because] it was cold. · other choices: because of, or
 - **Q11 new** (right or wrong): Is this sentence right?
   - "Zara was sad because her kite broke."
   - ✔ Right
@@ -1219,7 +1232,8 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
 
 - **Q4 silly** (fill the blank): Ruby saw [✔ a] huge octopus in the tree outside her window.
   - other choices: an
-  - was: Ruby saw [✔ a] huge owl in the tree outside her window. · other choices: an
+  - was: Mina saw [✔ a] huge owl in the tree outside her window. · other choices: an
+  - names: Mina → Ruby
 - **Q11 new** (right or wrong): Is this sentence right?
   - "Grandpa gave me an old map of the island."
   - ✔ Right
@@ -1236,7 +1250,7 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
 
 - **Q5 silly** (fill the blank): Last year, Pip [✔ became] the best reader in our class.
   - other choices: becomed, become
-  - was: Last year, Finn [✔ became] the best reader in our class. · other choices: becomed, become
+  - was: Last year, Sam [✔ became] the best reader in our class. · other choices: becomed, become
 - **Q11 new** (match pairs): Match each verb to its past tense.
   - plan → planned
   - plant → planted
@@ -1258,7 +1272,7 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
 
 - **Q6 silly** (fill the blank): The duck [✔ catches] the bus to school every morning.
   - other choices: catchs, catch
-  - was: Finn [✔ catches] the bus to school every morning. · other choices: catchs, catch
+  - was: Jun [✔ catches] the bus to school every morning. · other choices: catchs, catch
 - **Q11 new** (tap them all): Tap every word that needs an s.
   - Every Saturday, Theo [✔ clean] his room and Zara [✔ feed] the fish.
 
@@ -1391,7 +1405,7 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
 
 - **Q5 silly** (fill the blank): Pip wore [✔ a] uniform to the soccer game.
   - other choices: an, two
-  - was: Finn wore [✔ a] uniform to the soccer game. · other choices: an, two
+  - was: Sam wore [✔ a] uniform to the soccer game. · other choices: an, two
 - **Q11 new** (odd one out): Three of these go with "an". Which one does not?
   - honest girl
   - empty box
@@ -1402,7 +1416,7 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
 
 - **Q5 silly** (fill the blank): The bear borrowed his [✔ brother's] bike for the race.
   - other choices: brothers, brother
-  - was: Finn borrowed his [✔ brother's] bike for the race. · other choices: brothers, brother
+  - was: Sam borrowed his [✔ brother's] bike for the race. · other choices: brothers, brother
 - **Q11 new** (tap them all): Tap every word that needs an apostrophe.
   - [✔ Zaras] two kittens sleep on [✔ Dads] big chair.
 
@@ -1435,7 +1449,8 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
 
 - **Q4 silly** (fill the blank): Milo [✔ threw] the pancake over the fence, and it landed in a garden.
   - other choices: throw, throwed
-  - was: Milo [✔ threw] the ball over the fence, and it landed in a garden. · other choices: throw, throwed
+  - was: Leo [✔ threw] the ball over the fence, and it landed in a garden. · other choices: throw, throwed
+  - names: Leo → Milo
 - **Q11 new** (odd one out): Three of these are right past tense verbs. Which one is not?
   - bought
   - ✔ teached
@@ -1452,7 +1467,7 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
 
 - **Q6 silly** (fill the blank): Look! Pip and a crab [✔ are building] a sandcastle on the beach.
   - other choices: is building, building
-  - was: Look! Finn and Milo [✔ are building] a sandcastle on the beach. · other choices: is building, building
+  - was: Look! Sam and Leo [✔ are building] a sandcastle on the beach. · other choices: is building, building
 - **Q11 new** (odd one out): Three of these are right. Which one is not?
   - the ducks that are swimming
   - the cat that is hiding

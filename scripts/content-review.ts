@@ -16,15 +16,18 @@ const INTRO = `# Content pass, Nov 26: what changed
 Kyla, this is everything that changed in the eight content files (test weeks and review banks, Grades 1 to 4)
 before you load them. Each file has three parts:
 
-- **Skim: names.** Questions where only the names changed (Mia → Nova and so on). One line each, showing
-  the right answer. A quick look is enough: about 5 minutes for all eight files.
+- **Skim: names.** Questions whose names changed (Mia → Nova and so on). One line each, showing the
+  right answer. Some of them also got a new prompt and are in both skim sections. A quick look is enough:
+  about 5 minutes for all eight files.
 - **Skim: prompts.** The instructions at the top of a question ("Which one is right?"). A table of old → new
-  with how many times, then the new prompts in order for each lesson, so you can see they take turns. Most
+  with how many times, then each lesson's prompts in order, so you can see they take turns. Most
   are the fixed rotation; ones marked "(by hand)" were written for that question. About 5 minutes.
 - **Read: new and silly.** The questions to read properly: each **new** question (Q13 to Q15 in every
-  test-week lesson, Q11 in every review-bank skill) and each **silly** rewrite (same grammar, sillier scene),
-  with what it was before. The right answer is marked ✔ and the picture is named. "picture unchanged, check
-  it" means the words changed but the picture did not. This is the longer part: about 30 to 40 minutes.
+  test-week lesson, Q11 in every review-bank skill) and each **silly** rewrite (same grammar, sillier scene).
+  Under a rewrite, "was:" is the question as it is in the app today, before this pass, and a "names:" or
+  "prompt:" line lists the name or prompt changes it also got. Two are marked "name changed": a teacher's
+  name changed, not the scene. The right answer is marked ✔ and the picture is named. "picture unchanged,
+  check it" means the words changed but the picture did not. This is the longer part: about 30 to 40 minutes.
 
 Q numbers are positions in the lesson or skill. If anything is off, fix it in the app's editor after
 loading, or tell Claude what to change.
@@ -52,7 +55,7 @@ for (const file of FILES) {
     const base = b.get();
     const passed = passRawQuestions(base, b.seed, b.skill).questions;
     const asQuestions = (qs: RawQuestion[]) => qs as unknown as Question[];
-    return { label: g.label, changes: classifyChanges(asQuestions(passed), asQuestions(g.get()), asQuestions(base)), questions: asQuestions(g.get()) };
+    return { label: g.label, changes: classifyChanges(asQuestions(passed), asQuestions(g.get()), asQuestions(base)), questions: asQuestions(g.get()), base: asQuestions(base) };
   });
   const c = countChanges(groups);
   (Object.keys(total) as (keyof ReviewCounts)[]).forEach((k) => { total[k] += c[k]; });

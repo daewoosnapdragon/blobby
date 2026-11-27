@@ -58,6 +58,11 @@ describe('content shape after the content pass', () => {
     expect(all.filter(({ q }) => /\bwrong\b/i.test(q.prompt ?? '')).map((s) => `${s.where}: ${s.q.prompt}`)).toEqual([]);
   });
 
+  it('no sort-it group label says "wrong"', () => {
+    const labels = all.flatMap(({ where, q }) => (q.type === 'sort_it' ? (q.groups as string[]).filter((g) => /\bwrong\b/i.test(g)).map((g) => `${where}: ${g}`) : []));
+    expect(labels).toEqual([]);
+  });
+
   it('no old cast name is left anywhere', () => {
     const old = /\b(Mia|Mina|Stella|Leo|Ben|Sam|Jun|Tom)(s|'s|s')?\b/gi;
     for (const { file } of [...plans, ...banks]) {
