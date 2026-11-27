@@ -448,16 +448,16 @@
             {
               "type": "right_wrong",
               "skill": "be",
-              "sentence": "Dad and Grandpa is on the bus.",
+              "sentence": "Dad and Grandpa is at home.",
               "right": false,
-              "picture": "bus"
+              "picture": "house"
             },
             {
               "type": "odd_one_out",
               "skill": "be",
               "prompt": "Three of these go with \"is\". Which one does not?",
               "words": [
-                "my sister",
+                "my big sister",
                 "Theo",
                 "Finn and Zara",
                 "the teacher"
@@ -946,7 +946,7 @@
               "skill": "ing",
               "prompt": "Three of these are right. Which one is not?",
               "words": [
-                "is jumping",
+                "is cooking",
                 "is sing",
                 "is eating",
                 "is drawing"
