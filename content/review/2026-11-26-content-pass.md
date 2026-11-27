@@ -275,10 +275,10 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
   - ✔ This is an octopus.
   - picture: octopus
 - **Q15 new** (odd one out): Three of these go with "an". Which one does not?
-  - apple
-  - egg
+  - eye
+  - arm
   - ✔ kite
-  - owl
+  - ear
 
 #### Week 1 · A, an, or the?
 
@@ -296,9 +296,9 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
   - Look at rainbow!
   - picture: rainbow
 - **Q15 new** (odd one out): Which one has a mistake?
-  - the sky
-  - an egg
-  - a hat
+  - the park
+  - an ant
+  - a bird
   - ✔ a owl
 
 #### Week 1 · There is, there are
@@ -521,7 +521,7 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
   - picture: dog
 - **Q15 new** (odd one out): Three of these go with "loves pizza". Which one does not?
   - Zara
-  - the cat
+  - the little cat
   - Blobby
   - ✔ the children
 

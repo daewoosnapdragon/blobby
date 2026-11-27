@@ -232,10 +232,10 @@
               "skill": "articles",
               "prompt": "Three of these go with \"an\". Which one does not?",
               "words": [
-                "apple",
-                "egg",
+                "eye",
+                "arm",
                 "kite",
-                "owl"
+                "ear"
               ],
               "answer": 2
             }
@@ -469,9 +469,9 @@
               "skill": "articles",
               "prompt": "Which one has a mistake?",
               "words": [
-                "the sky",
-                "an egg",
-                "a hat",
+                "the park",
+                "an ant",
+                "a bird",
                 "a owl"
               ],
               "answer": 3
