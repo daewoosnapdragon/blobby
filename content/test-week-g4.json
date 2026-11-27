@@ -69,7 +69,7 @@
             {
               "type": "fill_blank",
               "skill": "past-tense",
-              "before": "The car",
+              "before": "The big brown bear",
               "after": "at the red light, and everyone waited.",
               "choices": [
                 "stoped",
@@ -77,7 +77,7 @@
                 "stopping"
               ],
               "answer": 1,
-              "picture": "automobile"
+              "picture": "bear"
             },
             {
               "type": "fill_blank",
@@ -238,6 +238,52 @@
                   "group": 2
                 }
               ]
+            },
+            {
+              "type": "odd_one_out",
+              "skill": "past-tense",
+              "prompt": "Three of these are spelled the right way. Which one is not?",
+              "words": [
+                "chatted",
+                "copied",
+                "shoped",
+                "rained"
+              ],
+              "answer": 2
+            },
+            {
+              "type": "right_wrong",
+              "skill": "past-tense",
+              "sentence": "Last Saturday, Blobby buryed a cookie in the garden.",
+              "right": false,
+              "picture": "cookie"
+            },
+            {
+              "type": "match_pairs",
+              "skill": "past-tense",
+              "prompt": "Match each verb to its past tense.",
+              "pairs": [
+                {
+                  "left": "skip",
+                  "right": "skipped"
+                },
+                {
+                  "left": "worry",
+                  "right": "worried"
+                },
+                {
+                  "left": "enjoy",
+                  "right": "enjoyed"
+                },
+                {
+                  "left": "fix",
+                  "right": "fixed"
+                },
+                {
+                  "left": "hope",
+                  "right": "hoped"
+                }
+              ]
             }
           ]
         },
@@ -298,14 +344,14 @@
               "type": "fill_blank",
               "skill": "irregular-past",
               "before": "Grandpa",
-              "after": "a birdhouse, and we painted it blue.",
+              "after": "a bed for the elephant, and we painted it blue.",
               "choices": [
                 "builded",
                 "build",
                 "built"
               ],
               "answer": 2,
-              "picture": "bird"
+              "picture": "elephant"
             },
             {
               "type": "fill_blank",
@@ -467,6 +513,52 @@
                   "group": 0
                 }
               ]
+            },
+            {
+              "type": "right_wrong",
+              "skill": "irregular-past",
+              "sentence": "Yesterday, Zara wrote a song and sang it for Grandpa.",
+              "right": true,
+              "picture": "musical-notes"
+            },
+            {
+              "type": "match_pairs",
+              "skill": "irregular-past",
+              "prompt": "Match each verb to its past tense.",
+              "pairs": [
+                {
+                  "left": "wear",
+                  "right": "wore"
+                },
+                {
+                  "left": "freeze",
+                  "right": "froze"
+                },
+                {
+                  "left": "shake",
+                  "right": "shook"
+                },
+                {
+                  "left": "lend",
+                  "right": "lent"
+                },
+                {
+                  "left": "blow",
+                  "right": "blew"
+                }
+              ]
+            },
+            {
+              "type": "odd_one_out",
+              "skill": "irregular-past",
+              "prompt": "Three of these are right past tense verbs. Which one is not?",
+              "words": [
+                "spoke",
+                "digged",
+                "grew",
+                "hugged"
+              ],
+              "answer": 1
             }
           ]
         },
@@ -665,14 +757,14 @@
                 "rang,",
                 "and",
                 "the",
-                "children",
+                "penguins",
                 "ran",
                 "outside."
               ],
               "distractors": [
                 "run"
               ],
-              "picture": "bell"
+              "picture": "penguin"
             },
             {
               "type": "sort_it",
@@ -708,6 +800,48 @@
                   "group": 1
                 }
               ]
+            },
+            {
+              "type": "match_pairs",
+              "skill": "irregular-past",
+              "prompt": "Match each one to its past tense.",
+              "pairs": [
+                {
+                  "left": "sit down",
+                  "right": "sat down"
+                },
+                {
+                  "left": "stand up",
+                  "right": "stood up"
+                },
+                {
+                  "left": "get up",
+                  "right": "got up"
+                },
+                {
+                  "left": "come in",
+                  "right": "came in"
+                }
+              ]
+            },
+            {
+              "type": "odd_one_out",
+              "skill": "irregular-past",
+              "prompt": "Three of these can finish \"Yesterday morning, I ...\". Which one cannot?",
+              "words": [
+                "fed the fish",
+                "ate some toast",
+                "packed my bag",
+                "catch the bus"
+              ],
+              "answer": 3
+            },
+            {
+              "type": "right_wrong",
+              "skill": "past-tense",
+              "sentence": "Last night, Dad read me a story and turns off the light.",
+              "right": false,
+              "picture": "closed-book"
             }
           ]
         },
@@ -801,7 +935,7 @@
                 "There",
                 "were",
                 "three",
-                "student",
+                "frog",
                 "in",
                 "the",
                 "art",
@@ -809,12 +943,12 @@
               ],
               "wrongIndex": 3,
               "fixes": [
-                "students",
-                "student's",
-                "studentes"
+                "frogs",
+                "frog's",
+                "froges"
               ],
               "answer": 0,
-              "picture": "artist-palette"
+              "picture": "frog"
             },
             {
               "type": "find_fix",
@@ -939,6 +1073,59 @@
                   "group": 1
                 }
               ]
+            },
+            {
+              "type": "picture_first",
+              "skill": "irregular-plurals",
+              "picture": "goose",
+              "prompt": "Which sentence is right?",
+              "choices": [
+                "There are three gooses in the pond.",
+                "There are three geese in the pond.",
+                "There are three geeses in the pond."
+              ],
+              "answer": 1
+            },
+            {
+              "type": "match_pairs",
+              "skill": "comparatives",
+              "prompt": "Match each word to its \"-er\" form.",
+              "pairs": [
+                {
+                  "left": "hot",
+                  "right": "hotter"
+                },
+                {
+                  "left": "funny",
+                  "right": "funnier"
+                },
+                {
+                  "left": "wide",
+                  "right": "wider"
+                },
+                {
+                  "left": "sad",
+                  "right": "sadder"
+                }
+              ]
+            },
+            {
+              "type": "tap_all",
+              "skill": "plurals",
+              "prompt": "Tap every word that means more than one.",
+              "words": [
+                "wolves",
+                "bus",
+                "dishes",
+                "leaf",
+                "women",
+                "glass"
+              ],
+              "answers": [
+                0,
+                2,
+                4
+              ]
             }
           ]
         },
@@ -987,7 +1174,7 @@
               "type": "fill_blank",
               "skill": "irregular-past",
               "before": "Zara",
-              "after": "the ball high, and it landed on the roof.",
+              "after": "the pizza high, and it landed on the roof.",
               "choices": [
                 "throw",
                 "threw",
@@ -995,7 +1182,7 @@
                 "thrown"
               ],
               "answer": 1,
-              "picture": "soccer-ball"
+              "picture": "pizza"
             },
             {
               "type": "fill_blank",
@@ -1167,6 +1354,37 @@
                   "group": 1
                 }
               ]
+            },
+            {
+              "type": "odd_one_out",
+              "skill": "comparatives",
+              "prompt": "Three of these are right. Which one is not?",
+              "words": [
+                "louder",
+                "more careful",
+                "thiner",
+                "happier"
+              ],
+              "answer": 2
+            },
+            {
+              "type": "picture_first",
+              "skill": "plurals",
+              "picture": "peach",
+              "prompt": "Which sentence is right?",
+              "choices": [
+                "Pip hid three peaches in his bed.",
+                "Pip hid three peachs in his bed.",
+                "Pip hid three peach in his bed."
+              ],
+              "answer": 0
+            },
+            {
+              "type": "right_wrong",
+              "skill": "irregular-past",
+              "sentence": "Last week, Ruby lost a tooth and put it under her pillow.",
+              "right": true,
+              "picture": "tooth"
             }
           ]
         }

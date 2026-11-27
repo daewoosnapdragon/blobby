@@ -53,7 +53,7 @@
             {
               "type": "fill_blank",
               "skill": "past-tense",
-              "before": "The bus",
+              "before": "The giant turtle",
               "after": "at the corner, and we got on.",
               "choices": [
                 "stoped",
@@ -61,7 +61,7 @@
                 "stopping"
               ],
               "answer": 1,
-              "picture": "bus"
+              "picture": "turtle"
             },
             {
               "type": "fill_blank",
@@ -227,6 +227,52 @@
                   "group": 2
                 }
               ]
+            },
+            {
+              "type": "right_wrong",
+              "skill": "past-tense",
+              "sentence": "Last night, Blobby carryed a big cake up the stairs.",
+              "right": false,
+              "picture": "birthday-cake"
+            },
+            {
+              "type": "odd_one_out",
+              "skill": "past-tense",
+              "prompt": "Three of these are spelled the right way. Which one is not?",
+              "words": [
+                "hugged",
+                "tried",
+                "grabed",
+                "rested"
+              ],
+              "answer": 2
+            },
+            {
+              "type": "match_pairs",
+              "skill": "past-tense",
+              "prompt": "Match each verb to its past tense.",
+              "pairs": [
+                {
+                  "left": "beg",
+                  "right": "begged"
+                },
+                {
+                  "left": "fry",
+                  "right": "fried"
+                },
+                {
+                  "left": "bake",
+                  "right": "baked"
+                },
+                {
+                  "left": "mix",
+                  "right": "mixed"
+                },
+                {
+                  "left": "nod",
+                  "right": "nodded"
+                }
+              ]
             }
           ]
         },
@@ -297,15 +343,15 @@
             {
               "type": "fill_blank",
               "skill": "irregular-past",
-              "before": "Finn threw the ball, and Milo",
-              "after": "it with one hand.",
+              "before": "Grandma threw a pancake, and Grandpa",
+              "after": "it with his hat.",
               "choices": [
                 "catched",
                 "catch",
                 "caught"
               ],
               "answer": 2,
-              "picture": "baseball"
+              "picture": "pancakes"
             },
             {
               "type": "find_fix",
@@ -449,6 +495,52 @@
                   "group": 0
                 }
               ]
+            },
+            {
+              "type": "match_pairs",
+              "skill": "irregular-past",
+              "prompt": "Match each verb to its past tense.",
+              "pairs": [
+                {
+                  "left": "fly",
+                  "right": "flew"
+                },
+                {
+                  "left": "sing",
+                  "right": "sang"
+                },
+                {
+                  "left": "sleep",
+                  "right": "slept"
+                },
+                {
+                  "left": "give",
+                  "right": "gave"
+                },
+                {
+                  "left": "win",
+                  "right": "won"
+                }
+              ]
+            },
+            {
+              "type": "right_wrong",
+              "skill": "irregular-past",
+              "sentence": "Last summer, Grandpa taught me how to ride a bike.",
+              "right": true,
+              "picture": "bicycle"
+            },
+            {
+              "type": "odd_one_out",
+              "skill": "irregular-past",
+              "prompt": "Three of these are right past tense verbs. Which one is not?",
+              "words": [
+                "maked",
+                "drove",
+                "painted",
+                "wrote"
+              ],
+              "answer": 0
             }
           ]
         },
@@ -507,7 +599,7 @@
             {
               "type": "fill_blank",
               "skill": "did-didnt",
-              "before": "Finn looked for his pencil, but he didn't",
+              "before": "The cow looked for her phone, but she didn't",
               "after": "it anywhere.",
               "choices": [
                 "find",
@@ -515,7 +607,7 @@
                 "finds"
               ],
               "answer": 0,
-              "picture": "pencil"
+              "picture": "cow"
             },
             {
               "type": "fill_blank",
@@ -679,6 +771,48 @@
                   "group": 1
                 }
               ]
+            },
+            {
+              "type": "odd_one_out",
+              "skill": "did-didnt",
+              "prompt": "Three of these are right. Which one is not?",
+              "words": [
+                "didn't climb",
+                "didn't drew",
+                "didn't laugh",
+                "didn't wash"
+              ],
+              "answer": 1
+            },
+            {
+              "type": "match_pairs",
+              "skill": "irregular-past",
+              "prompt": "Match each verb to its past tense.",
+              "pairs": [
+                {
+                  "left": "bring",
+                  "right": "brought"
+                },
+                {
+                  "left": "buy",
+                  "right": "bought"
+                },
+                {
+                  "left": "drink",
+                  "right": "drank"
+                },
+                {
+                  "left": "forget",
+                  "right": "forgot"
+                }
+              ]
+            },
+            {
+              "type": "right_wrong",
+              "skill": "past-tense",
+              "sentence": "Yesterday, Milo opened a box, and a tiny frog jumps out.",
+              "right": false,
+              "picture": "frog"
             }
           ]
         },
@@ -750,7 +884,7 @@
             {
               "type": "fill_blank",
               "skill": "third-person-s",
-              "before": "Milo always",
+              "before": "The penguin always",
               "after": "the bus because he lives far away.",
               "choices": [
                 "take",
@@ -758,7 +892,7 @@
                 "takes"
               ],
               "answer": 2,
-              "picture": "bus"
+              "picture": "penguin"
             },
             {
               "type": "find_fix",
@@ -902,6 +1036,53 @@
                   "group": 1
                 }
               ]
+            },
+            {
+              "type": "picture_first",
+              "skill": "articles",
+              "picture": "elephant",
+              "prompt": "Which sentence is right?",
+              "choices": [
+                "At the zoo, Finn saw a elephant.",
+                "At the zoo, Finn saw elephant.",
+                "At the zoo, Finn saw an elephant."
+              ],
+              "answer": 2
+            },
+            {
+              "type": "tap_all",
+              "skill": "third-person-s",
+              "prompt": "Tap every word that needs an s.",
+              "words": [
+                "Every",
+                "afternoon,",
+                "Pip",
+                "sleep",
+                "on",
+                "the",
+                "sofa",
+                "and",
+                "dream",
+                "about",
+                "bones."
+              ],
+              "answers": [
+                3,
+                8
+              ],
+              "picture": "dog"
+            },
+            {
+              "type": "odd_one_out",
+              "skill": "third-person-s",
+              "prompt": "Three of these go with \"loves pizza\". Which one does not?",
+              "words": [
+                "Zara",
+                "Grandma's cat",
+                "Blobby",
+                "the boys"
+              ],
+              "answer": 3
             }
           ]
         },
@@ -1056,7 +1237,8 @@
               "skill": "did-didnt",
               "prompt": "What does this say? Put it in order.",
               "tiles": [
-                "Finn",
+                "The",
+                "rabbit",
                 "didn't",
                 "eat",
                 "his",
@@ -1067,7 +1249,7 @@
               "distractors": [
                 "ate"
               ],
-              "picture": "carrot"
+              "picture": "rabbit"
             },
             {
               "type": "build_it",
@@ -1123,6 +1305,62 @@
                   "group": 1
                 }
               ]
+            },
+            {
+              "type": "right_wrong",
+              "skill": "did-didnt",
+              "sentence": "Yesterday, Otto didn't go to school because he was sick.",
+              "right": true,
+              "picture": "school"
+            },
+            {
+              "type": "match_pairs",
+              "skill": "irregular-past",
+              "prompt": "Match each verb to its past tense.",
+              "pairs": [
+                {
+                  "left": "keep",
+                  "right": "kept"
+                },
+                {
+                  "left": "speak",
+                  "right": "spoke"
+                },
+                {
+                  "left": "wake",
+                  "right": "woke"
+                },
+                {
+                  "left": "hide",
+                  "right": "hid"
+                },
+                {
+                  "left": "lose",
+                  "right": "lost"
+                }
+              ]
+            },
+            {
+              "type": "tap_all",
+              "skill": "third-person-s",
+              "prompt": "Tap every word that needs an s.",
+              "words": [
+                "On",
+                "Sundays,",
+                "Grandma",
+                "bake",
+                "bread",
+                "and",
+                "Grandpa",
+                "clean",
+                "the",
+                "car."
+              ],
+              "answers": [
+                3,
+                7
+              ],
+              "picture": "bread"
             }
           ]
         }
