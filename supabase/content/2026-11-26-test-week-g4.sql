@@ -22,13 +22,13 @@
 -- Safe to run any time: it only reads, it never changes anything.
 -- One list per file: questions in the app whose text is not what the file had
 -- before this edit (for example a teacher edit). PART 2 replaces them.
---   app_text  = the start of the question as it is in the app now
---   file_text = the start of the question as the file had it before (empty if new)
+--   app_text  = the whole question as it is in the app now
+--   file_text = the whole question as the file had it before (empty if new)
 -- No rows means nothing in the app will be lost.
 
 -- Test week · Grade 4: questions in the app that differ from the file before this edit
-select v.wpos as week_position, v.lpos as lesson_position, v.qpos as question_position,
-       left(qq.payload::text, 60) as app_text, left(v.base::jsonb::text, 60) as file_text
+select v.wpos as week_position, l.title as lesson_title, v.qpos as question_position,
+       qq.payload::text as app_text, v.base::jsonb::text as file_text
 from (values
   (1::int, 1::int, 1::int, '{"prompt":"Which sentence is right?","choices":["Mia droped her spoon and picked it up.","Mia drop her spoon and picked it up.","Mia dropped her spoon and pick it up.","Mia dropped her spoon and picked it up."],"answer":3,"picture":"spoon"}'::text),
   (1, 1, 2, '{"prompt":"Which sentence is right?","choices":["Ben carryed the heavy box upstairs.","Ben carried the heavy box upstairs.","Ben caried the heavy box upstairs.","Ben carry the heavy box upstairs."],"answer":1,"picture":"package"}'),
@@ -111,7 +111,7 @@ join wp_weeks w on w.plan_id = p.id and w.position = v.wpos
 join wp_lessons l on l.week_id = w.id and l.position = v.lpos
 join wp_questions qq on qq.lesson_id = l.id and qq.position = v.qpos and qq.deleted_at is null
 where v.base is null or qq.payload <> v.base::jsonb
-order by 1, 2, 3;
+order by v.wpos, v.lpos, v.qpos;
 
 
 -- ############################################################################

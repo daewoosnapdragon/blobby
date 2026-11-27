@@ -22,13 +22,13 @@
 -- Safe to run any time: it only reads, it never changes anything.
 -- One list per file: questions in the app whose text is not what the file had
 -- before this edit (for example a teacher edit). PART 2 replaces them.
---   app_text  = the start of the question as it is in the app now
---   file_text = the start of the question as the file had it before (empty if new)
+--   app_text  = the whole question as it is in the app now
+--   file_text = the whole question as the file had it before (empty if new)
 -- No rows means nothing in the app will be lost.
 
 -- Test week · Grade 1: questions in the app that differ from the file before this edit
-select v.wpos as week_position, v.lpos as lesson_position, v.qpos as question_position,
-       left(qq.payload::text, 60) as app_text, left(v.base::jsonb::text, 60) as file_text
+select v.wpos as week_position, l.title as lesson_title, v.qpos as question_position,
+       qq.payload::text as app_text, v.base::jsonb::text as file_text
 from (values
   (1::int, 1::int, 1::int, '{"prompt":"Pick the right sentence.","choices":["I am happy.","I is happy.","I are happy."],"answer":0}'::text),
   (1, 1, 2, '{"prompt":"Pick the right sentence.","choices":["The dog are big.","The dog am big.","The dog is big."],"answer":2,"picture":"dog"}'),
@@ -111,7 +111,7 @@ join wp_weeks w on w.plan_id = p.id and w.position = v.wpos
 join wp_lessons l on l.week_id = w.id and l.position = v.lpos
 join wp_questions qq on qq.lesson_id = l.id and qq.position = v.qpos and qq.deleted_at is null
 where v.base is null or qq.payload <> v.base::jsonb
-order by 1, 2, 3;
+order by v.wpos, v.lpos, v.qpos;
 
 
 -- ############################################################################
@@ -377,10 +377,10 @@ update wp_questions set type = 'pick_one', payload = '{"prompt":"Which one is ri
   and (type <> 'pick_one' or payload <> '{"prompt":"Which one is right?","choices":["Two children reading.","Two children is reading.","Two children are reading."],"answer":2,"picture":"open-book"}'::jsonb or skill is distinct from 'ing');
 insert into wp_questions (lesson_id, position, type, payload, skill) select (select id from wp_lessons where week_id = (select id from wp_weeks where plan_id = (select id from wp_plans where title = 'Test week · Grade 1') and position = 1) and position = 4), 2, 'pick_one', '{"prompt":"Which one is right?","choices":["Two children reading.","Two children is reading.","Two children are reading."],"answer":2,"picture":"open-book"}'::jsonb, 'ing'
   where not exists (select 1 from wp_questions where lesson_id = (select id from wp_lessons where week_id = (select id from wp_weeks where plan_id = (select id from wp_plans where title = 'Test week · Grade 1') and position = 1) and position = 4) and position = 2);
-update wp_questions set type = 'pick_one', payload = '{"prompt":"Pick the sentence that sounds right.","choices":["Three kids are sitting.","Three kids siting.","Three Kids are sitting.","Three kids is sitting."],"answer":0,"picture":"chair"}'::jsonb, skill = 'ing', updated_at = now()
+update wp_questions set type = 'pick_one', payload = '{"prompt":"Look closely. Which one is written correctly?","choices":["Three kids are sitting.","Three kids siting.","Three Kids are sitting.","Three kids is sitting."],"answer":0,"picture":"chair"}'::jsonb, skill = 'ing', updated_at = now()
   where lesson_id = (select id from wp_lessons where week_id = (select id from wp_weeks where plan_id = (select id from wp_plans where title = 'Test week · Grade 1') and position = 1) and position = 4) and position = 3 and deleted_at is null
-  and (type <> 'pick_one' or payload <> '{"prompt":"Pick the sentence that sounds right.","choices":["Three kids are sitting.","Three kids siting.","Three Kids are sitting.","Three kids is sitting."],"answer":0,"picture":"chair"}'::jsonb or skill is distinct from 'ing');
-insert into wp_questions (lesson_id, position, type, payload, skill) select (select id from wp_lessons where week_id = (select id from wp_weeks where plan_id = (select id from wp_plans where title = 'Test week · Grade 1') and position = 1) and position = 4), 3, 'pick_one', '{"prompt":"Pick the sentence that sounds right.","choices":["Three kids are sitting.","Three kids siting.","Three Kids are sitting.","Three kids is sitting."],"answer":0,"picture":"chair"}'::jsonb, 'ing'
+  and (type <> 'pick_one' or payload <> '{"prompt":"Look closely. Which one is written correctly?","choices":["Three kids are sitting.","Three kids siting.","Three Kids are sitting.","Three kids is sitting."],"answer":0,"picture":"chair"}'::jsonb or skill is distinct from 'ing');
+insert into wp_questions (lesson_id, position, type, payload, skill) select (select id from wp_lessons where week_id = (select id from wp_weeks where plan_id = (select id from wp_plans where title = 'Test week · Grade 1') and position = 1) and position = 4), 3, 'pick_one', '{"prompt":"Look closely. Which one is written correctly?","choices":["Three kids are sitting.","Three kids siting.","Three Kids are sitting.","Three kids is sitting."],"answer":0,"picture":"chair"}'::jsonb, 'ing'
   where not exists (select 1 from wp_questions where lesson_id = (select id from wp_lessons where week_id = (select id from wp_weeks where plan_id = (select id from wp_plans where title = 'Test week · Grade 1') and position = 1) and position = 4) and position = 3);
 update wp_questions set type = 'fill_blank', payload = '{"before":"Milo is","after":"TV.","choices":["watch","watching","watches"],"answer":1,"picture":"television"}'::jsonb, skill = 'ing', updated_at = now()
   where lesson_id = (select id from wp_lessons where week_id = (select id from wp_weeks where plan_id = (select id from wp_plans where title = 'Test week · Grade 1') and position = 1) and position = 4) and position = 4 and deleted_at is null

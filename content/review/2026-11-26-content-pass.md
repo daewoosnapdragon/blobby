@@ -68,14 +68,15 @@ loading, or tell Claude what to change.
 | Build the sentence. | Make a sentence from the tiles. | 2 |
 | Build the sentence. | Tap the tiles in order. | 2 |
 | Build the sentence. | What does this say? Put it in order. | 2 |
-| Pick the right sentence. | Pick the sentence that sounds right. | 2 |
 | Pick the right sentence. | Which sentence is right? | 2 |
 | Sort the words. | Sort them out. | 2 |
 | Sort the words. | Where does each one go? | 2 |
 | Build the sentence. | Put the words in order. | 1 |
 | Is the name written the right way? | Which ones are right? Sort them. (and the box Wrong → Not right) | 1 |
 | Pick the right sentence. | A robot wrote these. Which one is right? | 1 |
+| Pick the right sentence. | Look closely. Which one is written correctly? (by hand) | 1 |
 | Pick the right sentence. | One of these is right. Tap it. | 1 |
+| Pick the right sentence. | Pick the sentence that sounds right. | 1 |
 | Pick the right sentence. | Tap the one with capitals and periods in the right places. (by hand) | 1 |
 | Pick the right sentence. | Which one has the capital letters and periods right? (by hand) | 1 |
 | Pick the right sentence. | Which one would your teacher write? | 1 |
@@ -87,7 +88,7 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
 - **Week 1 · Am, Is, Are:** Q1 One of these is right. Tap it. · Q2 Which sentence is right? · Q3 Which one is right? · Q10 Build it! · Q11 Build the sentence. (same) · Q12 Sort them out.
 - **Week 1 · He, She, We, They:** Q2 A robot wrote these. Which one is right? · Q3 Which one would your teacher write? · Q10 Make a sentence from the tiles. · Q11 Tap the tiles in order. · Q12 Where does each one go?
 - **Week 1 · Capitals and Periods:** Q1 Which one has the capital letters and periods right? · Q2 Tap the one with capitals and periods in the right places. · Q3 Which sentence starts and ends the right way? · Q10 Put the words in order. · Q11 Make a sentence from the tiles. · Q12 Which ones are right? Sort them.
-- **Week 1 · What Is Happening Now?:** Q1 Which sentence is right? · Q2 Which one is right? · Q3 Pick the sentence that sounds right. · Q10 What does this say? Put it in order. · Q11 Build it! · Q12 Where does each one go?
+- **Week 1 · What Is Happening Now?:** Q1 Which sentence is right? · Q2 Which one is right? · Q3 Look closely. Which one is written correctly? · Q10 What does this say? Put it in order. · Q11 Build it! · Q12 Where does each one go?
 - **Week 1 · Big Review:** Q1 Which one is right? · Q2 Which one has the capital letters and periods right? · Q3 Pick the sentence that sounds right. · Q10 Tap the tiles in order. · Q11 What does this say? Put it in order. · Q12 Sort them out.
 
 ### Read: new and silly
@@ -270,7 +271,7 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
   - "Pip found a egg in the garden."
   - ✔ Not right
   - picture: egg
-- **Q14 new** (picture first): Which one matches the picture?
+- **Q14 new** (picture first): Which sentence is right?
   - This is a octopus.
   - ✔ This is an octopus.
   - picture: octopus
@@ -290,7 +291,7 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
   - "Blobby has an big hat."
   - ✔ Not right
   - picture: top-hat
-- **Q14 new** (picture first): Which one matches the picture?
+- **Q14 new** (picture first): Which sentence is right?
   - ✔ Look at the rainbow!
   - Look at an rainbow!
   - Look at rainbow!
@@ -352,7 +353,7 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
   - other choices: a
   - picture: cat
   - was: My aunt is [✔ an] artist. · other choices: a · picture: artist-palette
-- **Q13 new** (picture first): Which one matches the picture?
+- **Q13 new** (picture first): Which sentence is right?
   - This is an kite.
   - This is kite.
   - ✔ This is a kite.
@@ -1173,8 +1174,8 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
 | Old prompt | New prompt | How many |
 |---|---|---|
 | Sort the sentences. | Which ones are right? Sort them. (and the box Wrong → Not right) | 8 |
-| Which sentence is right? | A robot wrote these. Which one is right? | 6 |
 | Which sentence is right? | Pick the sentence that sounds right. | 6 |
+| Which sentence is right? | A robot wrote these. Which one is right? | 5 |
 | Which sentence is right? | Which one would your teacher write? | 4 |
 | Build the sentence. | Tap the tiles in order. | 3 |
 | Which sentence is right? | Which one is right? | 3 |
@@ -1185,6 +1186,7 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
 | Which one is a complete sentence? | Tap the complete sentence. (by hand) | 1 |
 | Which one is a complete sentence? | Which one is a whole sentence? (by hand) | 1 |
 | Which sentence is right? | Which one has the capital letters and periods right? (by hand) | 1 |
+| Which sentence is right? | Which one has the commas and periods right? (by hand) | 1 |
 
 The prompts in order, so you can see they take turns ("same" means it did not change):
 
@@ -1194,7 +1196,7 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
 - **Skill: articles:** Q1 Pick the sentence that sounds right. · Q2 A robot wrote these. Which one is right? · Q3 Which one would your teacher write? · Q9 Build the sentence. (same) · Q10 Which ones are right? Sort them.
 - **Skill: plurals:** Q1 Pick the sentence that sounds right. · Q2 A robot wrote these. Which one is right? · Q3 Which one would your teacher write? · Q9 Make a sentence from the tiles. · Q10 Which ones are right? Sort them.
 - **Skill: past-tense:** Q1 Which sentence is right? (same) · Q2 Which one is right? · Q3 Pick the sentence that sounds right. · Q9 Tap the tiles in order. · Q10 Which ones are right? Sort them.
-- **Skill: sentence-ends:** Q1 Pick the sentence that sounds right. · Q2 Which one has the capital letters and periods right? · Q3 A robot wrote these. Which one is right? · Q9 Tap the tiles in order. · Q10 Which ones are right? Sort them.
+- **Skill: sentence-ends:** Q1 Which one has the commas and periods right? · Q2 Which one has the capital letters and periods right? · Q3 Pick the sentence that sounds right. · Q9 Tap the tiles in order. · Q10 Which ones are right? Sort them.
 - **Skill: be:** Q1 Which one is right? · Q2 Pick the sentence that sounds right. · Q3 A robot wrote these. Which one is right? · Q9 Build the sentence. (same) · Q10 Which ones are right? Sort them.
 - **Skill: third-person-s:** Q1 A robot wrote these. Which one is right? · Q2 Which one would your teacher write? · Q3 Tap the sentence with no mistakes. · Q9 Build the sentence. (same) · Q10 Which ones are right? Sort them.
 
@@ -1361,10 +1363,10 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
 
 | Old prompt | New prompt | How many |
 |---|---|---|
-| Which sentence is right? | A robot wrote these. Which one is right? | 6 |
-| Which sentence is right? | Pick the sentence that sounds right. | 6 |
-| Which sentence is right? | Which one would your teacher write? | 5 |
+| Which sentence is right? | A robot wrote these. Which one is right? | 7 |
+| Which sentence is right? | Pick the sentence that sounds right. | 5 |
 | Which sentence is right? | Which one is right? | 4 |
+| Which sentence is right? | Which one would your teacher write? | 4 |
 | Build the sentence. | Tap the tiles in order. | 3 |
 | Build the sentence. | Make a sentence from the tiles. | 2 |
 | Which sentence is right? | One of these is right. Tap it. | 2 |
@@ -1373,12 +1375,13 @@ The prompts in order, so you can see they take turns ("same" means it did not ch
 | Build the sentence. | What does this say? Put it in order. | 1 |
 | Right or wrong? | Which ones are right? Sort them. (and the box Wrong → Not right) | 1 |
 | Sort the sentences. | Which ones are right? Sort them. | 1 |
-| Which one is right? | A robot wrote these. Which one is right? | 1 |
+| Which one is right? | Pick the sentence that sounds right. | 1 |
+| Which sentence is right? | Which one has the commas and periods right? (by hand) | 1 |
 
 The prompts in order, so you can see they take turns ("same" means it did not change):
 
 - **Skill: because-when:** Q1 One of these is right. Tap it. · Q2 Which sentence is right? (same) · Q9 Make a sentence from the tiles.
-- **Skill: sentence-ends:** Q1 Pick the sentence that sounds right. · Q2 A robot wrote these. Which one is right? · Q3 Which one would your teacher write? · Q9 Tap the tiles in order. · Q10 Which ones are right? Sort them.
+- **Skill: sentence-ends:** Q1 Which one has the commas and periods right? · Q2 Pick the sentence that sounds right. · Q3 A robot wrote these. Which one is right? · Q9 Tap the tiles in order. · Q10 Which ones are right? Sort them.
 - **Skill: articles:** Q1 Pick the sentence that sounds right. · Q2 A robot wrote these. Which one is right? · Q3 Which one would your teacher write? · Q9 Build the sentence. (same)
 - **Skill: apostrophes:** Q1 One of these is right. Tap it. · Q2 Which sentence is right? (same) · Q3 Which one is right? · Q9 Tap the tiles in order.
 - **Skill: prepositions:** Q1 A robot wrote these. Which one is right? · Q2 Which one would your teacher write? · Q3 Tap the sentence with no mistakes. · Q9 What does this say? Put it in order.

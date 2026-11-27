@@ -22,13 +22,13 @@
 -- Safe to run any time: it only reads, it never changes anything.
 -- One list per file: questions in the app whose text is not what the file had
 -- before this edit (for example a teacher edit). PART 2 replaces them.
---   app_text  = the start of the question as it is in the app now
---   file_text = the start of the question as the file had it before (empty if new)
+--   app_text  = the whole question as it is in the app now
+--   file_text = the whole question as the file had it before (empty if new)
 -- No rows means nothing in the app will be lost.
 
 -- Review bank, grade 1: questions in the app that differ from the file before this edit
-select qq.bank_grade, v.skill, v.pos as question_position,
-       left(qq.payload::text, 60) as app_text, left(v.base::jsonb::text, 60) as file_text
+select v.skill, v.pos as question_position,
+       qq.payload::text as app_text, v.base::jsonb::text as file_text
 from (values
   ('be'::text, 1::int, '{"prompt":"Pick the right sentence.","choices":["The boy are happy.","The boy is happy.","The boy am happy."],"answer":1}'::text),
   ('be', 2, '{"prompt":"Pick the right sentence.","choices":["Two children is at the door.","Two children am at the door.","Two children are at the door."],"answer":2}'),
@@ -143,7 +143,7 @@ from (values
 ) as v(skill, pos, base)
 join wp_questions qq on qq.bank_grade = 1 and qq.skill = v.skill and qq.position = v.pos and qq.deleted_at is null
 where v.base is null or qq.payload <> v.base::jsonb
-order by 2, 3;
+order by v.skill, v.pos;
 
 
 -- ############################################################################

@@ -22,13 +22,13 @@
 -- Safe to run any time: it only reads, it never changes anything.
 -- One list per file: questions in the app whose text is not what the file had
 -- before this edit (for example a teacher edit). PART 2 replaces them.
---   app_text  = the start of the question as it is in the app now
---   file_text = the start of the question as the file had it before (empty if new)
+--   app_text  = the whole question as it is in the app now
+--   file_text = the whole question as the file had it before (empty if new)
 -- No rows means nothing in the app will be lost.
 
 -- Test week · Grade 2: questions in the app that differ from the file before this edit
-select v.wpos as week_position, v.lpos as lesson_position, v.qpos as question_position,
-       left(qq.payload::text, 60) as app_text, left(v.base::jsonb::text, 60) as file_text
+select v.wpos as week_position, l.title as lesson_title, v.qpos as question_position,
+       qq.payload::text as app_text, v.base::jsonb::text as file_text
 from (values
   (1::int, 1::int, 1::int, '{"prompt":"Pick the right sentence.","choices":["Ben found a ant in his bag.","Ben found an ant in his bag.","Ben found ant in his bag."],"answer":1,"picture":"ant"}'::text),
   (1, 1, 2, '{"prompt":"Pick the right sentence.","choices":["Leo has a old bike.","Leo has old bike.","Leo has an old bike."],"answer":2,"picture":"bicycle"}'),
@@ -111,7 +111,7 @@ join wp_weeks w on w.plan_id = p.id and w.position = v.wpos
 join wp_lessons l on l.week_id = w.id and l.position = v.lpos
 join wp_questions qq on qq.lesson_id = l.id and qq.position = v.qpos and qq.deleted_at is null
 where v.base is null or qq.payload <> v.base::jsonb
-order by 1, 2, 3;
+order by v.wpos, v.lpos, v.qpos;
 
 
 -- ############################################################################
@@ -201,10 +201,10 @@ update wp_questions set type = 'right_wrong', payload = '{"prompt":"Is this sent
   and (type <> 'right_wrong' or payload <> '{"prompt":"Is this sentence right?","sentence":"Pip found a egg in the garden.","right":false,"picture":"egg"}'::jsonb or skill is distinct from 'articles');
 insert into wp_questions (lesson_id, position, type, payload, skill) select (select id from wp_lessons where week_id = (select id from wp_weeks where plan_id = (select id from wp_plans where title = 'Test week · Grade 2') and position = 1) and position = 1), 13, 'right_wrong', '{"prompt":"Is this sentence right?","sentence":"Pip found a egg in the garden.","right":false,"picture":"egg"}'::jsonb, 'articles'
   where not exists (select 1 from wp_questions where lesson_id = (select id from wp_lessons where week_id = (select id from wp_weeks where plan_id = (select id from wp_plans where title = 'Test week · Grade 2') and position = 1) and position = 1) and position = 13);
-update wp_questions set type = 'picture_first', payload = '{"picture":"octopus","prompt":"Which one matches the picture?","choices":["This is a octopus.","This is an octopus."],"answer":1}'::jsonb, skill = 'articles', updated_at = now()
+update wp_questions set type = 'picture_first', payload = '{"picture":"octopus","prompt":"Which sentence is right?","choices":["This is a octopus.","This is an octopus."],"answer":1}'::jsonb, skill = 'articles', updated_at = now()
   where lesson_id = (select id from wp_lessons where week_id = (select id from wp_weeks where plan_id = (select id from wp_plans where title = 'Test week · Grade 2') and position = 1) and position = 1) and position = 14 and deleted_at is null
-  and (type <> 'picture_first' or payload <> '{"picture":"octopus","prompt":"Which one matches the picture?","choices":["This is a octopus.","This is an octopus."],"answer":1}'::jsonb or skill is distinct from 'articles');
-insert into wp_questions (lesson_id, position, type, payload, skill) select (select id from wp_lessons where week_id = (select id from wp_weeks where plan_id = (select id from wp_plans where title = 'Test week · Grade 2') and position = 1) and position = 1), 14, 'picture_first', '{"picture":"octopus","prompt":"Which one matches the picture?","choices":["This is a octopus.","This is an octopus."],"answer":1}'::jsonb, 'articles'
+  and (type <> 'picture_first' or payload <> '{"picture":"octopus","prompt":"Which sentence is right?","choices":["This is a octopus.","This is an octopus."],"answer":1}'::jsonb or skill is distinct from 'articles');
+insert into wp_questions (lesson_id, position, type, payload, skill) select (select id from wp_lessons where week_id = (select id from wp_weeks where plan_id = (select id from wp_plans where title = 'Test week · Grade 2') and position = 1) and position = 1), 14, 'picture_first', '{"picture":"octopus","prompt":"Which sentence is right?","choices":["This is a octopus.","This is an octopus."],"answer":1}'::jsonb, 'articles'
   where not exists (select 1 from wp_questions where lesson_id = (select id from wp_lessons where week_id = (select id from wp_weeks where plan_id = (select id from wp_plans where title = 'Test week · Grade 2') and position = 1) and position = 1) and position = 14);
 update wp_questions set type = 'odd_one_out', payload = '{"prompt":"Three of these go with \"an\". Which one does not?","words":["eye","arm","kite","ear"],"answer":2}'::jsonb, skill = 'articles', updated_at = now()
   where lesson_id = (select id from wp_lessons where week_id = (select id from wp_weeks where plan_id = (select id from wp_plans where title = 'Test week · Grade 2') and position = 1) and position = 1) and position = 15 and deleted_at is null
@@ -278,10 +278,10 @@ update wp_questions set type = 'right_wrong', payload = '{"prompt":"Is this sent
   and (type <> 'right_wrong' or payload <> '{"prompt":"Is this sentence right?","sentence":"Blobby has an big hat.","right":false,"picture":"top-hat"}'::jsonb or skill is distinct from 'articles');
 insert into wp_questions (lesson_id, position, type, payload, skill) select (select id from wp_lessons where week_id = (select id from wp_weeks where plan_id = (select id from wp_plans where title = 'Test week · Grade 2') and position = 1) and position = 2), 13, 'right_wrong', '{"prompt":"Is this sentence right?","sentence":"Blobby has an big hat.","right":false,"picture":"top-hat"}'::jsonb, 'articles'
   where not exists (select 1 from wp_questions where lesson_id = (select id from wp_lessons where week_id = (select id from wp_weeks where plan_id = (select id from wp_plans where title = 'Test week · Grade 2') and position = 1) and position = 2) and position = 13);
-update wp_questions set type = 'picture_first', payload = '{"picture":"rainbow","prompt":"Which one matches the picture?","choices":["Look at the rainbow!","Look at an rainbow!","Look at rainbow!"],"answer":0}'::jsonb, skill = 'articles', updated_at = now()
+update wp_questions set type = 'picture_first', payload = '{"picture":"rainbow","prompt":"Which sentence is right?","choices":["Look at the rainbow!","Look at an rainbow!","Look at rainbow!"],"answer":0}'::jsonb, skill = 'articles', updated_at = now()
   where lesson_id = (select id from wp_lessons where week_id = (select id from wp_weeks where plan_id = (select id from wp_plans where title = 'Test week · Grade 2') and position = 1) and position = 2) and position = 14 and deleted_at is null
-  and (type <> 'picture_first' or payload <> '{"picture":"rainbow","prompt":"Which one matches the picture?","choices":["Look at the rainbow!","Look at an rainbow!","Look at rainbow!"],"answer":0}'::jsonb or skill is distinct from 'articles');
-insert into wp_questions (lesson_id, position, type, payload, skill) select (select id from wp_lessons where week_id = (select id from wp_weeks where plan_id = (select id from wp_plans where title = 'Test week · Grade 2') and position = 1) and position = 2), 14, 'picture_first', '{"picture":"rainbow","prompt":"Which one matches the picture?","choices":["Look at the rainbow!","Look at an rainbow!","Look at rainbow!"],"answer":0}'::jsonb, 'articles'
+  and (type <> 'picture_first' or payload <> '{"picture":"rainbow","prompt":"Which sentence is right?","choices":["Look at the rainbow!","Look at an rainbow!","Look at rainbow!"],"answer":0}'::jsonb or skill is distinct from 'articles');
+insert into wp_questions (lesson_id, position, type, payload, skill) select (select id from wp_lessons where week_id = (select id from wp_weeks where plan_id = (select id from wp_plans where title = 'Test week · Grade 2') and position = 1) and position = 2), 14, 'picture_first', '{"picture":"rainbow","prompt":"Which sentence is right?","choices":["Look at the rainbow!","Look at an rainbow!","Look at rainbow!"],"answer":0}'::jsonb, 'articles'
   where not exists (select 1 from wp_questions where lesson_id = (select id from wp_lessons where week_id = (select id from wp_weeks where plan_id = (select id from wp_plans where title = 'Test week · Grade 2') and position = 1) and position = 2) and position = 14);
 update wp_questions set type = 'odd_one_out', payload = '{"prompt":"Which one has a mistake?","words":["the park","an ant","a bird","a owl"],"answer":3}'::jsonb, skill = 'articles', updated_at = now()
   where lesson_id = (select id from wp_lessons where week_id = (select id from wp_weeks where plan_id = (select id from wp_plans where title = 'Test week · Grade 2') and position = 1) and position = 2) and position = 15 and deleted_at is null
@@ -504,10 +504,10 @@ update wp_questions set type = 'sort_it', payload = '{"prompt":"Is or are?","gro
   and (type <> 'sort_it' or payload <> '{"prompt":"Is or are?","groups":["is","are"],"items":[{"text":"the kids","group":1},{"text":"my sister","group":0},{"text":"Milo and Nova","group":1},{"text":"one boy","group":0},{"text":"every student","group":0},{"text":"two birds","group":1}]}'::jsonb or skill is distinct from 'ing');
 insert into wp_questions (lesson_id, position, type, payload, skill) select (select id from wp_lessons where week_id = (select id from wp_weeks where plan_id = (select id from wp_plans where title = 'Test week · Grade 2') and position = 1) and position = 5), 12, 'sort_it', '{"prompt":"Is or are?","groups":["is","are"],"items":[{"text":"the kids","group":1},{"text":"my sister","group":0},{"text":"Milo and Nova","group":1},{"text":"one boy","group":0},{"text":"every student","group":0},{"text":"two birds","group":1}]}'::jsonb, 'ing'
   where not exists (select 1 from wp_questions where lesson_id = (select id from wp_lessons where week_id = (select id from wp_weeks where plan_id = (select id from wp_plans where title = 'Test week · Grade 2') and position = 1) and position = 5) and position = 12);
-update wp_questions set type = 'picture_first', payload = '{"picture":"kite","prompt":"Which one matches the picture?","choices":["This is an kite.","This is kite.","This is a kite."],"answer":2}'::jsonb, skill = 'articles', updated_at = now()
+update wp_questions set type = 'picture_first', payload = '{"picture":"kite","prompt":"Which sentence is right?","choices":["This is an kite.","This is kite.","This is a kite."],"answer":2}'::jsonb, skill = 'articles', updated_at = now()
   where lesson_id = (select id from wp_lessons where week_id = (select id from wp_weeks where plan_id = (select id from wp_plans where title = 'Test week · Grade 2') and position = 1) and position = 5) and position = 13 and deleted_at is null
-  and (type <> 'picture_first' or payload <> '{"picture":"kite","prompt":"Which one matches the picture?","choices":["This is an kite.","This is kite.","This is a kite."],"answer":2}'::jsonb or skill is distinct from 'articles');
-insert into wp_questions (lesson_id, position, type, payload, skill) select (select id from wp_lessons where week_id = (select id from wp_weeks where plan_id = (select id from wp_plans where title = 'Test week · Grade 2') and position = 1) and position = 5), 13, 'picture_first', '{"picture":"kite","prompt":"Which one matches the picture?","choices":["This is an kite.","This is kite.","This is a kite."],"answer":2}'::jsonb, 'articles'
+  and (type <> 'picture_first' or payload <> '{"picture":"kite","prompt":"Which sentence is right?","choices":["This is an kite.","This is kite.","This is a kite."],"answer":2}'::jsonb or skill is distinct from 'articles');
+insert into wp_questions (lesson_id, position, type, payload, skill) select (select id from wp_lessons where week_id = (select id from wp_weeks where plan_id = (select id from wp_plans where title = 'Test week · Grade 2') and position = 1) and position = 5), 13, 'picture_first', '{"picture":"kite","prompt":"Which sentence is right?","choices":["This is an kite.","This is kite.","This is a kite."],"answer":2}'::jsonb, 'articles'
   where not exists (select 1 from wp_questions where lesson_id = (select id from wp_lessons where week_id = (select id from wp_weeks where plan_id = (select id from wp_plans where title = 'Test week · Grade 2') and position = 1) and position = 5) and position = 13);
 update wp_questions set type = 'right_wrong', payload = '{"prompt":"Is this sentence right?","sentence":"Grandma was at the beach yesterday.","right":true,"picture":"beach-with-umbrella"}'::jsonb, skill = 'was-were', updated_at = now()
   where lesson_id = (select id from wp_lessons where week_id = (select id from wp_weeks where plan_id = (select id from wp_plans where title = 'Test week · Grade 2') and position = 1) and position = 5) and position = 14 and deleted_at is null

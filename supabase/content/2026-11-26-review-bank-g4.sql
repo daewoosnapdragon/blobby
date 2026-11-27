@@ -22,13 +22,13 @@
 -- Safe to run any time: it only reads, it never changes anything.
 -- One list per file: questions in the app whose text is not what the file had
 -- before this edit (for example a teacher edit). PART 2 replaces them.
---   app_text  = the start of the question as it is in the app now
---   file_text = the start of the question as the file had it before (empty if new)
+--   app_text  = the whole question as it is in the app now
+--   file_text = the whole question as the file had it before (empty if new)
 -- No rows means nothing in the app will be lost.
 
 -- Review bank, grade 4: questions in the app that differ from the file before this edit
-select qq.bank_grade, v.skill, v.pos as question_position,
-       left(qq.payload::text, 60) as app_text, left(v.base::jsonb::text, 60) as file_text
+select v.skill, v.pos as question_position,
+       qq.payload::text as app_text, v.base::jsonb::text as file_text
 from (values
   ('because-when'::text, 1::int, '{"prompt":"Which sentence is right?","choices":["Because the bus was late. We missed the show.","Because the bus was late we missed the show.","Because the bus was late, we missed the show.","Because, the bus was late we missed the show."],"answer":2}'::text),
   ('because-when', 2, '{"prompt":"Which sentence is right?","choices":["Mina put on her coat. Before she went outside.","Before she went outside. Mina put on her coat.","Before she went outside Mina put on her coat.","Mina put on her coat before she went outside."],"answer":3}'),
@@ -143,7 +143,7 @@ from (values
 ) as v(skill, pos, base)
 join wp_questions qq on qq.bank_grade = 4 and qq.skill = v.skill and qq.position = v.pos and qq.deleted_at is null
 where v.base is null or qq.payload <> v.base::jsonb
-order by 2, 3;
+order by v.skill, v.pos;
 
 
 -- ############################################################################
@@ -203,17 +203,17 @@ update wp_questions set type = 'right_wrong', payload = '{"prompt":"Is this a co
   where bank_grade = 4 and skill = 'because-when' and position = 11 and deleted_at is null and (type <> 'right_wrong' or payload <> '{"prompt":"Is this a complete sentence?","sentence":"Because the train was two hours late.","right":false}'::jsonb);
 insert into wp_questions (bank_grade, skill, position, type, payload) select 4, 'because-when', 11, 'right_wrong', '{"prompt":"Is this a complete sentence?","sentence":"Because the train was two hours late.","right":false}'::jsonb
   where not exists (select 1 from wp_questions where bank_grade = 4 and skill = 'because-when' and position = 11);
-update wp_questions set type = 'pick_one', payload = '{"prompt":"Pick the sentence that sounds right.","choices":["Milo picked up the box, it was very heavy.","Milo picked up the box. It was very heavy.","Milo picked up the box it was very heavy.","Milo picked up the box. it was very heavy."],"answer":1}'::jsonb, updated_at = now()
-  where bank_grade = 4 and skill = 'sentence-ends' and position = 1 and deleted_at is null and (type <> 'pick_one' or payload <> '{"prompt":"Pick the sentence that sounds right.","choices":["Milo picked up the box, it was very heavy.","Milo picked up the box. It was very heavy.","Milo picked up the box it was very heavy.","Milo picked up the box. it was very heavy."],"answer":1}'::jsonb);
-insert into wp_questions (bank_grade, skill, position, type, payload) select 4, 'sentence-ends', 1, 'pick_one', '{"prompt":"Pick the sentence that sounds right.","choices":["Milo picked up the box, it was very heavy.","Milo picked up the box. It was very heavy.","Milo picked up the box it was very heavy.","Milo picked up the box. it was very heavy."],"answer":1}'::jsonb
+update wp_questions set type = 'pick_one', payload = '{"prompt":"Which one has the commas and periods right?","choices":["Milo picked up the box, it was very heavy.","Milo picked up the box. It was very heavy.","Milo picked up the box it was very heavy.","Milo picked up the box. it was very heavy."],"answer":1}'::jsonb, updated_at = now()
+  where bank_grade = 4 and skill = 'sentence-ends' and position = 1 and deleted_at is null and (type <> 'pick_one' or payload <> '{"prompt":"Which one has the commas and periods right?","choices":["Milo picked up the box, it was very heavy.","Milo picked up the box. It was very heavy.","Milo picked up the box it was very heavy.","Milo picked up the box. it was very heavy."],"answer":1}'::jsonb);
+insert into wp_questions (bank_grade, skill, position, type, payload) select 4, 'sentence-ends', 1, 'pick_one', '{"prompt":"Which one has the commas and periods right?","choices":["Milo picked up the box, it was very heavy.","Milo picked up the box. It was very heavy.","Milo picked up the box it was very heavy.","Milo picked up the box. it was very heavy."],"answer":1}'::jsonb
   where not exists (select 1 from wp_questions where bank_grade = 4 and skill = 'sentence-ends' and position = 1);
-update wp_questions set type = 'pick_one', payload = '{"prompt":"A robot wrote these. Which one is right?","choices":["We played tag, then we ate ice cream, after that we went home.","We played tag then we ate ice cream after that we went home.","We played tag. then we ate ice cream. after that, we went home.","We played tag. Then we ate ice cream. After that, we went home."],"answer":3}'::jsonb, updated_at = now()
-  where bank_grade = 4 and skill = 'sentence-ends' and position = 2 and deleted_at is null and (type <> 'pick_one' or payload <> '{"prompt":"A robot wrote these. Which one is right?","choices":["We played tag, then we ate ice cream, after that we went home.","We played tag then we ate ice cream after that we went home.","We played tag. then we ate ice cream. after that, we went home.","We played tag. Then we ate ice cream. After that, we went home."],"answer":3}'::jsonb);
-insert into wp_questions (bank_grade, skill, position, type, payload) select 4, 'sentence-ends', 2, 'pick_one', '{"prompt":"A robot wrote these. Which one is right?","choices":["We played tag, then we ate ice cream, after that we went home.","We played tag then we ate ice cream after that we went home.","We played tag. then we ate ice cream. after that, we went home.","We played tag. Then we ate ice cream. After that, we went home."],"answer":3}'::jsonb
+update wp_questions set type = 'pick_one', payload = '{"prompt":"Pick the sentence that sounds right.","choices":["We played tag, then we ate ice cream, after that we went home.","We played tag then we ate ice cream after that we went home.","We played tag. then we ate ice cream. after that, we went home.","We played tag. Then we ate ice cream. After that, we went home."],"answer":3}'::jsonb, updated_at = now()
+  where bank_grade = 4 and skill = 'sentence-ends' and position = 2 and deleted_at is null and (type <> 'pick_one' or payload <> '{"prompt":"Pick the sentence that sounds right.","choices":["We played tag, then we ate ice cream, after that we went home.","We played tag then we ate ice cream after that we went home.","We played tag. then we ate ice cream. after that, we went home.","We played tag. Then we ate ice cream. After that, we went home."],"answer":3}'::jsonb);
+insert into wp_questions (bank_grade, skill, position, type, payload) select 4, 'sentence-ends', 2, 'pick_one', '{"prompt":"Pick the sentence that sounds right.","choices":["We played tag, then we ate ice cream, after that we went home.","We played tag then we ate ice cream after that we went home.","We played tag. then we ate ice cream. after that, we went home.","We played tag. Then we ate ice cream. After that, we went home."],"answer":3}'::jsonb
   where not exists (select 1 from wp_questions where bank_grade = 4 and skill = 'sentence-ends' and position = 2);
-update wp_questions set type = 'pick_one', payload = '{"prompt":"Which one would your teacher write?","choices":["It was late, we were very tired.","It was late we were very tired.","It was late, and we were very tired.","It was late, And we were very tired."],"answer":2}'::jsonb, updated_at = now()
-  where bank_grade = 4 and skill = 'sentence-ends' and position = 3 and deleted_at is null and (type <> 'pick_one' or payload <> '{"prompt":"Which one would your teacher write?","choices":["It was late, we were very tired.","It was late we were very tired.","It was late, and we were very tired.","It was late, And we were very tired."],"answer":2}'::jsonb);
-insert into wp_questions (bank_grade, skill, position, type, payload) select 4, 'sentence-ends', 3, 'pick_one', '{"prompt":"Which one would your teacher write?","choices":["It was late, we were very tired.","It was late we were very tired.","It was late, and we were very tired.","It was late, And we were very tired."],"answer":2}'::jsonb
+update wp_questions set type = 'pick_one', payload = '{"prompt":"A robot wrote these. Which one is right?","choices":["It was late, we were very tired.","It was late we were very tired.","It was late, and we were very tired.","It was late, And we were very tired."],"answer":2}'::jsonb, updated_at = now()
+  where bank_grade = 4 and skill = 'sentence-ends' and position = 3 and deleted_at is null and (type <> 'pick_one' or payload <> '{"prompt":"A robot wrote these. Which one is right?","choices":["It was late, we were very tired.","It was late we were very tired.","It was late, and we were very tired.","It was late, And we were very tired."],"answer":2}'::jsonb);
+insert into wp_questions (bank_grade, skill, position, type, payload) select 4, 'sentence-ends', 3, 'pick_one', '{"prompt":"A robot wrote these. Which one is right?","choices":["It was late, we were very tired.","It was late we were very tired.","It was late, and we were very tired.","It was late, And we were very tired."],"answer":2}'::jsonb
   where not exists (select 1 from wp_questions where bank_grade = 4 and skill = 'sentence-ends' and position = 3);
 update wp_questions set type = 'fill_blank', payload = '{"before":"Zara looked out the window.","after":"was snowing!","choices":["it","It","and it"],"answer":1}'::jsonb, updated_at = now()
   where bank_grade = 4 and skill = 'sentence-ends' and position = 4 and deleted_at is null and (type <> 'fill_blank' or payload <> '{"before":"Zara looked out the window.","after":"was snowing!","choices":["it","It","and it"],"answer":1}'::jsonb);

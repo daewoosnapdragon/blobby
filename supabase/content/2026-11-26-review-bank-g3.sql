@@ -22,13 +22,13 @@
 -- Safe to run any time: it only reads, it never changes anything.
 -- One list per file: questions in the app whose text is not what the file had
 -- before this edit (for example a teacher edit). PART 2 replaces them.
---   app_text  = the start of the question as it is in the app now
---   file_text = the start of the question as the file had it before (empty if new)
+--   app_text  = the whole question as it is in the app now
+--   file_text = the whole question as the file had it before (empty if new)
 -- No rows means nothing in the app will be lost.
 
 -- Review bank, grade 3: questions in the app that differ from the file before this edit
-select qq.bank_grade, v.skill, v.pos as question_position,
-       left(qq.payload::text, 60) as app_text, left(v.base::jsonb::text, 60) as file_text
+select v.skill, v.pos as question_position,
+       qq.payload::text as app_text, v.base::jsonb::text as file_text
 from (values
   ('fragments'::text, 1::int, '{"prompt":"Which one is a complete sentence?","choices":["Because the library was closed on Monday.","The library was closed on Monday.","The library, which was closed on Monday."],"answer":1}'::text),
   ('fragments', 2, '{"prompt":"Which one is a complete sentence?","choices":["A girl called Mina, who was searching for her lost cat.","A girl called Mina was searching for her lost cat.","Searching everywhere for her lost cat after school."],"answer":1}'),
@@ -132,7 +132,7 @@ from (values
 ) as v(skill, pos, base)
 join wp_questions qq on qq.bank_grade = 3 and qq.skill = v.skill and qq.position = v.pos and qq.deleted_at is null
 where v.base is null or qq.payload <> v.base::jsonb
-order by 2, 3;
+order by v.skill, v.pos;
 
 
 -- ############################################################################
@@ -412,17 +412,17 @@ update wp_questions set type = 'match_pairs', payload = '{"prompt":"Match each v
   where bank_grade = 3 and skill = 'past-tense' and position = 11 and deleted_at is null and (type <> 'match_pairs' or payload <> '{"prompt":"Match each verb to its past tense.","pairs":[{"left":"plan","right":"planned"},{"left":"plant","right":"planted"},{"left":"ride","right":"rode"},{"left":"drive","right":"drove"}]}'::jsonb);
 insert into wp_questions (bank_grade, skill, position, type, payload) select 3, 'past-tense', 11, 'match_pairs', '{"prompt":"Match each verb to its past tense.","pairs":[{"left":"plan","right":"planned"},{"left":"plant","right":"planted"},{"left":"ride","right":"rode"},{"left":"drive","right":"drove"}]}'::jsonb
   where not exists (select 1 from wp_questions where bank_grade = 3 and skill = 'past-tense' and position = 11);
-update wp_questions set type = 'pick_one', payload = '{"prompt":"Pick the sentence that sounds right.","choices":["The library was quiet, everyone was reading.","The library was quiet. Everyone was reading.","The library was quiet everyone was reading."],"answer":1}'::jsonb, updated_at = now()
-  where bank_grade = 3 and skill = 'sentence-ends' and position = 1 and deleted_at is null and (type <> 'pick_one' or payload <> '{"prompt":"Pick the sentence that sounds right.","choices":["The library was quiet, everyone was reading.","The library was quiet. Everyone was reading.","The library was quiet everyone was reading."],"answer":1}'::jsonb);
-insert into wp_questions (bank_grade, skill, position, type, payload) select 3, 'sentence-ends', 1, 'pick_one', '{"prompt":"Pick the sentence that sounds right.","choices":["The library was quiet, everyone was reading.","The library was quiet. Everyone was reading.","The library was quiet everyone was reading."],"answer":1}'::jsonb
+update wp_questions set type = 'pick_one', payload = '{"prompt":"Which one has the commas and periods right?","choices":["The library was quiet, everyone was reading.","The library was quiet. Everyone was reading.","The library was quiet everyone was reading."],"answer":1}'::jsonb, updated_at = now()
+  where bank_grade = 3 and skill = 'sentence-ends' and position = 1 and deleted_at is null and (type <> 'pick_one' or payload <> '{"prompt":"Which one has the commas and periods right?","choices":["The library was quiet, everyone was reading.","The library was quiet. Everyone was reading.","The library was quiet everyone was reading."],"answer":1}'::jsonb);
+insert into wp_questions (bank_grade, skill, position, type, payload) select 3, 'sentence-ends', 1, 'pick_one', '{"prompt":"Which one has the commas and periods right?","choices":["The library was quiet, everyone was reading.","The library was quiet. Everyone was reading.","The library was quiet everyone was reading."],"answer":1}'::jsonb
   where not exists (select 1 from wp_questions where bank_grade = 3 and skill = 'sentence-ends' and position = 1);
 update wp_questions set type = 'pick_one', payload = '{"prompt":"Which one has the capital letters and periods right?","choices":["We heard a noise. then the lights went out.","We heard a noise then the lights went out.","We heard a noise. Then the lights went out."],"answer":2}'::jsonb, updated_at = now()
   where bank_grade = 3 and skill = 'sentence-ends' and position = 2 and deleted_at is null and (type <> 'pick_one' or payload <> '{"prompt":"Which one has the capital letters and periods right?","choices":["We heard a noise. then the lights went out.","We heard a noise then the lights went out.","We heard a noise. Then the lights went out."],"answer":2}'::jsonb);
 insert into wp_questions (bank_grade, skill, position, type, payload) select 3, 'sentence-ends', 2, 'pick_one', '{"prompt":"Which one has the capital letters and periods right?","choices":["We heard a noise. then the lights went out.","We heard a noise then the lights went out.","We heard a noise. Then the lights went out."],"answer":2}'::jsonb
   where not exists (select 1 from wp_questions where bank_grade = 3 and skill = 'sentence-ends' and position = 2);
-update wp_questions set type = 'pick_one', payload = '{"prompt":"A robot wrote these. Which one is right?","choices":["It started to rain, so they ran inside.","It started to rain. so they ran inside.","It started to rain so, they ran inside."],"answer":0}'::jsonb, updated_at = now()
-  where bank_grade = 3 and skill = 'sentence-ends' and position = 3 and deleted_at is null and (type <> 'pick_one' or payload <> '{"prompt":"A robot wrote these. Which one is right?","choices":["It started to rain, so they ran inside.","It started to rain. so they ran inside.","It started to rain so, they ran inside."],"answer":0}'::jsonb);
-insert into wp_questions (bank_grade, skill, position, type, payload) select 3, 'sentence-ends', 3, 'pick_one', '{"prompt":"A robot wrote these. Which one is right?","choices":["It started to rain, so they ran inside.","It started to rain. so they ran inside.","It started to rain so, they ran inside."],"answer":0}'::jsonb
+update wp_questions set type = 'pick_one', payload = '{"prompt":"Pick the sentence that sounds right.","choices":["It started to rain, so they ran inside.","It started to rain. so they ran inside.","It started to rain so, they ran inside."],"answer":0}'::jsonb, updated_at = now()
+  where bank_grade = 3 and skill = 'sentence-ends' and position = 3 and deleted_at is null and (type <> 'pick_one' or payload <> '{"prompt":"Pick the sentence that sounds right.","choices":["It started to rain, so they ran inside.","It started to rain. so they ran inside.","It started to rain so, they ran inside."],"answer":0}'::jsonb);
+insert into wp_questions (bank_grade, skill, position, type, payload) select 3, 'sentence-ends', 3, 'pick_one', '{"prompt":"Pick the sentence that sounds right.","choices":["It started to rain, so they ran inside.","It started to rain. so they ran inside.","It started to rain so, they ran inside."],"answer":0}'::jsonb
   where not exists (select 1 from wp_questions where bank_grade = 3 and skill = 'sentence-ends' and position = 3);
 update wp_questions set type = 'fill_blank', payload = '{"before":"Ruby closed the","after":"she turned off the light.","choices":["book. Then","book, then","book then"],"answer":0}'::jsonb, updated_at = now()
   where bank_grade = 3 and skill = 'sentence-ends' and position = 4 and deleted_at is null and (type <> 'fill_blank' or payload <> '{"before":"Ruby closed the","after":"she turned off the light.","choices":["book. Then","book, then","book then"],"answer":0}'::jsonb);
