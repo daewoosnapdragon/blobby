@@ -200,3 +200,20 @@ export function passRawQuestions(raw: RawQuestion[], seed: string, groupSkill?: 
   });
   return { questions, renamed: changed(plain, renamedQs), relabeled: changed(renamedQs, relabeledQs), rotated: changed(relabeledQs, rotatedQs) };
 }
+
+/**
+ * The groups the pass rotates within, for a parsed content file: a bank file's skills (seed and skill = the
+ * skill key) or a plan file's lessons (seed = lesson title; each question carries its own `skill`).
+ * `label` names the group for people ("skill be", "Week 1 · Add -ed the right way").
+ */
+export function contentGroups(data: unknown): { where: string; label: string; seed: string; skill?: string; get: () => RawQuestion[]; set: (qs: RawQuestion[]) => void }[] {
+  const d = data as { skills?: Record<string, RawQuestion[]>; weeks?: { lessons: { title: string; questions: RawQuestion[] }[] }[] };
+  if (d && typeof d === 'object' && d.skills && !d.weeks) {
+    const skills = d.skills;
+    return Object.keys(skills).map((key) => ({ where: `skill ${key}`, label: `Skill: ${key}`, seed: key, skill: key, get: () => skills[key], set: (qs) => { skills[key] = qs; } }));
+  }
+  return d.weeks!.flatMap((week, wi) => week.lessons.map((lesson) => ({
+    where: `lesson "${lesson.title}"`, label: `Week ${wi + 1} · ${lesson.title}`, seed: lesson.title,
+    get: () => lesson.questions, set: (qs: RawQuestion[]) => { lesson.questions = qs; },
+  })));
+}
