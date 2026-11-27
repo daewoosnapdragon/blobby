@@ -334,8 +334,8 @@ export async function saveQuestion(
 
 /** Per-row deadline for "Make missing audio". */
 export const BACKLOG_AUDIO_TIMEOUT_MS = 25_000;
-/** Overall budget for one "Make missing audio" call: no new row starts after this, inside the page's 60 s maxDuration. */
-export const BACKLOG_DEADLINE_MS = 45_000;
+/** Overall budget for one "Make missing audio" call: no new row starts after this, so 30 s + one 25 s row = 55 s, under the page's 60 s maxDuration. */
+export const BACKLOG_DEADLINE_MS = 30_000;
 
 /** Non-deleted questions (lessons and review banks) that still have a spoken string with no audio, in a stable order. */
 async function audioBacklog() {
@@ -363,7 +363,7 @@ export async function countMissingAudio(): Promise<number> {
 /**
  * Makes audio for whole rows until about `limit` missing strings are covered, saving each row as soon as its audio
  * is made. Stops at the first failure (rows already saved stay saved) and returns its message; `remaining` is recounted.
- * Once `deadlineMs` (default 45 s) has passed since the call began, no further row is started: it returns what is done.
+ * Once `deadlineMs` (default 30 s) has passed since the call began, no further row is started: it returns what is done.
  */
 export async function fillMissingAudio(
   limit: number, deps: { audio?: () => Promise<AudioDeps>; deadlineMs?: number } = {},
