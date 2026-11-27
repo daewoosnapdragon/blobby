@@ -57,6 +57,10 @@ or lesson link, and their questions stay in free practice. So run the reset befo
 Re-importing a file keeps what the teacher changed in the app (week skills and dates, lesson titles, edited
 and deleted questions) and prints what it kept. Add `--overwrite` only when the file should replace those edits.
 
+Content changes loaded by SQL (like the Nov 26 content pass) use the files in `supabase/content/`. Kyla runs
+them in the Supabase SQL editor, one file at a time, as its `README.md` says. Then she opens Plans →
+Read-aloud audio, presses **Make missing audio**, and leaves it until it says "All sentences have audio".
+
 ## Read-aloud voice: shutdown date
 
 OpenAI lists its TTS models for shutdown on **Jan 6, 2027**. Audio already made stays in Storage and keeps
