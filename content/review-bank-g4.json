@@ -156,6 +156,11 @@
             "group": 0
           }
         ]
+      },
+      {
+        "type": "right_wrong",
+        "sentence": "Because the train was two hours late.",
+        "right": false
       }
     ],
     "sentence-ends": [
@@ -314,6 +319,25 @@
             "group": 0
           }
         ]
+      },
+      {
+        "type": "tap_all",
+        "prompt": "Two sentences got stuck together. Tap the word that starts the second one.",
+        "words": [
+          "Theo",
+          "built",
+          "a",
+          "big",
+          "sandcastle",
+          "the",
+          "waves",
+          "knocked",
+          "it",
+          "down."
+        ],
+        "answers": [
+          5
+        ]
       }
     ],
     "articles": [
@@ -362,7 +386,7 @@
       },
       {
         "type": "fill_blank",
-        "before": "Finn wore",
+        "before": "Pip wore",
         "after": "uniform to the soccer game.",
         "choices": [
           "a",
@@ -470,6 +494,17 @@
             "group": 0
           }
         ]
+      },
+      {
+        "type": "odd_one_out",
+        "prompt": "Three of these go with \"an\". Which one does not?",
+        "words": [
+          "honest girl",
+          "empty box",
+          "useful map",
+          "old shoe"
+        ],
+        "answer": 2
       }
     ],
     "apostrophes": [
@@ -518,7 +553,7 @@
       },
       {
         "type": "fill_blank",
-        "before": "Finn borrowed his",
+        "before": "The bear borrowed his",
         "after": "bike for the race.",
         "choices": [
           "brother's",
@@ -624,6 +659,24 @@
             "text": "four desks",
             "group": 1
           }
+        ]
+      },
+      {
+        "type": "tap_all",
+        "prompt": "Tap every word that needs an apostrophe.",
+        "words": [
+          "Zaras",
+          "two",
+          "kittens",
+          "sleep",
+          "on",
+          "Dads",
+          "big",
+          "chair."
+        ],
+        "answers": [
+          0,
+          5
         ]
       }
     ],
@@ -779,6 +832,11 @@
             "group": 1
           }
         ]
+      },
+      {
+        "type": "right_wrong",
+        "sentence": "Otto was proud of the drawing he made for Grandma.",
+        "right": true
       }
     ],
     "be": [
@@ -869,7 +927,7 @@
         "type": "find_fix",
         "words": [
           "My",
-          "grandma",
+          "turtle",
           "were",
           "happy",
           "to",
@@ -932,6 +990,28 @@
           {
             "text": "the people",
             "group": 1
+          }
+        ]
+      },
+      {
+        "type": "match_pairs",
+        "prompt": "Match the two parts of each sentence.",
+        "pairs": [
+          {
+            "left": "Right now, the dog with the spots",
+            "right": "is very sleepy."
+          },
+          {
+            "left": "Right now, the puppies in the box",
+            "right": "are very sleepy."
+          },
+          {
+            "left": "Last night, the boy with two cats",
+            "right": "was very sleepy."
+          },
+          {
+            "left": "Last night, Zara and Grandpa",
+            "right": "were very sleepy."
           }
         ]
       }
@@ -1089,6 +1169,28 @@
             "group": 1
           }
         ]
+      },
+      {
+        "type": "match_pairs",
+        "prompt": "Match each word to the word for more than one.",
+        "pairs": [
+          {
+            "left": "wolf",
+            "right": "wolves"
+          },
+          {
+            "left": "elf",
+            "right": "elves"
+          },
+          {
+            "left": "knife",
+            "right": "knives"
+          },
+          {
+            "left": "man",
+            "right": "men"
+          }
+        ]
       }
     ],
     "past-tense": [
@@ -1128,7 +1230,7 @@
       {
         "type": "fill_blank",
         "before": "Milo",
-        "after": "the ball over the fence, and it landed in a garden.",
+        "after": "the pancake over the fence, and it landed in a garden.",
         "choices": [
           "throw",
           "threw",
@@ -1253,6 +1355,17 @@
             "group": 1
           }
         ]
+      },
+      {
+        "type": "odd_one_out",
+        "prompt": "Three of these are right past tense verbs. Which one is not?",
+        "words": [
+          "bought",
+          "teached",
+          "swept",
+          "hurried"
+        ],
+        "answer": 1
       }
     ],
     "third-person-s": [
@@ -1409,6 +1522,11 @@
             "group": 1
           }
         ]
+      },
+      {
+        "type": "right_wrong",
+        "sentence": "Every evening, Grandpa waters the plants and feed the cat.",
+        "right": false
       }
     ],
     "ing": [
@@ -1469,7 +1587,7 @@
       },
       {
         "type": "fill_blank",
-        "before": "Look! Finn and Milo",
+        "before": "Look! Two crabs",
         "after": "a sandcastle on the beach.",
         "choices": [
           "are building",
@@ -1571,6 +1689,17 @@
             "group": 1
           }
         ]
+      },
+      {
+        "type": "odd_one_out",
+        "prompt": "Three of these are right. Which one is not?",
+        "words": [
+          "the ducks that are swimming",
+          "the cat that is hiding",
+          "the twins who is laughing",
+          "the chef who is cooking"
+        ],
+        "answer": 2
       }
     ]
   }

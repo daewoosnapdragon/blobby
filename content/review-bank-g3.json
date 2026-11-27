@@ -45,7 +45,7 @@
       },
       {
         "type": "fill_blank",
-        "before": "The boy",
+        "before": "The giraffe",
         "after": "a ghost book from the top shelf.",
         "choices": [
           "took",
@@ -155,6 +155,11 @@
             "group": 0
           }
         ]
+      },
+      {
+        "type": "right_wrong",
+        "sentence": "After the long soccer game on Friday night.",
+        "right": false
       }
     ],
     "agreement": [
@@ -201,7 +206,7 @@
       },
       {
         "type": "fill_blank",
-        "before": "The box of old books",
+        "before": "The box of tiny elephants",
         "after": "very heavy.",
         "choices": [
           "was",
@@ -316,6 +321,17 @@
             "group": 0
           }
         ]
+      },
+      {
+        "type": "odd_one_out",
+        "prompt": "Three of these go with \"was late\". Which one does not?",
+        "words": [
+          "the bus",
+          "the man with three cats",
+          "Grandma",
+          "Milo and Zara"
+        ],
+        "answer": 3
       }
     ],
     "prepositions": [
@@ -481,6 +497,17 @@
             "group": 1
           }
         ]
+      },
+      {
+        "type": "odd_one_out",
+        "prompt": "Three of these are right. Which one is not?",
+        "words": [
+          "laughed at the joke",
+          "waited the train",
+          "talked to Grandpa",
+          "thought about lunch"
+        ],
+        "answer": 1
       }
     ],
     "articles": [
@@ -517,7 +544,7 @@
       {
         "type": "fill_blank",
         "before": "Ruby saw",
-        "after": "huge owl in the tree outside her window.",
+        "after": "huge pizza in the tree outside her window.",
         "choices": [
           "a",
           "an"
@@ -644,6 +671,11 @@
             "group": 1
           }
         ]
+      },
+      {
+        "type": "right_wrong",
+        "sentence": "Grandpa gave me an old map of the island.",
+        "right": true
       }
     ],
     "plurals": [
@@ -804,6 +836,28 @@
             "group": 1
           }
         ]
+      },
+      {
+        "type": "match_pairs",
+        "prompt": "Match each word to the word for more than one.",
+        "pairs": [
+          {
+            "left": "brush",
+            "right": "brushes"
+          },
+          {
+            "left": "bush",
+            "right": "bushes"
+          },
+          {
+            "left": "berry",
+            "right": "berries"
+          },
+          {
+            "left": "bench",
+            "right": "benches"
+          }
+        ]
       }
     ],
     "past-tense": [
@@ -850,7 +904,7 @@
       },
       {
         "type": "fill_blank",
-        "before": "Last year, Finn",
+        "before": "Last year, Pip",
         "after": "the best reader in our class.",
         "choices": [
           "became",
@@ -965,6 +1019,28 @@
           {
             "text": "They began to sing.",
             "group": 0
+          }
+        ]
+      },
+      {
+        "type": "match_pairs",
+        "prompt": "Match each verb to its past tense.",
+        "pairs": [
+          {
+            "left": "plan",
+            "right": "planned"
+          },
+          {
+            "left": "plant",
+            "right": "planted"
+          },
+          {
+            "left": "ride",
+            "right": "rode"
+          },
+          {
+            "left": "drive",
+            "right": "drove"
           }
         ]
       }
@@ -1125,6 +1201,28 @@
             "text": "Nova smiled. She liked the book.",
             "group": 0
           }
+        ]
+      },
+      {
+        "type": "tap_all",
+        "prompt": "Tap every word that needs a capital letter.",
+        "words": [
+          "on",
+          "Sunday,",
+          "zara",
+          "and",
+          "I",
+          "baked",
+          "bread.",
+          "it",
+          "smelled",
+          "so",
+          "good."
+        ],
+        "answers": [
+          0,
+          2,
+          7
         ]
       }
     ],
@@ -1289,6 +1387,11 @@
             "group": 1
           }
         ]
+      },
+      {
+        "type": "right_wrong",
+        "sentence": "Ruby and her cousin were at the pool yesterday.",
+        "right": true
       }
     ],
     "third-person-s": [
@@ -1346,7 +1449,7 @@
       },
       {
         "type": "fill_blank",
-        "before": "Finn",
+        "before": "The duck",
         "after": "the bus to school every morning.",
         "choices": [
           "catches",
@@ -1448,6 +1551,27 @@
             "text": "The teacher teachs math.",
             "group": 1
           }
+        ]
+      },
+      {
+        "type": "tap_all",
+        "prompt": "Tap every word that needs an s.",
+        "words": [
+          "Every",
+          "Saturday,",
+          "Theo",
+          "clean",
+          "his",
+          "room",
+          "and",
+          "Zara",
+          "feed",
+          "the",
+          "fish."
+        ],
+        "answers": [
+          3,
+          8
         ]
       }
     ]

@@ -149,6 +149,17 @@
             "group": 0
           }
         ]
+      },
+      {
+        "type": "odd_one_out",
+        "prompt": "Three of these are right. Which one is not?",
+        "words": [
+          "an old hat",
+          "a red apple",
+          "an blue kite",
+          "an empty box"
+        ],
+        "answer": 2
       }
     ],
     "third-person-s": [
@@ -195,7 +206,7 @@
       },
       {
         "type": "fill_blank",
-        "before": "Otto",
+        "before": "The hippo",
         "after": "his teeth every night.",
         "choices": [
           "brush",
@@ -298,6 +309,23 @@
             "group": 0
           }
         ]
+      },
+      {
+        "type": "tap_all",
+        "prompt": "Tap every word that needs an s.",
+        "words": [
+          "Zara",
+          "sing",
+          "and",
+          "Milo",
+          "dance",
+          "every",
+          "day."
+        ],
+        "answers": [
+          1,
+          4
+        ]
       }
     ],
     "plurals": [
@@ -370,16 +398,16 @@
           "Nova",
           "saw",
           "4",
-          "girl",
-          "at",
+          "cow",
+          "in",
           "the",
           "pool."
         ],
         "wrongIndex": 3,
         "fixes": [
-          "girls",
-          "girles",
-          "girl's"
+          "cows",
+          "cowes",
+          "cow's"
         ],
         "answer": 0
       },
@@ -445,6 +473,28 @@
           {
             "text": "people",
             "group": 1
+          }
+        ]
+      },
+      {
+        "type": "match_pairs",
+        "prompt": "Match each word to the word for more than one.",
+        "pairs": [
+          {
+            "left": "mouse",
+            "right": "mice"
+          },
+          {
+            "left": "man",
+            "right": "men"
+          },
+          {
+            "left": "fox",
+            "right": "foxes"
+          },
+          {
+            "left": "baby",
+            "right": "babies"
           }
         ]
       }
@@ -591,6 +641,11 @@
             "group": 1
           }
         ]
+      },
+      {
+        "type": "right_wrong",
+        "sentence": "We went to the zoo on sunday.",
+        "right": false
       }
     ],
     "past-tense": [
@@ -626,7 +681,7 @@
       },
       {
         "type": "fill_blank",
-        "before": "Last week, Finn",
+        "before": "Last week, the frog",
         "after": "his toy car.",
         "choices": [
           "fix",
@@ -746,6 +801,17 @@
             "group": 1
           }
         ]
+      },
+      {
+        "type": "odd_one_out",
+        "prompt": "Three of these can finish \"Yesterday, I ...\". Which one cannot?",
+        "words": [
+          "jumped high",
+          "sang a song",
+          "swim fast",
+          "baked a cake"
+        ],
+        "answer": 2
       }
     ],
     "be": [
@@ -818,7 +884,9 @@
           "My",
           "shoes",
           "is",
-          "wet."
+          "full",
+          "of",
+          "popcorn."
         ],
         "wrongIndex": 2,
         "fixes": [
@@ -893,6 +961,28 @@
             "group": 0
           }
         ]
+      },
+      {
+        "type": "match_pairs",
+        "prompt": "Match the two parts of each sentence.",
+        "pairs": [
+          {
+            "left": "Right now, I",
+            "right": "am at the park."
+          },
+          {
+            "left": "Right now, we",
+            "right": "are at the park."
+          },
+          {
+            "left": "Yesterday, Grandpa",
+            "right": "was at the park."
+          },
+          {
+            "left": "Yesterday, the ducks",
+            "right": "were at the park."
+          }
+        ]
       }
     ],
     "because-when": [
@@ -928,7 +1018,7 @@
       },
       {
         "type": "fill_blank",
-        "before": "Finn closed the window",
+        "before": "Pip closed the window",
         "after": "it was cold.",
         "choices": [
           "because",
@@ -1047,6 +1137,11 @@
             "group": 0
           }
         ]
+      },
+      {
+        "type": "right_wrong",
+        "sentence": "Zara was sad because her kite broke.",
+        "right": true
       }
     ],
     "compound-comma": [
@@ -1197,6 +1292,11 @@
             "group": 1
           }
         ]
+      },
+      {
+        "type": "right_wrong",
+        "sentence": "Dad made pancakes, and we ate them all.",
+        "right": true
       }
     ],
     "ing": [
@@ -1347,6 +1447,11 @@
             "group": 1
           }
         ]
+      },
+      {
+        "type": "right_wrong",
+        "sentence": "Look! The cat is climb a tree.",
+        "right": false
       }
     ],
     "prepositions": [
@@ -1499,6 +1604,17 @@
             "group": 2
           }
         ]
+      },
+      {
+        "type": "odd_one_out",
+        "prompt": "Three of these are right. Which one is not?",
+        "words": [
+          "sit on the sofa",
+          "listen to Grandpa",
+          "go at the beach",
+          "swim in the lake"
+        ],
+        "answer": 2
       }
     ]
   }
