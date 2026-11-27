@@ -221,6 +221,7 @@
               "type": "picture_first",
               "skill": "articles",
               "picture": "octopus",
+              "prompt": "Which sentence is right?",
               "choices": [
                 "This is a octopus.",
                 "This is an octopus."
@@ -457,6 +458,7 @@
               "type": "picture_first",
               "skill": "articles",
               "picture": "rainbow",
+              "prompt": "Which sentence is right?",
               "choices": [
                 "Look at the rainbow!",
                 "Look at an rainbow!",
@@ -1188,6 +1190,7 @@
               "type": "picture_first",
               "skill": "articles",
               "picture": "kite",
+              "prompt": "Which sentence is right?",
               "choices": [
                 "This is an kite.",
                 "This is kite.",

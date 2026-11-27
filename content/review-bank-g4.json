@@ -167,7 +167,7 @@
     "sentence-ends": [
       {
         "type": "pick_one",
-        "prompt": "Pick the sentence that sounds right.",
+        "prompt": "Which one has the commas and periods right?",
         "choices": [
           "Milo picked up the box, it was very heavy.",
           "Milo picked up the box. It was very heavy.",
@@ -178,7 +178,7 @@
       },
       {
         "type": "pick_one",
-        "prompt": "A robot wrote these. Which one is right?",
+        "prompt": "Pick the sentence that sounds right.",
         "choices": [
           "We played tag, then we ate ice cream, after that we went home.",
           "We played tag then we ate ice cream after that we went home.",
@@ -189,7 +189,7 @@
       },
       {
         "type": "pick_one",
-        "prompt": "Which one would your teacher write?",
+        "prompt": "A robot wrote these. Which one is right?",
         "choices": [
           "It was late, we were very tired.",
           "It was late we were very tired.",

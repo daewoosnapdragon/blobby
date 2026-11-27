@@ -757,7 +757,7 @@
             {
               "type": "pick_one",
               "skill": "ing",
-              "prompt": "Pick the sentence that sounds right.",
+              "prompt": "Look closely. Which one is written correctly?",
               "choices": [
                 "Three kids are sitting.",
                 "Three kids siting.",

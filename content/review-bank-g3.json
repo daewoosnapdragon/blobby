@@ -1049,7 +1049,7 @@
     "sentence-ends": [
       {
         "type": "pick_one",
-        "prompt": "Pick the sentence that sounds right.",
+        "prompt": "Which one has the commas and periods right?",
         "choices": [
           "The library was quiet, everyone was reading.",
           "The library was quiet. Everyone was reading.",
@@ -1069,7 +1069,7 @@
       },
       {
         "type": "pick_one",
-        "prompt": "A robot wrote these. Which one is right?",
+        "prompt": "Pick the sentence that sounds right.",
         "choices": [
           "It started to rain, so they ran inside.",
           "It started to rain. so they ran inside.",
