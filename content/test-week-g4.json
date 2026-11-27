@@ -69,7 +69,7 @@
             {
               "type": "fill_blank",
               "skill": "past-tense",
-              "before": "The big brown bear",
+              "before": "The bear on a bike",
               "after": "at the red light, and everyone waited.",
               "choices": [
                 "stoped",
@@ -254,9 +254,9 @@
             {
               "type": "right_wrong",
               "skill": "past-tense",
-              "sentence": "Last Saturday, Blobby buryed a cookie in the garden.",
+              "sentence": "Last Saturday, Blobby fryed six eggs for breakfast.",
               "right": false,
-              "picture": "cookie"
+              "picture": "egg"
             },
             {
               "type": "match_pairs",
@@ -264,8 +264,8 @@
               "prompt": "Match each verb to its past tense.",
               "pairs": [
                 {
-                  "left": "skip",
-                  "right": "skipped"
+                  "left": "hop",
+                  "right": "hopped"
                 },
                 {
                   "left": "worry",
@@ -554,7 +554,7 @@
               "prompt": "Three of these are right past tense verbs. Which one is not?",
               "words": [
                 "spoke",
-                "digged",
+                "swimmed",
                 "grew",
                 "hugged"
               ],
@@ -807,10 +807,6 @@
               "prompt": "Match each one to its past tense.",
               "pairs": [
                 {
-                  "left": "sit down",
-                  "right": "sat down"
-                },
-                {
                   "left": "stand up",
                   "right": "stood up"
                 },
@@ -819,8 +815,12 @@
                   "right": "got up"
                 },
                 {
-                  "left": "come in",
-                  "right": "came in"
+                  "left": "give up",
+                  "right": "gave up"
+                },
+                {
+                  "left": "wake up",
+                  "right": "woke up"
                 }
               ]
             },
@@ -839,9 +839,9 @@
             {
               "type": "right_wrong",
               "skill": "past-tense",
-              "sentence": "Last night, Dad read me a story and turns off the light.",
+              "sentence": "Last night, Dad told me a story and turns off the light.",
               "right": false,
-              "picture": "closed-book"
+              "picture": "light-bulb"
             }
           ]
         },

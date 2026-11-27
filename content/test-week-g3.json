@@ -253,24 +253,24 @@
               "prompt": "Match each verb to its past tense.",
               "pairs": [
                 {
-                  "left": "beg",
-                  "right": "begged"
+                  "left": "tap",
+                  "right": "tapped"
+                },
+                {
+                  "left": "tape",
+                  "right": "taped"
                 },
                 {
                   "left": "fry",
                   "right": "fried"
                 },
                 {
-                  "left": "bake",
-                  "right": "baked"
-                },
-                {
                   "left": "mix",
                   "right": "mixed"
                 },
                 {
-                  "left": "nod",
-                  "right": "nodded"
+                  "left": "bake",
+                  "right": "baked"
                 }
               ]
             }
@@ -923,7 +923,7 @@
                 "Every",
                 "morning,",
                 "Mr.",
-                "Park",
+                "Bell",
                 "open",
                 "the",
                 "library",
@@ -1078,9 +1078,9 @@
               "prompt": "Three of these go with \"loves pizza\". Which one does not?",
               "words": [
                 "Zara",
-                "Grandma's cat",
+                "the cat",
                 "Blobby",
-                "the boys"
+                "the children"
               ],
               "answer": 3
             }
@@ -1193,7 +1193,7 @@
               "skill": "third-person-s",
               "words": [
                 "Ms.",
-                "Lee",
+                "Gray",
                 "have",
                 "a",
                 "big",
@@ -1238,7 +1238,7 @@
               "prompt": "What does this say? Put it in order.",
               "tiles": [
                 "The",
-                "rabbit",
+                "dinosaur",
                 "didn't",
                 "eat",
                 "his",
@@ -1249,7 +1249,7 @@
               "distractors": [
                 "ate"
               ],
-              "picture": "rabbit"
+              "picture": "sauropod"
             },
             {
               "type": "build_it",
