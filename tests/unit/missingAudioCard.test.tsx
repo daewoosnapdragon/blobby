@@ -4,7 +4,6 @@ import { render, screen, waitFor, act, fireEvent } from '@testing-library/react'
 const makeMissingAudio = vi.fn();
 vi.mock('@/app/teacher/audioActions', () => ({
   makeMissingAudio: () => makeMissingAudio(),
-  missingAudioCount: vi.fn(async () => 0),
 }));
 
 import { MissingAudioCard } from '@/app/teacher/plans/MissingAudioCard';
@@ -66,6 +65,21 @@ describe('MissingAudioCard', () => {
     expect(makeMissingAudio).toHaveBeenCalledTimes(2);
     expect(screen.getByText('Made 22 so far, 28 to go')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Make missing audio' })).toBeEnabled();
+  });
+
+  it('stops when a call makes nothing, reports no error, and some are still left', async () => {
+    makeMissingAudio
+      .mockResolvedValueOnce({ done: 20, remaining: 30 })
+      .mockResolvedValueOnce({ done: 0, remaining: 30 })
+      .mockResolvedValue({ done: 20, remaining: 10 });
+    render(<MissingAudioCard initialRemaining={50} />);
+    await act(async () => { fireEvent.click(screen.getByRole('button', { name: 'Make missing audio' })); });
+    await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent("Couldn't make progress just now. What's made is saved. Try again in a minute."));
+    expect(makeMissingAudio).toHaveBeenCalledTimes(2);
+    expect(screen.getByText('Made 20 so far, 30 to go')).toBeInTheDocument();
+    expect(screen.getByText('30 sentences have no audio yet')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Make missing audio' })).toBeEnabled();
+    expect(screen.queryByRole('button', { name: 'Stop' })).not.toBeInTheDocument();
   });
 
   it('says the same when the action itself throws', async () => {

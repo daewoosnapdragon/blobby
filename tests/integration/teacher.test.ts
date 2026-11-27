@@ -178,4 +178,30 @@ describe('missing audio', () => {
     expect(again).toEqual({ done: 1, remaining: 0 });
     expect(Object.keys(await audioOf(bankId(13)))).toEqual(['Build sentence 13.']);
   });
+
+  it('starts no new row once the overall deadline has passed, keeping the rows already saved', async () => {
+    const { fillMissingAudio, countMissingAudio } = await import('@/lib/db/teacher');
+    // four one-string rows, after everything else already has audio
+    for (const n of [21, 22, 23, 24]) {
+      await bankRow(n, 'build_it', { prompt: `Build sentence ${n}.`, tiles: ['I', 'ran.'] }, { skill: 'zz_slow', position: n });
+    }
+    expect(await countMissingAudio()).toBe(4);
+    const slow = fakeAudio();
+    const inner = slow.synthesize.getMockImplementation()!;
+    slow.synthesize.mockImplementation(async (text: string) => {
+      await new Promise((r) => setTimeout(r, 250));
+      return inner(text);
+    });
+    // row 1 starts (always), row 2 starts at ~250 ms (< 400), row 3 would start at ~500 ms (>= 400): stop there
+    const r = await fillMissingAudio(20, { audio: slow.deps, deadlineMs: 400 });
+    expect(r).toEqual({ done: 2, remaining: 2 });
+    expect(slow.synthesize).toHaveBeenCalledTimes(2);
+    expect(Object.keys(await audioOf(bankId(21)))).toEqual(['Build sentence 21.']);
+    expect(Object.keys(await audioOf(bankId(22)))).toEqual(['Build sentence 22.']);
+    expect(await audioOf(bankId(23))).toEqual({});
+    expect(await audioOf(bankId(24))).toEqual({});
+    expect(await countMissingAudio()).toBe(2);
+    // the next call carries on from where this one stopped
+    expect(await fillMissingAudio(20, { audio: fakeAudio().deps })).toEqual({ done: 2, remaining: 0 });
+  });
 });

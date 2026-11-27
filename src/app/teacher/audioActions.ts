@@ -1,20 +1,15 @@
 'use server';
-import { revalidatePath } from 'next/cache';
 import { requireTeacher } from '@/lib/supabase/server';
-import { countMissingAudio, fillMissingAudio } from '@/lib/db/teacher';
+import { fillMissingAudio } from '@/lib/db/teacher';
 
-/** Strings per press: about 20 voice calls at 4 at a time, well inside one server function's time budget. */
+/**
+ * Strings per press. Each row has its own 25 s limit and no new row starts after 45 s, so one call ends within the
+ * Plans page's 60 s maxDuration (this action runs under that page's route config).
+ */
 const PER_CALL = 20;
 
 /** Makes audio for the next ~20 missing sentences; the Plans page card calls this again until none remain. */
 export async function makeMissingAudio(): Promise<{ done: number; remaining: number; error?: string }> {
   await requireTeacher();
-  const result = await fillMissingAudio(PER_CALL);
-  revalidatePath('/teacher/plans');
-  return result;
-}
-
-export async function missingAudioCount(): Promise<number> {
-  await requireTeacher();
-  return countMissingAudio();
+  return fillMissingAudio(PER_CALL);
 }

@@ -332,12 +332,10 @@ export async function saveQuestion(
   return { id, audio: status };
 }
 
-/**
- * Hides a question from the editor, lessons and free practice. The row and its attempts stay (stats still count them).
- * A lesson's last question can't be deleted: kids would be stranded on a lesson with nothing in it.
- */
-/** Per-row deadline for "Make missing audio"; a press covers ~20 strings, well under a serverless function's budget. */
+/** Per-row deadline for "Make missing audio". */
 export const BACKLOG_AUDIO_TIMEOUT_MS = 25_000;
+/** Overall budget for one "Make missing audio" call: no new row starts after this, inside the page's 60 s maxDuration. */
+export const BACKLOG_DEADLINE_MS = 45_000;
 
 /** Non-deleted questions (lessons and review banks) that still have a spoken string with no audio, in a stable order. */
 async function audioBacklog() {
@@ -365,10 +363,13 @@ export async function countMissingAudio(): Promise<number> {
 /**
  * Makes audio for whole rows until about `limit` missing strings are covered, saving each row as soon as its audio
  * is made. Stops at the first failure (rows already saved stay saved) and returns its message; `remaining` is recounted.
+ * Once `deadlineMs` (default 45 s) has passed since the call began, no further row is started: it returns what is done.
  */
 export async function fillMissingAudio(
-  limit: number, deps: { audio?: () => Promise<AudioDeps> } = {},
+  limit: number, deps: { audio?: () => Promise<AudioDeps>; deadlineMs?: number } = {},
 ): Promise<{ done: number; remaining: number; error?: string }> {
+  const started = Date.now();
+  const deadlineMs = deps.deadlineMs ?? BACKLOG_DEADLINE_MS;
   const backlog = await audioBacklog();
   const batch: typeof backlog = [];
   let covered = 0;
@@ -382,7 +383,8 @@ export async function fillMissingAudio(
   if (batch.length) {
     try {
       const audioDeps = await (deps.audio ?? defaultAudioDeps)();
-      for (const row of batch) {
+      for (const [i, row] of batch.entries()) {
+        if (i > 0 && Date.now() - started >= deadlineMs) break; // the first row always runs, so each call makes progress
         const audio = await ensureAudio(row.question, audioDeps, { timeoutMs: BACKLOG_AUDIO_TIMEOUT_MS });
         // Only if nobody edited the question meanwhile: the editor's own save makes that version's audio.
         const saved = await sql`update wp_questions set audio = ${sql.json(audio as never)}
@@ -397,6 +399,10 @@ export async function fillMissingAudio(
   return error === undefined ? { done, remaining } : { done, remaining, error };
 }
 
+/**
+ * Hides a question from the editor, lessons and free practice. The row and its attempts stay (stats still count them).
+ * A lesson's last question can't be deleted: kids would be stranded on a lesson with nothing in it.
+ */
 export async function softDeleteQuestion(id: string): Promise<void> {
   if (!UUID_RE.test(id)) throw new NotFoundError('question not found');
   await sql.begin(async (tx) => {

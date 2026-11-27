@@ -215,7 +215,7 @@ describe('update mode SQL (PART 1 look, PART 2 apply)', () => {
     const text = contentToSql(planFile({}, 10), { update: true });
     const listed = await sql.unsafe(part1(text));
     expect(listed.map((r) => r.question_position)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9]);
-    expect(listed[0]).toMatchObject({ week_position: 1, lesson_position: 1, file_text: null });
+    expect(listed[0]).toMatchObject({ week_position: 1, lesson_title: 'U1', file_text: null });
     expect(listed[0].app_text).toContain('Q1?');
   });
 
@@ -225,9 +225,26 @@ describe('update mode SQL (PART 1 look, PART 2 apply)', () => {
     const text = contentToSql(planFile({ 2: 'Changed two?' }, 10), { update: true, base: planFile() });
     const listed = await sql.unsafe(part1(text));
     expect(listed.length).toBe(1);
-    expect(listed[0]).toMatchObject({ week_position: 1, lesson_position: 1, question_position: 3 });
+    expect(listed[0]).toMatchObject({ week_position: 1, lesson_title: 'U1', question_position: 3 });
     expect(listed[0].app_text).toContain('Teacher three?');
     expect(listed[0].file_text).toContain('Q3?');
+  });
+
+  it('PART 1 lists an edit to the last choice with the whole question text', async () => {
+    // jsonb puts short keys first ("answer", "prompt", "choices"), so the last choice is near the end of the text
+    await sql`update wp_questions set payload = jsonb_set(payload, '{choices,1}', '"Teacher last choice"')
+      where payload->>'prompt' = 'Q4?'`;
+    const text = contentToSql(planFile({ 2: 'Changed two?' }, 10), { update: true, base: planFile() });
+    const listed = await sql.unsafe(part1(text));
+    expect(listed.map((r) => r.question_position)).toEqual([3, 4]);
+    const row = listed[1];
+    expect(row).toMatchObject({ week_position: 1, lesson_title: 'U1', question_position: 4 });
+    expect(row.app_text).toContain('Teacher last choice');
+    expect(row.file_text).not.toContain('Teacher last choice');
+    expect(row.file_text).toContain('"b"');
+    expect(row.app_text).not.toBe(row.file_text);
+    expect(JSON.parse(row.app_text)).toEqual({ prompt: 'Q4?', choices: ['a', 'Teacher last choice'], answer: 0 });
+    expect(JSON.parse(row.file_text)).toEqual({ prompt: 'Q4?', choices: ['a', 'b'], answer: 0 });
   });
 
   it('PART 2 updates in place, inserts missing positions, keeps a deleted position deleted, and a second run changes nothing', async () => {
@@ -285,9 +302,17 @@ describe('update mode SQL (PART 1 look, PART 2 apply)', () => {
       await sql`update wp_questions set payload = payload || '{"prompt":"Teacher B3?"}'::jsonb where bank_grade = 4 and payload->>'prompt' = 'B3?'`;
       const listed = await sql.unsafe(part1(text()));
       expect(listed.length).toBe(1);
-      expect(listed[0]).toMatchObject({ bank_grade: 4, skill: 'irregular-past', question_position: 3 });
+      expect(listed[0]).toMatchObject({ skill: 'irregular-past', question_position: 3 });
       expect(listed[0].app_text).toContain('Teacher B3?');
       expect(listed[0].file_text).toContain('B3?');
+      // an edit to the last choice is listed too, with the whole text
+      await sql`update wp_questions set payload = jsonb_set(payload, '{choices,1}', '"Teacher goed"') where bank_grade = 4 and payload->>'prompt' = 'B1?'`;
+      const both = await sql.unsafe(part1(text()));
+      expect(both.map((r) => [r.skill, r.question_position])).toEqual([['irregular-past', 1], ['irregular-past', 3]]);
+      expect(both[0].app_text).toContain('Teacher goed');
+      expect(both[0].file_text).not.toContain('Teacher goed');
+      expect(both[0].app_text).not.toBe(both[0].file_text);
+      await sql`update wp_questions set payload = jsonb_set(payload, '{choices,1}', '"goed"') where bank_grade = 4 and payload->>'prompt' = 'B1?'`;
       // without a base, every existing row is listed
       expect((await sql.unsafe(part1(bankToSql(bankFile(['x?']), { update: true })))).length).toBe(2);
     });

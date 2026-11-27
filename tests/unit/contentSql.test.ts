@@ -60,6 +60,31 @@ describe('add-only mode is unchanged', () => {
   });
 });
 
+describe('PART 1 shows the whole question', () => {
+  // jsonb puts short keys first, so a cut-off text would hide an edit to a later field such as the last choice
+  it('plan files list week, lesson title and question position with the full app and file text', () => {
+    const { part1 } = split(contentToSql(plan(), { update: true, base: plan() }));
+    expect(part1).toContain('select v.wpos as week_position, l.title as lesson_title, v.qpos as question_position,');
+    expect(part1).toContain('qq.payload::text as app_text, v.base::jsonb::text as file_text');
+    expect(part1).toContain('order by v.wpos, v.lpos, v.qpos;');
+    expect(code(part1)).not.toMatch(/\bleft\(/);
+    // the base carries the whole payload, last choice included
+    expect(part1).toContain(`'{"prompt":"Pick Nova''s one.","choices":["A","B"],"answer":0}'`);
+  });
+  it('bank files list skill and question position with the full app and file text', () => {
+    const { part1 } = split(bankToSql(bank(), { update: true, base: bank() }));
+    expect(part1).toContain('select v.skill, v.pos as question_position,');
+    expect(part1).toContain('qq.payload::text as app_text, v.base::jsonb::text as file_text');
+    expect(part1).toContain('order by v.skill, v.pos;');
+    expect(code(part1)).not.toMatch(/\bleft\(|bank_grade,/);
+  });
+  it('the header says the whole question is shown', () => {
+    const text = contentToSql(plan(), { update: true, base: plan() });
+    expect(text).toContain('--   app_text  = the whole question as it is in the app now');
+    expect(text).not.toMatch(/the start of the question/);
+  });
+});
+
 describe('quoting', () => {
   it("escapes apostrophes in payloads and the base's text", () => {
     const text = contentToSql(plan(), { update: true, base: plan() });
